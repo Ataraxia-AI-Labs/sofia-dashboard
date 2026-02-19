@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       try {
         const organization = await fetchUserOrganization(session.user.id)
-        setOrg(organization)
+        setOrg(organization as Organization | null)
       } catch (e) {
         console.error('Error fetching org:', e)
       }
