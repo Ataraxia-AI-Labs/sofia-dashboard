@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
+import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, createPatient, updatePatient, createStaffNote, createTreatment, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
 import type { Patient } from '@/types'
 import {
   Search, Filter, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
@@ -32,6 +32,14 @@ export default function PacientesPage() {
   const [mlFeatures, setMlFeatures] = useState<any>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [orgId, setOrgId] = useState<string | null>(null)
+  const [showNewPatient, setShowNewPatient] = useState(false)
+  const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
+  const [staffNotes, setStaffNotes] = useState<any[]>([])
+  const [treatments, setTreatments] = useState<any[]>([])
+  const [newNote, setNewNote] = useState('')
+  const [savingNote, setSavingNote] = useState(false)
+  const [editingPatient, setEditingPatient] = useState(false)
+  const [editData, setEditData] = useState<any>({})
 
   useEffect(() => {
     const wrapper = document.querySelector('[data-org-id]')
@@ -72,17 +80,63 @@ export default function PacientesPage() {
     setSelectedPatient(patient)
     setDetailLoading(true)
     setMlFeatures(null)
+    setStaffNotes([])
+    setTreatments([])
+    setEditingPatient(false)
+    setNewNote('')
     try {
-      const [detail, ml] = await Promise.all([
+      const [detail, ml, notes, treats] = await Promise.all([
         fetchPatientDetail(patient.id),
         fetchPatientMLFeatures(patient.id),
+        fetchStaffNotes(patient.id),
+        fetchPatientTreatments(patient.id),
       ])
       setSelectedPatient(detail)
       setMlFeatures(ml)
+      setStaffNotes(notes)
+      setTreatments(treats)
     } catch (e) {
       console.error(e)
     }
     setDetailLoading(false)
+  }
+
+  const handleCreatePatient = async () => {
+    if (!orgId || !newPatient.phone) return
+    try {
+      await createPatient(orgId, newPatient)
+      setShowNewPatient(false)
+      setNewPatient({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
+      loadPatients()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleSavePatientEdit = async () => {
+    if (!selectedPatient) return
+    try {
+      await updatePatient(selectedPatient.id, editData)
+      setEditingPatient(false)
+      openDetail(selectedPatient)
+      loadPatients()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleAddNote = async () => {
+    if (!selectedPatient || !newNote.trim()) return
+    setSavingNote(true)
+    try {
+      await createStaffNote(selectedPatient.id, newNote.trim())
+      setNewNote('')
+      const notes = await fetchStaffNotes(selectedPatient.id)
+      setStaffNotes(notes)
+    } catch (e) {
+      console.error(e)
+    }
+    setSavingNote(false)
   }
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
@@ -111,9 +165,14 @@ export default function PacientesPage() {
           <h2 className="text-xl font-semibold text-text-primary">Pacientes</h2>
           <p className="text-text-dim text-xs mt-0.5">{formatNumber(total)} registrados</p>
         </div>
-        <button onClick={loadPatients} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
+            <UserPlus size={13} /> Nuevo Paciente
+          </button>
+          <button onClick={loadPatients} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
       </div>
 
       {/* SEARCH + FILTERS */}
@@ -134,6 +193,39 @@ export default function PacientesPage() {
           )}
         </div>
       </div>
+
+      {/* NEW PATIENT FORM */}
+      {showNewPatient && (
+        <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
+          <h4 className="text-sm font-semibold text-text-primary">Registrar Paciente Presencial</h4>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Nombre completo *</label>
+              <input type="text" value={newPatient.full_name} onChange={(e) => setNewPatient({ ...newPatient, full_name: e.target.value })} placeholder="María García" className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Teléfono *</label>
+              <input type="text" value={newPatient.phone} onChange={(e) => setNewPatient({ ...newPatient, phone: e.target.value })} placeholder="573001234567" className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Email</label>
+              <input type="email" value={newPatient.email} onChange={(e) => setNewPatient({ ...newPatient, email: e.target.value })} placeholder="maria@email.com" className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Ciudad</label>
+              <input type="text" value={newPatient.city} onChange={(e) => setNewPatient({ ...newPatient, city: e.target.value })} placeholder="Bogotá" className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Interés de servicio</label>
+            <input type="text" value={newPatient.service_interest} onChange={(e) => setNewPatient({ ...newPatient, service_interest: e.target.value })} placeholder="Limpieza dental" className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40" />
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button onClick={() => setShowNewPatient(false)} className="px-3 py-1.5 rounded-lg bg-surface-3 text-text-muted text-xs font-semibold">Cancelar</button>
+            <button onClick={handleCreatePatient} disabled={!newPatient.phone} className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold disabled:opacity-50">Registrar</button>
+          </div>
+        </div>
+      )}
 
       {/* TABLE */}
       <div className="glass-card overflow-hidden">
@@ -396,6 +488,61 @@ export default function PacientesPage() {
                       </div>
                     </div>
                   )}
+
+                  {/* Treatments */}
+                  {treatments.length > 0 && (
+                    <div className="glass-card p-4 space-y-3">
+                      <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Tratamientos</h4>
+                      {treatments.map((t: any) => (
+                        <div key={t.id} className={`bg-void/50 rounded-lg px-3 py-2 ${t.status !== 'ACTIVE' ? 'opacity-50' : ''}`}>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-semibold text-text-primary">{t.treatment_name}</span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${t.status === 'ACTIVE' ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>{t.status}</span>
+                          </div>
+                          <div className="text-[10px] text-text-muted mt-0.5">
+                            💊 {t.medication} — {t.dosage} — cada {t.frequency_hours}h
+                          </div>
+                          <div className="text-[10px] text-text-dim mt-0.5">
+                            📅 {new Date(t.start_date).toLocaleDateString('es-CO')} → {new Date(t.end_date).toLocaleDateString('es-CO')} | {t.total_reminders_sent} recordatorios enviados
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Staff Notes */}
+                  <div className="glass-card p-4 space-y-3">
+                    <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Notas Clínicas</h4>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newNote}
+                        onChange={(e) => setNewNote(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
+                        placeholder="Agregar nota..."
+                        className="flex-1 px-3 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none focus:border-brand-purple/40"
+                      />
+                      <button
+                        onClick={handleAddNote}
+                        disabled={savingNote || !newNote.trim()}
+                        className="px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold disabled:opacity-30"
+                      >
+                        {savingNote ? '...' : 'Agregar'}
+                      </button>
+                    </div>
+                    {staffNotes.length > 0 ? (
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {staffNotes.map((n: any) => (
+                          <div key={n.id} className="bg-void/50 rounded-lg px-3 py-2">
+                            <p className="text-xs text-text-primary">{n.note_content}</p>
+                            <p className="text-[9px] text-text-dim mt-1">{timeAgo(n.created_at)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-text-dim">Sin notas aún</p>
+                    )}
+                  </div>
                 </>
               )}
             </div>

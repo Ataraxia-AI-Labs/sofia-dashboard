@@ -163,6 +163,234 @@ export async function fetchUserOrganization(userId: string) {
 }
 
 // ============================================================
+// WRITE OPERATIONS — PATIENTS
+// ============================================================
+
+export async function createPatient(orgId: string, data: {
+  full_name: string
+  phone: string
+  email?: string
+  city?: string
+  service_interest?: string
+  acquisition_channel?: string
+}) {
+  const { data: patient, error } = await supabase
+    .from('patients')
+    .insert({
+      organization_id: orgId,
+      full_name: data.full_name || 'Por identificar',
+      phone: data.phone,
+      email: data.email || null,
+      city: data.city || 'Por identificar',
+      service_interest: data.service_interest || 'Por identificar',
+      acquisition_channel: data.acquisition_channel || 'PRESENCIAL',
+    })
+    .select()
+    .single()
+  if (error) throw error
+  return patient
+}
+
+export async function updatePatient(patientId: string, data: Record<string, any>) {
+  const { error } = await supabase
+    .from('patients')
+    .update({ ...data, updated_at: new Date().toISOString() })
+    .eq('id', patientId)
+  if (error) throw error
+}
+
+// ============================================================
+// WRITE OPERATIONS — APPOINTMENTS
+// ============================================================
+
+export async function updateAppointmentStatus(appointmentId: string, status: string, reason?: string) {
+  const updateData: any = { status }
+  if (reason) updateData.cancellation_reason = reason
+  const { error } = await supabase
+    .from('appointments')
+    .update(updateData)
+    .eq('id', appointmentId)
+  if (error) throw error
+}
+
+// ============================================================
+// TREATMENTS
+// ============================================================
+
+export async function fetchActiveTreatments(orgId: string) {
+  const { data, error } = await supabase
+    .from('active_treatments')
+    .select('id, patient_id, treatment_name, medication, dosage, frequency_hours, start_date, end_date, next_reminder_at, total_reminders_sent, status, notes, created_at, patients(full_name, phone)')
+    .eq('organization_id', orgId)
+    .in('status', ['ACTIVE', 'PAUSED'])
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
+export async function fetchPatientTreatments(patientId: string) {
+  const { data, error } = await supabase
+    .from('active_treatments')
+    .select('*')
+    .eq('patient_id', patientId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
+export async function createTreatment(orgId: string, data: {
+  patient_id: string
+  appointment_id?: string
+  treatment_name: string
+  medication: string
+  dosage: string
+  frequency_hours: number
+  start_date: string
+  end_date: string
+  notes?: string
+}) {
+  const { data: treatment, error } = await supabase
+    .from('active_treatments')
+    .insert({
+      organization_id: orgId,
+      patient_id: data.patient_id,
+      appointment_id: data.appointment_id || null,
+      treatment_name: data.treatment_name,
+      medication: data.medication,
+      dosage: data.dosage,
+      frequency_hours: data.frequency_hours,
+      start_date: data.start_date,
+      end_date: data.end_date,
+      next_reminder_at: data.start_date,
+      notes: data.notes || '',
+      status: 'ACTIVE',
+    })
+    .select()
+    .single()
+  if (error) throw error
+  return treatment
+}
+
+export async function updateTreatmentStatus(treatmentId: string, status: string) {
+  const { error } = await supabase
+    .from('active_treatments')
+    .update({ status })
+    .eq('id', treatmentId)
+  if (error) throw error
+}
+
+// ============================================================
+// STAFF NOTES
+// ============================================================
+
+export async function fetchStaffNotes(patientId: string) {
+  const { data, error } = await supabase
+    .from('staff_notes')
+    .select('id, note_content, sentiment_label, is_private, created_at')
+    .eq('patient_id', patientId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
+export async function createStaffNote(patientId: string, content: string, userId?: string) {
+  const { error } = await supabase
+    .from('staff_notes')
+    .insert({
+      patient_id: patientId,
+      staff_user_id: userId || null,
+      note_content: content,
+      is_private: true,
+    })
+  if (error) throw error
+}
+
+// ============================================================
+// SERVICES CATALOG
+// ============================================================
+
+export async function fetchServicesCatalog(orgId: string) {
+  const { data, error } = await supabase
+    .from('services_catalog')
+    .select('*')
+    .eq('organization_id', orgId)
+    .eq('is_active', true)
+    .order('category', { ascending: true })
+  if (error) throw error
+  return data || []
+}
+
+export async function createService(orgId: string, data: {
+  name: string; description?: string; price: number; currency?: string
+  duration_minutes?: number; category?: string; requires_deposit?: boolean; deposit_amount?: number
+}) {
+  const { error } = await supabase
+    .from('services_catalog')
+    .insert({
+      organization_id: orgId,
+      name: data.name,
+      description: data.description || '',
+      price: data.price,
+      currency: data.currency || 'COP',
+      duration_minutes: data.duration_minutes || 60,
+      category: data.category || 'GENERAL',
+      requires_deposit: data.requires_deposit || false,
+      deposit_amount: data.deposit_amount || 0,
+    })
+  if (error) throw error
+}
+
+export async function updateService(serviceId: string, data: Record<string, any>) {
+  const { error } = await supabase
+    .from('services_catalog')
+    .update(data)
+    .eq('id', serviceId)
+  if (error) throw error
+}
+
+export async function deleteService(serviceId: string) {
+  const { error } = await supabase
+    .from('services_catalog')
+    .update({ is_active: false })
+    .eq('id', serviceId)
+  if (error) throw error
+}
+
+// ============================================================
+// BUSINESS HOURS
+// ============================================================
+
+export async function fetchBusinessHours(orgId: string) {
+  const { data, error } = await supabase
+    .from('business_hours')
+    .select('*')
+    .eq('organization_id', orgId)
+    .order('day_of_week', { ascending: true })
+  if (error) throw error
+  return data || []
+}
+
+export async function updateBusinessHour(hourId: string, data: Record<string, any>) {
+  const { error } = await supabase
+    .from('business_hours')
+    .update(data)
+    .eq('id', hourId)
+  if (error) throw error
+}
+
+// ============================================================
+// ORGANIZATION SETTINGS
+// ============================================================
+
+export async function updateOrganization(orgId: string, data: Record<string, any>) {
+  const { error } = await supabase
+    .from('organizations')
+    .update({ ...data, updated_at: new Date().toISOString() })
+    .eq('id', orgId)
+  if (error) throw error
+}
+
+// ============================================================
 // HELPERS
 // ============================================================
 

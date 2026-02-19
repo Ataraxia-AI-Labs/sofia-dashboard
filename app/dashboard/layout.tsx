@@ -15,7 +15,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes', ready: true },
   { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario', ready: true },
   { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades', ready: true },
-  { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', ready: false },
+  { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', ready: true },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

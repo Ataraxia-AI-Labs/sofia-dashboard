@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { fetchAppointments, timeAgo } from '@/lib/api'
+import { fetchAppointments, updateAppointmentStatus, timeAgo } from '@/lib/api'
 import type { Appointment } from '@/types'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
@@ -290,6 +290,30 @@ export default function CalendarioPage() {
             <div className="pt-2 border-t border-border text-xs text-text-dim">
               Creada {timeAgo(selectedAppt.created_at)}
             </div>
+
+            {/* STATUS ACTIONS */}
+            {selectedAppt.status !== 'COMPLETED' && selectedAppt.status !== 'CANCELLED' && (
+              <div className="pt-3 border-t border-border flex gap-2 flex-wrap">
+                <button
+                  onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'COMPLETED'); setSelectedAppt(null); loadAppointments() }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs font-semibold hover:bg-status-success/20 transition-colors"
+                >
+                  <CheckCircle size={12} /> Completada
+                </button>
+                <button
+                  onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'NO_SHOW'); setSelectedAppt(null); loadAppointments() }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-status-warning text-xs font-semibold hover:bg-status-warning/20 transition-colors"
+                >
+                  <AlertTriangle size={12} /> No Asistió
+                </button>
+                <button
+                  onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'CANCELLED', 'Cancelado desde dashboard'); setSelectedAppt(null); loadAppointments() }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:bg-status-danger/20 transition-colors"
+                >
+                  <XCircle size={12} /> Cancelar
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
