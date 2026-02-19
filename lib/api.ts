@@ -99,7 +99,7 @@ export async function fetchAppointments(orgId: string, opts?: {
 export async function fetchOpportunities(orgId: string, status?: string) {
   let query = supabase
     .from('detected_opportunities')
-    .select('id, opportunity_type, status, estimated_value, notes, created_at, patients(full_name, phone)')
+    .select('id, opportunity_type, status, estimated_value, notes, created_at, patient_id, patients(full_name, phone)')
     .eq('organization_id', orgId)
     .order('created_at', { ascending: false })
     .limit(50)
@@ -107,6 +107,21 @@ export async function fetchOpportunities(orgId: string, status?: string) {
   if (status) query = query.eq('status', status)
 
   const { data, error } = await query
+  if (error) throw error
+  return data || []
+}
+
+// ============================================================
+// PATIENT APPOINTMENTS (for detail view)
+// ============================================================
+
+export async function fetchPatientAppointments(patientId: string) {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('id, start_time, end_time, service_name, status, created_at')
+    .eq('patient_id', patientId)
+    .order('start_time', { ascending: false })
+    .limit(20)
   if (error) throw error
   return data || []
 }

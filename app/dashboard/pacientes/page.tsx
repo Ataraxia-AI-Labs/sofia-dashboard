@@ -1,0 +1,454 @@
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
+import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
+import type { Patient } from '@/types'
+import {
+  Search, Filter, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
+  Phone, Mail, MapPin, Calendar, TrendingUp, Brain, X, MessageSquare,
+  DollarSign, Target, Clock, Activity, Heart, AlertTriangle, Star,
+  RefreshCw, Download, UserPlus
+} from 'lucide-react'
+
+const CHANNELS: Record<string, { label: string; color: string }> = {
+  WHATSAPP: { label: 'WhatsApp', color: 'text-status-success' },
+  INSTAGRAM: { label: 'Instagram', color: 'text-brand-purple' },
+  MESSENGER: { label: 'Messenger', color: 'text-status-info' },
+  WEB: { label: 'Web', color: 'text-status-warning' },
+}
+
+const PAGE_SIZE = 20
+
+export default function PacientesPage() {
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [searchDebounced, setSearchDebounced] = useState('')
+  const [page, setPage] = useState(0)
+  const [sortBy, setSortBy] = useState('created_at')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [selectedPatient, setSelectedPatient] = useState<any>(null)
+  const [mlFeatures, setMlFeatures] = useState<any>(null)
+  const [detailLoading, setDetailLoading] = useState(false)
+  const [orgId, setOrgId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const wrapper = document.querySelector('[data-org-id]')
+    if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
+  }, [])
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchDebounced(search), 300)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  const loadPatients = useCallback(async () => {
+    if (!orgId) return
+    setLoading(true)
+    try {
+      const { patients: data, total: count } = await fetchPatients(orgId, {
+        limit: PAGE_SIZE,
+        offset: page * PAGE_SIZE,
+        search: searchDebounced || undefined,
+        orderBy: sortBy,
+        orderDir: sortDir,
+      })
+      setPatients(data)
+      setTotal(count)
+    } catch (e) {
+      console.error(e)
+    }
+    setLoading(false)
+  }, [orgId, page, searchDebounced, sortBy, sortDir])
+
+  useEffect(() => { loadPatients() }, [loadPatients])
+
+  // Reset page on search change
+  useEffect(() => { setPage(0) }, [searchDebounced])
+
+  const openDetail = async (patient: Patient) => {
+    setSelectedPatient(patient)
+    setDetailLoading(true)
+    setMlFeatures(null)
+    try {
+      const [detail, ml] = await Promise.all([
+        fetchPatientDetail(patient.id),
+        fetchPatientMLFeatures(patient.id),
+      ])
+      setSelectedPatient(detail)
+      setMlFeatures(ml)
+    } catch (e) {
+      console.error(e)
+    }
+    setDetailLoading(false)
+  }
+
+  const totalPages = Math.ceil(total / PAGE_SIZE)
+
+  const toggleSort = (field: string) => {
+    if (sortBy === field) {
+      setSortDir(sortDir === 'desc' ? 'asc' : 'desc')
+    } else {
+      setSortBy(field)
+      setSortDir('desc')
+    }
+  }
+
+  const SortIcon = ({ field }: { field: string }) => {
+    if (sortBy !== field) return <ChevronDown size={12} className="text-text-dim" />
+    return sortDir === 'desc'
+      ? <ChevronDown size={12} className="text-brand-purple" />
+      : <ChevronUp size={12} className="text-brand-purple" />
+  }
+
+  return (
+    <div className="max-w-[1400px] space-y-5">
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-text-primary">Pacientes</h2>
+          <p className="text-text-dim text-xs mt-0.5">{formatNumber(total)} registrados</p>
+        </div>
+        <button onClick={loadPatients} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+        </button>
+      </div>
+
+      {/* SEARCH + FILTERS */}
+      <div className="flex gap-3">
+        <div className="flex-1 relative">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-dim" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre o teléfono..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
+          />
+          {search && (
+            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* TABLE */}
+      <div className="glass-card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border">
+                {[
+                  { field: 'full_name', label: 'Paciente' },
+                  { field: 'phone', label: 'Teléfono' },
+                  { field: 'acquisition_channel', label: 'Canal' },
+                  { field: 'service_interest', label: 'Interés' },
+                  { field: 'city', label: 'Ciudad' },
+                  { field: 'created_at', label: 'Registro' },
+                ].map((col) => (
+                  <th
+                    key={col.field}
+                    onClick={() => toggleSort(col.field)}
+                    className="text-left text-[11px] font-semibold text-text-muted uppercase tracking-wider px-5 py-3.5 cursor-pointer hover:text-text-primary transition-colors select-none"
+                  >
+                    <div className="flex items-center gap-1">
+                      {col.label}
+                      <SortIcon field={col.field} />
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {loading && patients.length === 0 ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i} className="border-b border-border/50">
+                    {Array.from({ length: 6 }).map((_, j) => (
+                      <td key={j} className="px-5 py-3.5">
+                        <div className="h-4 bg-surface-3 rounded animate-pulse w-24" />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : patients.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-12 text-text-dim text-sm">
+                    {search ? 'No se encontraron pacientes con ese criterio' : 'Aún no hay pacientes registrados'}
+                  </td>
+                </tr>
+              ) : (
+                patients.map((p) => (
+                  <tr
+                    key={p.id}
+                    onClick={() => openDetail(p)}
+                    className="border-b border-border/50 hover:bg-surface-3/50 cursor-pointer transition-colors group"
+                  >
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold flex-shrink-0">
+                          {p.full_name?.[0]?.toUpperCase() || '?'}
+                        </div>
+                        <span className="text-sm font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
+                          {p.full_name || 'Sin nombre'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="text-sm text-text-secondary font-mono">{p.phone}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className={`text-xs font-semibold ${CHANNELS[p.acquisition_channel]?.color || 'text-text-muted'}`}>
+                        {CHANNELS[p.acquisition_channel]?.label || p.acquisition_channel}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="text-sm text-text-muted truncate max-w-[140px] block">
+                        {p.service_interest || '—'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="text-sm text-text-muted">{p.city || '—'}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="text-xs text-text-dim">{timeAgo(p.created_at)}</span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-border">
+            <span className="text-xs text-text-dim">
+              {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} de {total}
+            </span>
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setPage(Math.max(0, page - 1))}
+                disabled={page === 0}
+                className="w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={14} />
+              </button>
+              {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+                const pageNum = page < 3 ? i : page - 2 + i
+                if (pageNum >= totalPages) return null
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPage(pageNum)}
+                    className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
+                      pageNum === page
+                        ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
+                        : 'bg-surface-3 border border-border text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    {pageNum + 1}
+                  </button>
+                )
+              })}
+              <button
+                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+                disabled={page >= totalPages - 1}
+                className="w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ========== DETAIL PANEL (slide-over) ========== */}
+      {selectedPatient && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedPatient(null)} />
+          
+          {/* Panel */}
+          <div className="relative w-full max-w-lg bg-surface border-l border-border overflow-y-auto animate-slide-in">
+            {/* Header */}
+            <div className="sticky top-0 bg-surface/90 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center text-white font-bold">
+                  {selectedPatient.full_name?.[0]?.toUpperCase() || '?'}
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-text-primary">{selectedPatient.full_name || 'Sin nombre'}</h3>
+                  <p className="text-xs text-text-muted font-mono">{selectedPatient.phone}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedPatient(null)} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {detailLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-20 bg-surface-2 rounded-xl animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  {/* Contact Info */}
+                  <div className="glass-card p-4 space-y-3">
+                    <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Información</h4>
+                    <DetailRow icon={<Phone size={14} />} label="Teléfono" value={selectedPatient.phone} />
+                    <DetailRow icon={<Mail size={14} />} label="Email" value={selectedPatient.email || '—'} />
+                    <DetailRow icon={<MapPin size={14} />} label="Ciudad" value={selectedPatient.city || 'Por identificar'} />
+                    <DetailRow icon={<Star size={14} />} label="Interés" value={selectedPatient.service_interest || 'Por identificar'} />
+                    <DetailRow icon={<MessageSquare size={14} />} label="Canal" value={CHANNELS[selectedPatient.acquisition_channel]?.label || selectedPatient.acquisition_channel} />
+                    <DetailRow icon={<Calendar size={14} />} label="Registro" value={new Date(selectedPatient.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} />
+                  </div>
+
+                  {/* Psychometrics */}
+                  {selectedPatient.psychometrics && (
+                    <div className="glass-card p-4 space-y-3">
+                      <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Psicometría</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <MiniMetric label="Nivel de Confianza" value={formatPercent((selectedPatient.psychometrics.trust_level || 0) * 100)} color="text-status-success" />
+                        <MiniMetric label="Riesgo de Churn" value={formatPercent((selectedPatient.psychometrics.churn_risk_score || 0) * 100)} color="text-status-danger" />
+                        <MiniMetric label="Sensibilidad a Precio" value={formatPercent((selectedPatient.psychometrics.price_sensitivity || 0) * 100)} color="text-status-warning" />
+                        <MiniMetric label="LTV Predicho" value={formatCOP(selectedPatient.psychometrics.lifetime_value_predicted || 0)} color="text-brand-purple" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ML Features */}
+                  {mlFeatures && (
+                    <div className="glass-card p-4 space-y-4">
+                      <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+                        <Brain size={12} className="text-brand-purple" />
+                        ML Features
+                      </h4>
+
+                      {/* Engagement */}
+                      <div>
+                        <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Engagement</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          <MLStat label="Interacciones" value={mlFeatures.total_interactions} />
+                          <MLStat label="Mensajes in" value={mlFeatures.total_inbound} />
+                          <MLStat label="Mensajes out" value={mlFeatures.total_outbound} />
+                          <MLStat label="Hora preferida" value={`${mlFeatures.preferred_hour}:00`} />
+                          <MLStat label="Día preferido" value={['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][mlFeatures.preferred_day] || '—'} />
+                          <MLStat label="Días sin contacto" value={mlFeatures.days_since_last_contact} />
+                        </div>
+                      </div>
+
+                      {/* Appointments */}
+                      <div>
+                        <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Citas</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          <MLStat label="Total" value={mlFeatures.total_appointments} />
+                          <MLStat label="Completadas" value={mlFeatures.completed_appointments} color="text-status-success" />
+                          <MLStat label="Canceladas" value={mlFeatures.cancelled_appointments} color="text-status-danger" />
+                          <MLStat label="No-Show" value={mlFeatures.no_show_appointments} color="text-status-warning" />
+                          <MLStat label="Conversión" value={formatPercent(mlFeatures.conversion_rate * 100)} />
+                          <MLStat label="Asistencia" value={formatPercent(mlFeatures.show_rate * 100)} />
+                        </div>
+                      </div>
+
+                      {/* Revenue */}
+                      <div>
+                        <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Revenue</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          <MLStat label="Total" value={formatCOP(mlFeatures.total_revenue)} color="text-status-success" />
+                          <MLStat label="Transacciones" value={mlFeatures.total_transactions} />
+                          <MLStat label="Ticket avg" value={formatCOP(mlFeatures.avg_transaction_value)} />
+                          <MLStat label="LTV" value={formatCOP(mlFeatures.lifetime_value)} color="text-brand-purple" />
+                        </div>
+                      </div>
+
+                      {/* Predictions */}
+                      <div>
+                        <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Predicciones IA</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <PredictionBar label="Probabilidad Conversión" value={mlFeatures.conversion_probability} color="bg-status-success" />
+                          <PredictionBar label="Riesgo de Churn" value={mlFeatures.churn_probability} color="bg-status-danger" />
+                          <PredictionBar label="Riesgo No-Show" value={mlFeatures.no_show_probability} color="bg-status-warning" />
+                          <PredictionBar label="LTV Predicho" value={mlFeatures.predicted_ltv > 0 ? Math.min(mlFeatures.predicted_ltv / 5000000, 1) : 0} color="bg-brand-purple" extra={formatCOP(mlFeatures.predicted_ltv)} />
+                        </div>
+                      </div>
+
+                      {/* Sentiment */}
+                      <div>
+                        <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Sentiment</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          <MLStat label="Promedio" value={mlFeatures.avg_sentiment?.toFixed(2)} color={mlFeatures.avg_sentiment >= 0 ? 'text-status-success' : 'text-status-danger'} />
+                          <MLStat label="Tendencia" value={mlFeatures.sentiment_trend?.toFixed(2)} color={mlFeatures.sentiment_trend >= 0 ? 'text-status-success' : 'text-status-danger'} />
+                          <MLStat label="Quejas" value={mlFeatures.complaint_count} color={mlFeatures.complaint_count > 0 ? 'text-status-danger' : 'text-text-muted'} />
+                        </div>
+                      </div>
+
+                      {/* Media usage */}
+                      <div className="flex gap-2 flex-wrap">
+                        {mlFeatures.has_sent_audio && <span className="badge badge-info">🎤 Audio</span>}
+                        {mlFeatures.has_sent_image && <span className="badge badge-purple">📷 Imagen</span>}
+                        {mlFeatures.has_sent_document && <span className="badge badge-warning">📄 Documento</span>}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
+// SUB-COMPONENTS
+// ============================================================
+
+function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-text-dim">{icon}</span>
+      <span className="text-xs text-text-muted w-20 flex-shrink-0">{label}</span>
+      <span className="text-sm text-text-primary truncate">{value}</span>
+    </div>
+  )
+}
+
+function MiniMetric({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="bg-surface-3 rounded-lg px-3 py-2">
+      <div className="text-[10px] text-text-dim mb-0.5">{label}</div>
+      <div className={`text-sm font-bold font-mono ${color}`}>{value}</div>
+    </div>
+  )
+}
+
+function MLStat({ label, value, color }: { label: string; value: any; color?: string }) {
+  return (
+    <div className="bg-void/50 rounded-lg px-2.5 py-1.5">
+      <div className="text-[9px] text-text-dim">{label}</div>
+      <div className={`text-xs font-semibold font-mono ${color || 'text-text-primary'}`}>{value ?? '—'}</div>
+    </div>
+  )
+}
+
+function PredictionBar({ label, value, color, extra }: { label: string; value: number; color: string; extra?: string }) {
+  const pct = Math.round((value || 0) * 100)
+  return (
+    <div className="bg-void/50 rounded-lg px-2.5 py-2">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-[9px] text-text-dim">{label}</span>
+        <span className="text-[10px] font-bold font-mono text-text-primary">{extra || `${pct}%`}</span>
+      </div>
+      <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
+        <div className={`h-full rounded-full ${color} transition-all duration-700`} style={{ width: `${Math.max(pct, 2)}%` }} />
+      </div>
+    </div>
+  )
+}
