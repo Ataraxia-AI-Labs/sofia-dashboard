@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-void text-text-primary font-body antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-void; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-border-2; }
+
+  ::selection {
+    @apply bg-brand-purple/30 text-text-primary;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-surface-2 border border-border rounded-2xl backdrop-blur-sm;
+  }
+
+  .glass-card-elevated {
+    @apply bg-surface-2 border border-border rounded-2xl backdrop-blur-sm shadow-lg shadow-black/20;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-purple to-brand-cyan bg-clip-text text-transparent;
+  }
+
+  .gradient-border {
+    @apply relative;
+  }
+  .gradient-border::before {
+    content: '';
+    @apply absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-r from-brand-purple to-brand-cyan;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .metric-glow {
+    @apply relative;
+  }
+  .metric-glow::after {
+    content: '';
+    @apply absolute -inset-1 rounded-2xl opacity-0 transition-opacity duration-300;
+    background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.08), transparent 70%);
+  }
+  .metric-glow:hover::after {
+    @apply opacity-100;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-muted text-sm font-medium transition-all duration-200 hover:bg-surface-3 hover:text-text-primary;
+  }
+  .sidebar-link.active {
+    @apply bg-brand-purple/10 text-brand-purple border border-brand-purple/20;
+  }
+
+  .stat-number {
+    @apply text-3xl font-bold font-mono tracking-tight;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+  .badge-success { @apply bg-status-success/10 text-status-success border border-status-success/20; }
+  .badge-warning { @apply bg-status-warning/10 text-status-warning border border-status-warning/20; }
+  .badge-danger  { @apply bg-status-danger/10 text-status-danger border border-status-danger/20; }
+  .badge-info    { @apply bg-status-info/10 text-status-info border border-status-info/20; }
+  .badge-purple  { @apply bg-brand-purple/10 text-brand-purple border border-brand-purple/20; }
+}
+
+/* Number animation */
+@property --num {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}
