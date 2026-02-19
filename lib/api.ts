@@ -133,7 +133,7 @@ export async function fetchPatientAppointments(patientId: string) {
 export async function fetchOrganization(orgId: string) {
   const { data, error } = await supabase
     .from('organizations')
-    .select('id, name, status, system_prompt, whatsapp_phone_id')
+    .select('id, name, status, system_prompt, whatsapp_phone_id, config_settings')
     .eq('id', orgId)
     .single()
   if (error) throw error
