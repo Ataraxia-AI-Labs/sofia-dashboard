@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, createPatient, updatePatient, createStaffNote, createTreatment, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
+import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, fetchPatientMedia, createPatient, updatePatient, createStaffNote, createTreatment, exportPatientsCSV, sendWhatsAppMessage, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
 import type { Patient } from '@/types'
 import {
   Search, Filter, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
   Phone, Mail, MapPin, Calendar, TrendingUp, Brain, X, MessageSquare,
   DollarSign, Target, Clock, Activity, Heart, AlertTriangle, Star,
-  RefreshCw, Download, UserPlus
+  RefreshCw, Download, UserPlus, Edit3, Send, Pill, FileText, Mic, Image as ImageIcon
 } from 'lucide-react'
 
 const CHANNELS: Record<string, { label: string; color: string }> = {
@@ -40,6 +40,13 @@ export default function PacientesPage() {
   const [savingNote, setSavingNote] = useState(false)
   const [editingPatient, setEditingPatient] = useState(false)
   const [editData, setEditData] = useState<any>({})
+  const [patientMedia, setPatientMedia] = useState<any[]>([])
+  const [showWhatsApp, setShowWhatsApp] = useState(false)
+  const [waMessage, setWaMessage] = useState('')
+  const [sendingWa, setSendingWa] = useState(false)
+  const [showTreatmentForm, setShowTreatmentForm] = useState(false)
+  const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
+  const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
 
   useEffect(() => {
     const wrapper = document.querySelector('[data-org-id]')
@@ -82,19 +89,25 @@ export default function PacientesPage() {
     setMlFeatures(null)
     setStaffNotes([])
     setTreatments([])
+    setPatientMedia([])
     setEditingPatient(false)
     setNewNote('')
+    setShowWhatsApp(false)
+    setShowTreatmentForm(false)
+    setDetailTab('info')
     try {
-      const [detail, ml, notes, treats] = await Promise.all([
+      const [detail, ml, notes, treats, media] = await Promise.all([
         fetchPatientDetail(patient.id),
         fetchPatientMLFeatures(patient.id),
         fetchStaffNotes(patient.id),
         fetchPatientTreatments(patient.id),
+        fetchPatientMedia(patient.id),
       ])
       setSelectedPatient(detail)
       setMlFeatures(ml)
       setStaffNotes(notes)
       setTreatments(treats)
+      setPatientMedia(media)
     } catch (e) {
       console.error(e)
     }
@@ -139,6 +152,42 @@ export default function PacientesPage() {
     setSavingNote(false)
   }
 
+  const handleSendWhatsApp = async () => {
+    if (!selectedPatient || !waMessage.trim() || !orgId) return
+    setSendingWa(true)
+    try {
+      await sendWhatsAppMessage(orgId, selectedPatient.phone, waMessage.trim())
+      setWaMessage('')
+      setShowWhatsApp(false)
+    } catch (e) {
+      console.error(e)
+      alert('Error enviando mensaje. Verifica que el backend tenga el endpoint /dashboard/send-message')
+    }
+    setSendingWa(false)
+  }
+
+  const handleCreateTreatment = async () => {
+    if (!selectedPatient || !orgId || !newTreatment.treatment_name || !newTreatment.medication) return
+    try {
+      await createTreatment(orgId, { ...newTreatment, patient_id: selectedPatient.id })
+      setShowTreatmentForm(false)
+      setNewTreatment({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
+      const treats = await fetchPatientTreatments(selectedPatient.id)
+      setTreatments(treats)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleExport = async () => {
+    if (!orgId) return
+    try {
+      await exportPatientsCSV(orgId)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   const toggleSort = (field: string) => {
@@ -166,6 +215,9 @@ export default function PacientesPage() {
           <p className="text-text-dim text-xs mt-0.5">{formatNumber(total)} registrados</p>
         </div>
         <div className="flex items-center gap-2">
+          <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
+            <Download size={13} /> Exportar CSV
+          </button>
           <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
             <UserPlus size={13} /> Nuevo Paciente
           </button>
@@ -381,6 +433,33 @@ export default function PacientesPage() {
               </button>
             </div>
 
+            {/* Action buttons */}
+            <div className="flex gap-1.5 px-6 py-2 border-b border-border bg-surface/50">
+              <button onClick={() => { setEditingPatient(!editingPatient); setEditData({}) }} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${editingPatient ? 'bg-brand-purple/15 text-brand-purple' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+                <Edit3 size={11} className="inline mr-1" />Editar
+              </button>
+              <button onClick={() => setShowWhatsApp(!showWhatsApp)} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${showWhatsApp ? 'bg-status-success/15 text-status-success' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+                <Send size={11} className="inline mr-1" />WhatsApp
+              </button>
+              <button onClick={() => setShowTreatmentForm(!showTreatmentForm)} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${showTreatmentForm ? 'bg-status-info/15 text-status-info' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+                <Pill size={11} className="inline mr-1" />Tratamiento
+              </button>
+            </div>
+
+            {/* Detail tabs */}
+            <div className="flex gap-0 px-6 border-b border-border bg-surface/50">
+              {[
+                { id: 'info' as const, label: 'Info' },
+                { id: 'ml' as const, label: 'ML / IA' },
+                { id: 'notes' as const, label: `Notas (${staffNotes.length})` },
+                { id: 'media' as const, label: `Media (${patientMedia.length})` },
+              ].map((tab) => (
+                <button key={tab.id} onClick={() => setDetailTab(tab.id)} className={`px-3 py-2 text-[11px] font-semibold border-b-2 transition-colors ${detailTab === tab.id ? 'border-brand-purple text-brand-purple' : 'border-transparent text-text-dim hover:text-text-muted'}`}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             <div className="p-6 space-y-6">
               {detailLoading ? (
                 <div className="space-y-4">
@@ -390,6 +469,59 @@ export default function PacientesPage() {
                 </div>
               ) : (
                 <>
+                  {/* WhatsApp Send */}
+                  {showWhatsApp && (
+                    <div className="glass-card p-4 space-y-2 border-status-success/20">
+                      <h4 className="text-xs font-semibold text-status-success">Enviar WhatsApp a {selectedPatient.full_name}</h4>
+                      <textarea value={waMessage} onChange={(e) => setWaMessage(e.target.value)} rows={3} placeholder="Escribe un mensaje..." className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-xs outline-none focus:border-status-success/40 resize-none" />
+                      <div className="flex justify-end">
+                        <button onClick={handleSendWhatsApp} disabled={sendingWa || !waMessage.trim()} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-success/15 text-status-success text-xs font-semibold disabled:opacity-30">
+                          <Send size={11} /> {sendingWa ? 'Enviando...' : 'Enviar'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Treatment Form */}
+                  {showTreatmentForm && (
+                    <div className="glass-card p-4 space-y-2 border-status-info/20">
+                      <h4 className="text-xs font-semibold text-status-info">Nuevo Tratamiento</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Tratamiento *</label><input type="text" value={newTreatment.treatment_name} onChange={(e) => setNewTreatment({...newTreatment, treatment_name: e.target.value})} placeholder="Post-operatorio" className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Medicamento *</label><input type="text" value={newTreatment.medication} onChange={(e) => setNewTreatment({...newTreatment, medication: e.target.value})} placeholder="Ibuprofeno" className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Dosis</label><input type="text" value={newTreatment.dosage} onChange={(e) => setNewTreatment({...newTreatment, dosage: e.target.value})} placeholder="400mg" className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Cada (horas)</label><input type="number" value={newTreatment.frequency_hours} onChange={(e) => setNewTreatment({...newTreatment, frequency_hours: Number(e.target.value)})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Inicio</label><input type="date" value={newTreatment.start_date} onChange={(e) => setNewTreatment({...newTreatment, start_date: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Fin</label><input type="date" value={newTreatment.end_date} onChange={(e) => setNewTreatment({...newTreatment, end_date: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                      </div>
+                      <input type="text" value={newTreatment.notes} onChange={(e) => setNewTreatment({...newTreatment, notes: e.target.value})} placeholder="Notas adicionales..." className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" />
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => setShowTreatmentForm(false)} className="px-2.5 py-1 rounded-lg bg-surface-3 text-text-muted text-[10px]">Cancelar</button>
+                        <button onClick={handleCreateTreatment} disabled={!newTreatment.treatment_name || !newTreatment.medication} className="px-2.5 py-1 rounded-lg bg-status-info/15 text-status-info text-[10px] font-semibold disabled:opacity-30">Crear Tratamiento</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Edit Patient */}
+                  {editingPatient && (
+                    <div className="glass-card p-4 space-y-2 border-brand-purple/20">
+                      <h4 className="text-xs font-semibold text-brand-purple">Editar Paciente</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Nombre</label><input type="text" defaultValue={selectedPatient.full_name} onChange={(e) => setEditData({...editData, full_name: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Email</label><input type="email" defaultValue={selectedPatient.email || ''} onChange={(e) => setEditData({...editData, email: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Ciudad</label><input type="text" defaultValue={selectedPatient.city || ''} onChange={(e) => setEditData({...editData, city: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                        <div><label className="block text-[9px] text-text-dim uppercase mb-0.5">Interés</label><input type="text" defaultValue={selectedPatient.service_interest || ''} onChange={(e) => setEditData({...editData, service_interest: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none" /></div>
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => setEditingPatient(false)} className="px-2.5 py-1 rounded-lg bg-surface-3 text-text-muted text-[10px]">Cancelar</button>
+                        <button onClick={handleSavePatientEdit} className="px-2.5 py-1 rounded-lg bg-brand-purple text-white text-[10px] font-semibold">Guardar</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB: INFO */}
+                  {detailTab === 'info' && (
+                    <>
                   {/* Contact Info */}
                   <div className="glass-card p-4 space-y-3">
                     <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Información</h4>
@@ -414,6 +546,28 @@ export default function PacientesPage() {
                     </div>
                   )}
 
+                  {/* Treatments in Info tab */}
+                  {treatments.length > 0 && (
+                    <div className="glass-card p-4 space-y-3">
+                      <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Tratamientos Activos</h4>
+                      {treatments.map((t: any) => (
+                        <div key={t.id} className={`bg-void/50 rounded-lg px-3 py-2 ${t.status !== 'ACTIVE' ? 'opacity-50' : ''}`}>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-semibold text-text-primary">{t.treatment_name}</span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${t.status === 'ACTIVE' ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>{t.status}</span>
+                          </div>
+                          <div className="text-[10px] text-text-muted mt-0.5">💊 {t.medication} — {t.dosage} — cada {t.frequency_hours}h</div>
+                          <div className="text-[10px] text-text-dim mt-0.5">📅 {new Date(t.start_date).toLocaleDateString('es-CO')} → {new Date(t.end_date).toLocaleDateString('es-CO')}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                    </>
+                  )}
+
+                  {/* TAB: ML / IA */}
+                  {detailTab === 'ml' && (
+                    <>
                   {/* ML Features */}
                   {mlFeatures && (
                     <div className="glass-card p-4 space-y-4">
@@ -488,29 +642,11 @@ export default function PacientesPage() {
                       </div>
                     </div>
                   )}
-
-                  {/* Treatments */}
-                  {treatments.length > 0 && (
-                    <div className="glass-card p-4 space-y-3">
-                      <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Tratamientos</h4>
-                      {treatments.map((t: any) => (
-                        <div key={t.id} className={`bg-void/50 rounded-lg px-3 py-2 ${t.status !== 'ACTIVE' ? 'opacity-50' : ''}`}>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs font-semibold text-text-primary">{t.treatment_name}</span>
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${t.status === 'ACTIVE' ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>{t.status}</span>
-                          </div>
-                          <div className="text-[10px] text-text-muted mt-0.5">
-                            💊 {t.medication} — {t.dosage} — cada {t.frequency_hours}h
-                          </div>
-                          <div className="text-[10px] text-text-dim mt-0.5">
-                            📅 {new Date(t.start_date).toLocaleDateString('es-CO')} → {new Date(t.end_date).toLocaleDateString('es-CO')} | {t.total_reminders_sent} recordatorios enviados
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    </>
                   )}
 
-                  {/* Staff Notes */}
+                  {/* TAB: NOTES */}
+                  {detailTab === 'notes' && (
                   <div className="glass-card p-4 space-y-3">
                     <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Notas Clínicas</h4>
                     <div className="flex gap-2">
@@ -531,7 +667,7 @@ export default function PacientesPage() {
                       </button>
                     </div>
                     {staffNotes.length > 0 ? (
-                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                      <div className="space-y-2 max-h-80 overflow-y-auto">
                         {staffNotes.map((n: any) => (
                           <div key={n.id} className="bg-void/50 rounded-lg px-3 py-2">
                             <p className="text-xs text-text-primary">{n.note_content}</p>
@@ -540,9 +676,51 @@ export default function PacientesPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[11px] text-text-dim">Sin notas aún</p>
+                      <p className="text-[11px] text-text-dim">Sin notas aún. Agrega la primera.</p>
                     )}
                   </div>
+                  )}
+
+                  {/* TAB: MEDIA */}
+                  {detailTab === 'media' && (
+                  <div className="glass-card p-4 space-y-3">
+                    <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Archivos Multimedia</h4>
+                    {patientMedia.length > 0 ? (
+                      <div className="space-y-2 max-h-80 overflow-y-auto">
+                        {patientMedia.map((m: any) => (
+                          <div key={m.id} className="bg-void/50 rounded-lg px-3 py-2.5 flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                              m.content_type === 'AUDIO' ? 'bg-status-info/10 text-status-info' :
+                              m.content_type === 'IMAGE' ? 'bg-brand-purple/10 text-brand-purple' :
+                              'bg-status-warning/10 text-status-warning'
+                            }`}>
+                              {m.content_type === 'AUDIO' ? <Mic size={14} /> :
+                               m.content_type === 'IMAGE' ? <ImageIcon size={14} /> :
+                               <FileText size={14} />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-semibold text-text-primary">{m.content_type}</span>
+                                <span className="text-[9px] text-text-dim">{timeAgo(m.created_at)}</span>
+                              </div>
+                              {m.transcription && (
+                                <p className="text-[11px] text-text-muted mt-1 line-clamp-3">🎤 "{m.transcription}"</p>
+                              )}
+                              {m.content_type === 'IMAGE' && m.raw_content && (
+                                <p className="text-[11px] text-text-muted mt-1 line-clamp-2">👁 {m.raw_content.replace('[El paciente envió una FOTO. Análisis visual]: ', '')}</p>
+                              )}
+                              {m.content_type === 'DOCUMENT' && (
+                                <p className="text-[11px] text-text-muted mt-1">📄 {m.raw_content || 'Documento recibido'}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-text-dim">Este paciente no ha enviado audios, fotos ni documentos.</p>
+                    )}
+                  </div>
+                  )}
                 </>
               )}
             </div>

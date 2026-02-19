@@ -82,3 +82,12 @@
   initial-value: 0;
   inherits: false;
 }
+
+/* Animations */
+@keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.animate-slide-in { animation: slide-in 0.25s ease-out; }
+.animate-fade-up { animation: fade-up 0.2s ease-out; }
+.animate-fade-in { animation: fade-in 0.2s ease-out; }

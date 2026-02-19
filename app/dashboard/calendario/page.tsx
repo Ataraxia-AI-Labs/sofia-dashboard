@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { fetchAppointments, updateAppointmentStatus, timeAgo } from '@/lib/api'
+import { fetchAppointments, updateAppointmentStatus, createAppointment, fetchPatients, fetchServicesCatalog, timeAgo } from '@/lib/api'
 import type { Appointment } from '@/types'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
-  User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle
+  User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus
 } from 'lucide-react'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
@@ -30,6 +30,10 @@ export default function CalendarioPage() {
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null)
   const [orgId, setOrgId] = useState<string | null>(null)
+  const [showNewAppt, setShowNewAppt] = useState(false)
+  const [patients, setPatients] = useState<any[]>([])
+  const [services, setServices] = useState<any[]>([])
+  const [newAppt, setNewAppt] = useState({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
 
   useEffect(() => {
     const wrapper = document.querySelector('[data-org-id]')
@@ -70,6 +74,34 @@ export default function CalendarioPage() {
   }, [orgId, fromDate, toDate, statusFilter])
 
   useEffect(() => { loadAppointments() }, [loadAppointments])
+
+  const openNewAppt = async () => {
+    setShowNewAppt(true)
+    if (orgId && patients.length === 0) {
+      try {
+        const [pats, svcs] = await Promise.all([
+          fetchPatients(orgId, { limit: 100 }),
+          fetchServicesCatalog(orgId),
+        ])
+        setPatients(pats.patients || [])
+        setServices(svcs || [])
+      } catch (e) { console.error(e) }
+    }
+  }
+
+  const handleCreateAppt = async () => {
+    if (!orgId || !newAppt.patient_id || !newAppt.date || !newAppt.service_name) return
+    try {
+      const start = `${newAppt.date}T${newAppt.time}:00`
+      const endDate = new Date(`${newAppt.date}T${newAppt.time}:00`)
+      endDate.setMinutes(endDate.getMinutes() + newAppt.duration)
+      const end = endDate.toISOString()
+      await createAppointment(orgId, { patient_id: newAppt.patient_id, start_time: start, end_time: end, service_name: newAppt.service_name })
+      setShowNewAppt(false)
+      setNewAppt({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
+      loadAppointments()
+    } catch (e) { console.error(e) }
+  }
 
   const navigate = (dir: number) => {
     const d = new Date(currentDate)
@@ -169,6 +201,9 @@ export default function CalendarioPage() {
           <button onClick={loadAppointments} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
+          <button onClick={openNewAppt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
+            <Plus size={13} /> Nueva Cita
+          </button>
         </div>
       </div>
 
@@ -187,6 +222,41 @@ export default function CalendarioPage() {
         </div>
         <h3 className="text-base font-semibold text-text-primary">{headerLabel}</h3>
       </div>
+
+      {/* NEW APPOINTMENT FORM */}
+      {showNewAppt && (
+        <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
+          <h4 className="text-sm font-semibold text-text-primary">Nueva Cita Manual</h4>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Paciente *</label>
+              <select value={newAppt.patient_id} onChange={(e) => setNewAppt({...newAppt, patient_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
+                <option value="">Seleccionar...</option>
+                {patients.map((p: any) => <option key={p.id} value={p.id}>{p.full_name} — {p.phone}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Servicio *</label>
+              <select value={newAppt.service_name} onChange={(e) => setNewAppt({...newAppt, service_name: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
+                <option value="">Seleccionar...</option>
+                {services.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Fecha *</label>
+              <input type="date" value={newAppt.date} onChange={(e) => setNewAppt({...newAppt, date: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Hora *</label>
+              <input type="time" value={newAppt.time} onChange={(e) => setNewAppt({...newAppt, time: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button onClick={() => setShowNewAppt(false)} className="px-3 py-1.5 rounded-lg bg-surface-3 text-text-muted text-xs font-semibold">Cancelar</button>
+            <button onClick={handleCreateAppt} disabled={!newAppt.patient_id || !newAppt.date || !newAppt.service_name} className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold disabled:opacity-50">Crear Cita</button>
+          </div>
+        </div>
+      )}
 
       {/* CALENDAR GRID */}
       <div className="glass-card overflow-hidden">

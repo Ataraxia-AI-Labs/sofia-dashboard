@@ -27,3 +27,7 @@ CREATE POLICY IF NOT EXISTS "Dashboard creates services" ON services_catalog FOR
 CREATE POLICY IF NOT EXISTS "Dashboard updates services" ON services_catalog FOR UPDATE USING (true);
 CREATE POLICY IF NOT EXISTS "Dashboard updates hours" ON business_hours FOR UPDATE USING (true);
 CREATE POLICY IF NOT EXISTS "Dashboard updates orgs" ON organizations FOR UPDATE USING (true);
+
+-- Additional for v4 features
+CREATE POLICY IF NOT EXISTS "Dashboard reads interaction_logs" ON interaction_logs FOR SELECT USING (true);
+CREATE POLICY IF NOT EXISTS "Dashboard creates appointments" ON appointments FOR INSERT WITH CHECK (true);

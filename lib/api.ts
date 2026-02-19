@@ -213,6 +213,93 @@ export async function updateAppointmentStatus(appointmentId: string, status: str
   if (error) throw error
 }
 
+export async function createAppointment(orgId: string, data: {
+  patient_id: string
+  start_time: string
+  end_time: string
+  service_name: string
+  notes?: string
+}) {
+  const { data: appt, error } = await supabase
+    .from('appointments')
+    .insert({
+      organization_id: orgId,
+      patient_id: data.patient_id,
+      start_time: data.start_time,
+      end_time: data.end_time,
+      service_name: data.service_name,
+      status: 'CONFIRMED',
+      notes: data.notes || '',
+    })
+    .select()
+    .single()
+  if (error) throw error
+  return appt
+}
+
+// ============================================================
+// EXPORT PATIENTS CSV
+// ============================================================
+
+export async function exportPatientsCSV(orgId: string) {
+  const { data, error } = await supabase
+    .from('patients')
+    .select('full_name, phone, email, city, service_interest, acquisition_channel, created_at')
+    .eq('organization_id', orgId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+
+  const headers = ['Nombre', 'Teléfono', 'Email', 'Ciudad', 'Interés', 'Canal', 'Fecha Registro']
+  const rows = (data || []).map((p: any) => [
+    p.full_name || '',
+    p.phone || '',
+    p.email || '',
+    p.city || '',
+    p.service_interest || '',
+    p.acquisition_channel || '',
+    p.created_at ? new Date(p.created_at).toLocaleDateString('es-CO') : '',
+  ])
+
+  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n')
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `pacientes_${new Date().toISOString().split('T')[0]}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// ============================================================
+// SEND WHATSAPP FROM DASHBOARD (via backend API)
+// ============================================================
+
+export async function sendWhatsAppMessage(orgId: string, phone: string, message: string) {
+  const res = await fetch(`${API_URL}/dashboard/send-message`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ org_id: orgId, phone, message }),
+  })
+  if (!res.ok) throw new Error(`Send message error: ${res.status}`)
+  return res.json()
+}
+
+// ============================================================
+// PATIENT MEDIA/DOCS
+// ============================================================
+
+export async function fetchPatientMedia(patientId: string) {
+  const { data, error } = await supabase
+    .from('interaction_logs')
+    .select('id, content_type, media_url, transcription, raw_content, created_at')
+    .eq('patient_id', patientId)
+    .in('content_type', ['AUDIO', 'IMAGE', 'DOCUMENT'])
+    .order('created_at', { ascending: false })
+    .limit(20)
+  if (error) throw error
+  return data || []
+}
+
 // ============================================================
 // TREATMENTS
 // ============================================================
