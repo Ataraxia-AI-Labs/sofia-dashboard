@@ -32,6 +32,7 @@ export default function AjustesPage() {
   // Editable states
   const [systemPrompt, setSystemPrompt] = useState('')
   const [notifPhone, setNotifPhone] = useState('')
+  const [vacationMode, setVacationMode] = useState(false)
 
   // New service form
   const [showNewService, setShowNewService] = useState(false)
@@ -56,6 +57,7 @@ export default function AjustesPage() {
       setOrg(orgData)
       setSystemPrompt(orgData?.system_prompt || '')
       setNotifPhone(orgData?.config_settings?.notification_phone || '')
+      setVacationMode(orgData?.config_settings?.vacation_mode || false)
       setServices(servData)
       setHours(hoursData)
     } catch (e) {
@@ -426,6 +428,36 @@ export default function AjustesPage() {
                 Guardar
               </button>
             </div>
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-text-primary">Modo Vacaciones</h4>
+                <p className="text-xs text-text-dim mt-0.5">
+                  Cuando está activo, SofIA responde que la clínica está en descanso y no procesa mensajes con IA.
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  const newVal = !vacationMode
+                  setVacationMode(newVal)
+                  if (orgId && org) {
+                    const config = { ...(org.config_settings || {}), vacation_mode: newVal }
+                    await updateOrganization(orgId, { config_settings: config })
+                    showSaved(newVal ? 'Modo vacaciones activado 🏖️' : 'Modo vacaciones desactivado ✅')
+                  }
+                }}
+                className={`w-12 h-6 rounded-full transition-colors relative ${vacationMode ? 'bg-status-warning' : 'bg-surface-3'}`}
+              >
+                <div className="w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all" style={{ left: vacationMode ? '26px' : '2px' }} />
+              </button>
+            </div>
+            {vacationMode && (
+              <div className="px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold">
+                ⚠️ VACACIONES ACTIVO — SofIA NO está procesando mensajes. Los pacientes reciben un mensaje de que la clínica está en descanso.
+              </div>
+            )}
           </div>
 
           <div className="border-t border-border pt-4">
