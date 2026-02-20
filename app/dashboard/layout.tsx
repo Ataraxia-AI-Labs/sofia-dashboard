@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization } from '@/lib/api'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
-  LogOut, ChevronLeft, ChevronRight, Zap, Bell
+  LogOut, ChevronLeft, ChevronRight, Zap, Bell, CreditCard
 } from 'lucide-react'
 import type { Organization } from '@/types'
 
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Overview', ready: true },
   { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes', ready: true },
   { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario', ready: true },
+  { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos', ready: true },
   { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades', ready: true },
   { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', ready: true },
 ]
