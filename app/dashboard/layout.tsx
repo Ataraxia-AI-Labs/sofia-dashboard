@@ -112,6 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
+  const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'VIEWER'>('VIEWER')
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -128,8 +129,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setUser(session.user)
 
       try {
-        const organization = await fetchUserOrganization(session.user.id)
-        setOrg(organization as Organization | null)
+        const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
+        setOrg(organization)
+        setRole(userRole)
       } catch (e) {
         console.error('Error fetching org:', e)
       }
@@ -244,7 +246,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Page content */}
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
           {org && user ? (
-            <OrgContext.Provider value={{ user, org, orgId: org.id }}>
+            <OrgContext.Provider value={{ user, org, orgId: org.id, role }}>
               <ErrorBoundary>
                 {children}
               </ErrorBoundary>

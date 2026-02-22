@@ -22,7 +22,8 @@ const TABS = [
 ]
 
 export default function AjustesPage() {
-  const { orgId } = useOrg()
+  const { orgId, role } = useOrg()
+  const isReadOnly = role === 'VIEWER'
   const [activeTab, setActiveTab] = useState('prompt')
   const [org, setOrg] = useState<Organization | null>(null)
   const [services, setServices] = useState<ServiceCatalog[]>([])
@@ -73,7 +74,7 @@ export default function AjustesPage() {
   // ========== SAVE FUNCTIONS ==========
 
   const savePrompt = async () => {
-    if (!orgId) return
+    if (!orgId || isReadOnly) return
     setSaving(true)
     try {
       await updateOrganization(orgId, { system_prompt: systemPrompt })
@@ -85,7 +86,7 @@ export default function AjustesPage() {
   }
 
   const saveNotifPhone = async () => {
-    if (!orgId || !org) return
+    if (!orgId || !org || isReadOnly) return
     setSaving(true)
     try {
       const config = { ...(org.config_settings || {}), notification_phone: notifPhone }
@@ -98,7 +99,7 @@ export default function AjustesPage() {
   }
 
   const handleCreateService = async () => {
-    if (!orgId || !newService.name || !newService.price) return
+    if (!orgId || !newService.name || !newService.price || isReadOnly) return
     setSaving(true)
     try {
       await createService(orgId, newService)
@@ -169,6 +170,14 @@ export default function AjustesPage() {
 
   return (
     <div className="max-w-[1000px] space-y-5">
+      {/* RBAC: read-only banner for VIEWERs */}
+      {isReadOnly && (
+        <div className="px-4 py-3 rounded-xl bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold flex items-center gap-2">
+          <Shield size={14} />
+          Solo lectura — Tu rol ({role}) no permite modificar la configuración. Contacta al administrador.
+        </div>
+      )}
+
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
@@ -223,7 +232,7 @@ export default function AjustesPage() {
             </div>
             <button
               onClick={savePrompt}
-              disabled={saving}
+              disabled={saving || isReadOnly}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors disabled:opacity-50"
             >
               <Save size={13} />
@@ -252,13 +261,15 @@ export default function AjustesPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-xs text-text-dim">{services.length} servicios activos</p>
-            <button
-              onClick={() => setShowNewService(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors"
-            >
-              <Plus size={13} />
-              Nuevo Servicio
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={() => setShowNewService(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors"
+              >
+                <Plus size={13} />
+                Nuevo Servicio
+              </button>
+            )}
           </div>
 
           {/* New service form */}
@@ -418,7 +429,7 @@ export default function AjustesPage() {
               />
               <button
                 onClick={saveNotifPhone}
-                disabled={saving}
+                disabled={saving || isReadOnly}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors disabled:opacity-50"
               >
                 <Save size={13} />
@@ -437,6 +448,7 @@ export default function AjustesPage() {
               </div>
               <button
                 onClick={async () => {
+                  if (isReadOnly) return
                   const newVal = !vacationMode
                   setVacationMode(newVal)
                   if (orgId && org) {
@@ -445,7 +457,8 @@ export default function AjustesPage() {
                     showSaved(newVal ? 'Modo vacaciones activado 🏖️' : 'Modo vacaciones desactivado ✅')
                   }
                 }}
-                className={`w-12 h-6 rounded-full transition-colors relative ${vacationMode ? 'bg-status-warning' : 'bg-surface-3'}`}
+                disabled={isReadOnly}
+                className={`w-12 h-6 rounded-full transition-colors relative ${vacationMode ? 'bg-status-warning' : 'bg-surface-3'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all" style={{ left: vacationMode ? '26px' : '2px' }} />
               </button>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { API_URL } from '@/lib/supabase'
+import { API_URL, authFetch } from '@/lib/supabase'
 import type { SystemHealth } from '@/types'
 import {
   Activity, Shield, Phone, CreditCard,
@@ -37,7 +37,7 @@ export default function SystemHealthPage() {
 
   const loadHealth = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/health`)
+      const res = await authFetch(`${API_URL}/health`)
       const data = await res.json()
       setHealth(data)
     } catch (e) {

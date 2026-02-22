@@ -1,17 +1,18 @@
-import { API_URL } from './supabase'
+import { API_URL, authFetch } from './supabase'
+import type { Organization } from '@/types'
 
 // ============================================================
 // ANALYTICS
 // ============================================================
 
 export async function fetchFullAnalytics(orgId: string, dias: number = 30) {
-  const res = await fetch(`${API_URL}/analytics/${orgId}/full?dias=${dias}`)
+  const res = await authFetch(`${API_URL}/analytics/${orgId}/full?dias=${dias}`)
   if (!res.ok) throw new Error(`Analytics error: ${res.status}`)
   return res.json()
 }
 
 export async function fetchQuickMetrics(orgId: string) {
-  const res = await fetch(`${API_URL}/analytics/${orgId}/quick`)
+  const res = await authFetch(`${API_URL}/analytics/${orgId}/quick`)
   if (!res.ok) throw new Error(`Quick metrics error: ${res.status}`)
   return res.json()
 }
@@ -140,8 +141,8 @@ export async function fetchOrganization(orgId: string) {
   return data
 }
 
-export async function fetchUserOrganization(userId: string) {
-  // First get the user's org mapping
+export async function fetchUserOrganization(userId: string): Promise<{ organization: Organization | null; role: 'OWNER' | 'ADMIN' | 'VIEWER' }> {
+  // Get user's org mapping + role
   const { data, error } = await supabase
     .from('org_users')
     .select('organization_id, role, organizations(id, name, status)')
@@ -151,10 +152,11 @@ export async function fetchUserOrganization(userId: string) {
 
   if (error) {
     console.error('No org_users mapping found for user:', userId, error.message)
-    return null
+    return { organization: null, role: 'VIEWER' }
   }
 
-  return data?.organizations || null
+  const role = (data?.role as 'OWNER' | 'ADMIN' | 'VIEWER') || 'VIEWER'
+  return { organization: (data?.organizations as unknown as Organization | null) || null, role }
 }
 
 // ============================================================
@@ -270,9 +272,8 @@ export async function exportPatientsCSV(orgId: string) {
 // ============================================================
 
 export async function sendWhatsAppMessage(orgId: string, phone: string, message: string) {
-  const res = await fetch(`${API_URL}/dashboard/send-message`, {
+  const res = await authFetch(`${API_URL}/dashboard/send-message`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ org_id: orgId, phone, message }),
   })
   if (!res.ok) throw new Error(`Send message error: ${res.status}`)

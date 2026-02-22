@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { API_URL } from '@/lib/supabase'
+import { API_URL, authFetch } from '@/lib/supabase'
 import { fetchDataLakeDaily, fetchTrainingReadyCount } from '@/lib/api'
 import type { DataLakeStats, DataLakeExportResult } from '@/types'
 import {
@@ -34,7 +34,7 @@ export default function DataLakePage() {
     setLoading(true)
     try {
       const [statsRes, daily, ready] = await Promise.all([
-        fetch(`${API_URL}/data-lake/${orgId}/stats`).then(r => r.json()),
+        authFetch(`${API_URL}/data-lake/${orgId}/stats`).then(r => r.json()),
         fetchDataLakeDaily(orgId, 30),
         fetchTrainingReadyCount(orgId),
       ])
@@ -53,9 +53,8 @@ export default function DataLakePage() {
     if (!orgId) return
     setExporting(true)
     try {
-      const res = await fetch(`${API_URL}/data-lake/${orgId}/export-jsonl`, {
+      const res = await authFetch(`${API_URL}/data-lake/${orgId}/export-jsonl`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ product: 'SOFIA', min_quality: 0.7, balance_intents: true }),
       })
       const data = await res.json()

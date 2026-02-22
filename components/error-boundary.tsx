@@ -23,11 +23,15 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Log full details to console (for dev) — in production, send to Sentry/logging service
     console.error('Dashboard error boundary caught:', error, errorInfo)
   }
 
   render() {
     if (this.state.hasError) {
+      // Generate a short error ID for support reference (never expose internal message to user)
+      const errorId = Date.now().toString(36).toUpperCase()
+
       return (
         <div className="min-h-[400px] flex items-center justify-center p-8">
           <div className="glass-card p-8 max-w-md text-center space-y-4">
@@ -36,8 +40,9 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <h3 className="text-text-primary font-semibold">Algo salió mal</h3>
             <p className="text-text-muted text-sm">
-              {this.state.error?.message || 'Error inesperado en el dashboard.'}
+              Ocurrió un error inesperado. Intenta recargar la página.
             </p>
+            <p className="text-text-dim text-[10px] font-mono">Ref: {errorId}</p>
             <button
               onClick={() => this.setState({ hasError: false, error: null })}
               className="px-4 py-2 rounded-lg bg-brand-purple/15 text-brand-purple text-sm font-semibold hover:bg-brand-purple/25 transition-colors"

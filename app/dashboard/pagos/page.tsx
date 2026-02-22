@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { API_URL } from '@/lib/supabase'
+import { API_URL, authFetch } from '@/lib/supabase'
 import { formatCOP, timeAgo } from '@/lib/api'
 import type { Payment, RevenueAttribution } from '@/types'
 import {
@@ -31,8 +31,8 @@ export default function PagosPage() {
     setLoading(true)
     try {
       const [paymentsRes, attrRes] = await Promise.all([
-        fetch(`${API_URL}/payments/${orgId}${statusFilter ? `?status=${statusFilter}` : ''}`).then(r => r.json()),
-        fetch(`${API_URL}/payments/${orgId}/attribution?dias=30`).then(r => r.json()),
+        authFetch(`${API_URL}/payments/${orgId}${statusFilter ? `?status=${statusFilter}` : ''}`).then(r => r.json()),
+        authFetch(`${API_URL}/payments/${orgId}/attribution?dias=30`).then(r => r.json()),
       ])
       setPayments(paymentsRes.payments || [])
       setAttribution(attrRes)
