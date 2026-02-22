@@ -645,7 +645,7 @@ export default function AjustesPage() {
               <div>
                 <h4 className="text-sm font-semibold text-text-primary">Modo Vacaciones</h4>
                 <p className="text-xs text-text-dim mt-0.5">
-                  Cuando está activo, SofIA responde que la clínica está en descanso y no procesa mensajes con IA.
+                  Cuando está activo, SofIA sigue respondiendo pero informa que la clínica está en descanso.
                 </p>
               </div>
               <button

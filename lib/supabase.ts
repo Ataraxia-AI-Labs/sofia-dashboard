@@ -1,10 +1,11 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Client-side Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Client-side Supabase client — uses cookies (not localStorage) so the
+// Next.js middleware can read the session via createServerClient.
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
 
 // API base URL for the FastAPI backend (required — no hardcoded fallback)
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'

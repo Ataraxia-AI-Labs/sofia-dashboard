@@ -16,6 +16,8 @@ const CHANNELS: Record<string, { label: string; color: string }> = {
   INSTAGRAM: { label: 'Instagram', color: 'text-brand-purple' },
   MESSENGER: { label: 'Messenger', color: 'text-status-info' },
   WEB: { label: 'Web', color: 'text-status-warning' },
+  VOICE_CALL: { label: 'Llamada', color: 'text-brand-cyan' },
+  PRESENCIAL: { label: 'Presencial', color: 'text-brand-gold' },
 }
 
 const PAGE_SIZE = 20

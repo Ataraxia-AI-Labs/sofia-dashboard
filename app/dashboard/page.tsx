@@ -18,23 +18,23 @@ import {
 const OPP_COLORS: Record<string, string> = {
   HOT_LEAD: '#8B5CF6',
   UPSELL: '#06D6A0',
-  WINBACK: '#3B82F6',
-  REFERRAL_POTENTIAL: '#F5C842',
+  REACTIVATION: '#3B82F6',
+  REFERRAL: '#F5C842',
   CHURN_RISK: '#EF4444',
-  PRICE_OBJECTION: '#F59E0B',
+  PRICE_SENSITIVE: '#F59E0B',
   MULTI_PROCEDURE: '#EC4899',
-  EMERGENCY_MEDICAL: '#DC2626',
+  HIGH_VALUE: '#10B981',
 }
 
 const OPP_LABELS: Record<string, string> = {
   HOT_LEAD: 'Lead Caliente',
   UPSELL: 'Upsell',
-  WINBACK: 'Reactivación',
-  REFERRAL_POTENTIAL: 'Referido',
+  REACTIVATION: 'Reactivación',
+  REFERRAL: 'Referido',
   CHURN_RISK: 'Riesgo Abandono',
-  PRICE_OBJECTION: 'Objeción Precio',
+  PRICE_SENSITIVE: 'Sensible a Precio',
   MULTI_PROCEDURE: 'Multi-procedimiento',
-  EMERGENCY_MEDICAL: 'Emergencia',
+  HIGH_VALUE: 'Alto Valor',
 }
 
 export default function DashboardOverview() {

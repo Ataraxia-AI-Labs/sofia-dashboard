@@ -14,12 +14,12 @@ import {
 const OPP_CONFIG: Record<string, { label: string; icon: typeof Flame; color: string; bg: string }> = {
   HOT_LEAD:           { label: 'Lead Caliente', icon: Flame, color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20' },
   UPSELL:             { label: 'Upsell', icon: ArrowUpRight, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
-  WINBACK:            { label: 'Reactivación', icon: RotateCcw, color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20' },
-  REFERRAL_POTENTIAL:  { label: 'Potencial Referido', icon: UserPlus, color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20' },
+  REACTIVATION:       { label: 'Reactivación', icon: RotateCcw, color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20' },
+  REFERRAL:           { label: 'Referido', icon: UserPlus, color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20' },
   CHURN_RISK:         { label: 'Riesgo de Abandono', icon: AlertTriangle, color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20' },
-  PRICE_OBJECTION:    { label: 'Objeción de Precio', icon: DollarSign, color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20' },
+  PRICE_SENSITIVE:    { label: 'Sensible a Precio', icon: DollarSign, color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20' },
   MULTI_PROCEDURE:    { label: 'Multi-procedimiento', icon: ShoppingBag, color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
-  EMERGENCY_MEDICAL:  { label: 'Emergencia Médica', icon: Heart, color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20' },
+  HIGH_VALUE:         { label: 'Alto Valor', icon: Heart, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
 }
 
 const STATUS_OPTIONS: Record<string, { label: string; color: string }> = {

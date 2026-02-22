@@ -626,12 +626,12 @@ export async function fetchVoiceMetrics(orgId: string, days: number = 30, _branc
       .eq('platform', 'WHATSAPP')
       .ilike('ai_analysis->>intent', '%AGENDAR%')
       .gte('created_at', sinceStr),
-    // Voice call durations from data_lake_raw
+    // Voice call durations from data_lake_raw (data_type, not event_type)
     supabase
       .from('data_lake_raw')
       .select('structured_data')
       .eq('organization_id', orgId)
-      .eq('event_type', 'VOICE_CALL')
+      .in('data_type', ['VOICE_OUTBOUND', 'VOICE_TRANSFER', 'VOICEMAIL'])
       .gte('created_at', sinceStr),
   ])
 
