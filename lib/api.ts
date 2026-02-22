@@ -172,7 +172,7 @@ export async function fetchOrganization(orgId: string) {
   return data
 }
 
-export async function fetchUserOrganization(userId: string): Promise<{ organization: Organization | null; role: 'OWNER' | 'ADMIN' | 'VIEWER' }> {
+export async function fetchUserOrganization(userId: string): Promise<{ organization: Organization | null; role: 'OWNER' | 'ADMIN' | 'STAFF' }> {
   // Get user's org mapping + role
   const { data, error } = await supabase
     .from('org_users')
@@ -183,10 +183,13 @@ export async function fetchUserOrganization(userId: string): Promise<{ organizat
 
   if (error) {
     console.error('No org_users mapping found for user:', userId, error.message)
-    return { organization: null, role: 'VIEWER' }
+    return { organization: null, role: 'STAFF' }
   }
 
-  const role = (data?.role as 'OWNER' | 'ADMIN' | 'VIEWER') || 'VIEWER'
+  const rawRole = data?.role as string
+  const role: 'OWNER' | 'ADMIN' | 'STAFF' =
+    rawRole === 'OWNER' ? 'OWNER' :
+    rawRole === 'ADMIN' ? 'ADMIN' : 'STAFF'
   return { organization: (data?.organizations as unknown as Organization | null) || null, role }
 }
 
@@ -219,7 +222,7 @@ export async function createPatient(orgId: string, data: {
   return patient
 }
 
-export async function updatePatient(patientId: string, data: Record<string, any>) {
+export async function updatePatient(patientId: string, data: Record<string, unknown>) {
   const { error } = await supabase
     .from('patients')
     .update({ ...data, updated_at: new Date().toISOString() })
@@ -232,7 +235,7 @@ export async function updatePatient(patientId: string, data: Record<string, any>
 // ============================================================
 
 export async function updateAppointmentStatus(appointmentId: string, status: string, reason?: string) {
-  const updateData: any = { status }
+  const updateData: Record<string, string> = { status }
   if (reason) updateData.cancellation_reason = reason
   const { error } = await supabase
     .from('appointments')
@@ -278,7 +281,7 @@ export async function exportPatientsCSV(orgId: string) {
   if (error) throw error
 
   const headers = ['Nombre', 'Teléfono', 'Email', 'Ciudad', 'Interés', 'Canal', 'Fecha Registro']
-  const rows = (data || []).map((p: any) => [
+  const rows = (data || []).map((p: Record<string, string | null>) => [
     p.full_name || '',
     p.phone || '',
     p.email || '',
@@ -454,7 +457,7 @@ export async function createService(orgId: string, data: {
   if (error) throw error
 }
 
-export async function updateService(serviceId: string, data: Record<string, any>) {
+export async function updateService(serviceId: string, data: Record<string, unknown>) {
   const { error } = await supabase
     .from('services_catalog')
     .update(data)
@@ -484,7 +487,7 @@ export async function fetchBusinessHours(orgId: string) {
   return data || []
 }
 
-export async function updateBusinessHour(hourId: string, data: Record<string, any>) {
+export async function updateBusinessHour(hourId: string, data: Record<string, unknown>) {
   const { error } = await supabase
     .from('business_hours')
     .update(data)
@@ -496,7 +499,7 @@ export async function updateBusinessHour(hourId: string, data: Record<string, an
 // ORGANIZATION SETTINGS
 // ============================================================
 
-export async function updateOrganization(orgId: string, data: Record<string, any>) {
+export async function updateOrganization(orgId: string, data: Record<string, unknown>) {
   const { error } = await supabase
     .from('organizations')
     .update({ ...data, updated_at: new Date().toISOString() })

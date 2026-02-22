@@ -5,12 +5,12 @@ import { useOrg } from '@/lib/org-context'
 import {
   fetchOrganization, fetchServicesCatalog, fetchBusinessHours,
   updateOrganization, createService, updateService, deleteService, updateBusinessHour,
-  formatCOP
+  formatCOP, fetchFullAnalytics
 } from '@/lib/api'
-import type { Organization, ServiceCatalog, BusinessHour, WhatsAppTemplate, WATemplateCategory } from '@/types'
+import type { Organization, ServiceCatalog, BusinessHour, WhatsAppTemplate, WATemplateCategory, BirthdayBotConfig, SubBotMetrics } from '@/types'
 import {
   MessageSquare, Clock, ShoppingBag, Bell, Save,
-  Plus, Trash2, Edit3, RefreshCw, Shield, Phone
+  Plus, Trash2, Edit3, RefreshCw, Shield, Phone, Cake, CalendarDays, Activity
 } from 'lucide-react'
 
 const DAYS_ES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -20,6 +20,7 @@ const TABS = [
   { id: 'hours', label: 'Horarios', icon: Clock },
   { id: 'notifications', label: 'Notificaciones', icon: Bell },
   { id: 'templates', label: 'Plantillas WA', icon: Phone },
+  { id: 'bots', label: 'Bot Monitor', icon: Activity },
 ]
 
 const TEMPLATE_CATEGORIES: { value: WATemplateCategory; label: string }[] = [
@@ -33,7 +34,7 @@ const TEMPLATE_CATEGORIES: { value: WATemplateCategory; label: string }[] = [
 
 export default function AjustesPage() {
   const { orgId, role } = useOrg()
-  const isReadOnly = role === 'VIEWER'
+  const isReadOnly = role === 'STAFF'
   const [activeTab, setActiveTab] = useState('prompt')
   const [org, setOrg] = useState<Organization | null>(null)
   const [services, setServices] = useState<ServiceCatalog[]>([])
@@ -46,11 +47,18 @@ export default function AjustesPage() {
   const [systemPrompt, setSystemPrompt] = useState('')
   const [notifPhone, setNotifPhone] = useState('')
   const [vacationMode, setVacationMode] = useState(false)
+  const [vacationReturnDate, setVacationReturnDate] = useState('')
+  const [birthdayBotEnabled, setBirthdayBotEnabled] = useState(false)
+  const [birthdayBotTemplate, setBirthdayBotTemplate] = useState('¡Feliz cumpleaños {nombre}! 🎂 De parte de todo el equipo de {clinica} te deseamos un día maravilloso.')
 
   // WhatsApp templates (B7)
   const [templates, setTemplates] = useState<WhatsAppTemplate[]>([])
   const [showNewTemplate, setShowNewTemplate] = useState(false)
   const [newTemplate, setNewTemplate] = useState<Omit<WhatsAppTemplate, 'id'>>({ name: '', category: 'APPOINTMENT_REMINDER', language: 'es', description: '', is_active: true })
+
+  // Bot monitor
+  const [botMetrics, setBotMetrics] = useState<SubBotMetrics | null>(null)
+  const [botMetricsLoading, setBotMetricsLoading] = useState(false)
 
   // New service form
   const [showNewService, setShowNewService] = useState(false)
@@ -68,9 +76,15 @@ export default function AjustesPage() {
       ])
       setOrg(orgData)
       setSystemPrompt(orgData?.system_prompt || '')
-      const config = (orgData?.config_settings || {}) as Record<string, string | boolean>
+      const config = (orgData?.config_settings || {}) as Record<string, unknown>
       setNotifPhone((config.notification_phone as string) || '')
       setVacationMode(Boolean(config.vacation_mode))
+      setVacationReturnDate((config.vacation_return_date as string) || '')
+      const bday = config.birthday_bot as BirthdayBotConfig | undefined
+      if (bday) {
+        setBirthdayBotEnabled(Boolean(bday.enabled))
+        if (bday.message_template) setBirthdayBotTemplate(bday.message_template)
+      }
       const tpls = (orgData?.config_settings as Record<string, unknown>)?.whatsapp_templates
       setTemplates(Array.isArray(tpls) ? tpls as WhatsAppTemplate[] : [])
       setServices(servData)
@@ -114,6 +128,46 @@ export default function AjustesPage() {
     }
     setSaving(false)
   }
+
+  const saveBirthdayBot = async (enabled: boolean, template: string) => {
+    if (!orgId || !org || isReadOnly) return
+    setSaving(true)
+    try {
+      const config = { ...(org.config_settings || {}), birthday_bot: { enabled, message_template: template } }
+      await updateOrganization(orgId, { config_settings: config })
+      setBirthdayBotEnabled(enabled)
+      setBirthdayBotTemplate(template)
+      showSaved('Birthday Bot actualizado ✓')
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+    }
+    setSaving(false)
+  }
+
+  const saveVacationReturn = async (date: string) => {
+    if (!orgId || !org || isReadOnly) return
+    setSaving(true)
+    try {
+      const config = { ...(org.config_settings || {}), vacation_return_date: date }
+      await updateOrganization(orgId, { config_settings: config })
+      setVacationReturnDate(date)
+      showSaved('Fecha de retorno guardada ✓')
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+    }
+    setSaving(false)
+  }
+
+  const loadBotMetrics = useCallback(async () => {
+    setBotMetricsLoading(true)
+    try {
+      const data = await fetchFullAnalytics(orgId, 30)
+      if (data?.sub_bots) setBotMetrics(data.sub_bots as SubBotMetrics)
+    } catch {
+      // non-critical
+    }
+    setBotMetricsLoading(false)
+  }, [orgId])
 
   const handleCreateService = async () => {
     if (!orgId || !newService.name || !newService.price || isReadOnly) return
@@ -585,6 +639,7 @@ export default function AjustesPage() {
             </div>
           </div>
 
+          {/* ── Vacation Mode ── */}
           <div className="border-t border-border pt-4">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -601,7 +656,7 @@ export default function AjustesPage() {
                   if (orgId && org) {
                     const config = { ...(org.config_settings || {}), vacation_mode: newVal }
                     await updateOrganization(orgId, { config_settings: config })
-                    showSaved(newVal ? 'Modo vacaciones activado 🏖️' : 'Modo vacaciones desactivado ✅')
+                    showSaved(newVal ? 'Modo vacaciones activado' : 'Modo vacaciones desactivado')
                   }
                 }}
                 disabled={isReadOnly}
@@ -611,8 +666,81 @@ export default function AjustesPage() {
               </button>
             </div>
             {vacationMode && (
-              <div className="px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold">
-                ⚠️ VACACIONES ACTIVO — SofIA NO está procesando mensajes. Los pacientes reciben un mensaje de que la clínica está en descanso.
+              <div className="space-y-3">
+                <div className="px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold">
+                  VACACIONES ACTIVO — SofIA NO está procesando mensajes. Los pacientes reciben un mensaje de que la clínica está en descanso.
+                </div>
+                <div className="flex items-center gap-3">
+                  <CalendarDays size={14} className="text-status-warning flex-shrink-0" />
+                  <label className="text-xs text-text-muted font-semibold whitespace-nowrap">Fecha de retorno:</label>
+                  <input
+                    type="date"
+                    value={vacationReturnDate}
+                    onChange={(e) => setVacationReturnDate(e.target.value)}
+                    className="px-3 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40"
+                  />
+                  <button
+                    onClick={() => saveVacationReturn(vacationReturnDate)}
+                    disabled={saving || isReadOnly || !vacationReturnDate}
+                    className="px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors disabled:opacity-50"
+                  >
+                    <Save size={12} />
+                  </button>
+                </div>
+                {vacationReturnDate && (
+                  <p className="text-[11px] text-text-dim ml-7">
+                    SofIA informará a los pacientes que la clínica regresa el {new Date(vacationReturnDate + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ── Birthday Bot ── */}
+          <div className="border-t border-border pt-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Cake size={16} className="text-brand-purple" />
+                <div>
+                  <h4 className="text-sm font-semibold text-text-primary">Birthday Bot</h4>
+                  <p className="text-xs text-text-dim mt-0.5">
+                    Envía un mensaje automático de felicitación a pacientes en su cumpleaños.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => saveBirthdayBot(!birthdayBotEnabled, birthdayBotTemplate)}
+                disabled={isReadOnly || saving}
+                className={`w-12 h-6 rounded-full transition-colors relative ${birthdayBotEnabled ? 'bg-brand-purple' : 'bg-surface-3'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <div className="w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all" style={{ left: birthdayBotEnabled ? '26px' : '2px' }} />
+              </button>
+            </div>
+            {birthdayBotEnabled && (
+              <div className="space-y-3 ml-0.5">
+                <div>
+                  <label className="block text-[10px] font-semibold text-text-dim uppercase tracking-wider mb-1">Plantilla del mensaje</label>
+                  <textarea
+                    value={birthdayBotTemplate}
+                    onChange={(e) => setBirthdayBotTemplate(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 resize-y"
+                    placeholder="¡Feliz cumpleaños {nombre}! De parte de {clinica}..."
+                  />
+                  <p className="text-[10px] text-text-dim mt-1">
+                    Variables disponibles: <code className="text-brand-purple">{'{nombre}'}</code> = nombre del paciente, <code className="text-brand-purple">{'{clinica}'}</code> = nombre de la clínica
+                  </p>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => saveBirthdayBot(birthdayBotEnabled, birthdayBotTemplate)}
+                    disabled={saving || isReadOnly}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors disabled:opacity-50"
+                  >
+                    <Save size={12} />
+                    Guardar plantilla
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -629,6 +757,72 @@ export default function AjustesPage() {
           </div>
         </div>
       )}
+
+      {/* ========== TAB: BOT MONITOR ========== */}
+      {activeTab === 'bots' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-text-primary">Sub-Bot Monitor</h3>
+              <p className="text-xs text-text-dim mt-0.5">Métricas de los bots automáticos en los últimos 30 días.</p>
+            </div>
+            <button
+              onClick={loadBotMetrics}
+              disabled={botMetricsLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors disabled:opacity-50"
+            >
+              <RefreshCw size={12} className={botMetricsLoading ? 'animate-spin' : ''} />
+              {botMetricsLoading ? 'Cargando...' : 'Actualizar'}
+            </button>
+          </div>
+
+          {!botMetrics && !botMetricsLoading && (
+            <div className="glass-card p-8 text-center">
+              <Activity size={24} className="mx-auto text-text-dim mb-3" />
+              <p className="text-text-muted text-sm">Haz clic en &quot;Actualizar&quot; para cargar métricas de bots.</p>
+            </div>
+          )}
+
+          {botMetrics && (
+            <div className="space-y-3">
+              {/* Total */}
+              <div className="glass-card p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-text-muted font-semibold">Total mensajes automáticos (30d)</span>
+                  <span className="text-lg font-bold text-brand-purple">{botMetrics.total_mensajes_automaticos.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Reminder Bot */}
+              <BotCard
+                name="Reminder Bot"
+                description={botMetrics.reminder_bot.descripcion}
+                stats={[{ label: 'Mensajes enviados', value: botMetrics.reminder_bot.mensajes_enviados }]}
+                color="text-brand-cyan"
+              />
+
+              {/* Hunter Bot */}
+              <BotCard
+                name="Hunter Bot"
+                description={botMetrics.hunter_bot.descripcion}
+                stats={[
+                  { label: 'Follow-ups enviados', value: botMetrics.hunter_bot.followups_enviados },
+                  { label: 'Conversiones post-followup', value: botMetrics.hunter_bot.conversiones_post_followup },
+                ]}
+                color="text-status-warning"
+              />
+
+              {/* Nurse Bot */}
+              <BotCard
+                name="Nurse Bot"
+                description={botMetrics.nurse_bot.descripcion}
+                stats={[{ label: 'Recordatorios enviados', value: botMetrics.nurse_bot.recordatorios_enviados }]}
+                color="text-status-success"
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -636,6 +830,31 @@ export default function AjustesPage() {
 // ============================================================
 // SUB-COMPONENTS
 // ============================================================
+
+function BotCard({ name, description, stats, color }: {
+  name: string
+  description: string
+  stats: { label: string; value: number }[]
+  color: string
+}) {
+  return (
+    <div className="glass-card p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Activity size={14} className={color} />
+        <span className="text-sm font-semibold text-text-primary">{name}</span>
+      </div>
+      <p className="text-xs text-text-dim mb-3">{description}</p>
+      <div className="flex gap-4">
+        {stats.map(s => (
+          <div key={s.label} className="flex-1 px-3 py-2 rounded-lg bg-surface-2">
+            <div className="text-lg font-bold text-text-primary">{s.value.toLocaleString()}</div>
+            <div className="text-[10px] text-text-dim">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function InputField({ label, value, onChange, placeholder, type }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string

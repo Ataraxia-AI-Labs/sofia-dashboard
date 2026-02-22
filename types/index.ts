@@ -1,4 +1,55 @@
 // ============================================================
+// AUTH TYPES (Sesion 18 — JWT auth on all endpoints)
+// ============================================================
+
+export interface AuthUser {
+  user_id: string
+  email: string
+  org_id: string
+  role: 'OWNER' | 'ADMIN' | 'STAFF'
+}
+
+// ============================================================
+// AI TOOLS (13 tools — Sesion 17+)
+// ============================================================
+
+export type AITool =
+  | 'consultar_disponibilidad'
+  | 'agendar_cita'
+  | 'cancelar_cita'
+  | 'buscar_historial'
+  | 'consultar_precio'
+  | 'listar_servicios'
+  | 'enviar_link_pago'
+  | 'reagendar_cita'
+  | 'confirmar_asistencia'
+  | 'consultar_preparacion'
+  | 'calificar_atencion'
+  | 'enviar_referido'
+  | 'transferir_llamada'
+
+// ============================================================
+// CONVERSATION STATE (from ai_brain)
+// ============================================================
+
+export type ConversationStage =
+  | 'INITIAL'
+  | 'DISCOVERY'
+  | 'SCHEDULING'
+  | 'FOLLOW_UP'
+  | 'POST_SERVICE'
+  | 'REACTIVATION'
+  | 'NEGOTIATION'
+
+export interface ConversationState {
+  intent_actual: string
+  servicio_mencionado: string
+  fecha_mencionada: string
+  hora_mencionada: string
+  conversation_stage: ConversationStage
+}
+
+// ============================================================
 // ANALYTICS TYPES
 // ============================================================
 
@@ -97,35 +148,41 @@ export interface PatientDetail extends Patient {
 export interface PatientMLFeatures {
   patient_id: string
   organization_id?: string
+  engagement_score?: number
   total_interactions: number
   total_inbound?: number
   total_outbound?: number
-  preferred_hour?: number
-  preferred_day?: number
-  days_since_last_contact?: number
-  conversion_probability?: number
-  churn_probability?: number
-  no_show_probability?: number
-  avg_sentiment?: number
-  sentiment_trend?: number
-  complaint_count?: number
-  preferred_time?: string
-  avg_response_time_minutes?: number
   total_appointments?: number
   completed_appointments?: number
   cancelled_appointments?: number
+  no_show_count?: number
   no_show_appointments?: number
-  conversion_rate?: number
-  show_rate?: number
   total_revenue?: number
+  avg_response_time_minutes?: number
+  preferred_channel?: 'WHATSAPP' | 'VOICE_CALL' | 'INSTAGRAM' | 'MESSENGER'
+  preferred_hour?: number
+  preferred_day?: number
+  preferred_time?: string
+  avg_sentiment?: number
+  sentiment_avg?: number
+  sentiment_trend?: number
+  complaint_count?: number
+  days_since_last_contact?: number
+  days_since_last_interaction?: number
+  last_interaction_days_ago?: number
+  churn_risk?: number
+  churn_probability?: number
+  conversion_probability?: number
+  conversion_rate?: number
+  no_show_probability?: number
+  lifetime_value?: number
+  predicted_ltv?: number
+  referral_count?: number
+  show_rate?: number
   total_transactions?: number
   avg_transaction_value?: number
-  lifetime_value?: number
   total_spent?: number
   avg_ticket?: number
-  days_since_last_interaction?: number
-  predicted_ltv?: number
-  engagement_score?: number
   risk_level?: string
   last_intent?: string
   top_interests?: string[]
@@ -134,16 +191,43 @@ export interface PatientMLFeatures {
   has_sent_document?: boolean
 }
 
+// ============================================================
+// APPOINTMENT TYPES (Sesion 18 — added SCHEDULED)
+// ============================================================
+
+export type AppointmentStatus =
+  | 'CONFIRMED'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'NO_SHOW'
+  | 'REQUESTED'
+  | 'RESCHEDULED'
+  | 'SCHEDULED'
+
 export interface Appointment {
   id: string
   patient_id: string
   start_time: string
   end_time: string
   service_name: string
-  status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW' | 'REQUESTED' | 'RESCHEDULED'
+  status: AppointmentStatus
   created_at: string
   patients?: { full_name: string; phone: string }
 }
+
+// ============================================================
+// OPPORTUNITY TYPES (Sesion 18 — explicit union)
+// ============================================================
+
+export type OpportunityType =
+  | 'HOT_LEAD'
+  | 'UPSELL'
+  | 'REFERRAL'
+  | 'REACTIVATION'
+  | 'MULTI_PROCEDURE'
+  | 'PRICE_SENSITIVE'
+  | 'HIGH_VALUE'
+  | 'CHURN_RISK'
 
 export interface Opportunity {
   id: string
@@ -192,6 +276,39 @@ export interface WhatsAppTemplate {
   language: string
   description?: string
   is_active: boolean
+}
+
+// ============================================================
+// BOT EXECUTION TYPES (Sesion 18 — explicit bot types)
+// ============================================================
+
+export type BotType = 'REMINDER' | 'HUNTER' | 'NURSE' | 'VOICE_CONFIRM' | 'VIP_FOLLOWUP' | 'BIRTHDAY'
+export type BotStatus = 'SUCCESS' | 'ERROR' | 'PARTIAL'
+
+export interface BotExecutionLog {
+  id: string
+  bot_type: BotType
+  status: BotStatus
+  messages_sent: number
+  errors: number
+  duration_ms: number
+  details: Record<string, unknown>
+  organization_id?: string
+  created_at: string
+}
+
+// ============================================================
+// CONFIG TYPES (Sesion 18 — Birthday Bot, Vacation Mode)
+// ============================================================
+
+export interface BirthdayBotConfig {
+  enabled: boolean
+  message_template: string  // Supports {nombre}, {clinica}
+}
+
+export interface VacationModeConfig {
+  vacation_mode: boolean
+  vacation_return_date: string  // ISO date, e.g. "2026-03-15"
 }
 
 // ============================================================
@@ -337,6 +454,7 @@ export interface PipelinePatient {
   id: string
   full_name: string
   phone: string
+  email?: string
   service_interest?: string
   created_at: string
   stage: PipelineStage

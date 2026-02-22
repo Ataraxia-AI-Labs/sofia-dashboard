@@ -170,7 +170,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
-  const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'VIEWER'>('VIEWER')
+  const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'STAFF'>('STAFF')
   const [branches, setBranches] = useState<Branch[]>([])
   const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -206,8 +206,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     init()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') router.replace('/login')
+      if (event === 'TOKEN_REFRESHED' && session) {
+        setUser(session.user)
+      }
     })
 
     return () => subscription.unsubscribe()

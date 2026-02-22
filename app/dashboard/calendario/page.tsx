@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { fetchAppointments, updateAppointmentStatus, createAppointment, fetchPatients, fetchServicesCatalog, timeAgo } from '@/lib/api'
-import type { Appointment, Patient, ServiceCatalog } from '@/types'
+import { fetchAppointments, updateAppointmentStatus, createAppointment, fetchPatients, fetchServicesCatalog, fetchPatientMLFeatures, timeAgo } from '@/lib/api'
+import type { Appointment, Patient, ServiceCatalog, PatientMLFeatures } from '@/types'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
-  User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus
+  User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus, TrendingDown
 } from 'lucide-react'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof CheckCircle }> = {
@@ -16,6 +16,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
   NO_SHOW: { label: 'No asistió', color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', icon: AlertTriangle },
   REQUESTED: { label: 'Solicitada', color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20', icon: HelpCircle },
   RESCHEDULED: { label: 'Reagendada', color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20', icon: CalIcon },
+  SCHEDULED: { label: 'Programada', color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20', icon: CalIcon },
 }
 
 const DAYS_ES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
@@ -31,6 +32,7 @@ export default function CalendarioPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('week')
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null)
+  const [selectedMLFeatures, setSelectedMLFeatures] = useState<PatientMLFeatures | null>(null)
   const [showNewAppt, setShowNewAppt] = useState(false)
   const [patients, setPatients] = useState<Patient[]>([])
   const [services, setServices] = useState<ServiceCatalog[]>([])
@@ -80,6 +82,20 @@ export default function CalendarioPage() {
   }, [orgId, fromDate, toDate, statusFilter, branchId])
 
   useEffect(() => { loadAppointments() }, [loadAppointments])
+
+  // When selecting an appointment, fetch ML features for no-show badge
+  const handleSelectAppt = async (appt: Appointment) => {
+    setSelectedAppt(appt)
+    setSelectedMLFeatures(null)
+    if (appt.patient_id) {
+      try {
+        const features = await fetchPatientMLFeatures(appt.patient_id)
+        setSelectedMLFeatures(features as PatientMLFeatures | null)
+      } catch {
+        // ML features may not exist yet
+      }
+    }
+  }
 
   const openNewAppt = async () => {
     setShowNewAppt(true)
@@ -173,7 +189,7 @@ export default function CalendarioPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-xl font-semibold text-text-primary">Calendario</h2>
-          <p className="text-text-dim text-xs mt-0.5">{appointments.length} citas en este período</p>
+          <p className="text-text-dim text-xs mt-0.5">{appointments.length} citas en este periodo</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -303,7 +319,7 @@ export default function CalendarioPage() {
                     return (
                       <button
                         key={appt.id}
-                        onClick={() => setSelectedAppt(appt)}
+                        onClick={() => handleSelectAppt(appt)}
                         className={`w-full text-left px-1.5 py-1 rounded-md border text-[10px] leading-tight truncate transition-all hover:scale-[1.02] ${cfg.bg}`}
                       >
                         <span className={`font-semibold ${cfg.color}`}>{time}</span>
@@ -314,7 +330,7 @@ export default function CalendarioPage() {
                     )
                   })}
                   {dayAppts.length > (viewMode === 'week' ? 20 : 3) && (
-                    <div className="text-[9px] text-text-dim px-1">+{dayAppts.length - (viewMode === 'week' ? 20 : 3)} más</div>
+                    <div className="text-[9px] text-text-dim px-1">+{dayAppts.length - (viewMode === 'week' ? 20 : 3)} mas</div>
                   )}
                 </div>
               </div>
@@ -345,13 +361,20 @@ export default function CalendarioPage() {
               </button>
             </div>
 
+            {/* Status badge */}
             {(() => {
               const cfg = STATUS_CONFIG[selectedAppt.status] || STATUS_CONFIG.REQUESTED
               const StatusIcon = cfg.icon
               return (
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${cfg.bg}`}>
-                  <StatusIcon size={12} className={cfg.color} />
-                  <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${cfg.bg}`}>
+                    <StatusIcon size={12} className={cfg.color} />
+                    <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+                  </div>
+                  {/* No-Show risk badge (Sesion 18 — from patient_ml_features) */}
+                  {selectedMLFeatures?.no_show_probability != null && selectedAppt.status !== 'COMPLETED' && selectedAppt.status !== 'CANCELLED' && (
+                    <NoShowBadge probability={selectedMLFeatures.no_show_probability} />
+                  )}
                 </div>
               )
             })()}
@@ -380,7 +403,7 @@ export default function CalendarioPage() {
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'NO_SHOW'); setSelectedAppt(null); loadAppointments() }}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-status-warning text-xs font-semibold hover:bg-status-warning/20 transition-colors"
                 >
-                  <AlertTriangle size={12} /> No Asistió
+                  <AlertTriangle size={12} /> No Asistio
                 </button>
                 <button
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'CANCELLED', 'Cancelado desde dashboard'); setSelectedAppt(null); loadAppointments() }}
@@ -393,6 +416,31 @@ export default function CalendarioPage() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// ============================================================
+// No-Show Risk Badge (Sesion 18 — ML no_show_probability)
+// ============================================================
+
+function NoShowBadge({ probability }: { probability: number }) {
+  const pct = Math.round(probability * 100)
+  const color = probability > 0.6
+    ? 'text-status-danger bg-status-danger/10 border-status-danger/20'
+    : probability > 0.3
+      ? 'text-status-warning bg-status-warning/10 border-status-warning/20'
+      : 'text-status-success bg-status-success/10 border-status-success/20'
+  const label = probability > 0.6
+    ? 'Alto riesgo'
+    : probability > 0.3
+      ? 'Riesgo medio'
+      : 'Bajo riesgo'
+
+  return (
+    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[10px] font-semibold ${color}`}>
+      <TrendingDown size={10} />
+      No-show: {label} ({pct}%)
     </div>
   )
 }

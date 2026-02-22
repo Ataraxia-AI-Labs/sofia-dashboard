@@ -10,7 +10,30 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
 
 // ============================================================
+// Standardized API error format (from backend Sesion 18)
+// ============================================================
+
+export interface APIError {
+  error: true
+  status_code: number
+  message: string
+}
+
+/** Parse standardized error response from backend */
+export async function parseAPIError(res: Response): Promise<string> {
+  try {
+    const data = await res.json()
+    if (data?.message) return data.message
+    if (data?.detail) return typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)
+    return `Error ${res.status}`
+  } catch {
+    return `Error ${res.status}`
+  }
+}
+
+// ============================================================
 // Authenticated fetch — sends Supabase JWT as Bearer token
+// Global handling for 401, 403, 429 per backend security spec
 // ============================================================
 
 export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
@@ -34,6 +57,27 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
       headers,
       signal: options?.signal ?? controller.signal,
     })
+
+    // Global 401 — Token expired or invalid → force re-login
+    if (res.status === 401) {
+      await supabase.auth.signOut()
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
+      throw new Error('Sesión expirada. Redirigiendo al login...')
+    }
+
+    // Global 403 — Access denied (e.g. user accessing another org's data)
+    if (res.status === 403) {
+      const msg = await parseAPIError(res)
+      throw new Error(msg || 'No tienes acceso a este recurso')
+    }
+
+    // Global 429 — Rate limit exceeded
+    if (res.status === 429) {
+      throw new Error('Demasiadas solicitudes. Espera un momento e intenta de nuevo.')
+    }
+
     return res
   } finally {
     clearTimeout(timer)
