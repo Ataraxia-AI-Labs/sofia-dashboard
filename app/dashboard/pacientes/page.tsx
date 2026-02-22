@@ -53,6 +53,21 @@ export default function PacientesPage() {
     if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
   }, [])
 
+  // Escape key closes panels
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showWhatsApp) { setShowWhatsApp(false); return }
+        if (showTreatmentForm) { setShowTreatmentForm(false); return }
+        if (editingPatient) { setEditingPatient(false); return }
+        if (showNewPatient) { setShowNewPatient(false); return }
+        if (selectedPatient) { setSelectedPatient(null); return }
+      }
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [showWhatsApp, showTreatmentForm, editingPatient, showNewPatient, selectedPatient])
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setSearchDebounced(search), 300)
@@ -221,7 +236,7 @@ export default function PacientesPage() {
           <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
             <UserPlus size={13} /> Nuevo Paciente
           </button>
-          <button onClick={loadPatients} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadPatients} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>

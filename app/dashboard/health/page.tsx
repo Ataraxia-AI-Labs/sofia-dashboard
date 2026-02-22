@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import {
-  Activity, Shield, Wifi, WifiOff, Phone, CreditCard,
-  Database, Brain, MessageSquare, RefreshCw, Clock,
-  CheckCircle, AlertTriangle, XCircle, Zap, Server
+  Activity, Shield, Phone, CreditCard,
+  Database, Brain, MessageSquare, RefreshCw,
+  CheckCircle, AlertTriangle, XCircle, Server
 } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
@@ -12,13 +12,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.on
 const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }> = {
   CLOSED: { color: 'text-status-success', icon: CheckCircle, label: 'Operativo' },
   HALF_OPEN: { color: 'text-status-warning', icon: AlertTriangle, label: 'Recuperando' },
-  OPEN: { color: 'text-status-error', icon: XCircle, label: 'Caído' },
+  OPEN: { color: 'text-status-danger', icon: XCircle, label: 'Caído' },
 }
 
 const HEALTH_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
   HEALTHY: { color: 'text-status-success', bg: 'bg-status-success/10', label: 'Todo operativo' },
   DEGRADED: { color: 'text-status-warning', bg: 'bg-status-warning/10', label: 'Degradado' },
-  CRITICAL: { color: 'text-status-error', bg: 'bg-status-error/10', label: 'Crítico' },
+  CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: 'Crítico' },
 }
 
 const BREAKER_ICONS: Record<string, any> = {
@@ -64,7 +64,7 @@ export default function SystemHealthPage() {
             <Activity size={20} className={healthConfig.color} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-text-primary">System Health</h2>
+            <h2 className="text-xl font-semibold text-text-primary">System Health</h2>
             <p className="text-xs text-text-dim">Circuit Breakers & Service Status</p>
           </div>
         </div>
@@ -75,14 +75,14 @@ export default function SystemHealthPage() {
           >
             {autoRefresh ? '● Auto-refresh ON' : '○ Auto-refresh OFF'}
           </button>
-          <button onClick={loadHealth} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted">
+          <button onClick={loadHealth} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
       {/* Overall Status */}
-      <div className={`glass-card p-5 border-l-4 ${health?.status === 'HEALTHY' ? 'border-l-status-success' : health?.status === 'DEGRADED' ? 'border-l-status-warning' : 'border-l-status-error'}`}>
+      <div className={`glass-card p-5 border-l-4 ${health?.status === 'HEALTHY' ? 'border-l-status-success' : health?.status === 'DEGRADED' ? 'border-l-status-warning' : 'border-l-status-danger'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield size={24} className={healthConfig.color} />
@@ -113,7 +113,7 @@ export default function SystemHealthPage() {
             <div key={key} className="glass-card p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-lg ${breaker.state === 'CLOSED' ? 'bg-status-success/10' : breaker.state === 'HALF_OPEN' ? 'bg-status-warning/10' : 'bg-status-error/10'} flex items-center justify-center`}>
+                  <div className={`w-8 h-8 rounded-lg ${breaker.state === 'CLOSED' ? 'bg-status-success/10' : breaker.state === 'HALF_OPEN' ? 'bg-status-warning/10' : 'bg-status-danger/10'} flex items-center justify-center`}>
                     <Icon size={16} className={statusConf.color} />
                   </div>
                   <span className="text-sm font-semibold text-text-primary">{breaker.name}</span>
@@ -146,7 +146,7 @@ export default function SystemHealthPage() {
       {/* How it works */}
       <div className="glass-card p-5">
         <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Cómo funciona el Circuit Breaker</h3>
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div className="p-3 rounded-lg bg-status-success/5 border border-status-success/20">
             <CheckCircle size={20} className="text-status-success mx-auto mb-2" />
             <div className="text-xs font-semibold text-status-success">CLOSED</div>
@@ -157,9 +157,9 @@ export default function SystemHealthPage() {
             <div className="text-xs font-semibold text-status-warning">HALF-OPEN</div>
             <div className="text-[10px] text-text-dim mt-1">Probando recuperación. Tráfico limitado.</div>
           </div>
-          <div className="p-3 rounded-lg bg-status-error/5 border border-status-error/20">
-            <XCircle size={20} className="text-status-error mx-auto mb-2" />
-            <div className="text-xs font-semibold text-status-error">OPEN</div>
+          <div className="p-3 rounded-lg bg-status-danger/5 border border-status-danger/20">
+            <XCircle size={20} className="text-status-danger mx-auto mb-2" />
+            <div className="text-xs font-semibold text-status-danger">OPEN</div>
             <div className="text-[10px] text-text-dim mt-1">Servicio caído. Usando fallback.</div>
           </div>
         </div>

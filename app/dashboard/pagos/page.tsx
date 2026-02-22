@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { formatCOP, timeAgo } from '@/lib/api'
 import {
   DollarSign, CreditCard, TrendingUp, Clock, ArrowRight,
-  RefreshCw, Filter, ExternalLink, BarChart3, Zap, Target,
-  CheckCircle, XCircle, AlertTriangle, Loader
+  RefreshCw, ExternalLink, BarChart3, Zap,
+  CheckCircle, XCircle, AlertTriangle
 } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
@@ -17,20 +17,6 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   ERROR: { label: 'Error', color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20' },
   EXPIRED: { label: 'Expirado', color: 'text-text-dim', bg: 'bg-surface-3 border-border' },
   VOIDED: { label: 'Anulado', color: 'text-text-dim', bg: 'bg-surface-3 border-border' },
-}
-
-function formatCOP(n: number) {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(n)
-}
-
-function timeAgo(date: string) {
-  const diff = Date.now() - new Date(date).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `hace ${mins}m`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `hace ${hours}h`
-  const days = Math.floor(hours / 24)
-  return `hace ${days}d`
 }
 
 export default function PagosPage() {
@@ -72,7 +58,7 @@ export default function PagosPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-text-primary">Pagos & Revenue</h2>
+          <h2 className="text-xl font-semibold text-text-primary">Pagos & Revenue</h2>
           <p className="text-xs text-text-dim">{payments.length} transacciones</p>
         </div>
         <div className="flex items-center gap-2">
@@ -84,7 +70,7 @@ export default function PagosPage() {
               <BarChart3 size={12} className="inline mr-1" />Attribution
             </button>
           </div>
-          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary">
+          <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>

@@ -17,7 +17,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
   RESCHEDULED: { label: 'Reagendada', color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20', icon: CalIcon },
 }
 
-const DAYS_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+const DAYS_ES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 type ViewMode = 'week' | 'month'
@@ -38,6 +38,15 @@ export default function CalendarioPage() {
   useEffect(() => {
     const wrapper = document.querySelector('[data-org-id]')
     if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
+  }, [])
+
+  // Close modal on Escape
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setSelectedAppt(null); setShowNewAppt(false) }
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
   }, [])
 
   // Date range based on view
@@ -198,7 +207,7 @@ export default function CalendarioPage() {
             </button>
           ))}
 
-          <button onClick={loadAppointments} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadAppointments} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
           <button onClick={openNewAppt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">

@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Building2, User, Phone, MapPin, Stethoscope, ArrowRight,
-  ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare
+  ArrowRight, ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare,
+  Eye, EyeOff, ExternalLink, Shield
 } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
@@ -34,19 +34,17 @@ export default function OnboardingPage() {
   const [success, setSuccess] = useState(false)
   const [result, setResult] = useState<any>(null)
 
+  const [showPw, setShowPw] = useState(false)
   const [form, setForm] = useState({
     clinic_name: '',
     owner_name: '',
     owner_email: '',
     password: '',
+    password_confirm: '',
     phone: '',
     city: '',
     specialty: '',
     whatsapp_phone_id: '',
-    // Wompi (opcional en onboarding)
-    wompi_public: '',
-    wompi_private: '',
-    wompi_integrity: '',
   })
 
   const updateForm = (field: string, value: string) => {
@@ -54,12 +52,15 @@ export default function OnboardingPage() {
     setError('')
   }
 
+  const passwordsMatch = form.password === form.password_confirm
+  const passwordValid = form.password.length >= 8
+
   const canProceed = () => {
     switch (step) {
       case 1: return form.clinic_name && form.specialty
-      case 2: return form.owner_name && form.owner_email && form.phone && form.password && form.password.length >= 8
-      case 3: return true // WhatsApp es opcional en onboarding
-      case 4: return true // Wompi es opcional
+      case 2: return form.owner_name && form.owner_email && form.phone && passwordValid && passwordsMatch
+      case 3: return true
+      case 4: return true
       default: return false
     }
   }
@@ -187,10 +188,17 @@ export default function OnboardingPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           {/* Progress */}
-          <div className="flex gap-2 mb-8">
-            {[1, 2, 3, 4].map((s) => (
-              <div key={s} className={`flex-1 h-1.5 rounded-full transition-colors ${s <= step ? 'bg-brand-purple' : 'bg-surface-3'}`} />
-            ))}
+          <div className="mb-8">
+            <div className="flex gap-2 mb-2">
+              {[1, 2, 3, 4].map((s) => (
+                <div key={s} className={`flex-1 h-1.5 rounded-full transition-colors ${s <= step ? 'bg-brand-purple' : 'bg-surface-3'}`} />
+              ))}
+            </div>
+            <div className="flex justify-between text-[10px] text-text-dim px-1">
+              {['Clínica', 'Cuenta', 'WhatsApp', 'Confirmar'].map((label, i) => (
+                <span key={label} className={i + 1 === step ? 'text-brand-purple font-semibold' : ''}>{label}</span>
+              ))}
+            </div>
           </div>
 
           {/* Step 1: Clínica */}
@@ -248,8 +256,26 @@ export default function OnboardingPage() {
 
               <div>
                 <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Contraseña del Dashboard *</label>
-                <input type="password" value={form.password} onChange={(e) => updateForm('password', e.target.value)} placeholder="Mínimo 8 caracteres" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
-                <p className="text-[10px] text-text-dim mt-1">Con este email y contraseña entrarás al dashboard de tu clínica</p>
+                <div className="relative">
+                  <input type={showPw ? 'text' : 'password'} value={form.password} onChange={(e) => updateForm('password', e.target.value)} placeholder="Mínimo 8 caracteres" className={`w-full px-4 py-3 pr-12 rounded-xl bg-surface-2 border text-text-primary text-sm outline-none transition-colors ${form.password && !passwordValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                  <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors" aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
+                    {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {form.password && !passwordValid && (
+                  <p className="text-[10px] text-status-danger mt-1">Mínimo 8 caracteres</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Confirmar contraseña *</label>
+                <input type={showPw ? 'text' : 'password'} value={form.password_confirm} onChange={(e) => updateForm('password_confirm', e.target.value)} placeholder="Repite la contraseña" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm outline-none transition-colors ${form.password_confirm && !passwordsMatch ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                {form.password_confirm && !passwordsMatch && (
+                  <p className="text-[10px] text-status-danger mt-1">Las contraseñas no coinciden</p>
+                )}
+                {form.password_confirm && passwordsMatch && passwordValid && (
+                  <p className="text-[10px] text-status-success mt-1 flex items-center gap-1"><Check size={10} /> Contraseñas coinciden</p>
+                )}
               </div>
 
               <div>
@@ -271,14 +297,22 @@ export default function OnboardingPage() {
               <div>
                 <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp Phone Number ID</label>
                 <input type="text" value={form.whatsapp_phone_id} onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)} placeholder="Ej: 123456789012345" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/50" />
-                <p className="text-[10px] text-text-dim mt-1">Se obtiene de Meta Business → WhatsApp → API Setup</p>
+                <p className="text-[10px] text-text-dim mt-1 flex items-center gap-1">
+                  Se obtiene de Meta Business &rarr; WhatsApp &rarr; API Setup
+                  <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:text-brand-purple-light inline-flex items-center gap-0.5">
+                    Ir a Meta <ExternalLink size={9} />
+                  </a>
+                </p>
               </div>
 
-              <div className="glass-card p-4">
-                <p className="text-xs text-text-muted">
-                  Si no tienes el Phone ID ahora, puedes configurarlo después en <strong>Ajustes</strong>. 
-                  SofIA empezará a atender apenas lo conectes.
-                </p>
+              <div className="glass-card p-4 space-y-2">
+                <div className="flex items-start gap-2">
+                  <Shield size={14} className="text-brand-purple mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-text-muted">
+                    Si no tienes el Phone ID ahora, puedes configurarlo después en <strong>Ajustes</strong>.
+                    SofIA empezará a atender apenas lo conectes.
+                  </p>
+                </div>
               </div>
             </div>
           )}

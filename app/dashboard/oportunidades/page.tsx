@@ -93,13 +93,13 @@ export default function OportunidadesPage() {
           <h2 className="text-xl font-semibold text-text-primary">Oportunidades</h2>
           <p className="text-text-dim text-xs mt-0.5">Detectadas automáticamente por SofIA</p>
         </div>
-        <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+        <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
         </button>
       </div>
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <SummaryCard
           icon={<Target size={18} />}
           gradient="from-brand-purple to-brand-purple-dark"

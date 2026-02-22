@@ -139,6 +139,7 @@ export default function PipelinePage() {
         </div>
         <button
           onClick={loadPipeline}
+          aria-label="Actualizar"
           className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
@@ -146,7 +147,7 @@ export default function PipelinePage() {
       </div>
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {STAGES.map((stage) => {
           const count = grouped[stage.key].length
           const pct = totalPatients > 0 ? Math.round((count / totalPatients) * 100) : 0
@@ -203,7 +204,7 @@ export default function PipelinePage() {
 
       {/* KANBAN BOARD */}
       {loading ? (
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="glass-card p-4 space-y-3">
               <div className="h-5 w-24 bg-surface-3 rounded animate-pulse" />
@@ -214,7 +215,7 @@ export default function PipelinePage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-6 gap-3 items-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-start">
           {STAGES.map((stage) => (
             <PipelineColumn
               key={stage.key}

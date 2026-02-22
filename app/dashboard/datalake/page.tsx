@@ -94,7 +94,7 @@ export default function DataLakePage() {
             <Database size={20} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-text-primary">Data Lake</h2>
+            <h2 className="text-xl font-semibold text-text-primary">Data Lake</h2>
             <p className="text-xs text-text-dim">Fine-tuning & Training Pipeline</p>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function DataLakePage() {
               </button>
             ))}
           </div>
-          <button onClick={loadStats} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary">
+          <button onClick={loadStats} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>

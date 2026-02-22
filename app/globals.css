@@ -17,6 +17,21 @@
   ::selection {
     @apply bg-brand-purple/30 text-text-primary;
   }
+
+  /* Dark theme for native select dropdowns */
+  select {
+    color-scheme: dark;
+  }
+  select option {
+    background-color: #101018;
+    color: #F0EEF5;
+  }
+
+  /* Dark theme for date/time inputs */
+  input[type="date"],
+  input[type="time"] {
+    color-scheme: dark;
+  }
 }
 
 @layer components {
