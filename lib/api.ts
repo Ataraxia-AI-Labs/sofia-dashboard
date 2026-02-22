@@ -478,10 +478,95 @@ export async function updateOrganization(orgId: string, data: Record<string, any
 }
 
 // ============================================================
-// PIPELINE (patient journey stages)
+// VOICE AI METRICS
 // ============================================================
 
-import type { PipelinePatient, PipelineStage } from '@/types'
+import type { PipelinePatient, PipelineStage, VoiceMetrics } from '@/types'
+
+export async function fetchVoiceMetrics(orgId: string, days: number = 30): Promise<VoiceMetrics> {
+  const since = new Date()
+  since.setDate(since.getDate() - days)
+  const sinceStr = since.toISOString()
+
+  // Parallel: voice calls, whatsapp msgs, voice appointments, whatsapp appointments, voice durations
+  const [voiceRes, whatsappRes, voiceApptsRes, waApptsRes, durationRes] = await Promise.all([
+    // Total voice calls
+    supabase
+      .from('interaction_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', orgId)
+      .eq('platform', 'VOICE_CALL')
+      .gte('created_at', sinceStr),
+    // Total WhatsApp interactions
+    supabase
+      .from('interaction_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', orgId)
+      .eq('platform', 'WHATSAPP')
+      .eq('direction', 'INBOUND')
+      .gte('created_at', sinceStr),
+    // Appointments that came via voice (check interaction_logs with intent AGENDAR + VOICE_CALL)
+    supabase
+      .from('interaction_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', orgId)
+      .eq('platform', 'VOICE_CALL')
+      .ilike('ai_analysis->>intent', '%AGENDAR%')
+      .gte('created_at', sinceStr),
+    // Appointments via WhatsApp
+    supabase
+      .from('interaction_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', orgId)
+      .eq('platform', 'WHATSAPP')
+      .ilike('ai_analysis->>intent', '%AGENDAR%')
+      .gte('created_at', sinceStr),
+    // Voice call durations from data_lake_raw
+    supabase
+      .from('data_lake_raw')
+      .select('structured_data')
+      .eq('organization_id', orgId)
+      .eq('event_type', 'VOICE_CALL')
+      .gte('created_at', sinceStr),
+  ])
+
+  const totalCalls = voiceRes.count || 0
+  const totalWhatsapp = whatsappRes.count || 0
+  const appointmentsByVoice = voiceApptsRes.count || 0
+  const appointmentsByWhatsapp = waApptsRes.count || 0
+
+  // Calculate avg duration from data_lake_raw structured_data
+  let avgDuration = 0
+  const durations = durationRes.data || []
+  if (durations.length > 0) {
+    let totalSeconds = 0
+    let count = 0
+    for (const d of durations) {
+      const seconds = d.structured_data?.duration_seconds || d.structured_data?.call_duration || 0
+      if (seconds > 0) {
+        totalSeconds += seconds
+        count++
+      }
+    }
+    avgDuration = count > 0 ? Math.round(totalSeconds / count) : 0
+  }
+
+  const totalInteractions = totalCalls + totalWhatsapp
+  const voicePct = totalInteractions > 0 ? Math.round((totalCalls / totalInteractions) * 100) : 0
+
+  return {
+    total_calls: totalCalls,
+    total_whatsapp: totalWhatsapp,
+    avg_duration_seconds: avgDuration,
+    appointments_by_voice: appointmentsByVoice,
+    appointments_by_whatsapp: appointmentsByWhatsapp,
+    voice_pct: voicePct,
+  }
+}
+
+// ============================================================
+// PIPELINE (patient journey stages)
+// ============================================================
 
 export async function fetchPipelineData(orgId: string): Promise<PipelinePatient[]> {
   // Parallel fetch: patients, appointments, payments, interaction counts

@@ -115,6 +115,19 @@ export interface Organization {
 }
 
 // ============================================================
+// VOICE AI METRICS
+// ============================================================
+
+export interface VoiceMetrics {
+  total_calls: number
+  total_whatsapp: number
+  avg_duration_seconds: number
+  appointments_by_voice: number
+  appointments_by_whatsapp: number
+  voice_pct: number
+}
+
+// ============================================================
 // PIPELINE TYPES
 // ============================================================
 

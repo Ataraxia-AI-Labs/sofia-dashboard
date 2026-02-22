@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { fetchFullAnalytics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
-import type { FullAnalytics } from '@/types'
+import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
+import type { FullAnalytics, VoiceMetrics } from '@/types'
 import {
   MessageSquare, Users, CalendarCheck, DollarSign, Cpu, Target,
   TrendingUp, ArrowDownRight, ArrowUpRight, Clock, Zap, AlertTriangle,
-  RefreshCw, Bot
+  RefreshCw, Bot, PhoneCall, Smartphone
 } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -38,6 +38,7 @@ const OPP_LABELS: Record<string, string> = {
 
 export default function DashboardOverview() {
   const [data, setData] = useState<FullAnalytics | null>(null)
+  const [voice, setVoice] = useState<VoiceMetrics | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [days, setDays] = useState(30)
@@ -56,8 +57,12 @@ export default function DashboardOverview() {
     if (!orgId) return
     try {
       setLoading(true)
-      const analytics = await fetchFullAnalytics(orgId, days)
+      const [analytics, voiceData] = await Promise.all([
+        fetchFullAnalytics(orgId, days),
+        fetchVoiceMetrics(orgId, days),
+      ])
       setData(analytics)
+      setVoice(voiceData)
       setLastUpdate(new Date())
       setError('')
     } catch (e: any) {
@@ -261,6 +266,94 @@ export default function DashboardOverview() {
           </div>
         </div>
       </div>
+
+      {/* ===== VOICE AI ===== */}
+      {voice && (voice.total_calls > 0 || voice.total_whatsapp > 0) && (
+        <div className="glass-card p-6">
+          <SectionTitle icon={<PhoneCall size={16} />} title="Voice AI" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-5">
+            {/* Total calls */}
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center text-white shadow-lg">
+                <PhoneCall size={18} />
+              </div>
+              <div>
+                <div className="text-2xl font-bold font-mono text-text-primary">{formatNumber(voice.total_calls)}</div>
+                <div className="text-xs text-text-muted">Llamadas de voz</div>
+              </div>
+            </div>
+
+            {/* Avg duration */}
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-cyan to-emerald-500 flex items-center justify-center text-white shadow-lg">
+                <Clock size={18} />
+              </div>
+              <div>
+                <div className="text-2xl font-bold font-mono text-text-primary">
+                  {voice.avg_duration_seconds > 0
+                    ? `${Math.floor(voice.avg_duration_seconds / 60)}:${String(voice.avg_duration_seconds % 60).padStart(2, '0')}`
+                    : '—'}
+                </div>
+                <div className="text-xs text-text-muted">Duración promedio</div>
+              </div>
+            </div>
+
+            {/* Voice vs WhatsApp appointments */}
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-text-muted font-semibold uppercase tracking-wider">Citas agendadas por canal</span>
+                <span className="text-[10px] text-text-dim">
+                  {formatNumber(voice.appointments_by_voice + voice.appointments_by_whatsapp)} total
+                </span>
+              </div>
+              <div className="space-y-2.5">
+                {/* Voice bar */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
+                    <PhoneCall size={12} className="text-brand-purple" />
+                    <span className="text-xs text-text-muted">Voz</span>
+                  </div>
+                  <div className="flex-1 h-5 bg-surface-3 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-brand-purple to-brand-purple-light transition-all duration-700"
+                      style={{
+                        width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0
+                          ? Math.max((voice.appointments_by_voice / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2)
+                          : 0}%`
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold font-mono text-brand-purple w-8 text-right">{voice.appointments_by_voice}</span>
+                </div>
+                {/* WhatsApp bar */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
+                    <Smartphone size={12} className="text-status-success" />
+                    <span className="text-xs text-text-muted">WhatsApp</span>
+                  </div>
+                  <div className="flex-1 h-5 bg-surface-3 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-status-success to-emerald-400 transition-all duration-700"
+                      style={{
+                        width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0
+                          ? Math.max((voice.appointments_by_whatsapp / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2)
+                          : 0}%`
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold font-mono text-status-success w-8 text-right">{voice.appointments_by_whatsapp}</span>
+                </div>
+              </div>
+              {/* Voice % pill */}
+              <div className="mt-3 flex gap-2">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-purple/10 text-brand-purple font-semibold">
+                  {voice.voice_pct}% interacciones por voz
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ===== INTENTS + OPPORTUNITIES + PERFORMANCE ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
