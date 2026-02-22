@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react'
 import type { User } from '@supabase/supabase-js'
-import type { Organization } from '@/types'
+import type { Organization, Branch } from '@/types'
 
 export type OrgRole = 'OWNER' | 'ADMIN' | 'VIEWER'
 
@@ -11,6 +11,10 @@ export interface OrgContextValue {
   org: Organization
   orgId: string
   role: OrgRole
+  // Multi-sede (B10)
+  branches: Branch[]
+  branchId: string | null        // null = todas las sedes
+  setBranchId: (id: string | null) => void
 }
 
 export const OrgContext = createContext<OrgContextValue | null>(null)

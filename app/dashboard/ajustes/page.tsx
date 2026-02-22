@@ -7,10 +7,10 @@ import {
   updateOrganization, createService, updateService, deleteService, updateBusinessHour,
   formatCOP
 } from '@/lib/api'
-import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
+import type { Organization, ServiceCatalog, BusinessHour, WhatsAppTemplate, WATemplateCategory } from '@/types'
 import {
   MessageSquare, Clock, ShoppingBag, Bell, Save,
-  Plus, Trash2, Edit3, RefreshCw, Shield
+  Plus, Trash2, Edit3, RefreshCw, Shield, Phone
 } from 'lucide-react'
 
 const DAYS_ES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -19,6 +19,16 @@ const TABS = [
   { id: 'services', label: 'Catálogo', icon: ShoppingBag },
   { id: 'hours', label: 'Horarios', icon: Clock },
   { id: 'notifications', label: 'Notificaciones', icon: Bell },
+  { id: 'templates', label: 'Plantillas WA', icon: Phone },
+]
+
+const TEMPLATE_CATEGORIES: { value: WATemplateCategory; label: string }[] = [
+  { value: 'APPOINTMENT_REMINDER', label: 'Recordatorio de Cita' },
+  { value: 'FOLLOW_UP', label: 'Seguimiento' },
+  { value: 'TREATMENT_REMINDER', label: 'Recordatorio Tratamiento' },
+  { value: 'PAYMENT_LINK', label: 'Link de Pago' },
+  { value: 'WELCOME', label: 'Bienvenida' },
+  { value: 'CUSTOM', label: 'Personalizada' },
 ]
 
 export default function AjustesPage() {
@@ -36,6 +46,11 @@ export default function AjustesPage() {
   const [systemPrompt, setSystemPrompt] = useState('')
   const [notifPhone, setNotifPhone] = useState('')
   const [vacationMode, setVacationMode] = useState(false)
+
+  // WhatsApp templates (B7)
+  const [templates, setTemplates] = useState<WhatsAppTemplate[]>([])
+  const [showNewTemplate, setShowNewTemplate] = useState(false)
+  const [newTemplate, setNewTemplate] = useState<Omit<WhatsAppTemplate, 'id'>>({ name: '', category: 'APPOINTMENT_REMINDER', language: 'es', description: '', is_active: true })
 
   // New service form
   const [showNewService, setShowNewService] = useState(false)
@@ -56,6 +71,8 @@ export default function AjustesPage() {
       const config = (orgData?.config_settings || {}) as Record<string, string | boolean>
       setNotifPhone((config.notification_phone as string) || '')
       setVacationMode(Boolean(config.vacation_mode))
+      const tpls = (orgData?.config_settings as Record<string, unknown>)?.whatsapp_templates
+      setTemplates(Array.isArray(tpls) ? tpls as WhatsAppTemplate[] : [])
       setServices(servData)
       setHours(hoursData)
     } catch (e) {
@@ -135,6 +152,38 @@ export default function AjustesPage() {
     } catch (e) {
       showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
+  }
+
+  // ========== TEMPLATE FUNCTIONS (B7) ==========
+
+  const saveTemplates = async (updated: WhatsAppTemplate[]) => {
+    if (!orgId || !org || isReadOnly) return
+    setSaving(true)
+    try {
+      const config = { ...(org.config_settings || {}), whatsapp_templates: updated }
+      await updateOrganization(orgId, { config_settings: config })
+      setTemplates(updated)
+      showSaved('Plantillas actualizadas ✓')
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+    }
+    setSaving(false)
+  }
+
+  const handleAddTemplate = async () => {
+    if (!newTemplate.name) return
+    const tpl: WhatsAppTemplate = { ...newTemplate, id: crypto.randomUUID() }
+    await saveTemplates([...templates, tpl])
+    setShowNewTemplate(false)
+    setNewTemplate({ name: '', category: 'APPOINTMENT_REMINDER', language: 'es', description: '', is_active: true })
+  }
+
+  const handleRemoveTemplate = async (id: string) => {
+    await saveTemplates(templates.filter(t => t.id !== id))
+  }
+
+  const handleToggleTemplate = async (id: string) => {
+    await saveTemplates(templates.map(t => t.id === id ? { ...t, is_active: !t.is_active } : t))
   }
 
   const handleToggleDay = async (hourId: string, currentActive: boolean) => {
@@ -407,6 +456,104 @@ export default function AjustesPage() {
                 ))}
               </tbody>
             </table>
+          )}
+        </div>
+      )}
+
+      {/* ========== TAB: WHATSAPP TEMPLATES (B7) ========== */}
+      {activeTab === 'templates' && (
+        <div className="space-y-4">
+          <div className="px-4 py-3 rounded-xl bg-status-info/10 border border-status-info/20 text-xs text-status-info leading-relaxed">
+            <strong>Importante:</strong> Las plantillas deben estar aprobadas en Meta Business Manager antes de configurarlas aquí.
+            Cuando los sub-bots (Reminder, Hunter, Nurse) envían mensajes fuera de la ventana de 24h de WhatsApp, usan estas plantillas en lugar de texto libre.
+          </div>
+
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-text-dim">{templates.length} plantillas configuradas</p>
+            {!isReadOnly && (
+              <button
+                onClick={() => setShowNewTemplate(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors"
+              >
+                <Plus size={13} />
+                Nueva Plantilla
+              </button>
+            )}
+          </div>
+
+          {/* New template form */}
+          {showNewTemplate && (
+            <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
+              <h4 className="text-sm font-semibold text-text-primary">Nueva Plantilla</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <InputField label="Nombre (Meta template name)" value={newTemplate.name} onChange={(v) => setNewTemplate({ ...newTemplate, name: v })} placeholder="appointment_reminder_es" />
+                <div>
+                  <label className="block text-[10px] font-semibold text-text-dim uppercase tracking-wider mb-1">Categoría</label>
+                  <select
+                    value={newTemplate.category}
+                    onChange={(e) => setNewTemplate({ ...newTemplate, category: e.target.value as WATemplateCategory })}
+                    className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 transition-colors"
+                  >
+                    {TEMPLATE_CATEGORIES.map((cat) => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <InputField label="Idioma" value={newTemplate.language} onChange={(v) => setNewTemplate({ ...newTemplate, language: v })} placeholder="es" />
+                <InputField label="Descripción" value={newTemplate.description || ''} onChange={(v) => setNewTemplate({ ...newTemplate, description: v })} placeholder="Recordatorio 24h antes de la cita" />
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button onClick={() => setShowNewTemplate(false)} className="px-3 py-1.5 rounded-lg bg-surface-3 text-text-muted text-xs font-semibold">Cancelar</button>
+                <button onClick={handleAddTemplate} disabled={saving || !newTemplate.name} className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold disabled:opacity-50">
+                  {saving ? 'Guardando...' : 'Agregar Plantilla'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Templates list */}
+          {templates.map((tpl) => {
+            const catLabel = TEMPLATE_CATEGORIES.find(c => c.value === tpl.category)?.label || tpl.category
+            return (
+              <div key={tpl.id} className={`glass-card p-4 ${!tpl.is_active ? 'opacity-50' : ''}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Phone size={14} className="text-status-success flex-shrink-0" />
+                      <span className="text-sm font-semibold text-text-primary font-mono">{tpl.name}</span>
+                      <span className="text-[10px] bg-surface-3 text-text-dim px-2 py-0.5 rounded-full">{catLabel}</span>
+                      <span className="text-[10px] text-text-dim">{tpl.language}</span>
+                    </div>
+                    {tpl.description && (
+                      <p className="text-xs text-text-muted mt-1 ml-6">{tpl.description}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                    <button
+                      onClick={() => handleToggleTemplate(tpl.id)}
+                      disabled={isReadOnly}
+                      className={`w-10 h-5 rounded-full transition-colors relative ${tpl.is_active ? 'bg-status-success' : 'bg-surface-3'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <div className="w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all" style={{ left: tpl.is_active ? '22px' : '2px' }} />
+                    </button>
+                    {!isReadOnly && (
+                      <button
+                        onClick={() => handleRemoveTemplate(tpl.id)}
+                        className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-status-danger transition-colors"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {templates.length === 0 && !showNewTemplate && (
+            <div className="glass-card p-8 text-center text-text-dim text-sm">
+              No hay plantillas configuradas. Agrega la primera desde Meta Business Manager y regístrala aquí.
+            </div>
           )}
         </div>
       )}

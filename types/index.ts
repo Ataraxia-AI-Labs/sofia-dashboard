@@ -166,6 +166,35 @@ export interface Organization {
 }
 
 // ============================================================
+// BRANCHES (Multi-Sede)
+// ============================================================
+
+export interface Branch {
+  id: string
+  organization_id: string
+  name: string
+  address?: string
+  phone?: string
+  city?: string
+  is_active: boolean
+}
+
+// ============================================================
+// WHATSAPP TEMPLATES (B7)
+// ============================================================
+
+export type WATemplateCategory = 'APPOINTMENT_REMINDER' | 'FOLLOW_UP' | 'TREATMENT_REMINDER' | 'PAYMENT_LINK' | 'WELCOME' | 'CUSTOM'
+
+export interface WhatsAppTemplate {
+  id: string
+  name: string
+  category: WATemplateCategory
+  language: string
+  description?: string
+  is_active: boolean
+}
+
+// ============================================================
 // PAYMENTS & ATTRIBUTION
 // ============================================================
 

@@ -1,16 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { fetchUserOrganization } from '@/lib/api'
+import { fetchUserOrganization, fetchBranches } from '@/lib/api'
 import { OrgContext } from '@/lib/org-context'
 import { ErrorBoundary } from '@/components/error-boundary'
 import type { User } from '@supabase/supabase-js'
-import type { Organization } from '@/types'
+import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
-  LogOut, ChevronLeft, ChevronRight, Bell, CreditCard, Database, Activity, Kanban, Menu, X
+  LogOut, ChevronLeft, ChevronRight, Bell, CreditCard, Database, Activity, Kanban, Menu, X,
+  MapPin, ChevronDown
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -104,6 +105,62 @@ function Sidebar({
 }
 
 // ============================================================
+// BRANCH SELECTOR (B10 — Multi-Sede)
+// ============================================================
+
+function BranchSelector({
+  branches,
+  selectedBranchId,
+  onSelect,
+}: {
+  branches: Branch[]
+  selectedBranchId: string | null
+  onSelect: (id: string | null) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const selected = branches.find(b => b.id === selectedBranchId)
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs font-medium text-text-muted hover:text-text-primary hover:border-brand-purple/30 transition-all"
+      >
+        <MapPin size={12} className={selectedBranchId ? 'text-brand-purple' : ''} />
+        <span className="hidden sm:inline max-w-[120px] truncate">
+          {selected ? selected.name : 'Todas las sedes'}
+        </span>
+        <ChevronDown size={12} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 z-40 w-52 bg-surface border border-border rounded-xl shadow-lg py-1 animate-fade-in">
+            <button
+              onClick={() => { onSelect(null); setOpen(false) }}
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-surface-2 transition-colors ${!selectedBranchId ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
+            >
+              Todas las sedes
+            </button>
+            {branches.map(b => (
+              <button
+                key={b.id}
+                onClick={() => { onSelect(b.id); setOpen(false) }}
+                className={`w-full text-left px-3 py-2 text-xs hover:bg-surface-2 transition-colors ${selectedBranchId === b.id ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
+              >
+                {b.name}
+                {b.city && <span className="text-text-dim ml-1">({b.city})</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // DASHBOARD LAYOUT
 // ============================================================
 
@@ -113,9 +170,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
   const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'VIEWER'>('VIEWER')
+  const [branches, setBranches] = useState<Branch[]>([])
+  const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const setBranchId = useCallback((id: string | null) => {
+    setSelectedBranchId(id)
+  }, [])
 
   useEffect(() => {
     const init = async () => {
@@ -132,6 +195,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
         setOrg(organization)
         setRole(userRole)
+
+        // Fetch branches for multi-sede support (B10)
+        if (organization?.id) {
+          const branchList = await fetchBranches(organization.id)
+          setBranches(branchList.filter(b => b.is_active))
+        }
       } catch (e) {
         console.error('Error fetching org:', e)
       }
@@ -225,6 +294,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
+            {/* Branch selector — only if org has multiple branches (B10) */}
+            {branches.length > 1 && (
+              <BranchSelector
+                branches={branches}
+                selectedBranchId={selectedBranchId}
+                onSelect={setBranchId}
+              />
+            )}
+
             {/* Live indicator */}
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-success/5 border border-status-success/10">
               <div className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse" />
@@ -246,7 +324,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Page content */}
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
           {org && user ? (
-            <OrgContext.Provider value={{ user, org, orgId: org.id, role }}>
+            <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
               <ErrorBoundary>
                 {children}
               </ErrorBoundary>

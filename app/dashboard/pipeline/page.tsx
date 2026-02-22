@@ -90,20 +90,20 @@ const STAGES: {
 // ============================================================
 
 export default function PipelinePage() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [patients, setPatients] = useState<PipelinePatient[]>([])
   const [loading, setLoading] = useState(true)
 
   const loadPipeline = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await fetchPipelineData(orgId)
+      const data = await fetchPipelineData(orgId, branchId)
       setPatients(data)
     } catch (e) {
       console.error('Error loading pipeline:', e)
     }
     setLoading(false)
-  }, [orgId])
+  }, [orgId, branchId])
 
   useEffect(() => { loadPipeline() }, [loadPipeline])
 

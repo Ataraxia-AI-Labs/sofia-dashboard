@@ -31,7 +31,7 @@ const STATUS_OPTIONS: Record<string, { label: string; color: string }> = {
 }
 
 export default function OportunidadesPage() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
@@ -40,19 +40,19 @@ export default function OportunidadesPage() {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await fetchOpportunities(orgId, statusFilter || undefined)
-      setOpportunities(data as any[])
+      const data = await fetchOpportunities(orgId, statusFilter || undefined, branchId)
+      setOpportunities(data as unknown as Opportunity[])
     } catch (e) {
       console.error(e)
     }
     setLoading(false)
-  }, [orgId, statusFilter])
+  }, [orgId, statusFilter, branchId])
 
   useEffect(() => { loadData() }, [loadData])
 
   const updateStatus = async (oppId: string, newStatus: string) => {
     try {
-      const updateData: any = { status: newStatus }
+      const updateData: Record<string, string> = { status: newStatus }
       if (newStatus === 'ACTED_ON') updateData.acted_on_at = new Date().toISOString()
       if (newStatus === 'CONVERTED') updateData.converted_at = new Date().toISOString()
 
@@ -244,11 +244,11 @@ export default function OportunidadesPage() {
                         <div className="flex items-center gap-3 text-xs text-text-muted mb-2">
                           <span className="flex items-center gap-1">
                             <User size={11} />
-                            {(opp.patients as any).full_name || 'Sin nombre'}
+                            {opp.patients?.full_name || 'Sin nombre'}
                           </span>
                           <span className="flex items-center gap-1">
                             <Phone size={11} />
-                            {(opp.patients as any).phone}
+                            {opp.patients?.phone}
                           </span>
                         </div>
                       )}

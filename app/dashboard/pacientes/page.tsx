@@ -21,7 +21,7 @@ const CHANNELS: Record<string, { label: string; color: string }> = {
 const PAGE_SIZE = 20
 
 export default function PacientesPage() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [patients, setPatients] = useState<Patient[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -80,6 +80,7 @@ export default function PacientesPage() {
         search: searchDebounced || undefined,
         orderBy: sortBy,
         orderDir: sortDir,
+        branchId,
       })
       setPatients(data)
       setTotal(count)
@@ -87,7 +88,7 @@ export default function PacientesPage() {
       console.error(e)
     }
     setLoading(false)
-  }, [orgId, page, searchDebounced, sortBy, sortDir])
+  }, [orgId, page, searchDebounced, sortBy, sortDir, branchId])
 
   useEffect(() => { loadPatients() }, [loadPatients])
 

@@ -24,7 +24,7 @@ const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio
 type ViewMode = 'week' | 'month'
 
 export default function CalendarioPage() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -70,13 +70,14 @@ export default function CalendarioPage() {
         from: fromDate.toISOString(),
         to: toDate.toISOString(),
         status: statusFilter || undefined,
+        branchId,
       })
       setAppointments(data as unknown as Appointment[])
     } catch (e) {
       console.error(e)
     }
     setLoading(false)
-  }, [orgId, fromDate, toDate, statusFilter])
+  }, [orgId, fromDate, toDate, statusFilter, branchId])
 
   useEffect(() => { loadAppointments() }, [loadAppointments])
 

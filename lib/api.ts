@@ -1,12 +1,37 @@
 import { API_URL, authFetch } from './supabase'
-import type { Organization } from '@/types'
+import type { Organization, Branch } from '@/types'
+
+// ============================================================
+// HELPERS — URL builder with optional branch_id
+// ============================================================
+
+function withBranch(url: string, branchId?: string | null): string {
+  if (!branchId) return url
+  const sep = url.includes('?') ? '&' : '?'
+  return `${url}${sep}branch_id=${branchId}`
+}
+
+// ============================================================
+// BRANCHES (Multi-Sede)
+// ============================================================
+
+export async function fetchBranches(orgId: string): Promise<Branch[]> {
+  try {
+    const res = await authFetch(`${API_URL}/api/branches/${orgId}`)
+    if (!res.ok) return []
+    const data = await res.json()
+    return data.branches || data || []
+  } catch {
+    return []
+  }
+}
 
 // ============================================================
 // ANALYTICS
 // ============================================================
 
-export async function fetchFullAnalytics(orgId: string, dias: number = 30) {
-  const res = await authFetch(`${API_URL}/analytics/${orgId}/full?dias=${dias}`)
+export async function fetchFullAnalytics(orgId: string, dias: number = 30, branchId?: string | null) {
+  const res = await authFetch(withBranch(`${API_URL}/analytics/${orgId}/full?dias=${dias}`, branchId))
   if (!res.ok) throw new Error(`Analytics error: ${res.status}`)
   return res.json()
 }
@@ -29,11 +54,14 @@ export async function fetchPatients(orgId: string, opts?: {
   search?: string
   orderBy?: string
   orderDir?: 'asc' | 'desc'
+  branchId?: string | null
 }) {
   let query = supabase
     .from('patients')
     .select('id, full_name, phone, email, acquisition_channel, service_interest, city, created_at, updated_at', { count: 'exact' })
     .eq('organization_id', orgId)
+
+  if (opts?.branchId) query = query.eq('preferred_branch_id', opts.branchId)
 
   if (opts?.search) {
     query = query.or(`full_name.ilike.%${opts.search}%,phone.ilike.%${opts.search}%`)
@@ -76,12 +104,14 @@ export async function fetchAppointments(orgId: string, opts?: {
   from?: string
   to?: string
   status?: string
+  branchId?: string | null
 }) {
   let query = supabase
     .from('appointments')
     .select('id, patient_id, start_time, end_time, service_name, status, created_at, patients(full_name, phone)')
     .eq('organization_id', orgId)
 
+  if (opts?.branchId) query = query.eq('branch_id', opts.branchId)
   if (opts?.from) query = query.gte('start_time', opts.from)
   if (opts?.to) query = query.lte('start_time', opts.to)
   if (opts?.status) query = query.eq('status', opts.status)
@@ -97,7 +127,7 @@ export async function fetchAppointments(orgId: string, opts?: {
 // OPPORTUNITIES
 // ============================================================
 
-export async function fetchOpportunities(orgId: string, status?: string) {
+export async function fetchOpportunities(orgId: string, status?: string, branchId?: string | null) {
   let query = supabase
     .from('detected_opportunities')
     .select('id, opportunity_type, status, estimated_value, notes, created_at, patient_id, patients(full_name, phone)')
@@ -105,6 +135,7 @@ export async function fetchOpportunities(orgId: string, status?: string) {
     .order('created_at', { ascending: false })
     .limit(50)
 
+  if (branchId) query = query.eq('branch_id', branchId)
   if (status) query = query.eq('status', status)
 
   const { data, error } = await query
@@ -531,7 +562,7 @@ export async function fetchTrainingReadyCount(orgId: string): Promise<number> {
 
 import type { PipelinePatient, PipelineStage, VoiceMetrics } from '@/types'
 
-export async function fetchVoiceMetrics(orgId: string, days: number = 30): Promise<VoiceMetrics> {
+export async function fetchVoiceMetrics(orgId: string, days: number = 30, _branchId?: string | null): Promise<VoiceMetrics> {
   const since = new Date()
   since.setDate(since.getDate() - days)
   const sinceStr = since.toISOString()
@@ -616,22 +647,21 @@ export async function fetchVoiceMetrics(orgId: string, days: number = 30): Promi
 // PIPELINE (patient journey stages)
 // ============================================================
 
-export async function fetchPipelineData(orgId: string): Promise<PipelinePatient[]> {
+export async function fetchPipelineData(orgId: string, branchId?: string | null): Promise<PipelinePatient[]> {
   // Parallel fetch: patients, appointments, payments, interaction counts
+  let patientsQuery = supabase.from('patients').select('id, full_name, phone, service_interest, created_at').eq('organization_id', orgId).order('created_at', { ascending: false })
+  let appointmentsQuery = supabase.from('appointments').select('patient_id, status').eq('organization_id', orgId)
+  let paymentsQuery = supabase.from('payments').select('patient_id, status').eq('organization_id', orgId)
+
+  if (branchId) {
+    patientsQuery = patientsQuery.eq('preferred_branch_id', branchId)
+    appointmentsQuery = appointmentsQuery.eq('branch_id', branchId)
+  }
+
   const [patientsRes, appointmentsRes, paymentsRes, interactionsRes] = await Promise.all([
-    supabase
-      .from('patients')
-      .select('id, full_name, phone, service_interest, created_at')
-      .eq('organization_id', orgId)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('appointments')
-      .select('patient_id, status')
-      .eq('organization_id', orgId),
-    supabase
-      .from('payments')
-      .select('patient_id, status')
-      .eq('organization_id', orgId),
+    patientsQuery,
+    appointmentsQuery,
+    paymentsQuery,
     supabase
       .from('patient_ml_features')
       .select('patient_id, total_interactions')

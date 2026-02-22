@@ -21,7 +21,7 @@ function formatNumber(n: number) {
 }
 
 export default function DataLakePage() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [stats, setStats] = useState<DataLakeStats | null>(null)
   const [dailyData, setDailyData] = useState<{ date: string; count: number }[]>([])
   const [trainingReady, setTrainingReady] = useState(0)
@@ -33,8 +33,11 @@ export default function DataLakePage() {
   const loadStats = useCallback(async () => {
     setLoading(true)
     try {
+      const statsUrl = branchId
+        ? `${API_URL}/data-lake/${orgId}/stats?branch_id=${branchId}`
+        : `${API_URL}/data-lake/${orgId}/stats`
       const [statsRes, daily, ready] = await Promise.all([
-        authFetch(`${API_URL}/data-lake/${orgId}/stats`).then(r => r.json()),
+        authFetch(statsUrl).then(r => r.json()),
         fetchDataLakeDaily(orgId, 30),
         fetchTrainingReadyCount(orgId),
       ])
@@ -45,7 +48,7 @@ export default function DataLakePage() {
       console.error(e)
     }
     setLoading(false)
-  }, [orgId])
+  }, [orgId, branchId])
 
   useEffect(() => { loadStats() }, [loadStats])
 

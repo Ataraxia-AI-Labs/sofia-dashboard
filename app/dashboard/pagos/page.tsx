@@ -20,7 +20,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 }
 
 export default function PagosPage() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [payments, setPayments] = useState<Payment[]>([])
   const [attribution, setAttribution] = useState<RevenueAttribution | null>(null)
   const [loading, setLoading] = useState(true)
@@ -30,9 +30,11 @@ export default function PagosPage() {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
+      const paymentsUrl = `${API_URL}/payments/${orgId}${statusFilter ? `?status=${statusFilter}` : ''}`
+      const attrUrl = `${API_URL}/payments/${orgId}/attribution?dias=30`
       const [paymentsRes, attrRes] = await Promise.all([
-        authFetch(`${API_URL}/payments/${orgId}${statusFilter ? `?status=${statusFilter}` : ''}`).then(r => r.json()),
-        authFetch(`${API_URL}/payments/${orgId}/attribution?dias=30`).then(r => r.json()),
+        authFetch(branchId ? `${paymentsUrl}${paymentsUrl.includes('?') ? '&' : '?'}branch_id=${branchId}` : paymentsUrl).then(r => r.json()),
+        authFetch(branchId ? `${attrUrl}&branch_id=${branchId}` : attrUrl).then(r => r.json()),
       ])
       setPayments(paymentsRes.payments || [])
       setAttribution(attrRes)
@@ -40,7 +42,7 @@ export default function PagosPage() {
       console.error(e)
     }
     setLoading(false)
-  }, [orgId, statusFilter])
+  }, [orgId, statusFilter, branchId])
 
   useEffect(() => { loadData() }, [loadData])
 

@@ -38,7 +38,7 @@ const OPP_LABELS: Record<string, string> = {
 }
 
 export default function DashboardOverview() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [data, setData] = useState<FullAnalytics | null>(null)
   const [voice, setVoice] = useState<VoiceMetrics | null>(null)
   const [loading, setLoading] = useState(true)
@@ -51,8 +51,8 @@ export default function DashboardOverview() {
     try {
       setLoading(true)
       const [analytics, voiceData] = await Promise.all([
-        fetchFullAnalytics(orgId, days),
-        fetchVoiceMetrics(orgId, days),
+        fetchFullAnalytics(orgId, days, branchId),
+        fetchVoiceMetrics(orgId, days, branchId),
       ])
       setData(analytics)
       setVoice(voiceData)
@@ -63,7 +63,7 @@ export default function DashboardOverview() {
     } finally {
       setLoading(false)
     }
-  }, [orgId, days])
+  }, [orgId, days, branchId])
 
   useEffect(() => {
     loadData()
