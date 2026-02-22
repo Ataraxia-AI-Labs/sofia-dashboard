@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
+import { API_URL } from '@/lib/supabase'
 import { formatCOP, timeAgo } from '@/lib/api'
 import {
   DollarSign, CreditCard, TrendingUp, Clock, ArrowRight,
   RefreshCw, ExternalLink, BarChart3, Zap,
   CheckCircle, XCircle, AlertTriangle
 } from 'lucide-react'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   PAID: { label: 'Pagado', color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
@@ -20,20 +20,14 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 }
 
 export default function PagosPage() {
+  const { orgId } = useOrg()
   const [payments, setPayments] = useState<any[]>([])
   const [attribution, setAttribution] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [orgId, setOrgId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'pagos' | 'attribution'>('pagos')
   const [statusFilter, setStatusFilter] = useState('')
 
-  useEffect(() => {
-    const el = document.querySelector('[data-org-id]')
-    if (el) setOrgId(el.getAttribute('data-org-id'))
-  }, [])
-
   const loadData = useCallback(async () => {
-    if (!orgId) return
     setLoading(true)
     try {
       const [paymentsRes, attrRes] = await Promise.all([

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
 import {
   fetchOrganization, fetchServicesCatalog, fetchBusinessHours,
   updateOrganization, createService, updateService, deleteService, updateBusinessHour,
@@ -20,8 +21,8 @@ const TABS = [
 ]
 
 export default function AjustesPage() {
+  const { orgId } = useOrg()
   const [activeTab, setActiveTab] = useState('prompt')
-  const [orgId, setOrgId] = useState<string | null>(null)
   const [org, setOrg] = useState<any>(null)
   const [services, setServices] = useState<any[]>([])
   const [hours, setHours] = useState<any[]>([])
@@ -40,13 +41,7 @@ export default function AjustesPage() {
   const [editingService, setEditingService] = useState<string | null>(null)
   const [editServiceData, setEditServiceData] = useState<any>({})
 
-  useEffect(() => {
-    const wrapper = document.querySelector('[data-org-id]')
-    if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
-  }, [])
-
   const loadData = useCallback(async () => {
-    if (!orgId) return
     setLoading(true)
     try {
       const [orgData, servData, hoursData] = await Promise.all([

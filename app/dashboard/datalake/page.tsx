@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
+import { API_URL } from '@/lib/supabase'
 import { fetchDataLakeDaily, fetchTrainingReadyCount } from '@/lib/api'
 import {
   Database, Brain, Download, BarChart3, RefreshCw,
@@ -11,8 +13,6 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
-
 function formatNumber(n: number) {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
@@ -20,22 +20,16 @@ function formatNumber(n: number) {
 }
 
 export default function DataLakePage() {
+  const { orgId } = useOrg()
   const [stats, setStats] = useState<any>(null)
   const [dailyData, setDailyData] = useState<{ date: string; count: number }[]>([])
   const [trainingReady, setTrainingReady] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [orgId, setOrgId] = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
   const [exportResult, setExportResult] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models'>('overview')
 
-  useEffect(() => {
-    const el = document.querySelector('[data-org-id]')
-    if (el) setOrgId(el.getAttribute('data-org-id'))
-  }, [])
-
   const loadStats = useCallback(async () => {
-    if (!orgId) return
     setLoading(true)
     try {
       const [statsRes, daily, ready] = await Promise.all([

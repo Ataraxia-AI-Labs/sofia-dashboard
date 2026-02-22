@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
 import { fetchOpportunities, formatCOP, timeAgo } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
 import type { Opportunity } from '@/types'
@@ -30,19 +31,13 @@ const STATUS_OPTIONS: Record<string, { label: string; color: string }> = {
 }
 
 export default function OportunidadesPage() {
+  const { orgId } = useOrg()
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
-  const [orgId, setOrgId] = useState<string | null>(null)
-
-  useEffect(() => {
-    const wrapper = document.querySelector('[data-org-id]')
-    if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
-  }, [])
 
   const loadData = useCallback(async () => {
-    if (!orgId) return
     setLoading(true)
     try {
       const data = await fetchOpportunities(orgId, statusFilter || undefined)

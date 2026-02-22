@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useOrg } from '@/lib/org-context'
 import { fetchAppointments, updateAppointmentStatus, createAppointment, fetchPatients, fetchServicesCatalog, timeAgo } from '@/lib/api'
 import type { Appointment } from '@/types'
 import {
@@ -23,22 +24,17 @@ const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio
 type ViewMode = 'week' | 'month'
 
 export default function CalendarioPage() {
+  const { orgId } = useOrg()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<ViewMode>('week')
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null)
-  const [orgId, setOrgId] = useState<string | null>(null)
   const [showNewAppt, setShowNewAppt] = useState(false)
   const [patients, setPatients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
   const [newAppt, setNewAppt] = useState({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
-
-  useEffect(() => {
-    const wrapper = document.querySelector('[data-org-id]')
-    if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
-  }, [])
 
   // Close modal on Escape
   useEffect(() => {

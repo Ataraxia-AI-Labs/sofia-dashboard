@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
 import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, fetchPatientMedia, createPatient, updatePatient, createStaffNote, createTreatment, exportPatientsCSV, sendWhatsAppMessage, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
 import type { Patient } from '@/types'
 import {
@@ -20,6 +21,7 @@ const CHANNELS: Record<string, { label: string; color: string }> = {
 const PAGE_SIZE = 20
 
 export default function PacientesPage() {
+  const { orgId } = useOrg()
   const [patients, setPatients] = useState<Patient[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -31,7 +33,6 @@ export default function PacientesPage() {
   const [selectedPatient, setSelectedPatient] = useState<any>(null)
   const [mlFeatures, setMlFeatures] = useState<any>(null)
   const [detailLoading, setDetailLoading] = useState(false)
-  const [orgId, setOrgId] = useState<string | null>(null)
   const [showNewPatient, setShowNewPatient] = useState(false)
   const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
   const [staffNotes, setStaffNotes] = useState<any[]>([])
@@ -47,11 +48,6 @@ export default function PacientesPage() {
   const [showTreatmentForm, setShowTreatmentForm] = useState(false)
   const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
-
-  useEffect(() => {
-    const wrapper = document.querySelector('[data-org-id]')
-    if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
-  }, [])
 
   // Escape key closes panels
   useEffect(() => {

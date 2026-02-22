@@ -4,28 +4,113 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization } from '@/lib/api'
+import { OrgContext } from '@/lib/org-context'
+import { ErrorBoundary } from '@/components/error-boundary'
+import type { User } from '@supabase/supabase-js'
+import type { Organization } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, Bell, CreditCard, Database, Activity, Kanban, Menu, X
 } from 'lucide-react'
-import type { Organization } from '@/types'
 
 const NAV_ITEMS = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Overview', ready: true },
-  { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes', ready: true },
-  { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline', ready: true },
-  { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario', ready: true },
-  { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos', ready: true },
-  { href: '/dashboard/datalake', icon: Database, label: 'Data Lake', ready: true },
-  { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades', ready: true },
-  { href: '/dashboard/health', icon: Activity, label: 'System Health', ready: true },
-  { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes', ready: true },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
+  { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes' },
+  { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline' },
+  { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario' },
+  { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos' },
+  { href: '/dashboard/datalake', icon: Database, label: 'Data Lake' },
+  { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades' },
+  { href: '/dashboard/health', icon: Activity, label: 'System Health' },
+  { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
 ]
+
+// ============================================================
+// SIDEBAR (extracted as a standalone component — not inside render)
+// ============================================================
+
+function Sidebar({
+  isOpen,
+  mobile,
+  pathname,
+  orgName,
+  onNavigate,
+  onLogout,
+  onClose,
+}: {
+  isOpen: boolean
+  mobile?: boolean
+  pathname: string
+  orgName: string
+  onNavigate: (href: string) => void
+  onLogout: () => void
+  onClose?: () => void
+}) {
+  return (
+    <>
+      {/* Logo */}
+      <div className={`px-5 py-6 flex items-center ${isOpen ? 'gap-3' : 'justify-center'}`}>
+        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center flex-shrink-0">
+          <span className="text-white font-bold text-sm">A</span>
+        </div>
+        {isOpen && (
+          <div className="animate-fade-in overflow-hidden flex-1 min-w-0">
+            <div className="text-text-primary font-semibold text-sm leading-tight">SofIA</div>
+            <div className="text-text-dim text-[10px] truncate">{orgName}</div>
+          </div>
+        )}
+        {mobile && onClose && (
+          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto" aria-label="Cerrar menú">
+            <X size={16} />
+          </button>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href
+          const Icon = item.icon
+          return (
+            <button
+              key={item.href}
+              onClick={() => onNavigate(item.href)}
+              className={`sidebar-link w-full ${isActive ? 'active' : ''} cursor-pointer`}
+              title={!isOpen ? item.label : undefined}
+              aria-label={item.label}
+            >
+              <Icon size={18} className="flex-shrink-0" />
+              {isOpen && (
+                <span className="animate-fade-in truncate">{item.label}</span>
+              )}
+            </button>
+          )
+        })}
+      </nav>
+
+      {/* Logout */}
+      <div className="px-3 py-4 border-t border-border">
+        <button
+          onClick={onLogout}
+          className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
+          aria-label="Cerrar sesión"
+        >
+          <LogOut size={18} className="flex-shrink-0" />
+          {isOpen && <span className="animate-fade-in">Cerrar sesión</span>}
+        </button>
+      </div>
+    </>
+  )
+}
+
+// ============================================================
+// DASHBOARD LAYOUT
+// ============================================================
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -66,6 +151,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.replace('/login')
   }
 
+  const navigateTo = (href: string) => {
+    router.push(href)
+    setMobileMenuOpen(false)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -79,78 +169,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     )
   }
 
-  const navigateTo = (href: string) => {
-    router.push(href)
-    setMobileMenuOpen(false)
-  }
-
-  const SidebarContent = ({ mobile = false }: { mobile?: boolean }) => {
-    const isOpen = mobile ? true : sidebarOpen
-    return (
-      <>
-        {/* Logo */}
-        <div className={`px-5 py-6 flex items-center ${isOpen ? 'gap-3' : 'justify-center'}`}>
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-sm">A</span>
-          </div>
-          {isOpen && (
-            <div className="animate-fade-in overflow-hidden flex-1 min-w-0">
-              <div className="text-text-primary font-semibold text-sm leading-tight">SofIA</div>
-              <div className="text-text-dim text-[10px] truncate">{org?.name || 'Dashboard'}</div>
-            </div>
-          )}
-          {mobile && (
-            <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto" aria-label="Cerrar menú">
-              <X size={16} />
-            </button>
-          )}
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href
-            const Icon = item.icon
-            return (
-              <button
-                key={item.href}
-                onClick={() => item.ready ? navigateTo(item.href) : null}
-                className={`sidebar-link w-full ${isActive ? 'active' : ''} ${!item.ready ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                title={!isOpen ? item.label : undefined}
-                aria-label={item.label}
-              >
-                <Icon size={18} className="flex-shrink-0" />
-                {isOpen && (
-                  <span className="animate-fade-in truncate">{item.label}</span>
-                )}
-                {isOpen && !item.ready && (
-                  <span className="ml-auto text-[9px] bg-surface-3 text-text-dim px-1.5 py-0.5 rounded-full">Pronto</span>
-                )}
-              </button>
-            )
-          })}
-        </nav>
-
-        {/* Logout */}
-        <div className="px-3 py-4 border-t border-border">
-          <button
-            onClick={handleLogout}
-            className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
-            aria-label="Cerrar sesión"
-          >
-            <LogOut size={18} className="flex-shrink-0" />
-            {isOpen && <span className="animate-fade-in">Cerrar sesión</span>}
-          </button>
-        </div>
-      </>
-    )
+  const sidebarProps = {
+    pathname,
+    orgName: org?.name || 'Dashboard',
+    onNavigate: navigateTo,
+    onLogout: handleLogout,
   }
 
   return (
     <div className="min-h-screen flex">
       {/* ========== DESKTOP SIDEBAR ========== */}
       <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-surface border-r border-border hidden lg:flex flex-col transition-all duration-300 relative flex-shrink-0`}>
-        <SidebarContent />
+        <Sidebar isOpen={sidebarOpen} {...sidebarProps} />
         {/* Collapse button */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -166,7 +196,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
           <aside className="relative w-72 h-full bg-surface border-r border-border flex flex-col animate-slide-in">
-            <SidebarContent mobile />
+            <Sidebar isOpen mobile onClose={() => setMobileMenuOpen(false)} {...sidebarProps} />
           </aside>
         </div>
       )}
@@ -213,10 +243,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Page content */}
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
-          {org ? (
-            <div data-org-id={org.id} data-org-name={org.name}>
-              {children}
-            </div>
+          {org && user ? (
+            <OrgContext.Provider value={{ user, org, orgId: org.id }}>
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+            </OrgContext.Provider>
           ) : (
             <div className="glass-card p-8 text-center">
               <p className="text-text-muted">No se encontró organización asociada a tu cuenta.</p>

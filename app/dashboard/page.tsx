@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
 import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
 import type { FullAnalytics, VoiceMetrics } from '@/types'
 import {
@@ -37,21 +38,13 @@ const OPP_LABELS: Record<string, string> = {
 }
 
 export default function DashboardOverview() {
+  const { orgId } = useOrg()
   const [data, setData] = useState<FullAnalytics | null>(null)
   const [voice, setVoice] = useState<VoiceMetrics | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [days, setDays] = useState(30)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
-  const [orgId, setOrgId] = useState<string | null>(null)
-
-  // Get org_id from parent layout's data attribute
-  useEffect(() => {
-    const wrapper = document.querySelector('[data-org-id]')
-    if (wrapper) {
-      setOrgId(wrapper.getAttribute('data-org-id'))
-    }
-  }, [])
 
   const loadData = useCallback(async () => {
     if (!orgId) return
@@ -74,7 +67,9 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     loadData()
-    const interval = setInterval(loadData, 60000) // Refresh every 60s
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') loadData()
+    }, 60000)
     return () => clearInterval(interval)
   }, [loadData])
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useOrg } from '@/lib/org-context'
 import { fetchPipelineData, timeAgo } from '@/lib/api'
 import type { PipelinePatient, PipelineStage } from '@/types'
 import {
@@ -89,17 +90,11 @@ const STAGES: {
 // ============================================================
 
 export default function PipelinePage() {
+  const { orgId } = useOrg()
   const [patients, setPatients] = useState<PipelinePatient[]>([])
   const [loading, setLoading] = useState(true)
-  const [orgId, setOrgId] = useState<string | null>(null)
-
-  useEffect(() => {
-    const wrapper = document.querySelector('[data-org-id]')
-    if (wrapper) setOrgId(wrapper.getAttribute('data-org-id'))
-  }, [])
 
   const loadPipeline = useCallback(async () => {
-    if (!orgId) return
     setLoading(true)
     try {
       const data = await fetchPipelineData(orgId)

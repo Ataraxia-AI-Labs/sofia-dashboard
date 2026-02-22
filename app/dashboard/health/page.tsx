@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { API_URL } from '@/lib/supabase'
 import {
   Activity, Shield, Phone, CreditCard,
   Database, Brain, MessageSquare, RefreshCw,
   CheckCircle, AlertTriangle, XCircle, Server
 } from 'lucide-react'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
 
 const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }> = {
   CLOSED: { color: 'text-status-success', icon: CheckCircle, label: 'Operativo' },

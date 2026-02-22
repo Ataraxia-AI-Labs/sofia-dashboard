@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { API_URL } from '@/lib/supabase'
 import {
   ArrowRight, ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare,
   Eye, EyeOff, ExternalLink, Shield
 } from 'lucide-react'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
 
 const SPECIALTIES = [
   { value: 'Estética y Odontología', label: 'Estética + Odontología', icon: '🦷✨' },

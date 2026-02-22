@@ -150,13 +150,8 @@ export async function fetchUserOrganization(userId: string) {
     .single()
 
   if (error) {
-    // Fallback: try getting first active org (for admin/demo)
-    const { data: orgs } = await supabase
-      .from('organizations')
-      .select('id, name, status')
-      .eq('status', 'ACTIVE')
-      .limit(1)
-    return orgs?.[0] || null
+    console.error('No org_users mapping found for user:', userId, error.message)
+    return null
   }
 
   return data?.organizations || null
