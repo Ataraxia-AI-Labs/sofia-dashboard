@@ -18,8 +18,8 @@ Este documento describe todas las actualizaciones realizadas en el dashboard de 
 1. `middleware.ts` verifica cookies `sb-*-auth-token` en todas las rutas `/dashboard/*`
 2. Si no hay cookie, redirige a `/login?redirect=/dashboard`
 3. `layout.tsx` obtiene el usuario via `supabase.auth.getUser()` y luego llama a `fetchUserOrganization(userId)` para obtener la org
-4. El `OrgContext.Provider` expone `{ user, org, orgId }` a todas las paginas hijas
-5. Cada pagina accede al orgId con `const { orgId } = useOrg()`
+4. El `OrgContext.Provider` expone `{ user, org, orgId, role, branchId, branches, setBranchId }` a todas las paginas hijas
+5. Cada pagina accede al orgId y branchId con `const { orgId, branchId } = useOrg()`
 
 ### Error Boundary
 - Todas las paginas del dashboard estan envueltas en un `ErrorBoundary` React
@@ -124,7 +124,7 @@ GET /organizations/{orgId}
 
 PATCH /organizations/{orgId}
 → Body: { system_prompt?, config_settings? }
-→ config_settings incluye: { notification_phone, vacation_mode, ... }
+→ config_settings incluye: { notification_phone, vacation_mode, whatsapp_templates: WhatsAppTemplate[], ... }
 
 GET /services/{orgId}
 → Returns: ServiceCatalog[] { name, price, duration_minutes, category, requires_deposit, deposit_amount, is_active }
@@ -225,6 +225,9 @@ Todos los tipos estan en `types/index.ts`. Los principales:
 - `DataLakeStats` / `DataLakeExportResult` — fine-tuning pipeline
 - `VoiceMetrics` — metricas de Voice AI
 - `PipelinePatient` / `PipelineStage` — pipeline CRM
+- `Branch` — sucursal/sede de la organizacion
+- `WhatsAppTemplate` / `WATemplateCategory` — plantillas de WhatsApp Business
+- `OrgRole` — rol del usuario en la org (owner, admin, member, viewer)
 
 ---
 
@@ -232,15 +235,15 @@ Todos los tipos estan en `types/index.ts`. Los principales:
 
 | Ruta | Descripcion |
 |------|-------------|
-| `/dashboard` | Overview: KPIs, funnel, revenue, intents, oportunidades, Voice AI, sub-bots |
-| `/dashboard/pacientes` | CRM: tabla paginada, detalle slide-over, ML features, notas, tratamientos, media, WhatsApp directo |
-| `/dashboard/pipeline` | Kanban: 6 etapas automaticas (Lead → Recurrente) |
-| `/dashboard/calendario` | Calendario: vista semana/mes, crear citas, cambiar status |
-| `/dashboard/oportunidades` | Lista: filtros por status/tipo, acciones rapidas |
-| `/dashboard/pagos` | Tabla de pagos + Revenue Attribution (por canal, servicio, dia) |
-| `/dashboard/ajustes` | Config: system prompt, catalogo servicios, horarios, notificaciones, vacation mode |
-| `/dashboard/datalake` | Data Lake: stats, ingesta diaria, export JSONL, modelos entrenados |
-| `/dashboard/health` | System Health: circuit breakers, uptime, auto-refresh 15s |
+| `/dashboard` | Overview: KPIs, funnel, revenue, intents, oportunidades, Voice AI, sub-bots. Filtra por sede. |
+| `/dashboard/pacientes` | CRM: tabla paginada, detalle slide-over, ML features, notas, tratamientos, media, WhatsApp directo. Filtra por sede. |
+| `/dashboard/pipeline` | Kanban: 6 etapas automaticas (Lead → Recurrente). Filtra por sede. |
+| `/dashboard/calendario` | Calendario: vista semana/mes, crear citas, cambiar status. Filtra por sede. |
+| `/dashboard/oportunidades` | Lista: filtros por status/tipo, acciones rapidas. Filtra por sede. |
+| `/dashboard/pagos` | Tabla de pagos + Revenue Attribution (por canal, servicio, dia). Filtra por sede. |
+| `/dashboard/ajustes` | Config: system prompt, catalogo servicios, horarios, notificaciones, vacation mode, **plantillas WhatsApp (B7)** |
+| `/dashboard/datalake` | Data Lake: stats, ingesta diaria, export JSONL, modelos entrenados. Filtra por sede. |
+| `/dashboard/health` | System Health: circuit breakers, uptime, auto-refresh 15s (sin filtro de sede — system-wide) |
 
 ---
 
@@ -265,3 +268,125 @@ Todos los tipos estan en `types/index.ts`. Los principales:
 9. **Pipeline**: Las etapas se calculan en el backend basado en: interacciones, citas, completadas, pagos. El dashboard solo renderiza.
 
 10. **Auth**: El dashboard usa `fetchUserOrganization(userId)` que busca en `org_users` join `organizations`. Si no encuentra mapping, muestra error (no hay fallback inseguro).
+
+---
+
+## 7. Multi-Sede / Branch Filtering (B10)
+
+### Concepto
+Organizaciones con multiples sedes pueden filtrar todos los datos del dashboard por sucursal. Si la org tiene una sola sede, el selector no aparece.
+
+### Arquitectura
+- **`Branch` type** en `types/index.ts`: `{ id, organization_id, name, address?, phone?, city?, is_active }`
+- **`OrgContext`** ahora expone: `{ orgId, branchId, branches, setBranchId }` donde `branchId: string | null` (null = todas las sedes)
+- **`BranchSelector`** componente en el topbar del layout — dropdown que solo aparece si `branches.length > 1`
+- **`fetchBranches(orgId)`** en `lib/api.ts` — llama a `GET /api/branches/{orgId}`
+- **`withBranch(url, branchId)`** helper que appende `?branch_id=` o `&branch_id=` a URLs del backend
+
+### Endpoints que ahora aceptan `branch_id`
+Todos los endpoints principales aceptan query param opcional `?branch_id={uuid}`:
+```
+GET /analytics/{orgId}/full?dias=30&branch_id={branchId}
+GET /voice/{orgId}/metrics?dias=30&branch_id={branchId}
+GET /patients/{orgId}?...&branch_id={branchId}
+GET /appointments/{orgId}?...&branch_id={branchId}
+GET /opportunities/{orgId}?...&branch_id={branchId}
+GET /pipeline/{orgId}?branch_id={branchId}
+GET /payments/{orgId}?...&branch_id={branchId}
+GET /payments/{orgId}/attribution?dias=30&branch_id={branchId}
+GET /data-lake/{orgId}/stats?branch_id={branchId}
+GET /data-lake/{orgId}/daily?dias=30&branch_id={branchId}
+GET /data-lake/{orgId}/training-ready-count?branch_id={branchId}
+```
+
+### Endpoint requerido del backend
+```
+GET /api/branches/{orgId}
+→ Returns: Branch[] (todas las sedes activas de la org)
+→ Cada branch: { id, organization_id, name, address?, phone?, city?, is_active }
+```
+
+### Queries Supabase directas
+Las funciones que usan Supabase directamente (fetchPatients, fetchAppointments, fetchOpportunities, etc.) agregan `.eq('branch_id', branchId)` cuando `branchId` no es null.
+
+### Paginas actualizadas
+Todas las paginas del dashboard (excepto Health y Ajustes) ahora usan `const { orgId, branchId } = useOrg()` y pasan `branchId` a sus llamadas API. Los datos se re-fetchean automaticamente cuando cambia la sede seleccionada.
+
+---
+
+## 8. WhatsApp Business Templates (B7)
+
+### Concepto
+Cuando los bots envian mensajes fuera de la ventana de 24h de Meta, se requieren plantillas aprobadas en Meta Business Manager. El dashboard permite configurar estas plantillas desde la pestaña "Plantillas WA" en Ajustes.
+
+### Almacenamiento
+Las plantillas se guardan en `org.config_settings.whatsapp_templates` como array JSON:
+```json
+{
+  "config_settings": {
+    "whatsapp_templates": [
+      {
+        "id": "uuid",
+        "name": "appointment_reminder_es",
+        "category": "APPOINTMENT_REMINDER",
+        "language": "es",
+        "description": "Recordatorio de cita 24h antes",
+        "is_active": true
+      }
+    ]
+  }
+}
+```
+
+### Tipo TypeScript
+```ts
+export type WATemplateCategory =
+  | 'APPOINTMENT_REMINDER' | 'FOLLOW_UP' | 'TREATMENT_REMINDER'
+  | 'PAYMENT_LINK' | 'WELCOME' | 'CUSTOM'
+
+export interface WhatsAppTemplate {
+  id: string
+  name: string           // Nombre exacto en Meta Business Manager
+  category: WATemplateCategory
+  language: string       // e.g. 'es', 'en'
+  description?: string
+  is_active: boolean
+}
+```
+
+### Categorias disponibles
+| Key | Label |
+|-----|-------|
+| `APPOINTMENT_REMINDER` | Recordatorio de cita |
+| `FOLLOW_UP` | Seguimiento |
+| `TREATMENT_REMINDER` | Recordatorio de tratamiento |
+| `PAYMENT_LINK` | Link de pago |
+| `WELCOME` | Bienvenida |
+| `CUSTOM` | Personalizada |
+
+### CRUD
+- **Crear**: Se agrega al array y se guarda con `PATCH /organizations/{orgId}` body `{ config_settings: { ...existing, whatsapp_templates: [...] } }`
+- **Activar/desactivar**: Toggle `is_active` y save
+- **Eliminar**: Se remueve del array y save
+- **Leer**: Se carga desde `org.config_settings.whatsapp_templates` al montar la pagina
+
+### Nota para el backend
+El backend (`channel_window_validator.py`) debe leer `org.config_settings.whatsapp_templates` para obtener los nombres de plantillas activas cuando necesita enviar mensajes fuera de la ventana de 24h. Solo usar plantillas con `is_active: true`.
+
+---
+
+## 9. Seguridad y RBAC
+
+### Auth con JWT
+- **`authFetch(url)`** en `lib/api.ts` — wrapper de fetch que inyecta `Authorization: Bearer {jwt}` desde la sesion de Supabase
+- Todas las llamadas al backend usan `authFetch` (no fetch directo)
+
+### Roles
+- `OrgRole` type: `'owner' | 'admin' | 'member' | 'viewer'`
+- `OrgContext` expone `role` obtenido de `org_users`
+- Paginas con acciones destructivas verifican `role` antes de mostrar botones de edicion
+- Ajustes: viewer y member ven datos read-only, solo owner/admin pueden editar
+
+### Middleware
+- `middleware.ts` valida cookies de auth en todas las rutas `/dashboard/*`
+- Redirige a `/login` si no hay sesion valida

@@ -13,7 +13,7 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-
 // Authenticated fetch — sends Supabase JWT as Bearer token
 // ============================================================
 
-export async function authFetch(url: string, options?: RequestInit): Promise<Response> {
+export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
   const { data: { session } } = await supabase.auth.getSession()
   const headers = new Headers(options?.headers)
   if (session?.access_token) {
@@ -22,5 +22,20 @@ export async function authFetch(url: string, options?: RequestInit): Promise<Res
   if (!headers.has('Content-Type') && options?.body) {
     headers.set('Content-Type', 'application/json')
   }
-  return fetch(url, { ...options, headers })
+
+  // Timeout protection — prevent hanging requests (e.g. Render cold starts)
+  const timeoutMs = options?.timeoutMs ?? 15000
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers,
+      signal: options?.signal ?? controller.signal,
+    })
+    return res
+  } finally {
+    clearTimeout(timer)
+  }
 }

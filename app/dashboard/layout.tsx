@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization, fetchBranches } from '@/lib/api'
 import { OrgContext } from '@/lib/org-context'
 import { ErrorBoundary } from '@/components/error-boundary'
+import OnboardingWizard from '@/components/onboarding-wizard'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
 import {
@@ -195,16 +196,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
         setOrg(organization)
         setRole(userRole)
-
-        // Fetch branches for multi-sede support (B10)
-        if (organization?.id) {
-          const branchList = await fetchBranches(organization.id)
-          setBranches(branchList.filter(b => b.is_active))
-        }
       } catch (e) {
         console.error('Error fetching org:', e)
       }
 
+      // Show dashboard immediately — don't block on backend calls
       setLoading(false)
     }
 
@@ -216,6 +212,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return () => subscription.unsubscribe()
   }, [router])
+
+  // Fetch branches in background — never blocks dashboard loading
+  useEffect(() => {
+    if (!org?.id) return
+    fetchBranches(org.id)
+      .then(list => setBranches(list.filter(b => b.is_active)))
+      .catch(() => {})
+  }, [org?.id])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -326,7 +330,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {org && user ? (
             <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
               <ErrorBoundary>
-                {children}
+                {org.status === 'SETUP' ? (
+                  <OnboardingWizard org={org} orgId={org.id} onComplete={() => window.location.reload()} />
+                ) : (
+                  children
+                )}
               </ErrorBoundary>
             </OrgContext.Provider>
           ) : (
