@@ -4,23 +4,32 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import {
-  fetchOrgFull, fetchOrgStats, fetchOrgUsers,
+  fetchOrgFull, fetchOrgStats, fetchOrgUsers, fetchOrgActivityLog,
   updateOrgStatus, populateKnowledgeBase, testWhatsApp,
+  type ActivityLogEntry,
 } from '@/lib/admin-api'
-import { fetchServicesCatalog, fetchBusinessHours, updateOrganization, createService, deleteService, updateBusinessHour } from '@/lib/api'
-import { formatCOP } from '@/lib/api'
+import { fetchServicesCatalog, fetchBusinessHours, updateOrganization, createService, deleteService, updateBusinessHour, formatCOP, timeAgo } from '@/lib/api'
 import type { ServiceCatalog, BusinessHour } from '@/types'
 import {
   Building2, Users, Calendar, MessageSquare, DollarSign,
   Settings2, Save, ChevronLeft, RefreshCw, Phone,
-  CheckCircle2, PauseCircle, XCircle, Zap, Edit3,
-  Clock, ShoppingBag, BookOpen, Send, AlertTriangle,
-  Loader2, Trash2, Plus, Globe
+  CheckCircle2, AlertTriangle,
+  Loader2, Trash2, Plus, BookOpen, Send,
+  Clock, ShoppingBag, Activity, FileText
 } from 'lucide-react'
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
-type Tab = 'general' | 'services' | 'hours' | 'users' | 'prompt'
+type Tab = 'general' | 'services' | 'hours' | 'users' | 'prompt' | 'activity'
+
+const INTENT_COLORS: Record<string, string> = {
+  AGENDAR: 'text-status-success',
+  CANCELAR: 'text-status-danger',
+  CONSULTA_PRECIO: 'text-brand-gold',
+  CONSULTA_HORARIO: 'text-status-info',
+  SALUDO: 'text-brand-cyan',
+  OTRO: 'text-text-muted',
+}
 
 export default function OrgDetailPage() {
   const params = useParams()
@@ -32,6 +41,7 @@ export default function OrgDetailPage() {
   const [users, setUsers] = useState<{ id: string; user_id: string; role: string; created_at: string }[]>([])
   const [services, setServices] = useState<ServiceCatalog[]>([])
   const [hours, setHours] = useState<BusinessHour[]>([])
+  const [activityLog, setActivityLog] = useState<ActivityLogEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<Tab>('general')
@@ -53,12 +63,13 @@ export default function OrgDetailPage() {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const [orgData, statsData, usersData, servicesData, hoursData] = await Promise.all([
+      const [orgData, statsData, usersData, servicesData, hoursData, activityData] = await Promise.all([
         fetchOrgFull(orgId),
         fetchOrgStats(orgId),
         fetchOrgUsers(orgId),
         fetchServicesCatalog(orgId),
         fetchBusinessHours(orgId),
+        fetchOrgActivityLog(orgId, 100),
       ])
 
       setOrg(orgData)
@@ -66,8 +77,8 @@ export default function OrgDetailPage() {
       setUsers(usersData)
       setServices(servicesData)
       setHours(hoursData)
+      setActivityLog(activityData)
 
-      // Set editable fields
       setEditName(orgData.name || '')
       setEditStatus(orgData.status || 'ACTIVE')
       setEditPlan((orgData.config_settings as Record<string, unknown>)?.plan as string || 'TRIAL')
@@ -151,6 +162,15 @@ export default function OrgDetailPage() {
     }
   }
 
+  const handleUpdateHourTime = async (hour: BusinessHour, field: 'open_time' | 'close_time', value: string) => {
+    try {
+      await updateBusinessHour(hour.id, { [field]: value })
+      loadData()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const handleTestWhatsApp = async () => {
     const phone = prompt('Número de teléfono para prueba (ej: 573001234567):')
     if (!phone) return
@@ -228,6 +248,7 @@ export default function OrgDetailPage() {
           { id: 'hours' as Tab, label: 'Horarios', icon: Clock },
           { id: 'users' as Tab, label: 'Usuarios', icon: Users },
           { id: 'prompt' as Tab, label: 'System Prompt', icon: BookOpen },
+          { id: 'activity' as Tab, label: 'Actividad', icon: Activity },
         ]).map(t => {
           const Icon = t.icon
           return (
@@ -240,6 +261,7 @@ export default function OrgDetailPage() {
             >
               <Icon size={13} />
               {t.label}
+              {t.id === 'activity' && <span className="text-[9px] text-text-dim ml-1">({activityLog.length})</span>}
             </button>
           )
         })}
@@ -277,7 +299,7 @@ export default function OrgDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 pt-2">
+          <div className="flex items-center gap-3 pt-2 flex-wrap">
             <button onClick={handleSaveGeneral} disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-purple/15 text-brand-purple font-semibold text-xs hover:bg-brand-purple/25 transition-colors disabled:opacity-50">
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
               Guardar Cambios
@@ -295,7 +317,6 @@ export default function OrgDetailPage() {
       {/* TAB: Services */}
       {tab === 'services' && (
         <div className="space-y-4">
-          {/* Add service form */}
           <div className="glass-card p-4">
             <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Agregar Servicio</h4>
             <div className="flex gap-2 flex-wrap">
@@ -314,7 +335,6 @@ export default function OrgDetailPage() {
             </div>
           </div>
 
-          {/* Services list */}
           <div className="glass-card overflow-hidden">
             <table className="w-full">
               <thead>
@@ -348,22 +368,36 @@ export default function OrgDetailPage() {
         </div>
       )}
 
-      {/* TAB: Hours */}
+      {/* TAB: Hours — Editable Grid */}
       {tab === 'hours' && (
         <div className="glass-card p-5">
           <div className="space-y-2">
             {hours.sort((a, b) => a.day_of_week - b.day_of_week).map(h => (
               <div key={h.id} className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${h.is_open ? 'bg-surface-2 border-border' : 'bg-surface-3/30 border-border/50'}`}>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => handleToggleDay(h)} className={`w-8 h-5 rounded-full transition-all relative ${h.is_open ? 'bg-status-success' : 'bg-surface-3'}`}>
-                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${h.is_open ? 'left-3.5' : 'left-0.5'}`} />
+                  <button onClick={() => handleToggleDay(h)} className={`w-9 h-5 rounded-full transition-all relative ${h.is_open ? 'bg-status-success' : 'bg-surface-3'}`}>
+                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${h.is_open ? 'left-4' : 'left-0.5'}`} />
                   </button>
-                  <span className={`text-sm font-medium w-24 ${h.is_open ? 'text-text-primary' : 'text-text-dim'}`}>
+                  <span className={`text-sm font-medium w-28 ${h.is_open ? 'text-text-primary' : 'text-text-dim'}`}>
                     {DAY_NAMES[h.day_of_week]}
                   </span>
                 </div>
                 {h.is_open ? (
-                  <span className="text-xs font-mono text-text-muted">{h.open_time} — {h.close_time}</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="time"
+                      value={h.open_time}
+                      onChange={e => handleUpdateHourTime(h, 'open_time', e.target.value)}
+                      className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all"
+                    />
+                    <span className="text-text-dim text-xs">—</span>
+                    <input
+                      type="time"
+                      value={h.close_time}
+                      onChange={e => handleUpdateHourTime(h, 'close_time', e.target.value)}
+                      className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all"
+                    />
+                  </div>
                 ) : (
                   <span className="text-xs text-text-dim">Cerrado</span>
                 )}
@@ -423,6 +457,49 @@ export default function OrgDetailPage() {
                 Guardar Prompt
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: Activity Log */}
+      {tab === 'activity' && (
+        <div className="glass-card overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Activity size={14} className="text-brand-purple" />
+              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Log de Actividad</h3>
+            </div>
+            <span className="text-[10px] text-text-dim">{activityLog.length} interacciones recientes</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Canal</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Intent</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Teléfono</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activityLog.length === 0 ? (
+                  <tr><td colSpan={4} className="px-4 py-12 text-center text-text-dim text-xs">Sin actividad registrada</td></tr>
+                ) : (
+                  activityLog.map(a => (
+                    <tr key={a.id} className="border-b border-border/50 hover:bg-surface-3/50">
+                      <td className="px-4 py-2.5 text-xs text-text-muted">{timeAgo(a.created_at)}</td>
+                      <td className="px-4 py-2.5">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-3 border border-border text-text-muted uppercase">{a.channel}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className={`text-xs font-medium ${INTENT_COLORS[a.intent] || 'text-text-muted'}`}>{a.intent}</span>
+                      </td>
+                      <td className="px-4 py-2.5 text-xs font-mono text-text-dim">{a.patient_phone || '—'}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

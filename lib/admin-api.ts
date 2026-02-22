@@ -7,7 +7,11 @@ import type { User } from '@supabase/supabase-js'
 // SUPER ADMIN CHECK
 // ============================================================
 
+const SUPER_ADMIN_EMAIL = 'ataraxia.ia.labs@tutamail.com'
+
 export function isSuperAdmin(user: User): boolean {
+  // Primary: hardcoded super admin email
+  if (user.email?.toLowerCase() === SUPER_ADMIN_EMAIL) return true
   // Check Supabase app_metadata (set via Supabase dashboard or admin API)
   if (user.app_metadata?.is_super_admin === true) return true
   // Fallback: env var with comma-separated emails
@@ -295,6 +299,76 @@ FLUJO TÍPICO:
 4. Ofrecer agendar cita
 5. Confirmar datos
 6. Despedida amable`
+}
+
+// ============================================================
+// LAST ACTIVITY — Most recent interaction per org
+// ============================================================
+
+export async function fetchOrgLastActivity(orgId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('interaction_logs')
+    .select('created_at')
+    .eq('organization_id', orgId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+  return data?.[0]?.created_at || null
+}
+
+// ============================================================
+// ACTIVITY LOG — Recent interactions for an org
+// ============================================================
+
+export interface ActivityLogEntry {
+  id: string
+  channel: string
+  intent: string
+  created_at: string
+  patient_phone?: string
+}
+
+export async function fetchOrgActivityLog(orgId: string, limit: number = 50): Promise<ActivityLogEntry[]> {
+  const { data, error } = await supabase
+    .from('interaction_logs')
+    .select('id, channel, intent, created_at, patient_phone')
+    .eq('organization_id', orgId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) return []
+  return (data || []) as ActivityLogEntry[]
+}
+
+// ============================================================
+// BOT EXECUTION LOGS — For admin health
+// ============================================================
+
+export interface BotLogEntry {
+  id: string
+  bot_type: string
+  status: string
+  organization_id: string
+  details: Record<string, unknown> | null
+  created_at: string
+}
+
+export async function fetchBotLogs(limit: number = 50): Promise<BotLogEntry[]> {
+  const { data, error } = await supabase
+    .from('bot_execution_logs')
+    .select('id, bot_type, status, organization_id, details, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) return []
+  return (data || []) as BotLogEntry[]
+}
+
+export async function fetchBotErrorCount24h(): Promise<number> {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const { count } = await supabase
+    .from('bot_execution_logs')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'ERROR')
+    .gte('created_at', since)
+  return count || 0
 }
 
 // ============================================================

@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  fetchAllOrganizations, fetchGlobalMetrics, fetchOrgStats,
+  fetchAllOrganizations, fetchGlobalMetrics, fetchOrgStats, fetchOrgLastActivity,
   type AdminOrgRow,
 } from '@/lib/admin-api'
 import { formatCOP, timeAgo } from '@/lib/api'
@@ -31,6 +31,7 @@ const PLAN_COLORS: Record<string, string> = {
 
 interface OrgWithStats extends AdminOrgRow {
   stats?: { patients: number; appointments: number; interactions: number; revenue: number }
+  lastActivity?: string | null
 }
 
 export default function AdminPage() {
@@ -69,8 +70,11 @@ export default function AdminPage() {
       const withStats = await Promise.all(
         orgList.map(async (org) => {
           try {
-            const stats = await fetchOrgStats(org.id)
-            return { ...org, stats }
+            const [stats, lastActivity] = await Promise.all([
+              fetchOrgStats(org.id),
+              fetchOrgLastActivity(org.id),
+            ])
+            return { ...org, stats, lastActivity }
           } catch {
             return org
           }
@@ -145,6 +149,7 @@ export default function AdminPage() {
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Citas</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Interacciones</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Revenue</th>
+                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Última Actividad</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Creada</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -153,14 +158,14 @@ export default function AdminPage() {
               {loading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="border-b border-border/50">
-                    <td colSpan={9} className="px-4 py-4">
+                    <td colSpan={10} className="px-4 py-4">
                       <div className="h-5 bg-surface-3 rounded w-full animate-pulse" />
                     </td>
                   </tr>
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center">
+                  <td colSpan={10} className="px-4 py-12 text-center">
                     <Building2 size={28} className="mx-auto text-text-dim mb-3" />
                     <p className="text-text-muted text-sm">
                       {search ? `No se encontraron organizaciones para "${search}"` : 'No hay organizaciones registradas'}
@@ -229,6 +234,11 @@ export default function AdminPage() {
                       <td className="px-4 py-3.5 text-right">
                         <span className="text-sm font-mono font-semibold gradient-text">
                           {statsLoading && !org.stats ? '...' : formatCOP(org.stats?.revenue ?? 0)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-right">
+                        <span className={`text-xs ${org.lastActivity ? 'text-text-muted' : 'text-text-dim'}`}>
+                          {org.lastActivity ? timeAgo(org.lastActivity) : '—'}
                         </span>
                       </td>
                       <td className="px-4 py-3.5 text-right">

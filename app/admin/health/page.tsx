@@ -1,0 +1,298 @@
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
+import { API_URL, authFetch } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
+import { fetchBotLogs, fetchBotErrorCount24h, type BotLogEntry } from '@/lib/admin-api'
+import { timeAgo } from '@/lib/api'
+import {
+  Activity, Server, Database, Brain, MessageSquare, Phone,
+  CreditCard, RefreshCw, CheckCircle, AlertTriangle, XCircle,
+  Clock, Shield, Zap, Bot
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+
+interface HealthData {
+  status: string
+  error?: string
+  circuit_breakers?: Record<string, { state: string; failures: number; last_failure?: string }>
+  uptime?: number
+  version?: string
+}
+
+const CB_ICONS: Record<string, LucideIcon> = {
+  openai: Brain,
+  supabase: Database,
+  meta: MessageSquare,
+  vapi: Phone,
+  wompi: CreditCard,
+}
+
+const CB_STATUS: Record<string, { color: string; bg: string; label: string; icon: LucideIcon }> = {
+  CLOSED: { color: 'text-status-success', bg: 'bg-status-success/10', label: 'Operativo', icon: CheckCircle },
+  HALF_OPEN: { color: 'text-status-warning', bg: 'bg-status-warning/10', label: 'Recuperando', icon: AlertTriangle },
+  OPEN: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: 'Caído', icon: XCircle },
+}
+
+const BOT_STATUS_COLORS: Record<string, string> = {
+  SUCCESS: 'text-status-success bg-status-success/10 border-status-success/20',
+  ERROR: 'text-status-danger bg-status-danger/10 border-status-danger/20',
+  PARTIAL: 'text-status-warning bg-status-warning/10 border-status-warning/20',
+}
+
+export default function AdminHealthPage() {
+  const [health, setHealth] = useState<HealthData | null>(null)
+  const [botLogs, setBotLogs] = useState<BotLogEntry[]>([])
+  const [errorCount24h, setErrorCount24h] = useState(0)
+  const [supabaseStatus, setSupabaseStatus] = useState<'ok' | 'error' | 'checking'>('checking')
+  const [loading, setLoading] = useState(true)
+  const [autoRefresh, setAutoRefresh] = useState(true)
+
+  const loadData = useCallback(async () => {
+    try {
+      // Fetch backend health
+      const res = await authFetch(`${API_URL}/health`, { timeoutMs: 10000 })
+      const data = await res.json()
+      setHealth(data)
+    } catch {
+      setHealth({ status: 'CRITICAL', error: 'No se pudo conectar con el backend (Render)' })
+    }
+
+    // Check Supabase connectivity
+    try {
+      const { error } = await supabase.from('organizations').select('id', { count: 'exact', head: true })
+      setSupabaseStatus(error ? 'error' : 'ok')
+    } catch {
+      setSupabaseStatus('error')
+    }
+
+    // Fetch bot logs and error count
+    try {
+      const [logs, errors] = await Promise.all([
+        fetchBotLogs(50),
+        fetchBotErrorCount24h(),
+      ])
+      setBotLogs(logs)
+      setErrorCount24h(errors)
+    } catch {
+      // silent
+    }
+
+    setLoading(false)
+  }, [])
+
+  useEffect(() => { loadData() }, [loadData])
+
+  // Auto-refresh every 15s
+  useEffect(() => {
+    if (!autoRefresh) return
+    const interval = setInterval(loadData, 15000)
+    return () => clearInterval(interval)
+  }, [autoRefresh, loadData])
+
+  const overallStatus = health?.status === 'HEALTHY' && supabaseStatus === 'ok' && errorCount24h === 0
+    ? 'HEALTHY'
+    : health?.status === 'CRITICAL' || supabaseStatus === 'error'
+      ? 'CRITICAL'
+      : 'DEGRADED'
+
+  const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
+    HEALTHY: { color: 'text-status-success', bg: 'bg-status-success', label: 'Todo operativo' },
+    DEGRADED: { color: 'text-status-warning', bg: 'bg-status-warning', label: 'Degradado' },
+    CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger', label: 'Crítico' },
+  }
+
+  const statusCfg = STATUS_CONFIG[overallStatus] || STATUS_CONFIG.CRITICAL
+
+  // Group bot logs by bot_type to find last execution of each
+  const lastBotExecution = new Map<string, BotLogEntry>()
+  for (const log of botLogs) {
+    if (!lastBotExecution.has(log.bot_type)) {
+      lastBotExecution.set(log.bot_type, log)
+    }
+  }
+
+  return (
+    <div className="max-w-[1200px] space-y-5">
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-text-primary">System Health</h2>
+          <p className="text-text-dim text-xs mt-0.5">Monitoreo en tiempo real de la infraestructura</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors ${
+              autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-dim'
+            }`}
+          >
+            <Zap size={10} />
+            Auto-refresh {autoRefresh ? 'ON' : 'OFF'}
+          </button>
+          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
+      </div>
+
+      {/* OVERALL STATUS */}
+      <div className={`glass-card p-5 flex items-center justify-between ${statusCfg.color}`}>
+        <div className="flex items-center gap-4">
+          <div className={`w-3 h-3 rounded-full ${statusCfg.bg} animate-pulse-soft`} />
+          <div>
+            <div className="text-lg font-bold">{statusCfg.label}</div>
+            <div className="text-text-dim text-xs mt-0.5">
+              {health?.uptime ? `Uptime: ${Math.floor(health.uptime / 3600)}h ${Math.floor((health.uptime % 3600) / 60)}m` : ''}
+              {health?.version ? ` · ${health.version}` : ''}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <div className="text-xs text-text-dim">Errores 24h</div>
+            <div className={`text-xl font-bold font-mono ${errorCount24h > 0 ? 'text-status-danger' : 'text-status-success'}`}>{errorCount24h}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* SERVICES GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {/* Render (Backend) */}
+        <ServiceCard
+          name="Backend (Render)"
+          icon={Server}
+          status={health?.status === 'HEALTHY' || health?.status === 'DEGRADED' ? 'ok' : 'error'}
+          detail={health?.error || 'API respondiendo correctamente'}
+        />
+
+        {/* Supabase */}
+        <ServiceCard
+          name="Supabase (DB)"
+          icon={Database}
+          status={supabaseStatus === 'ok' ? 'ok' : supabaseStatus === 'error' ? 'error' : 'checking'}
+          detail={supabaseStatus === 'ok' ? 'PostgreSQL + RLS operativo' : supabaseStatus === 'error' ? 'Error de conexión' : 'Verificando...'}
+        />
+
+        {/* Circuit Breakers */}
+        {health?.circuit_breakers && Object.entries(health.circuit_breakers).map(([name, cb]) => {
+          const Icon = CB_ICONS[name] || Shield
+          const cbCfg = CB_STATUS[cb.state] || CB_STATUS.CLOSED
+          return (
+            <ServiceCard
+              key={name}
+              name={name.charAt(0).toUpperCase() + name.slice(1)}
+              icon={Icon}
+              status={cb.state === 'CLOSED' ? 'ok' : cb.state === 'HALF_OPEN' ? 'warning' : 'error'}
+              detail={`${cbCfg.label} · ${cb.failures} fallos${cb.last_failure ? ` · Último: ${timeAgo(cb.last_failure)}` : ''}`}
+            />
+          )
+        })}
+      </div>
+
+      {/* BOT EXECUTION — Last runs */}
+      <div className="glass-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <Bot size={14} className="text-brand-purple" />
+            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Última Ejecución por Bot</h3>
+          </div>
+          <span className="text-[10px] text-text-dim">{botLogs.length} logs totales</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left px-5 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Bot</th>
+                <th className="text-left px-5 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
+                <th className="text-left px-5 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Última Ejecución</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lastBotExecution.size === 0 ? (
+                <tr><td colSpan={3} className="px-5 py-8 text-center text-text-dim text-xs">Sin logs de bots</td></tr>
+              ) : (
+                Array.from(lastBotExecution.entries()).map(([botType, log]) => (
+                  <tr key={botType} className="border-b border-border/50 hover:bg-surface-3/50">
+                    <td className="px-5 py-3 text-sm font-medium text-text-primary">{botType}</td>
+                    <td className="px-5 py-3">
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
+                        {log.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-xs text-text-muted">{timeAgo(log.created_at)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* RECENT BOT LOGS */}
+      <div className="glass-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border flex items-center gap-2.5">
+          <Clock size={14} className="text-brand-cyan" />
+          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Logs Recientes de Bots</h3>
+        </div>
+        <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+          <table className="w-full">
+            <thead className="sticky top-0 bg-surface">
+              <tr className="border-b border-border">
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Bot</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Org ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              {botLogs.map(log => (
+                <tr key={log.id} className="border-b border-border/50 hover:bg-surface-3/50">
+                  <td className="px-4 py-2 text-xs text-text-muted whitespace-nowrap">{timeAgo(log.created_at)}</td>
+                  <td className="px-4 py-2 text-xs text-text-primary">{log.bot_type}</td>
+                  <td className="px-4 py-2">
+                    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
+                      {log.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-[10px] font-mono text-text-dim">{log.organization_id?.slice(0, 8)}...</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ServiceCard({ name, icon: Icon, status, detail }: {
+  name: string
+  icon: LucideIcon
+  status: 'ok' | 'warning' | 'error' | 'checking'
+  detail: string
+}) {
+  const statusMap = {
+    ok: { dot: 'bg-status-success', text: 'text-status-success', label: 'Operativo' },
+    warning: { dot: 'bg-status-warning', text: 'text-status-warning', label: 'Degradado' },
+    error: { dot: 'bg-status-danger', text: 'text-status-danger', label: 'Error' },
+    checking: { dot: 'bg-text-dim animate-pulse', text: 'text-text-dim', label: 'Verificando' },
+  }
+  const cfg = statusMap[status]
+
+  return (
+    <div className="glass-card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <Icon size={16} className="text-brand-purple" />
+          <span className="text-sm font-semibold text-text-primary">{name}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${cfg.dot}`} />
+          <span className={`text-[10px] font-semibold ${cfg.text}`}>{cfg.label}</span>
+        </div>
+      </div>
+      <p className="text-[11px] text-text-dim">{detail}</p>
+    </div>
+  )
+}

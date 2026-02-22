@@ -8,13 +8,14 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import type { User } from '@supabase/supabase-js'
 import {
   Shield, Building2, BarChart3, Plus, LogOut, ChevronLeft,
-  ChevronRight, Menu, X, LayoutDashboard
+  ChevronRight, Menu, X, LayoutDashboard, Activity
 } from 'lucide-react'
 
 const ADMIN_NAV = [
   { href: '/admin', icon: Building2, label: 'Organizaciones' },
   { href: '/admin/organizaciones/nueva', icon: Plus, label: 'Crear Org' },
   { href: '/admin/metricas', icon: BarChart3, label: 'Métricas' },
+  { href: '/admin/health', icon: Activity, label: 'System Health' },
 ]
 
 export interface AdminContextValue {
@@ -37,18 +38,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       setUser(session.user)
 
-      if (isSuperAdmin(session.user)) {
-        setAuthorized(true)
-      } else {
-        // Check if user is OWNER in at least one org (admin fallback)
-        const { data } = await supabase
-          .from('org_users')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .eq('role', 'OWNER')
-          .limit(1)
-        setAuthorized((data && data.length > 0) || false)
-      }
+      // Only super admin can access /admin — no OWNER fallback
+      setAuthorized(isSuperAdmin(session.user))
 
       setLoading(false)
     }
