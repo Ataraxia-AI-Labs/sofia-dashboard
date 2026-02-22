@@ -478,6 +478,98 @@ export async function updateOrganization(orgId: string, data: Record<string, any
 }
 
 // ============================================================
+// PIPELINE (patient journey stages)
+// ============================================================
+
+import type { PipelinePatient, PipelineStage } from '@/types'
+
+export async function fetchPipelineData(orgId: string): Promise<PipelinePatient[]> {
+  // Parallel fetch: patients, appointments, payments, interaction counts
+  const [patientsRes, appointmentsRes, paymentsRes, interactionsRes] = await Promise.all([
+    supabase
+      .from('patients')
+      .select('id, full_name, phone, service_interest, created_at')
+      .eq('organization_id', orgId)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('appointments')
+      .select('patient_id, status')
+      .eq('organization_id', orgId),
+    supabase
+      .from('payments')
+      .select('patient_id, status')
+      .eq('organization_id', orgId),
+    supabase
+      .from('patient_ml_features')
+      .select('patient_id, total_interactions')
+      .eq('organization_id', orgId),
+  ])
+
+  const patients = patientsRes.data || []
+  const appointments = appointmentsRes.data || []
+  const payments = paymentsRes.data || []
+  const mlFeatures = interactionsRes.data || []
+
+  // Index appointments by patient_id
+  const apptsByPatient: Record<string, { scheduled: number; completed: number }> = {}
+  for (const a of appointments) {
+    if (!a.patient_id) continue
+    if (!apptsByPatient[a.patient_id]) apptsByPatient[a.patient_id] = { scheduled: 0, completed: 0 }
+    if (a.status === 'SCHEDULED' || a.status === 'CONFIRMED') apptsByPatient[a.patient_id].scheduled++
+    if (a.status === 'COMPLETED') apptsByPatient[a.patient_id].completed++
+  }
+
+  // Index payments by patient_id
+  const paidByPatient = new Set<string>()
+  for (const p of payments) {
+    if (p.patient_id && p.status === 'PAID') paidByPatient.add(p.patient_id)
+  }
+
+  // Index interactions by patient_id
+  const interactionsByPatient: Record<string, number> = {}
+  for (const m of mlFeatures) {
+    if (m.patient_id) interactionsByPatient[m.patient_id] = m.total_interactions || 0
+  }
+
+  // Classify each patient into a pipeline stage
+  return patients.map((p) => {
+    const appts = apptsByPatient[p.id] || { scheduled: 0, completed: 0 }
+    const interactions = interactionsByPatient[p.id] || 0
+    const hasPaid = paidByPatient.has(p.id)
+
+    let stage: PipelineStage = 'LEAD'
+
+    // Highest priority first (a patient can only be in one stage)
+    if (appts.completed > 1) {
+      stage = 'RECURRENTE'
+    } else if (hasPaid) {
+      stage = 'PAGADO'
+    } else if (appts.completed >= 1) {
+      stage = 'CITA_COMPLETADA'
+    } else if (appts.scheduled > 0) {
+      stage = 'CITA_AGENDADA'
+    } else if (interactions > 3) {
+      stage = 'CONTACTADO'
+    } else {
+      stage = 'LEAD'
+    }
+
+    return {
+      id: p.id,
+      full_name: p.full_name,
+      phone: p.phone,
+      service_interest: p.service_interest,
+      created_at: p.created_at,
+      stage,
+      interaction_count: interactions,
+      appointment_count: appts.scheduled + appts.completed,
+      completed_count: appts.completed,
+      has_paid: hasPaid,
+    }
+  })
+}
+
+// ============================================================
 // HELPERS
 // ============================================================
 

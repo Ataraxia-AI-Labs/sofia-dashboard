@@ -113,3 +113,22 @@ export interface Organization {
   name: string
   status: string
 }
+
+// ============================================================
+// PIPELINE TYPES
+// ============================================================
+
+export type PipelineStage = 'LEAD' | 'CONTACTADO' | 'CITA_AGENDADA' | 'CITA_COMPLETADA' | 'PAGADO' | 'RECURRENTE'
+
+export interface PipelinePatient {
+  id: string
+  full_name: string
+  phone: string
+  service_interest?: string
+  created_at: string
+  stage: PipelineStage
+  interaction_count: number
+  appointment_count: number
+  completed_count: number
+  has_paid: boolean
+}

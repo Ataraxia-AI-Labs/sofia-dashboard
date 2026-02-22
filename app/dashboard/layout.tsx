@@ -6,13 +6,14 @@ import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization } from '@/lib/api'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
-  LogOut, ChevronLeft, ChevronRight, Zap, Bell, CreditCard, Database, Activity
+  LogOut, ChevronLeft, ChevronRight, Zap, Bell, CreditCard, Database, Activity, Kanban
 } from 'lucide-react'
 import type { Organization } from '@/types'
 
 const NAV_ITEMS = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Overview', ready: true },
   { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes', ready: true },
+  { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline', ready: true },
   { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario', ready: true },
   { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos', ready: true },
   { href: '/dashboard/datalake', icon: Database, label: 'Data Lake', ready: true },
