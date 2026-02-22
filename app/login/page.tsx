@@ -18,22 +18,31 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    })
+    try {
+      console.log('[LOGIN] Attempting signInWithPassword for:', email.trim())
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      })
 
-    if (authError) {
-      setError(
-        authError.message === 'Invalid login credentials'
-          ? 'Email o contraseña incorrectos'
-          : authError.message
-      )
+      if (authError) {
+        console.error('[LOGIN] Auth error:', authError.message, authError.status)
+        setError(
+          authError.message === 'Invalid login credentials'
+            ? 'Email o contraseña incorrectos'
+            : authError.message
+        )
+        setLoading(false)
+        return
+      }
+
+      console.log('[LOGIN] Success — user:', data.user?.id, 'session:', !!data.session)
+      router.replace('/dashboard')
+    } catch (err) {
+      console.error('[LOGIN] Unexpected error:', err)
+      setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
       setLoading(false)
-      return
     }
-
-    router.replace('/dashboard')
   }
 
   return (

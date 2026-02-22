@@ -173,7 +173,9 @@ export async function fetchOrganization(orgId: string) {
 }
 
 export async function fetchUserOrganization(userId: string): Promise<{ organization: Organization | null; role: 'OWNER' | 'ADMIN' | 'STAFF' }> {
-  // Get user's org mapping + role
+  console.log('[ORG] Fetching organization for user:', userId)
+
+  // Try org_users first (dashboard canonical table)
   const { data, error } = await supabase
     .from('org_users')
     .select('organization_id, role, organizations(id, name, status)')
@@ -181,16 +183,37 @@ export async function fetchUserOrganization(userId: string): Promise<{ organizat
     .limit(1)
     .single()
 
-  if (error) {
-    console.error('No org_users mapping found for user:', userId, error.message)
+  if (!error && data) {
+    console.log('[ORG] Found via org_users:', data.organization_id, 'role:', data.role)
+    const rawRole = data.role as string
+    const role: 'OWNER' | 'ADMIN' | 'STAFF' =
+      rawRole === 'OWNER' ? 'OWNER' :
+      rawRole === 'ADMIN' ? 'ADMIN' : 'STAFF'
+    return { organization: (data.organizations as unknown as Organization | null) || null, role }
+  }
+
+  console.warn('[ORG] org_users lookup failed:', error?.message, '— trying org_members...')
+
+  // Fallback: try org_members (backend canonical table from onboarding_service)
+  const { data: membersData, error: membersError } = await supabase
+    .from('org_members')
+    .select('organization_id, role, is_active, organizations(id, name, status)')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .limit(1)
+    .single()
+
+  if (membersError) {
+    console.error('[ORG] Both org_users and org_members failed for user:', userId, membersError.message)
     return { organization: null, role: 'STAFF' }
   }
 
-  const rawRole = data?.role as string
+  console.log('[ORG] Found via org_members:', membersData?.organization_id, 'role:', membersData?.role)
+  const rawRole = membersData?.role as string
   const role: 'OWNER' | 'ADMIN' | 'STAFF' =
     rawRole === 'OWNER' ? 'OWNER' :
     rawRole === 'ADMIN' ? 'ADMIN' : 'STAFF'
-  return { organization: (data?.organizations as unknown as Organization | null) || null, role }
+  return { organization: (membersData?.organizations as unknown as Organization | null) || null, role }
 }
 
 // ============================================================
