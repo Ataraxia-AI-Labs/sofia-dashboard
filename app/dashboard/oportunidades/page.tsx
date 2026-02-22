@@ -33,6 +33,7 @@ export default function OportunidadesPage() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
   const [orgId, setOrgId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -67,11 +68,22 @@ export default function OportunidadesPage() {
     }
   }
 
-  // Summary stats
+  // Apply type filter client-side
+  const filtered = typeFilter
+    ? opportunities.filter(o => o.opportunity_type === typeFilter)
+    : opportunities
+
+  // Summary stats (from all opportunities, not filtered)
   const totalValue = opportunities.reduce((sum, o) => sum + (o.estimated_value || 0), 0)
   const convertedValue = opportunities.filter(o => o.status === 'CONVERTED').reduce((sum, o) => sum + (o.estimated_value || 0), 0)
   const detected = opportunities.filter(o => o.status === 'DETECTED').length
   const converted = opportunities.filter(o => o.status === 'CONVERTED').length
+
+  // Type breakdown counts (from all opportunities)
+  const typeCounts: Record<string, number> = {}
+  for (const o of opportunities) {
+    typeCounts[o.opportunity_type] = (typeCounts[o.opportunity_type] || 0) + 1
+  }
 
   return (
     <div className="max-w-[1400px] space-y-5">
@@ -87,7 +99,7 @@ export default function OportunidadesPage() {
       </div>
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
         <SummaryCard
           icon={<Target size={18} />}
           gradient="from-brand-purple to-brand-purple-dark"
@@ -112,51 +124,103 @@ export default function OportunidadesPage() {
           value={formatCOP(totalValue)}
           label="Valor estimado total"
         />
+        <SummaryCard
+          icon={<TrendingUp size={18} />}
+          gradient="from-brand-cyan to-emerald-500"
+          value={formatCOP(convertedValue)}
+          label="Revenue convertido"
+        />
       </div>
 
-      {/* FILTERS */}
-      <div className="flex gap-2 flex-wrap">
-        <button
-          onClick={() => setStatusFilter('')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            !statusFilter
-              ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
-              : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
-          }`}
-        >
-          Todas
-        </button>
-        {Object.entries(STATUS_OPTIONS).map(([key, cfg]) => (
+      {/* FILTERS — Status */}
+      <div className="space-y-2">
+        <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Estado</p>
+        <div className="flex gap-2 flex-wrap">
           <button
-            key={key}
-            onClick={() => setStatusFilter(key)}
+            onClick={() => setStatusFilter('')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              statusFilter === key
+              !statusFilter
                 ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                 : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
             }`}
           >
-            {cfg.label}
+            Todos
           </button>
-        ))}
+          {Object.entries(STATUS_OPTIONS).map(([key, cfg]) => (
+            <button
+              key={key}
+              onClick={() => setStatusFilter(key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                statusFilter === key
+                  ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
+                  : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+              }`}
+            >
+              {cfg.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* FILTERS — Type */}
+      <div className="space-y-2">
+        <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Tipo</p>
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => setTypeFilter('')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              !typeFilter
+                ? 'bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/25'
+                : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+            }`}
+          >
+            Todos
+          </button>
+          {Object.entries(OPP_CONFIG).map(([key, cfg]) => {
+            const count = typeCounts[key] || 0
+            if (count === 0 && opportunities.length > 0) return null
+            return (
+              <button
+                key={key}
+                onClick={() => setTypeFilter(typeFilter === key ? '' : key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  typeFilter === key
+                    ? `${cfg.bg} ${cfg.color} border`
+                    : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+                }`}
+              >
+                {cfg.label}
+                {count > 0 && (
+                  <span className={`text-[9px] font-mono ${typeFilter === key ? cfg.color : 'text-text-dim'}`}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* OPPORTUNITY LIST */}
       <div className="space-y-3">
-        {loading && opportunities.length === 0 ? (
+        {loading && filtered.length === 0 ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="glass-card p-5 animate-pulse">
               <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
               <div className="h-4 bg-surface-3 rounded w-72" />
             </div>
           ))
-        ) : opportunities.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="glass-card p-12 text-center">
             <Target size={32} className="mx-auto text-text-dim mb-3" />
-            <p className="text-text-muted text-sm">No hay oportunidades {statusFilter ? `con estado "${STATUS_OPTIONS[statusFilter]?.label}"` : 'detectadas aún'}</p>
+            <p className="text-text-muted text-sm">
+              {statusFilter || typeFilter
+                ? `No hay oportunidades con ${statusFilter ? `estado "${STATUS_OPTIONS[statusFilter]?.label}"` : ''}${statusFilter && typeFilter ? ' y ' : ''}${typeFilter ? `tipo "${OPP_CONFIG[typeFilter]?.label}"` : ''}`
+                : 'No hay oportunidades detectadas aún'}
+            </p>
           </div>
         ) : (
-          opportunities.map((opp) => {
+          filtered.map((opp) => {
             const cfg = OPP_CONFIG[opp.opportunity_type] || OPP_CONFIG.HOT_LEAD
             const Icon = cfg.icon
             const statusCfg = STATUS_OPTIONS[opp.status] || STATUS_OPTIONS.DETECTED
