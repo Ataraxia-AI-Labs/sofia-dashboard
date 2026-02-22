@@ -478,6 +478,58 @@ export async function updateOrganization(orgId: string, data: Record<string, any
 }
 
 // ============================================================
+// DATA LAKE — Daily ingestion chart
+// ============================================================
+
+export async function fetchDataLakeDaily(orgId: string, days: number = 30): Promise<{ date: string; count: number }[]> {
+  const since = new Date()
+  since.setDate(since.getDate() - days)
+
+  const { data, error } = await supabase
+    .from('data_lake_raw')
+    .select('created_at')
+    .eq('organization_id', orgId)
+    .gte('created_at', since.toISOString())
+    .order('created_at', { ascending: true })
+
+  if (error) throw error
+
+  // Group by date
+  const counts: Record<string, number> = {}
+  for (const row of data || []) {
+    const date = new Date(row.created_at).toISOString().split('T')[0]
+    counts[date] = (counts[date] || 0) + 1
+  }
+
+  // Fill missing days with 0
+  const result: { date: string; count: number }[] = []
+  const cursor = new Date(since)
+  const today = new Date()
+  while (cursor <= today) {
+    const key = cursor.toISOString().split('T')[0]
+    result.push({ date: key, count: counts[key] || 0 })
+    cursor.setDate(cursor.getDate() + 1)
+  }
+
+  return result
+}
+
+// ============================================================
+// DATA LAKE — Training ready count
+// ============================================================
+
+export async function fetchTrainingReadyCount(orgId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('data_lake_raw')
+    .select('id', { count: 'exact', head: true })
+    .eq('organization_id', orgId)
+    .eq('is_training_ready', true)
+
+  if (error) return 0
+  return count || 0
+}
+
+// ============================================================
 // VOICE AI METRICS
 // ============================================================
 

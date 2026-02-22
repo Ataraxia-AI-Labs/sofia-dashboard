@@ -1,11 +1,15 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { fetchDataLakeDaily, fetchTrainingReadyCount } from '@/lib/api'
 import {
   Database, Brain, Download, BarChart3, RefreshCw,
   Zap, Target, TrendingUp, Archive, HardDrive, Layers,
-  FileJson, CheckCircle, AlertTriangle, Clock
+  FileJson, CheckCircle, AlertTriangle, Clock, Sparkles
 } from 'lucide-react'
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
+} from 'recharts'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
 
@@ -17,6 +21,8 @@ function formatNumber(n: number) {
 
 export default function DataLakePage() {
   const [stats, setStats] = useState<any>(null)
+  const [dailyData, setDailyData] = useState<{ date: string; count: number }[]>([])
+  const [trainingReady, setTrainingReady] = useState(0)
   const [loading, setLoading] = useState(true)
   const [orgId, setOrgId] = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
@@ -32,9 +38,14 @@ export default function DataLakePage() {
     if (!orgId) return
     setLoading(true)
     try {
-      const res = await fetch(`${API_URL}/data-lake/${orgId}/stats`)
-      const data = await res.json()
-      setStats(data)
+      const [statsRes, daily, ready] = await Promise.all([
+        fetch(`${API_URL}/data-lake/${orgId}/stats`).then(r => r.json()),
+        fetchDataLakeDaily(orgId, 30),
+        fetchTrainingReadyCount(orgId),
+      ])
+      setStats(statsRes)
+      setDailyData(daily)
+      setTrainingReady(ready)
     } catch (e) {
       console.error(e)
     }
@@ -102,7 +113,7 @@ export default function DataLakePage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
@@ -119,10 +130,21 @@ export default function DataLakePage() {
             <div className="w-8 h-8 rounded-lg bg-status-success/10 flex items-center justify-center">
               <Brain size={16} className="text-status-success" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Training Ready</span>
+            <span className="text-[10px] text-text-dim uppercase font-semibold">Training Data</span>
           </div>
           <div className="text-xl font-bold text-status-success font-mono">{formatNumber(stats?.training_data_total || 0)}</div>
           <div className="text-[10px] text-text-dim mt-1">Quality ≥ 0.7</div>
+        </div>
+
+        <div className="glass-card p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
+              <Sparkles size={16} className="text-brand-cyan" />
+            </div>
+            <span className="text-[10px] text-text-dim uppercase font-semibold">Training Ready</span>
+          </div>
+          <div className="text-xl font-bold text-brand-cyan font-mono">{formatNumber(trainingReady)}</div>
+          <div className="text-[10px] text-text-dim mt-1">is_training_ready = true</div>
         </div>
 
         <div className="glass-card p-4">
@@ -204,7 +226,68 @@ export default function DataLakePage() {
         <p className="text-xs text-text-muted mt-4 italic">{stats?.recomendacion || ''}</p>
       </div>
 
-      {/* TAB: OVERVIEW */}
+      {/* TAB: OVERVIEW — Daily ingestion chart */}
+      {activeTab === 'overview' && dailyData.length > 0 && (
+        <div className="glass-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+              <BarChart3 size={14} className="text-brand-purple" />
+              Ingesta por Día (últimos 30 días)
+            </h3>
+            <span className="text-[10px] text-text-dim font-mono">
+              {dailyData.reduce((s, d) => s + d.count, 0)} total
+            </span>
+          </div>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={dailyData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                <defs>
+                  <linearGradient id="dlGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1C1C2A" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: '#4E4A5E', fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(d: string) => {
+                    const parts = d.split('-')
+                    return `${parts[2]}/${parts[1]}`
+                  }}
+                  interval={Math.max(Math.floor(dailyData.length / 7) - 1, 0)}
+                />
+                <YAxis
+                  tick={{ fill: '#4E4A5E', fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip
+                  contentStyle={{ background: '#101018', border: '1px solid #1C1C2A', borderRadius: '12px', fontSize: '12px' }}
+                  labelStyle={{ color: '#F0EEF5' }}
+                  labelFormatter={(d: string) => {
+                    const date = new Date(d + 'T12:00:00')
+                    return date.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
+                  }}
+                  formatter={(value: number) => [`${value} samples`, 'Ingesta']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#8B5CF6"
+                  strokeWidth={2}
+                  fill="url(#dlGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: OVERVIEW — Intent distribution + Pipeline */}
       {activeTab === 'overview' && stats?.por_intent && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Intent distribution */}
