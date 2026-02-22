@@ -7,9 +7,10 @@ import {
   updateOrganization, createService, updateService, deleteService, updateBusinessHour,
   formatCOP
 } from '@/lib/api'
+import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
 import {
-  Settings, MessageSquare, Clock, ShoppingBag, Bell, Save,
-  Plus, Trash2, Edit3, X, Check, RefreshCw, AlertTriangle, Zap, Shield
+  MessageSquare, Clock, ShoppingBag, Bell, Save,
+  Plus, Trash2, Edit3, RefreshCw, Shield
 } from 'lucide-react'
 
 const DAYS_ES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -23,9 +24,9 @@ const TABS = [
 export default function AjustesPage() {
   const { orgId } = useOrg()
   const [activeTab, setActiveTab] = useState('prompt')
-  const [org, setOrg] = useState<any>(null)
-  const [services, setServices] = useState<any[]>([])
-  const [hours, setHours] = useState<any[]>([])
+  const [org, setOrg] = useState<Organization | null>(null)
+  const [services, setServices] = useState<ServiceCatalog[]>([])
+  const [hours, setHours] = useState<BusinessHour[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
@@ -39,7 +40,7 @@ export default function AjustesPage() {
   const [showNewService, setShowNewService] = useState(false)
   const [newService, setNewService] = useState({ name: '', description: '', price: 0, duration_minutes: 60, category: 'GENERAL' })
   const [editingService, setEditingService] = useState<string | null>(null)
-  const [editServiceData, setEditServiceData] = useState<any>({})
+  const [editServiceData, setEditServiceData] = useState<Partial<ServiceCatalog>>({})
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -51,8 +52,9 @@ export default function AjustesPage() {
       ])
       setOrg(orgData)
       setSystemPrompt(orgData?.system_prompt || '')
-      setNotifPhone(orgData?.config_settings?.notification_phone || '')
-      setVacationMode(orgData?.config_settings?.vacation_mode || false)
+      const config = (orgData?.config_settings || {}) as Record<string, string | boolean>
+      setNotifPhone((config.notification_phone as string) || '')
+      setVacationMode(Boolean(config.vacation_mode))
       setServices(servData)
       setHours(hoursData)
     } catch (e) {
@@ -76,8 +78,8 @@ export default function AjustesPage() {
     try {
       await updateOrganization(orgId, { system_prompt: systemPrompt })
       showSaved('System prompt guardado ✓')
-    } catch (e: any) {
-      showSaved('Error: ' + e.message)
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
     setSaving(false)
   }
@@ -89,8 +91,8 @@ export default function AjustesPage() {
       const config = { ...(org.config_settings || {}), notification_phone: notifPhone }
       await updateOrganization(orgId, { config_settings: config })
       showSaved('Número de notificación guardado ✓')
-    } catch (e: any) {
-      showSaved('Error: ' + e.message)
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
     setSaving(false)
   }
@@ -104,8 +106,8 @@ export default function AjustesPage() {
       setNewService({ name: '', description: '', price: 0, duration_minutes: 60, category: 'GENERAL' })
       loadData()
       showSaved('Servicio creado ✓')
-    } catch (e: any) {
-      showSaved('Error: ' + e.message)
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
     setSaving(false)
   }
@@ -117,8 +119,8 @@ export default function AjustesPage() {
       setEditingService(null)
       loadData()
       showSaved('Servicio actualizado ✓')
-    } catch (e: any) {
-      showSaved('Error: ' + e.message)
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
     setSaving(false)
   }
@@ -129,8 +131,8 @@ export default function AjustesPage() {
       await deleteService(serviceId)
       loadData()
       showSaved('Servicio desactivado ✓')
-    } catch (e: any) {
-      showSaved('Error: ' + e.message)
+    } catch (e) {
+      showSaved('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
   }
 

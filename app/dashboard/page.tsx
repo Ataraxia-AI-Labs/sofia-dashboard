@@ -58,8 +58,8 @@ export default function DashboardOverview() {
       setVoice(voiceData)
       setLastUpdate(new Date())
       setError('')
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error desconocido')
     } finally {
       setLoading(false)
     }

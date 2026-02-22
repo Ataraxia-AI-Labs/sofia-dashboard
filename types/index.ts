@@ -77,6 +77,7 @@ export interface SubBotMetrics {
 
 export interface Patient {
   id: string
+  organization_id?: string
   full_name: string
   phone: string
   email?: string
@@ -87,13 +88,59 @@ export interface Patient {
   updated_at?: string
 }
 
+/** Full patient detail (select *) includes extra DB columns */
+export interface PatientDetail extends Patient {
+  psychometrics?: Record<string, number>
+  config_settings?: Record<string, unknown>
+}
+
+export interface PatientMLFeatures {
+  patient_id: string
+  organization_id?: string
+  total_interactions: number
+  total_inbound?: number
+  total_outbound?: number
+  preferred_hour?: number
+  preferred_day?: number
+  days_since_last_contact?: number
+  conversion_probability?: number
+  churn_probability?: number
+  no_show_probability?: number
+  avg_sentiment?: number
+  sentiment_trend?: number
+  complaint_count?: number
+  preferred_time?: string
+  avg_response_time_minutes?: number
+  total_appointments?: number
+  completed_appointments?: number
+  cancelled_appointments?: number
+  no_show_appointments?: number
+  conversion_rate?: number
+  show_rate?: number
+  total_revenue?: number
+  total_transactions?: number
+  avg_transaction_value?: number
+  lifetime_value?: number
+  total_spent?: number
+  avg_ticket?: number
+  days_since_last_interaction?: number
+  predicted_ltv?: number
+  engagement_score?: number
+  risk_level?: string
+  last_intent?: string
+  top_interests?: string[]
+  has_sent_audio?: boolean
+  has_sent_image?: boolean
+  has_sent_document?: boolean
+}
+
 export interface Appointment {
   id: string
   patient_id: string
   start_time: string
   end_time: string
   service_name: string
-  status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW' | 'REQUESTED'
+  status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW' | 'REQUESTED' | 'RESCHEDULED'
   created_at: string
   patients?: { full_name: string; phone: string }
 }
@@ -105,6 +152,7 @@ export interface Opportunity {
   estimated_value: number
   notes: string
   created_at: string
+  patient_id?: string
   patients?: { full_name: string; phone: string }
 }
 
@@ -112,6 +160,129 @@ export interface Organization {
   id: string
   name: string
   status: string
+  system_prompt?: string
+  whatsapp_phone_id?: string
+  config_settings?: Record<string, unknown>
+}
+
+// ============================================================
+// PAYMENTS & ATTRIBUTION
+// ============================================================
+
+export interface Payment {
+  id: string
+  patient_id: string
+  organization_id: string
+  amount_cop: number
+  currency?: string
+  status: string
+  service_name?: string
+  payment_method_type?: string
+  reference?: string
+  link_url?: string
+  created_at: string
+  patients?: { full_name: string; phone: string }
+}
+
+export interface RevenueAttribution {
+  resumen: {
+    total_revenue: number
+    total_pending: number
+    total_pagos: number
+    pagos_pendientes: number
+    ticket_promedio: number
+    roi_estimado: number
+    costo_ia_usd: number
+    tiempo_promedio_a_pago_horas: number
+    total_transacciones?: number
+  }
+  attribution: {
+    por_canal: Record<string, number>
+    por_servicio: Record<string, number>
+    por_dia: Record<string, number>
+  }
+  top_conversaciones?: {
+    patient: string
+    service: string
+    conversation_snippet: string
+    payment_amount: number
+    paid_at: string
+  }[]
+}
+
+// ============================================================
+// SERVICES & BUSINESS HOURS
+// ============================================================
+
+export interface ServiceCatalog {
+  id: string
+  organization_id: string
+  name: string
+  description?: string
+  price: number
+  currency: string
+  duration_minutes: number
+  category: string
+  requires_deposit: boolean
+  deposit_amount: number
+  is_active: boolean
+}
+
+export interface BusinessHour {
+  id: string
+  organization_id: string
+  day_of_week: number
+  open_time: string
+  close_time: string
+  slot_duration_minutes: number
+  is_open: boolean
+  is_active: boolean
+}
+
+// ============================================================
+// STAFF NOTES & TREATMENTS
+// ============================================================
+
+export interface StaffNote {
+  id: string
+  patient_id?: string
+  staff_user_id?: string
+  note_content: string
+  sentiment_label?: string
+  is_private: boolean
+  created_at: string
+}
+
+export interface Treatment {
+  id: string
+  patient_id: string
+  organization_id: string
+  appointment_id?: string
+  treatment_name: string
+  medication: string
+  dosage: string
+  frequency_hours: number
+  start_date: string
+  end_date: string
+  next_reminder_at?: string
+  total_reminders_sent: number
+  status: 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED'
+  notes?: string
+  created_at: string
+  patients?: { full_name: string; phone: string }
+}
+
+// ============================================================
+// MEDIA
+// ============================================================
+
+export interface PatientMedia {
+  id: string
+  content_type: 'AUDIO' | 'IMAGE' | 'DOCUMENT'
+  media_url?: string
+  transcription?: string
+  raw_content?: string
+  created_at: string
 }
 
 // ============================================================
@@ -144,4 +315,69 @@ export interface PipelinePatient {
   appointment_count: number
   completed_count: number
   has_paid: boolean
+}
+
+// ============================================================
+// SYSTEM HEALTH
+// ============================================================
+
+export interface CircuitBreakerDetail {
+  state: string
+  name: string
+  failure_count: number
+  success_count: number
+  uptime_seconds: number
+}
+
+export interface SystemHealth {
+  status: 'HEALTHY' | 'DEGRADED' | 'CRITICAL'
+  uptime_human?: string
+  uptime_seconds?: number
+  database?: string
+  version?: string
+  message_queue?: {
+    pending: number
+    [key: string]: unknown
+  }
+  circuit_breakers?: Record<string, CircuitBreakerDetail>
+  error?: string
+}
+
+// ============================================================
+// DATA LAKE
+// ============================================================
+
+export interface DataLakeModel {
+  model_name: string
+  status: string
+  base_model: string
+  training_samples: number
+  training_loss: number
+}
+
+export interface DataLakeStats {
+  raw_data_total: number
+  training_data_total: number
+  quality_promedio: number
+  modelos_entrenados: number
+  listo_para_finetuning: boolean
+  recomendacion?: string
+  training_exported?: number
+  ultimo_modelo?: DataLakeModel
+  ultimo_entrenamiento?: string
+  por_intent: Record<string, number>
+  por_tipo?: Record<string, number>
+}
+
+export interface DataLakeExportResult {
+  message?: string
+  error?: string
+  jsonl_preview?: string
+  export_batch?: string
+  stats?: {
+    total: number
+    tokens_estimados: number
+  }
+  costo_estimado_usd?: number
+  recomendacion?: string
 }

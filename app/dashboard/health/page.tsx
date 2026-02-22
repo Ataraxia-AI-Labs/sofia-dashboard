@@ -2,13 +2,15 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { API_URL } from '@/lib/supabase'
+import type { SystemHealth } from '@/types'
 import {
   Activity, Shield, Phone, CreditCard,
   Database, Brain, MessageSquare, RefreshCw,
   CheckCircle, AlertTriangle, XCircle, Server
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
-const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }> = {
+const STATUS_CONFIG: Record<string, { color: string; icon: LucideIcon; label: string }> = {
   CLOSED: { color: 'text-status-success', icon: CheckCircle, label: 'Operativo' },
   HALF_OPEN: { color: 'text-status-warning', icon: AlertTriangle, label: 'Recuperando' },
   OPEN: { color: 'text-status-danger', icon: XCircle, label: 'Caído' },
@@ -20,7 +22,7 @@ const HEALTH_CONFIG: Record<string, { color: string; bg: string; label: string }
   CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: 'Crítico' },
 }
 
-const BREAKER_ICONS: Record<string, any> = {
+const BREAKER_ICONS: Record<string, LucideIcon> = {
   openai: Brain,
   supabase: Database,
   meta: MessageSquare,
@@ -29,7 +31,7 @@ const BREAKER_ICONS: Record<string, any> = {
 }
 
 export default function SystemHealthPage() {
-  const [health, setHealth] = useState<any>(null)
+  const [health, setHealth] = useState<SystemHealth | null>(null)
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
 
@@ -94,8 +96,8 @@ export default function SystemHealthPage() {
           </div>
           <div className="text-right">
             <div className="text-xs text-text-dim">Cola de mensajes</div>
-            <div className={`text-lg font-bold font-mono ${(health?.message_queue || 0) > 0 ? 'text-status-warning' : 'text-status-success'}`}>
-              {health?.message_queue || 0}
+            <div className={`text-lg font-bold font-mono ${(health?.message_queue?.pending || 0) > 0 ? 'text-status-warning' : 'text-status-success'}`}>
+              {health?.message_queue?.pending || 0}
             </div>
           </div>
         </div>
@@ -103,7 +105,7 @@ export default function SystemHealthPage() {
 
       {/* Circuit Breakers Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {health?.circuit_breakers && Object.entries(health.circuit_breakers).map(([key, breaker]: [string, any]) => {
+        {health?.circuit_breakers && Object.entries(health.circuit_breakers).map(([key, breaker]) => {
           const statusConf = STATUS_CONFIG[breaker.state] || STATUS_CONFIG.OPEN
           const Icon = BREAKER_ICONS[key] || Server
           const StatusIcon = statusConf.icon

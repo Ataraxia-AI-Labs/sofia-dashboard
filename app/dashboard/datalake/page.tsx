@@ -4,10 +4,11 @@ import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { API_URL } from '@/lib/supabase'
 import { fetchDataLakeDaily, fetchTrainingReadyCount } from '@/lib/api'
+import type { DataLakeStats, DataLakeExportResult } from '@/types'
 import {
   Database, Brain, Download, BarChart3, RefreshCw,
-  Zap, Target, TrendingUp, Archive, HardDrive, Layers,
-  FileJson, CheckCircle, AlertTriangle, Clock, Sparkles
+  Zap, Target, HardDrive, Layers,
+  FileJson, CheckCircle, Clock, Sparkles
 } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
@@ -21,12 +22,12 @@ function formatNumber(n: number) {
 
 export default function DataLakePage() {
   const { orgId } = useOrg()
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState<DataLakeStats | null>(null)
   const [dailyData, setDailyData] = useState<{ date: string; count: number }[]>([])
   const [trainingReady, setTrainingReady] = useState(0)
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
-  const [exportResult, setExportResult] = useState<any>(null)
+  const [exportResult, setExportResult] = useState<DataLakeExportResult | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models'>('overview')
 
   const loadStats = useCallback(async () => {
@@ -288,7 +289,7 @@ export default function DataLakePage() {
           <div className="glass-card p-5">
             <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Distribución por Intent</h3>
             <div className="space-y-3">
-              {Object.entries(stats.por_intent).sort(([,a]: any, [,b]: any) => b - a).map(([intent, count]: any) => {
+              {Object.entries(stats.por_intent).sort(([, a], [, b]) => (b as number) - (a as number)).map(([intent, count]) => {
                 const max = Math.max(...Object.values(stats.por_intent) as number[])
                 const pct = max > 0 ? (count / max) * 100 : 0
                 return (
@@ -312,7 +313,7 @@ export default function DataLakePage() {
             <div className="space-y-4">
               <PipelineStep icon={<HardDrive size={16} />} label="Interacciones capturadas" value={`${formatNumber(stats.raw_data_total)} total`} status="active" />
               <PipelineStep icon={<Target size={16} />} label="Quality filtering" value={`${formatNumber(stats.training_data_total)} aprobadas`} status="active" />
-              <PipelineStep icon={<FileJson size={16} />} label="Exportadas (JSONL)" value={`${formatNumber(stats.training_exported)} samples`} status={stats.training_exported > 0 ? 'active' : 'waiting'} />
+              <PipelineStep icon={<FileJson size={16} />} label="Exportadas (JSONL)" value={`${formatNumber(stats.training_exported || 0)} samples`} status={(stats.training_exported || 0) > 0 ? 'active' : 'waiting'} />
               <PipelineStep icon={<Brain size={16} />} label="Modelos entrenados" value={`${stats.modelos_entrenados} modelos`} status={stats.modelos_entrenados > 0 ? 'active' : 'waiting'} />
               <PipelineStep icon={<Zap size={16} />} label="Modelo en producción" value={stats.ultimo_modelo?.model_name || 'GPT-4o (temporal)'} status={stats.ultimo_modelo ? 'active' : 'waiting'} />
             </div>

@@ -3,13 +3,13 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchAppointments, updateAppointmentStatus, createAppointment, fetchPatients, fetchServicesCatalog, timeAgo } from '@/lib/api'
-import type { Appointment } from '@/types'
+import type { Appointment, Patient, ServiceCatalog } from '@/types'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
   User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus
 } from 'lucide-react'
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof CheckCircle }> = {
   CONFIRMED: { label: 'Confirmada', color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20', icon: CheckCircle },
   COMPLETED: { label: 'Completada', color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', icon: CheckCircle },
   CANCELLED: { label: 'Cancelada', color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20', icon: XCircle },
@@ -32,8 +32,8 @@ export default function CalendarioPage() {
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null)
   const [showNewAppt, setShowNewAppt] = useState(false)
-  const [patients, setPatients] = useState<any[]>([])
-  const [services, setServices] = useState<any[]>([])
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [services, setServices] = useState<ServiceCatalog[]>([])
   const [newAppt, setNewAppt] = useState({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
 
   // Close modal on Escape
@@ -71,7 +71,7 @@ export default function CalendarioPage() {
         to: toDate.toISOString(),
         status: statusFilter || undefined,
       })
-      setAppointments(data as any[])
+      setAppointments(data as unknown as Appointment[])
     } catch (e) {
       console.error(e)
     }
@@ -237,14 +237,14 @@ export default function CalendarioPage() {
               <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Paciente *</label>
               <select value={newAppt.patient_id} onChange={(e) => setNewAppt({...newAppt, patient_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
                 <option value="">Seleccionar...</option>
-                {patients.map((p: any) => <option key={p.id} value={p.id}>{p.full_name} — {p.phone}</option>)}
+                {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} — {p.phone}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Servicio *</label>
               <select value={newAppt.service_name} onChange={(e) => setNewAppt({...newAppt, service_name: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
                 <option value="">Seleccionar...</option>
-                {services.map((s: any) => <option key={s.id} value={s.name}>{s.name}</option>)}
+                {services.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
               </select>
             </div>
             <div>
@@ -298,7 +298,7 @@ export default function CalendarioPage() {
                   {dayAppts.slice(0, viewMode === 'week' ? 20 : 3).map((appt) => {
                     const cfg = STATUS_CONFIG[appt.status] || STATUS_CONFIG.REQUESTED
                     const time = new Date(appt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })
-                    const patientName = (appt.patients as any)?.full_name || 'Sin nombre'
+                    const patientName = appt.patients?.full_name || 'Sin nombre'
                     return (
                       <button
                         key={appt.id}
@@ -356,7 +356,7 @@ export default function CalendarioPage() {
             })()}
 
             <div className="space-y-3">
-              <ApptRow icon={<User size={14} />} label="Paciente" value={(selectedAppt.patients as any)?.full_name || 'Sin nombre'} />
+              <ApptRow icon={<User size={14} />} label="Paciente" value={selectedAppt.patients?.full_name || 'Sin nombre'} />
               <ApptRow icon={<CalIcon size={14} />} label="Fecha" value={new Date(selectedAppt.start_time).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} />
               <ApptRow icon={<Clock size={14} />} label="Hora" value={`${new Date(selectedAppt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })} — ${new Date(selectedAppt.end_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}`} />
               <ApptRow icon={<Eye size={14} />} label="Servicio" value={selectedAppt.service_name || '—'} />

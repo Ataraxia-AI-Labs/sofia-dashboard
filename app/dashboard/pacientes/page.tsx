@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, fetchPatientMedia, createPatient, updatePatient, createStaffNote, createTreatment, exportPatientsCSV, sendWhatsAppMessage, formatCOP, formatNumber, formatPercent, timeAgo } from '@/lib/api'
-import type { Patient } from '@/types'
+import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
 import {
   Search, Filter, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
   Phone, Mail, MapPin, Calendar, TrendingUp, Brain, X, MessageSquare,
@@ -30,18 +30,18 @@ export default function PacientesPage() {
   const [page, setPage] = useState(0)
   const [sortBy, setSortBy] = useState('created_at')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
-  const [selectedPatient, setSelectedPatient] = useState<any>(null)
-  const [mlFeatures, setMlFeatures] = useState<any>(null)
+  const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(null)
+  const [mlFeatures, setMlFeatures] = useState<PatientMLFeatures | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [showNewPatient, setShowNewPatient] = useState(false)
   const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
-  const [staffNotes, setStaffNotes] = useState<any[]>([])
-  const [treatments, setTreatments] = useState<any[]>([])
+  const [staffNotes, setStaffNotes] = useState<StaffNote[]>([])
+  const [treatments, setTreatments] = useState<Treatment[]>([])
   const [newNote, setNewNote] = useState('')
   const [savingNote, setSavingNote] = useState(false)
   const [editingPatient, setEditingPatient] = useState(false)
-  const [editData, setEditData] = useState<any>({})
-  const [patientMedia, setPatientMedia] = useState<any[]>([])
+  const [editData, setEditData] = useState<Partial<PatientDetail>>({})
+  const [patientMedia, setPatientMedia] = useState<PatientMedia[]>([])
   const [showWhatsApp, setShowWhatsApp] = useState(false)
   const [waMessage, setWaMessage] = useState('')
   const [sendingWa, setSendingWa] = useState(false)
@@ -95,7 +95,7 @@ export default function PacientesPage() {
   useEffect(() => { setPage(0) }, [searchDebounced])
 
   const openDetail = async (patient: Patient) => {
-    setSelectedPatient(patient)
+    setSelectedPatient(patient as PatientDetail)
     setDetailLoading(true)
     setMlFeatures(null)
     setStaffNotes([])
@@ -561,7 +561,7 @@ export default function PacientesPage() {
                   {treatments.length > 0 && (
                     <div className="glass-card p-4 space-y-3">
                       <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Tratamientos Activos</h4>
-                      {treatments.map((t: any) => (
+                      {treatments.map((t) => (
                         <div key={t.id} className={`bg-void/50 rounded-lg px-3 py-2 ${t.status !== 'ACTIVE' ? 'opacity-50' : ''}`}>
                           <div className="flex justify-between items-center">
                             <span className="text-xs font-semibold text-text-primary">{t.treatment_name}</span>
@@ -594,8 +594,8 @@ export default function PacientesPage() {
                           <MLStat label="Interacciones" value={mlFeatures.total_interactions} />
                           <MLStat label="Mensajes in" value={mlFeatures.total_inbound} />
                           <MLStat label="Mensajes out" value={mlFeatures.total_outbound} />
-                          <MLStat label="Hora preferida" value={`${mlFeatures.preferred_hour}:00`} />
-                          <MLStat label="Día preferido" value={['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][mlFeatures.preferred_day] || '—'} />
+                          <MLStat label="Hora preferida" value={mlFeatures.preferred_hour != null ? `${mlFeatures.preferred_hour}:00` : '—'} />
+                          <MLStat label="Día preferido" value={mlFeatures.preferred_day != null ? (['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][mlFeatures.preferred_day] || '—') : '—'} />
                           <MLStat label="Días sin contacto" value={mlFeatures.days_since_last_contact} />
                         </div>
                       </div>
@@ -608,8 +608,8 @@ export default function PacientesPage() {
                           <MLStat label="Completadas" value={mlFeatures.completed_appointments} color="text-status-success" />
                           <MLStat label="Canceladas" value={mlFeatures.cancelled_appointments} color="text-status-danger" />
                           <MLStat label="No-Show" value={mlFeatures.no_show_appointments} color="text-status-warning" />
-                          <MLStat label="Conversión" value={formatPercent(mlFeatures.conversion_rate * 100)} />
-                          <MLStat label="Asistencia" value={formatPercent(mlFeatures.show_rate * 100)} />
+                          <MLStat label="Conversión" value={formatPercent((mlFeatures.conversion_rate ?? 0) * 100)} />
+                          <MLStat label="Asistencia" value={formatPercent((mlFeatures.show_rate ?? 0) * 100)} />
                         </div>
                       </div>
 
@@ -617,10 +617,10 @@ export default function PacientesPage() {
                       <div>
                         <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Revenue</p>
                         <div className="grid grid-cols-3 gap-2">
-                          <MLStat label="Total" value={formatCOP(mlFeatures.total_revenue)} color="text-status-success" />
+                          <MLStat label="Total" value={formatCOP(mlFeatures.total_revenue ?? 0)} color="text-status-success" />
                           <MLStat label="Transacciones" value={mlFeatures.total_transactions} />
-                          <MLStat label="Ticket avg" value={formatCOP(mlFeatures.avg_transaction_value)} />
-                          <MLStat label="LTV" value={formatCOP(mlFeatures.lifetime_value)} color="text-brand-purple" />
+                          <MLStat label="Ticket avg" value={formatCOP(mlFeatures.avg_transaction_value ?? 0)} />
+                          <MLStat label="LTV" value={formatCOP(mlFeatures.lifetime_value ?? 0)} color="text-brand-purple" />
                         </div>
                       </div>
 
@@ -628,10 +628,10 @@ export default function PacientesPage() {
                       <div>
                         <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Predicciones IA</p>
                         <div className="grid grid-cols-2 gap-2">
-                          <PredictionBar label="Probabilidad Conversión" value={mlFeatures.conversion_probability} color="bg-status-success" />
-                          <PredictionBar label="Riesgo de Churn" value={mlFeatures.churn_probability} color="bg-status-danger" />
-                          <PredictionBar label="Riesgo No-Show" value={mlFeatures.no_show_probability} color="bg-status-warning" />
-                          <PredictionBar label="LTV Predicho" value={mlFeatures.predicted_ltv > 0 ? Math.min(mlFeatures.predicted_ltv / 5000000, 1) : 0} color="bg-brand-purple" extra={formatCOP(mlFeatures.predicted_ltv)} />
+                          <PredictionBar label="Probabilidad Conversión" value={mlFeatures.conversion_probability ?? 0} color="bg-status-success" />
+                          <PredictionBar label="Riesgo de Churn" value={mlFeatures.churn_probability ?? 0} color="bg-status-danger" />
+                          <PredictionBar label="Riesgo No-Show" value={mlFeatures.no_show_probability ?? 0} color="bg-status-warning" />
+                          <PredictionBar label="LTV Predicho" value={(mlFeatures.predicted_ltv ?? 0) > 0 ? Math.min((mlFeatures.predicted_ltv ?? 0) / 5000000, 1) : 0} color="bg-brand-purple" extra={formatCOP(mlFeatures.predicted_ltv ?? 0)} />
                         </div>
                       </div>
 
@@ -639,9 +639,9 @@ export default function PacientesPage() {
                       <div>
                         <p className="text-[10px] text-text-dim uppercase tracking-wider mb-2">Sentiment</p>
                         <div className="grid grid-cols-3 gap-2">
-                          <MLStat label="Promedio" value={mlFeatures.avg_sentiment?.toFixed(2)} color={mlFeatures.avg_sentiment >= 0 ? 'text-status-success' : 'text-status-danger'} />
-                          <MLStat label="Tendencia" value={mlFeatures.sentiment_trend?.toFixed(2)} color={mlFeatures.sentiment_trend >= 0 ? 'text-status-success' : 'text-status-danger'} />
-                          <MLStat label="Quejas" value={mlFeatures.complaint_count} color={mlFeatures.complaint_count > 0 ? 'text-status-danger' : 'text-text-muted'} />
+                          <MLStat label="Promedio" value={mlFeatures.avg_sentiment?.toFixed(2)} color={(mlFeatures.avg_sentiment ?? 0) >= 0 ? 'text-status-success' : 'text-status-danger'} />
+                          <MLStat label="Tendencia" value={mlFeatures.sentiment_trend?.toFixed(2)} color={(mlFeatures.sentiment_trend ?? 0) >= 0 ? 'text-status-success' : 'text-status-danger'} />
+                          <MLStat label="Quejas" value={mlFeatures.complaint_count} color={(mlFeatures.complaint_count ?? 0) > 0 ? 'text-status-danger' : 'text-text-muted'} />
                         </div>
                       </div>
 
@@ -679,7 +679,7 @@ export default function PacientesPage() {
                     </div>
                     {staffNotes.length > 0 ? (
                       <div className="space-y-2 max-h-80 overflow-y-auto">
-                        {staffNotes.map((n: any) => (
+                        {staffNotes.map((n) => (
                           <div key={n.id} className="bg-void/50 rounded-lg px-3 py-2">
                             <p className="text-xs text-text-primary">{n.note_content}</p>
                             <p className="text-[9px] text-text-dim mt-1">{timeAgo(n.created_at)}</p>
@@ -698,7 +698,7 @@ export default function PacientesPage() {
                     <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Archivos Multimedia</h4>
                     {patientMedia.length > 0 ? (
                       <div className="space-y-2 max-h-80 overflow-y-auto">
-                        {patientMedia.map((m: any) => (
+                        {patientMedia.map((m) => (
                           <div key={m.id} className="bg-void/50 rounded-lg px-3 py-2.5 flex items-start gap-3">
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                               m.content_type === 'AUDIO' ? 'bg-status-info/10 text-status-info' :
@@ -765,7 +765,7 @@ function MiniMetric({ label, value, color }: { label: string; value: string; col
   )
 }
 
-function MLStat({ label, value, color }: { label: string; value: any; color?: string }) {
+function MLStat({ label, value, color }: { label: string; value: string | number | null | undefined; color?: string }) {
   return (
     <div className="bg-void/50 rounded-lg px-2.5 py-1.5">
       <div className="text-[9px] text-text-dim">{label}</div>

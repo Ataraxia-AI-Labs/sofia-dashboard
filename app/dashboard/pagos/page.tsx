@@ -4,10 +4,10 @@ import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { API_URL } from '@/lib/supabase'
 import { formatCOP, timeAgo } from '@/lib/api'
+import type { Payment, RevenueAttribution } from '@/types'
 import {
-  DollarSign, CreditCard, TrendingUp, Clock, ArrowRight,
-  RefreshCw, ExternalLink, BarChart3, Zap,
-  CheckCircle, XCircle, AlertTriangle
+  DollarSign, CreditCard, TrendingUp, Clock,
+  RefreshCw, ExternalLink, BarChart3, Zap
 } from 'lucide-react'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -21,8 +21,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export default function PagosPage() {
   const { orgId } = useOrg()
-  const [payments, setPayments] = useState<any[]>([])
-  const [attribution, setAttribution] = useState<any>(null)
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [attribution, setAttribution] = useState<RevenueAttribution | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'pagos' | 'attribution'>('pagos')
   const [statusFilter, setStatusFilter] = useState('')
@@ -44,8 +44,8 @@ export default function PagosPage() {
 
   useEffect(() => { loadData() }, [loadData])
 
-  const resumen = attribution?.resumen || {}
-  const attr = attribution?.attribution || {}
+  const resumen = attribution?.resumen ?? {} as RevenueAttribution['resumen']
+  const attr = attribution?.attribution ?? {} as RevenueAttribution['attribution']
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -188,7 +188,7 @@ export default function PagosPage() {
               <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Revenue por Canal</h3>
               {Object.keys(attr.por_canal || {}).length > 0 ? (
                 <div className="space-y-3">
-                  {Object.entries(attr.por_canal).sort(([,a]: any, [,b]: any) => b - a).map(([canal, amount]: any) => {
+                  {Object.entries(attr.por_canal).sort(([, a], [, b]) => (b as number) - (a as number)).map(([canal, amount]) => {
                     const max = Math.max(...Object.values(attr.por_canal) as number[])
                     const pct = max > 0 ? (amount / max) * 100 : 0
                     return (
@@ -213,7 +213,7 @@ export default function PagosPage() {
               <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Revenue por Servicio</h3>
               {Object.keys(attr.por_servicio || {}).length > 0 ? (
                 <div className="space-y-3">
-                  {Object.entries(attr.por_servicio).sort(([,a]: any, [,b]: any) => b - a).map(([svc, amount]: any) => {
+                  {Object.entries(attr.por_servicio).sort(([, a], [, b]) => (b as number) - (a as number)).map(([svc, amount]) => {
                     const max = Math.max(...Object.values(attr.por_servicio) as number[])
                     const pct = max > 0 ? (amount / max) * 100 : 0
                     return (
@@ -240,7 +240,7 @@ export default function PagosPage() {
             <div className="glass-card p-5">
               <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Revenue por Día de la Semana</h3>
               <div className="flex items-end gap-2 h-32">
-                {Object.entries(attr.por_dia || {}).map(([day, amount]: any) => {
+                {Object.entries(attr.por_dia || {}).map(([day, amount]) => {
                   const max = Math.max(...Object.values(attr.por_dia || {}) as number[], 1)
                   const pct = (amount / max) * 100
                   return (
@@ -279,11 +279,11 @@ export default function PagosPage() {
           </div>
 
           {/* Top Conversaciones */}
-          {attribution.top_conversaciones?.length > 0 && (
+          {(attribution.top_conversaciones?.length ?? 0) > 0 && (
             <div className="glass-card p-5">
               <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">🎯 Conversaciones que Generaron Revenue</h3>
               <div className="space-y-3">
-                {attribution.top_conversaciones.map((conv: any, i: number) => (
+                {attribution.top_conversaciones!.map((conv, i) => (
                   <div key={i} className="bg-void/50 rounded-lg px-4 py-3 flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

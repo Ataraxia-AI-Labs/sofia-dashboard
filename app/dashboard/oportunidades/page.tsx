@@ -7,11 +7,11 @@ import { supabase } from '@/lib/supabase'
 import type { Opportunity } from '@/types'
 import {
   Target, DollarSign, TrendingUp, Clock, User, Phone,
-  RefreshCw, Filter, ChevronDown, Check, X, Zap, AlertTriangle,
+  RefreshCw, Check, Zap, AlertTriangle,
   Heart, ArrowUpRight, UserPlus, ShoppingBag, Flame, RotateCcw
 } from 'lucide-react'
 
-const OPP_CONFIG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
+const OPP_CONFIG: Record<string, { label: string; icon: typeof Flame; color: string; bg: string }> = {
   HOT_LEAD:           { label: 'Lead Caliente', icon: Flame, color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20' },
   UPSELL:             { label: 'Upsell', icon: ArrowUpRight, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
   WINBACK:            { label: 'Reactivación', icon: RotateCcw, color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20' },
