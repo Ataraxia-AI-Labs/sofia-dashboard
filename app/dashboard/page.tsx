@@ -46,10 +46,11 @@ export default function DashboardOverview() {
   const [days, setDays] = useState(30)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (retryCount = 0) => {
     if (!orgId) return
     try {
       setLoading(true)
+      if (retryCount > 0) setError('Conectando con el servidor...')
       const [analytics, voiceData] = await Promise.all([
         fetchFullAnalytics(orgId, days, branchId),
         fetchVoiceMetrics(orgId, days, branchId),
@@ -59,7 +60,13 @@ export default function DashboardOverview() {
       setLastUpdate(new Date())
       setError('')
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error desconocido')
+      const msg = e instanceof Error ? e.message : 'Error desconocido'
+      if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502'))) {
+        setError('Conectando con el servidor... (reintentando)')
+        setTimeout(() => loadData(retryCount + 1), 10000)
+        return
+      }
+      setError(msg)
     } finally {
       setLoading(false)
     }
@@ -97,7 +104,7 @@ export default function DashboardOverview() {
           <span className="font-semibold">Error cargando métricas</span>
         </div>
         <p className="text-text-muted text-sm">{error}</p>
-        <button onClick={loadData} className="mt-4 px-4 py-2 rounded-lg bg-brand-purple/10 text-brand-purple text-sm hover:bg-brand-purple/20 transition-colors">
+        <button onClick={() => loadData()} className="mt-4 px-4 py-2 rounded-lg bg-brand-purple/10 text-brand-purple text-sm hover:bg-brand-purple/20 transition-colors">
           Reintentar
         </button>
       </div>
@@ -142,7 +149,7 @@ export default function DashboardOverview() {
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={() => loadData()} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
           {[7, 30, 90].map((d) => (

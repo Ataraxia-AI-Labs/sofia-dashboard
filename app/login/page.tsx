@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Eye, EyeOff, ArrowRight, Zap } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
@@ -37,7 +38,8 @@ export default function LoginPage() {
       }
 
       console.log('[LOGIN] Success — user:', data.user?.id, 'session:', !!data.session)
-      router.replace('/dashboard')
+      const redirect = searchParams.get('redirect') || '/dashboard'
+      router.replace(redirect)
     } catch (err) {
       console.error('[LOGIN] Unexpected error:', err)
       setError('Error de conexión. Verifica tu internet e intenta de nuevo.')

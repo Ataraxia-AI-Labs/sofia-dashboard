@@ -102,7 +102,7 @@ export default function CalendarioPage() {
     if (orgId && patients.length === 0) {
       try {
         const [pats, svcs] = await Promise.all([
-          fetchPatients(orgId, { limit: 100 }),
+          fetchPatients(orgId, { limit: 500 }),
           fetchServicesCatalog(orgId),
         ])
         setPatients(pats.patients || [])
