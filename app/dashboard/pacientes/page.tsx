@@ -110,18 +110,18 @@ export default function PacientesPage() {
     setShowTreatmentForm(false)
     setDetailTab('info')
     try {
-      const [detail, ml, notes, treats, media] = await Promise.all([
+      const [detail, ml, notes, treats, media] = await Promise.allSettled([
         fetchPatientDetail(patient.id),
         fetchPatientMLFeatures(patient.id),
         fetchStaffNotes(patient.id),
         fetchPatientTreatments(patient.id),
         fetchPatientMedia(patient.id),
       ])
-      setSelectedPatient(detail)
-      setMlFeatures(ml)
-      setStaffNotes(notes)
-      setTreatments(treats)
-      setPatientMedia(media)
+      if (detail.status === 'fulfilled') setSelectedPatient(detail.value)
+      if (ml.status === 'fulfilled') setMlFeatures(ml.value)
+      if (notes.status === 'fulfilled') setStaffNotes(notes.value)
+      if (treats.status === 'fulfilled') setTreatments(treats.value)
+      if (media.status === 'fulfilled') setPatientMedia(media.value)
     } catch (e) {
       console.error(e)
     }

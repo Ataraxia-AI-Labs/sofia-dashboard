@@ -763,7 +763,7 @@ export async function fetchPipelineData(orgId: string, branchId?: string | null)
 // ============================================================
 
 export function formatCOP(n: number): string {
-  if (!n && n !== 0) return '$0'
+  if (n == null || Number.isNaN(n)) return '$0'
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
   if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`
   return `$${n.toLocaleString('es-CO')}`

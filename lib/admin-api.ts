@@ -330,12 +330,18 @@ export interface ActivityLogEntry {
 export async function fetchOrgActivityLog(orgId: string, limit: number = 50): Promise<ActivityLogEntry[]> {
   const { data, error } = await supabase
     .from('interaction_logs')
-    .select('id, channel, intent, created_at, patient_phone')
+    .select('id, platform, ai_analysis, created_at, network_info')
     .eq('organization_id', orgId)
     .order('created_at', { ascending: false })
     .limit(limit)
   if (error) return []
-  return (data || []) as ActivityLogEntry[]
+  return (data || []).map((d: Record<string, unknown>) => ({
+    id: d.id as string,
+    channel: (d.platform as string) || 'UNKNOWN',
+    intent: (d.ai_analysis as Record<string, unknown>)?.intent as string || '',
+    created_at: d.created_at as string,
+    patient_phone: (d.network_info as Record<string, unknown>)?.phone as string || undefined,
+  }))
 }
 
 // ============================================================
