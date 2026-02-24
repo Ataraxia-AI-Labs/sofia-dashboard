@@ -347,18 +347,18 @@ export async function fetchOrgActivityLog(orgId: string, limit: number = 50): Pr
 
 export interface BotLogEntry {
   id: string
-  bot_type: string
+  bot_name: string
   status: string
-  organization_id: string
   details: Record<string, unknown> | null
-  created_at: string
+  error_message: string | null
+  executed_at: string
 }
 
 export async function fetchBotLogs(limit: number = 50): Promise<BotLogEntry[]> {
   const { data, error } = await supabase
     .from('bot_execution_logs')
-    .select('id, bot_type, status, organization_id, details, created_at')
-    .order('created_at', { ascending: false })
+    .select('id, bot_name, status, details, error_message, executed_at')
+    .order('executed_at', { ascending: false })
     .limit(limit)
   if (error) return []
   return (data || []) as BotLogEntry[]
@@ -370,7 +370,7 @@ export async function fetchBotErrorCount24h(): Promise<number> {
     .from('bot_execution_logs')
     .select('id', { count: 'exact', head: true })
     .eq('status', 'ERROR')
-    .gte('created_at', since)
+    .gte('executed_at', since)
   return count || 0
 }
 

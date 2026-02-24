@@ -104,11 +104,11 @@ export default function AdminHealthPage() {
 
   const statusCfg = STATUS_CONFIG[overallStatus] || STATUS_CONFIG.CRITICAL
 
-  // Group bot logs by bot_type to find last execution of each
+  // Group bot logs by bot_name to find last execution of each
   const lastBotExecution = new Map<string, BotLogEntry>()
   for (const log of botLogs) {
-    if (!lastBotExecution.has(log.bot_type)) {
-      lastBotExecution.set(log.bot_type, log)
+    if (!lastBotExecution.has(log.bot_name)) {
+      lastBotExecution.set(log.bot_name, log)
     }
   }
 
@@ -220,7 +220,7 @@ export default function AdminHealthPage() {
                         {log.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-xs text-text-muted">{timeAgo(log.created_at)}</td>
+                    <td className="px-5 py-3 text-xs text-text-muted">{timeAgo(log.executed_at)}</td>
                   </tr>
                 ))
               )}
@@ -242,20 +242,20 @@ export default function AdminHealthPage() {
                 <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
                 <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Bot</th>
                 <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Org ID</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Error</th>
               </tr>
             </thead>
             <tbody>
               {botLogs.map(log => (
                 <tr key={log.id} className="border-b border-border/50 hover:bg-surface-3/50">
-                  <td className="px-4 py-2 text-xs text-text-muted whitespace-nowrap">{timeAgo(log.created_at)}</td>
-                  <td className="px-4 py-2 text-xs text-text-primary">{log.bot_type}</td>
+                  <td className="px-4 py-2 text-xs text-text-muted whitespace-nowrap">{timeAgo(log.executed_at)}</td>
+                  <td className="px-4 py-2 text-xs text-text-primary">{log.bot_name}</td>
                   <td className="px-4 py-2">
                     <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
                       {log.status}
                     </span>
                   </td>
-                  <td className="px-4 py-2 text-[10px] font-mono text-text-dim">{log.organization_id?.slice(0, 8)}...</td>
+                  <td className="px-4 py-2 text-[10px] font-mono text-text-dim">{log.error_message || '—'}</td>
                 </tr>
               ))}
             </tbody>
