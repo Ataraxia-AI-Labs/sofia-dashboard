@@ -28,14 +28,12 @@ function LoginForm() {
     setError('')
 
     try {
-      console.log('[LOGIN] Attempting signInWithPassword for:', email.trim())
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
       })
 
       if (authError) {
-        console.error('[LOGIN] Auth error:', authError.message, authError.status)
         setError(
           authError.message === 'Invalid login credentials'
             ? 'Email o contraseña incorrectos'
@@ -45,13 +43,11 @@ function LoginForm() {
         return
       }
 
-      console.log('[LOGIN] Success — user:', data.user?.id, 'session:', !!data.session)
       const rawRedirect = searchParams.get('redirect') || '/dashboard'
       // Prevent open redirect: only allow relative paths
       const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
       router.replace(redirect)
-    } catch (err) {
-      console.error('[LOGIN] Unexpected error:', err)
+    } catch {
       setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
       setLoading(false)
     }

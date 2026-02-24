@@ -75,8 +75,8 @@ export default function CalendarioPage() {
         branchId,
       })
       setAppointments(data as unknown as Appointment[])
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Appointments load failed — UI will show empty calendar
     }
     setLoading(false)
   }, [orgId, fromDate, toDate, statusFilter, branchId])
@@ -107,7 +107,7 @@ export default function CalendarioPage() {
         ])
         setPatients(pats.patients || [])
         setServices(svcs || [])
-      } catch (e) { console.error(e) }
+      } catch { /* Failed to load patients/services for form */ }
     }
   }
 
@@ -122,7 +122,7 @@ export default function CalendarioPage() {
       setShowNewAppt(false)
       setNewAppt({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
       loadAppointments()
-    } catch (e) { console.error(e) }
+    } catch { /* Appointment creation failed */ }
   }
 
   const navigate = (dir: number) => {

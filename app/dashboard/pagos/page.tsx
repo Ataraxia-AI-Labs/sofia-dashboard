@@ -38,8 +38,8 @@ export default function PagosPage() {
       ])
       setPayments(paymentsRes.payments || [])
       setAttribution(attrRes)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Payments load failed — UI will show empty state
     }
     setLoading(false)
   }, [orgId, statusFilter, branchId])

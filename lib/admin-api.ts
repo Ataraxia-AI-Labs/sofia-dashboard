@@ -19,7 +19,7 @@ export function isSuperAdmin(user: User): boolean {
 }
 
 // ============================================================
-// ORGANIZATIONS — List all (via org_users join)
+// ORGANIZATIONS — List all (via org_members join)
 // ============================================================
 
 export interface AdminOrgRow {
@@ -43,12 +43,13 @@ export async function fetchAllOrganizations(): Promise<AdminOrgRow[]> {
 
   // Get all orgs the user belongs to
   const { data: memberships, error } = await supabase
-    .from('org_users')
+    .from('org_members')
     .select('organization_id, role, organizations(id, name, status, created_at, whatsapp_phone_id, config_settings)')
     .eq('user_id', session.user.id)
+    .eq('is_active', true)
 
   if (error) {
-    console.error('Error fetching admin orgs:', error.message)
+    if (process.env.NODE_ENV === 'development') console.error('Error fetching admin orgs:', error.message)
     return []
   }
 
@@ -134,13 +135,13 @@ export async function fetchGlobalMetrics(orgIds: string[]) {
 }
 
 // ============================================================
-// ORG USERS — List members
+// ORG MEMBERS — List members
 // ============================================================
 
 export async function fetchOrgUsers(orgId: string) {
   const { data, error } = await supabase
-    .from('org_users')
-    .select('id, user_id, role, created_at')
+    .from('org_members')
+    .select('id, user_id, role, is_active, created_at')
     .eq('organization_id', orgId)
   if (error) throw error
   return data || []
@@ -213,18 +214,18 @@ export async function createOrganizationFull(input: CreateOrgInput): Promise<{ o
 
   const orgId = org.id
 
-  // Step 3: Create org_users mapping (owner)
+  // Step 3: Create org_members mapping (owner)
   const { error: mappingError } = await supabase
-    .from('org_users')
-    .insert({ organization_id: orgId, user_id: userId, role: 'OWNER' })
+    .from('org_members')
+    .insert({ organization_id: orgId, user_id: userId, role: 'OWNER', is_active: true })
   if (mappingError) throw new Error(`Error asignando rol: ${mappingError.message}`)
 
-  // Step 4: Also add current super admin to org_users
+  // Step 4: Also add current super admin to org_members
   const { data: { session } } = await supabase.auth.getSession()
   if (session && session.user.id !== userId) {
     await supabase
-      .from('org_users')
-      .insert({ organization_id: orgId, user_id: session.user.id, role: 'ADMIN' })
+      .from('org_members')
+      .insert({ organization_id: orgId, user_id: session.user.id, role: 'ADMIN', is_active: true })
   }
 
   // Step 5: Create default business hours (Mon-Fri 8-18, Sat 8-13)

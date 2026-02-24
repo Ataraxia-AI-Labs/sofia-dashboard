@@ -54,8 +54,8 @@ export default function AdminPage() {
         const m = await fetchGlobalMetrics(orgIds)
         setMetrics(m)
       }
-    } catch (e) {
-      console.error('Error loading admin data:', e)
+    } catch {
+      // Admin data load failed — UI will show empty state
     }
     setLoading(false)
 
@@ -81,8 +81,8 @@ export default function AdminPage() {
         })
       )
       setOrgs(withStats)
-    } catch (e) {
-      console.error('Error loading org stats:', e)
+    } catch {
+      // Org stats load failed — will show partial data
     }
     setStatsLoading(false)
   }, [])

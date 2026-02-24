@@ -42,8 +42,8 @@ export default function OportunidadesPage() {
     try {
       const data = await fetchOpportunities(orgId, statusFilter || undefined, branchId)
       setOpportunities(data as unknown as Opportunity[])
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Opportunities load failed — UI will show empty state
     }
     setLoading(false)
   }, [orgId, statusFilter, branchId])
@@ -58,8 +58,8 @@ export default function OportunidadesPage() {
 
       await supabase.from('detected_opportunities').update(updateData).eq('id', oppId)
       loadData()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Status update failed — user can retry
     }
   }
 

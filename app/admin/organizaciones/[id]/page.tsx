@@ -84,8 +84,7 @@ export default function OrgDetailPage() {
       setEditPlan((orgData.config_settings as Record<string, unknown>)?.plan as string || 'TRIAL')
       setEditPrompt(orgData.system_prompt || '')
       setEditWhatsApp(orgData.whatsapp_phone_id || '')
-    } catch (e) {
-      console.error('Error loading org detail:', e)
+    } catch {
       setMessage({ type: 'error', text: 'Error cargando datos de la organización' })
     }
     setLoading(false)
@@ -148,8 +147,8 @@ export default function OrgDetailPage() {
     try {
       await deleteService(serviceId)
       loadData()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Service deletion failed silently — user can retry
     }
   }
 
@@ -157,8 +156,8 @@ export default function OrgDetailPage() {
     try {
       await updateBusinessHour(hour.id, { is_open: !hour.is_open })
       loadData()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Toggle failed silently — user can retry
     }
   }
 
@@ -166,8 +165,8 @@ export default function OrgDetailPage() {
     try {
       await updateBusinessHour(hour.id, { [field]: value })
       loadData()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Hour update failed silently — user can retry
     }
   }
 

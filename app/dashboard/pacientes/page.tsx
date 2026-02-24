@@ -86,8 +86,8 @@ export default function PacientesPage() {
       })
       setPatients(data)
       setTotal(count)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Patients load failed — UI will show empty state
     }
     setLoading(false)
   }, [orgId, page, searchDebounced, sortBy, sortDir, branchId])
@@ -122,8 +122,8 @@ export default function PacientesPage() {
       if (notes.status === 'fulfilled') setStaffNotes(notes.value)
       if (treats.status === 'fulfilled') setTreatments(treats.value)
       if (media.status === 'fulfilled') setPatientMedia(media.value)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Patient detail load failed
     }
     setDetailLoading(false)
   }
@@ -135,8 +135,8 @@ export default function PacientesPage() {
       setShowNewPatient(false)
       setNewPatient({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
       loadPatients()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Patient creation failed
     }
   }
 
@@ -147,8 +147,8 @@ export default function PacientesPage() {
       setEditingPatient(false)
       openDetail(selectedPatient)
       loadPatients()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Patient edit save failed
     }
   }
 
@@ -160,8 +160,8 @@ export default function PacientesPage() {
       setNewNote('')
       const notes = await fetchStaffNotes(selectedPatient.id)
       setStaffNotes(notes)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Note creation failed
     }
     setSavingNote(false)
   }
@@ -173,8 +173,7 @@ export default function PacientesPage() {
       await sendWhatsAppMessage(orgId, selectedPatient.phone, waMessage.trim())
       setWaMessage('')
       setShowWhatsApp(false)
-    } catch (e) {
-      console.error(e)
+    } catch {
       alert('Error enviando mensaje. Verifica que el backend tenga el endpoint /dashboard/send-message')
     }
     setSendingWa(false)
@@ -188,8 +187,8 @@ export default function PacientesPage() {
       setNewTreatment({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
       const treats = await fetchPatientTreatments(selectedPatient.id)
       setTreatments(treats)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Treatment creation failed
     }
   }
 
@@ -197,8 +196,8 @@ export default function PacientesPage() {
     if (!orgId) return
     try {
       await exportPatientsCSV(orgId)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // CSV export failed
     }
   }
 

@@ -89,8 +89,8 @@ export default function AjustesPage() {
       setTemplates(Array.isArray(tpls) ? tpls as WhatsAppTemplate[] : [])
       setServices(servData)
       setHours(hoursData)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Settings load failed — UI will show empty state
     }
     setLoading(false)
   }, [orgId])
@@ -244,8 +244,8 @@ export default function AjustesPage() {
     try {
       await updateBusinessHour(hourId, { is_active: !currentActive })
       loadData()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Toggle failed silently — user can retry
     }
   }
 
@@ -253,8 +253,8 @@ export default function AjustesPage() {
     try {
       await updateBusinessHour(hourId, { [field]: value })
       loadData()
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Hour update failed silently — user can retry
     }
   }
 

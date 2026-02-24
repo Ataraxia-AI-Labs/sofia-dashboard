@@ -99,8 +99,8 @@ export default function PipelinePage() {
     try {
       const data = await fetchPipelineData(orgId, branchId)
       setPatients(data)
-    } catch (e) {
-      console.error('Error loading pipeline:', e)
+    } catch {
+      // Pipeline load failed — UI will show empty state
     }
     setLoading(false)
   }, [orgId, branchId])

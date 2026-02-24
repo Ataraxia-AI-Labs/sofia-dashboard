@@ -47,8 +47,8 @@ export default function DataLakePage() {
       setStats(statsRes)
       setDailyData(daily)
       setTrainingReady(ready)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Data lake stats load failed — UI will show empty state
     }
     setLoading(false)
   }, [orgId, branchId])
@@ -65,8 +65,8 @@ export default function DataLakePage() {
       })
       const data = await res.json()
       setExportResult(data)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Export failed — user can retry
     }
     setExporting(false)
   }

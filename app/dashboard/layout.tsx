@@ -183,35 +183,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const init = async () => {
-      console.log('[DASHBOARD] init — checking session...')
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
-      if (sessionError) {
-        console.error('[DASHBOARD] getSession error:', sessionError.message)
-      }
+      const { data: { session } } = await supabase.auth.getSession()
 
       if (!session) {
-        console.warn('[DASHBOARD] No session found — redirecting to /login')
         router.replace('/login')
         return
       }
 
-      console.log('[DASHBOARD] Session OK — user:', session.user.id, 'email:', session.user.email)
       setUser(session.user)
 
       try {
-        console.log('[DASHBOARD] Fetching user organization...')
         const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
-        console.log('[DASHBOARD] Org result:', organization?.id, organization?.name, 'role:', userRole)
         setOrg(organization)
         setRole(userRole)
-      } catch (e) {
-        console.error('[DASHBOARD] Error fetching org:', e)
+      } catch {
+        // Organization fetch failed — will show fallback UI
       }
 
-      // Show dashboard immediately — don't block on backend calls
       setLoading(false)
-      console.log('[DASHBOARD] Init complete — loading=false')
     }
 
     init()

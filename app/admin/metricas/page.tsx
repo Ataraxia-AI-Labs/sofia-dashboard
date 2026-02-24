@@ -92,8 +92,8 @@ export default function MetricsPage() {
         }
         setGrowth(Array.from(dayMap.values()))
       }
-    } catch (e) {
-      console.error('Error loading metrics:', e)
+    } catch {
+      // Metrics load failed — UI will show empty state
     }
     setLoading(false)
   }, [])
