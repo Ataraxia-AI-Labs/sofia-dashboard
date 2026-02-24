@@ -38,6 +38,8 @@ export async function parseAPIError(res: Response): Promise<string> {
 // ============================================================
 
 export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
+  // getSession() reads from local cache (fast). The JWT is re-validated server-side
+  // by the backend's auth.py, so we don't need the overhead of getUser() here.
   const { data: { session } } = await supabase.auth.getSession()
   const headers = new Headers(options?.headers)
   if (session?.access_token) {

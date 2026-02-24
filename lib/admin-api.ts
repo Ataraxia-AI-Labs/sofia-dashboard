@@ -7,12 +7,8 @@ import type { User } from '@supabase/supabase-js'
 // SUPER ADMIN CHECK
 // ============================================================
 
-const SUPER_ADMIN_EMAIL = 'ataraxia.ia.labs@tutamail.com'
-
 export function isSuperAdmin(user: User): boolean {
-  // Primary: hardcoded super admin email
-  if (user.email?.toLowerCase() === SUPER_ADMIN_EMAIL) return true
-  // Check Supabase app_metadata (set via Supabase dashboard or admin API)
+  // Primary: Supabase app_metadata (set via Supabase dashboard or admin API)
   if (user.app_metadata?.is_super_admin === true) return true
   // Fallback: env var with comma-separated emails
   const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '')

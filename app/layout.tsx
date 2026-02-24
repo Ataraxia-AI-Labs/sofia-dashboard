@@ -1,5 +1,24 @@
 import type { Metadata, Viewport } from 'next'
+import { Outfit, JetBrains_Mono, Playfair_Display } from 'next/font/google'
 import './globals.css'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains',
+  display: 'swap',
+})
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'SofIA Dashboard — Ataraxia IA Labs',
@@ -27,7 +46,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className="dark">
+    <html lang="es" className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}>
       <body className="min-h-screen">
         {children}
       </body>

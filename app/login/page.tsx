@@ -46,7 +46,9 @@ function LoginForm() {
       }
 
       console.log('[LOGIN] Success — user:', data.user?.id, 'session:', !!data.session)
-      const redirect = searchParams.get('redirect') || '/dashboard'
+      const rawRedirect = searchParams.get('redirect') || '/dashboard'
+      // Prevent open redirect: only allow relative paths
+      const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
       router.replace(redirect)
     } catch (err) {
       console.error('[LOGIN] Unexpected error:', err)

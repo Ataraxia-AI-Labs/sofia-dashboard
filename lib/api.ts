@@ -64,7 +64,11 @@ export async function fetchPatients(orgId: string, opts?: {
   if (opts?.branchId) query = query.eq('preferred_branch_id', opts.branchId)
 
   if (opts?.search) {
-    query = query.or(`full_name.ilike.%${opts.search}%,phone.ilike.%${opts.search}%`)
+    // Sanitize: only allow alphanumeric, spaces, @, -, and basic Latin chars
+    const sanitized = opts.search.replace(/[^a-zA-Z0-9\s@\-\u00C0-\u024F]/g, '').slice(0, 100)
+    if (sanitized) {
+      query = query.or(`full_name.ilike.%${sanitized}%,phone.ilike.%${sanitized}%`)
+    }
   }
 
   query = query

@@ -32,9 +32,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        body: ['Outfit', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        display: ['var(--font-playfair)', 'Georgia', 'serif'],
+        body: ['var(--font-outfit)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-jetbrains)', 'monospace'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

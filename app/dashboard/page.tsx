@@ -4,15 +4,17 @@ import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
 import type { FullAnalytics, VoiceMetrics } from '@/types'
+import dynamic from 'next/dynamic'
 import {
   MessageSquare, Users, CalendarCheck, DollarSign, Cpu, Target,
   TrendingUp, ArrowDownRight, ArrowUpRight, Clock, Zap, AlertTriangle,
   RefreshCw, Bot, PhoneCall, Smartphone
 } from 'lucide-react'
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-  PieChart, Pie
-} from 'recharts'
+
+const LazyIntentsChart = dynamic(
+  () => import('./DashboardCharts').then(mod => ({ default: mod.IntentsChart })),
+  { ssr: false, loading: () => <div className="h-56 bg-surface-3 rounded-lg animate-pulse" /> },
+)
 
 // Opportunity type colors
 const OPP_COLORS: Record<string, string> = {
@@ -364,21 +366,7 @@ export default function DashboardOverview() {
           <SectionTitle icon={<MessageSquare size={16} />} title="Intents" />
           {intentData.length > 0 ? (
             <div className="mt-4 h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={intentData} layout="vertical" margin={{ left: 0, right: 12 }}>
-                  <XAxis type="number" hide />
-                  <YAxis type="category" dataKey="name" width={100} tick={{ fill: '#7E7A8E', fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    contentStyle={{ background: '#101018', border: '1px solid #1C1C2A', borderRadius: '12px', fontSize: '12px' }}
-                    labelStyle={{ color: '#F0EEF5' }}
-                  />
-                  <Bar dataKey="value" radius={[0, 6, 6, 0]}>
-                    {intentData.map((_, i) => (
-                      <Cell key={i} fill={i === 0 ? '#8B5CF6' : `rgba(139, 92, 246, ${0.8 - i * 0.08})`} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              <LazyIntentsChart data={intentData} />
             </div>
           ) : (
             <EmptyState />
