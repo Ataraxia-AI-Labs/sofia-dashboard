@@ -717,7 +717,7 @@ export default function PacientesPage() {
                                 <span className="text-[9px] text-text-dim">{timeAgo(m.created_at)}</span>
                               </div>
                               {m.transcription && (
-                                <p className="text-[11px] text-text-muted mt-1 line-clamp-3">🎤 "{m.transcription}"</p>
+                                <p className="text-[11px] text-text-muted mt-1 line-clamp-3">{`🎤 "${m.transcription}"`}</p>
                               )}
                               {m.content_type === 'IMAGE' && m.raw_content && (
                                 <p className="text-[11px] text-text-muted mt-1 line-clamp-2">👁 {m.raw_content.replace('[El paciente envió una FOTO. Análisis visual]: ', '')}</p>

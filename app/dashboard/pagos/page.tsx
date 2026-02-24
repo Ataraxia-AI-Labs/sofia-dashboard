@@ -292,7 +292,7 @@ export default function PagosPage() {
                         <span className="text-xs font-semibold text-text-primary">{conv.patient}</span>
                         <span className="text-[10px] text-text-dim">— {conv.service}</span>
                       </div>
-                      <p className="text-[11px] text-text-muted mt-0.5 truncate">"{conv.conversation_snippet}"</p>
+                      <p className="text-[11px] text-text-muted mt-0.5 truncate">{`"${conv.conversation_snippet}"`}</p>
                     </div>
                     <div className="text-right ml-4 flex-shrink-0">
                       <div className="text-sm font-bold text-status-success font-mono">{formatCOP(conv.payment_amount)}</div>
