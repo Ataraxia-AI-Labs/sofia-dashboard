@@ -50,20 +50,23 @@ export default function DashboardOverview() {
 
   const loadData = useCallback(async (retryCount = 0) => {
     if (!orgId) return
+    setLoading(true)
+    if (retryCount > 0) setError('Conectando con el servidor...')
+
+    // Voice metrics go directly to Supabase — always load independently
+    fetchVoiceMetrics(orgId, days, branchId)
+      .then(v => setVoice(v))
+      .catch(() => {})
+
+    // Analytics go to backend — may fail on cold start
     try {
-      setLoading(true)
-      if (retryCount > 0) setError('Conectando con el servidor...')
-      const [analytics, voiceData] = await Promise.all([
-        fetchFullAnalytics(orgId, days, branchId),
-        fetchVoiceMetrics(orgId, days, branchId),
-      ])
+      const analytics = await fetchFullAnalytics(orgId, days, branchId)
       setData(analytics)
-      setVoice(voiceData)
       setLastUpdate(new Date())
       setError('')
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Error desconocido'
-      if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502'))) {
+      if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502') || msg.includes('autenticación'))) {
         setError('Conectando con el servidor... (reintentando)')
         setTimeout(() => loadData(retryCount + 1), 10000)
         return

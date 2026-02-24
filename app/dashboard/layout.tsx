@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization, fetchBranches } from '@/lib/api'
+import { isSuperAdmin } from '@/lib/admin-api'
 import { OrgContext } from '@/lib/org-context'
 import { ErrorBoundary } from '@/components/error-boundary'
 import OnboardingWizard from '@/components/onboarding-wizard'
@@ -12,7 +13,7 @@ import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, Bell, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown
+  MapPin, ChevronDown, Shield
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -39,6 +40,7 @@ function Sidebar({
   onNavigate,
   onLogout,
   onClose,
+  showAdmin,
 }: {
   isOpen: boolean
   mobile?: boolean
@@ -47,6 +49,7 @@ function Sidebar({
   onNavigate: (href: string) => void
   onLogout: () => void
   onClose?: () => void
+  showAdmin?: boolean
 }) {
   return (
     <>
@@ -90,8 +93,18 @@ function Sidebar({
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="px-3 py-4 border-t border-border">
+      {/* Admin + Logout */}
+      <div className="px-3 py-4 border-t border-border space-y-1">
+        {showAdmin && (
+          <button
+            onClick={() => onNavigate('/admin')}
+            className={`sidebar-link w-full text-brand-purple/70 hover:text-brand-purple hover:bg-brand-purple/5 ${!isOpen ? 'justify-center' : ''}`}
+            aria-label="Super Admin"
+          >
+            <Shield size={18} className="flex-shrink-0" />
+            {isOpen && <span className="animate-fade-in">Super Admin</span>}
+          </button>
+        )}
         <button
           onClick={onLogout}
           className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
@@ -251,6 +264,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     orgName: org?.name || 'Dashboard',
     onNavigate: navigateTo,
     onLogout: handleLogout,
+    showAdmin: user ? isSuperAdmin(user) : false,
   }
 
   return (
