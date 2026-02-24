@@ -61,13 +61,12 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
       signal: options?.signal ?? controller.signal,
     })
 
-    // Global 401 — Token expired or invalid → force re-login
+    // Global 401 — Backend rejected the token.
+    // Do NOT auto-signout: the Supabase session may still be valid
+    // (backend could be deploying, cold starting, or have JWT config issues).
+    // Let the calling code handle the error gracefully.
     if (res.status === 401) {
-      await supabase.auth.signOut()
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login'
-      }
-      throw new Error('Sesión expirada. Redirigiendo al login...')
+      throw new Error('Error de autenticación con el servidor. Intenta recargar la página.')
     }
 
     // Global 403 — Access denied (e.g. user accessing another org's data)
