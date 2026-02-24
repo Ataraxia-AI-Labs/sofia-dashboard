@@ -51,15 +51,18 @@ export default function OnboardingPage() {
     setError('')
   }
 
+  const [acceptTerms, setAcceptTerms] = useState(false)
+
   const passwordsMatch = form.password === form.password_confirm
   const passwordValid = form.password.length >= 8
+  const phoneValid = /^57\d{10}$/.test(form.phone.replace(/\s/g, ''))
 
   const canProceed = () => {
     switch (step) {
       case 1: return form.clinic_name && form.specialty
-      case 2: return form.owner_name && form.owner_email && form.phone && passwordValid && passwordsMatch
+      case 2: return form.owner_name && form.owner_email && form.phone && phoneValid && passwordValid && passwordsMatch
       case 3: return true
-      case 4: return true
+      case 4: return acceptTerms
       default: return false
     }
   }
@@ -88,7 +91,12 @@ export default function OnboardingPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.detail || 'Error creando clínica')
+        const msg = data.detail || data.mensaje || 'Error creando clinica'
+        if (msg.toLowerCase().includes('already') || msg.toLowerCase().includes('duplicate') || msg.toLowerCase().includes('existe')) {
+          setError('Ya existe una cuenta con este email. Intenta iniciar sesion o usa otro email.')
+        } else {
+          setError(msg)
+        }
         setLoading(false)
         return
       }
@@ -279,8 +287,12 @@ export default function OnboardingPage() {
 
               <div>
                 <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp del doctor *</label>
-                <input type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="573001234567" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/50" />
-                <p className="text-[10px] text-text-dim mt-1">Aquí SofIA enviará alertas de emergencia y escalamiento</p>
+                <input type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="573001234567" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm font-mono outline-none transition-colors ${form.phone && !phoneValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                {form.phone && !phoneValid ? (
+                  <p className="text-[10px] text-status-danger mt-1">Formato: 57 + 10 digitos (ej: 573001234567)</p>
+                ) : (
+                  <p className="text-[10px] text-text-dim mt-1">Aqui SofIA enviara alertas de emergencia y escalamiento</p>
+                )}
               </div>
             </div>
           )}
@@ -336,10 +348,23 @@ export default function OnboardingPage() {
 
               <div className="glass-card p-4 border-brand-purple/20">
                 <p className="text-xs text-text-muted">
-                  Al confirmar se creará: organización, horarios (Lun-Sáb 8AM-6PM), 
-                  servicios de ejemplo según tu especialidad, y el system prompt personalizado para <strong>{form.clinic_name}</strong>.
+                  Al confirmar se creara: organizacion, horarios (Lun-Sab 8AM-6PM),
+                  servicios de ejemplo segun tu especialidad, y el system prompt personalizado para <strong>{form.clinic_name}</strong>.
                 </p>
               </div>
+
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-border accent-brand-purple"
+                />
+                <span className="text-xs text-text-muted leading-relaxed group-hover:text-text-primary transition-colors">
+                  Acepto los terminos de servicio y la politica de privacidad de Ataraxia IA Labs.
+                  Los datos de pacientes seran procesados conforme a la regulacion colombiana de proteccion de datos (Ley 1581 de 2012).
+                </span>
+              </label>
             </div>
           )}
 
