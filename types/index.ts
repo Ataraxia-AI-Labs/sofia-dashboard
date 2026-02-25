@@ -528,3 +528,27 @@ export interface DataLakeExportResult {
   costo_estimado_usd?: number
   recomendacion?: string
 }
+
+// ============================================================
+// INTERACTION LOGS
+// ============================================================
+
+export interface InteractionLog {
+  id: string
+  organization_id: string
+  patient_id: string
+  channel: string
+  direction: 'INBOUND' | 'OUTBOUND'
+  message_content: string
+  intent?: string
+  sentiment_score?: number
+  sentiment_label?: string
+  tools_used?: string[]
+  tokens_used?: number
+  cost_usd?: number
+  response_time_ms?: number
+  conversation_id?: string
+  created_at: string
+  // Joined from patients table (if backend returns it)
+  patients?: { full_name: string; phone: string }
+}

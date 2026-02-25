@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { API_URL, authFetch } from '@/lib/supabase'
 import { supabase } from '@/lib/supabase'
+import { fetchSystemHealth } from '@/lib/api/health'
 import { fetchBotLogs, fetchBotErrorCount24h, type BotLogEntry } from '@/lib/admin-api'
 import { timeAgo } from '@/lib/api'
 import {
@@ -12,13 +12,9 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
-interface HealthData {
-  status: string
-  error?: string
-  circuit_breakers?: Record<string, { state: string; failures: number; last_failure?: string }>
-  uptime?: number
-  version?: string
-}
+import type { SystemHealth } from '@/types'
+
+type HealthData = SystemHealth
 
 const CB_ICONS: Record<string, LucideIcon> = {
   openai: Brain,
@@ -50,9 +46,7 @@ export default function AdminHealthPage() {
 
   const loadData = useCallback(async () => {
     try {
-      // Fetch backend health
-      const res = await authFetch(`${API_URL}/health`, { timeoutMs: 10000 })
-      const data = await res.json()
+      const data = await fetchSystemHealth()
       setHealth(data)
     } catch {
       setHealth({ status: 'CRITICAL', error: 'No se pudo conectar con el backend (Render)' })
@@ -143,7 +137,7 @@ export default function AdminHealthPage() {
           <div>
             <div className="text-lg font-bold">{statusCfg.label}</div>
             <div className="text-text-dim text-xs mt-0.5">
-              {health?.uptime ? `Uptime: ${Math.floor(health.uptime / 3600)}h ${Math.floor((health.uptime % 3600) / 60)}m` : ''}
+              {health?.uptime_seconds ? `Uptime: ${Math.floor(health.uptime_seconds / 3600)}h ${Math.floor((health.uptime_seconds % 3600) / 60)}m` : (health?.uptime_human || '')}
               {health?.version ? ` · ${health.version}` : ''}
             </div>
           </div>
@@ -184,7 +178,7 @@ export default function AdminHealthPage() {
               name={name.charAt(0).toUpperCase() + name.slice(1)}
               icon={Icon}
               status={cb.state === 'CLOSED' ? 'ok' : cb.state === 'HALF_OPEN' ? 'warning' : 'error'}
-              detail={`${cbCfg.label} · ${cb.failures} fallos${cb.last_failure ? ` · Último: ${timeAgo(cb.last_failure)}` : ''}`}
+              detail={`${cbCfg.label} · ${cb.failure_count} fallos`}
             />
           )
         })}

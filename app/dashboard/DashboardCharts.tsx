@@ -2,7 +2,6 @@
 
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-  PieChart, Pie
 } from 'recharts'
 
 export function IntentsChart({ data }: { data: { name: string; value: number }[] }) {
@@ -24,6 +23,3 @@ export function IntentsChart({ data }: { data: { name: string; value: number }[]
     </ResponsiveContainer>
   )
 }
-
-// Re-export PieChart for future use
-export { PieChart, Pie }

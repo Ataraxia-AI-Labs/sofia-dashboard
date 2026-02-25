@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { API_URL, authFetch } from '@/lib/supabase'
+import { fetchSystemHealth } from '@/lib/api/health'
 import type { SystemHealth } from '@/types'
 import {
   Activity, Shield, Phone, CreditCard,
@@ -37,10 +37,9 @@ export default function SystemHealthPage() {
 
   const loadHealth = useCallback(async () => {
     try {
-      const res = await authFetch(`${API_URL}/health`)
-      const data = await res.json()
+      const data = await fetchSystemHealth()
       setHealth(data)
-    } catch (e) {
+    } catch {
       setHealth({ status: 'CRITICAL', error: 'No se pudo conectar con el backend' })
     }
     setLoading(false)

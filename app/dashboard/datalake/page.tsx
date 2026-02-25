@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { API_URL, authFetch } from '@/lib/supabase'
-import { fetchDataLakeDaily, fetchTrainingReadyCount } from '@/lib/api'
+import { fetchDataLakeStats, fetchDataLakeDaily, fetchTrainingReadyCount, exportDataLakeJSONL } from '@/lib/api/data-lake'
 import type { DataLakeStats, DataLakeExportResult } from '@/types'
 import dynamic from 'next/dynamic'
 import {
@@ -36,11 +35,8 @@ export default function DataLakePage() {
   const loadStats = useCallback(async () => {
     setLoading(true)
     try {
-      const statsUrl = branchId
-        ? `${API_URL}/data-lake/${orgId}/stats?branch_id=${branchId}`
-        : `${API_URL}/data-lake/${orgId}/stats`
       const [statsRes, daily, ready] = await Promise.all([
-        authFetch(statsUrl).then(r => r.json()),
+        fetchDataLakeStats(orgId, branchId),
         fetchDataLakeDaily(orgId, 30),
         fetchTrainingReadyCount(orgId),
       ])
@@ -59,11 +55,7 @@ export default function DataLakePage() {
     if (!orgId) return
     setExporting(true)
     try {
-      const res = await authFetch(`${API_URL}/data-lake/${orgId}/export-jsonl`, {
-        method: 'POST',
-        body: JSON.stringify({ product: 'SOFIA', min_quality: 0.7, balance_intents: true }),
-      })
-      const data = await res.json()
+      const data = await exportDataLakeJSONL(orgId)
       setExportResult(data)
     } catch {
       // Export failed — user can retry

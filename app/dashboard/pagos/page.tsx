@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { API_URL, authFetch } from '@/lib/supabase'
+import { fetchPayments as apiFetchPayments, fetchRevenueAttribution } from '@/lib/api/payments'
 import { formatCOP, timeAgo } from '@/lib/api'
 import type { Payment, RevenueAttribution } from '@/types'
 import {
@@ -30,14 +30,12 @@ export default function PagosPage() {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const paymentsUrl = `${API_URL}/payments/${orgId}${statusFilter ? `?status=${statusFilter}` : ''}`
-      const attrUrl = `${API_URL}/payments/${orgId}/attribution?dias=30`
-      const [paymentsRes, attrRes] = await Promise.all([
-        authFetch(branchId ? `${paymentsUrl}${paymentsUrl.includes('?') ? '&' : '?'}branch_id=${branchId}` : paymentsUrl).then(r => r.json()),
-        authFetch(branchId ? `${attrUrl}&branch_id=${branchId}` : attrUrl).then(r => r.json()),
+      const [paymentsData, attrData] = await Promise.all([
+        apiFetchPayments(orgId, { status: statusFilter || undefined, branchId }),
+        fetchRevenueAttribution(orgId, 30, branchId),
       ])
-      setPayments(paymentsRes.payments || [])
-      setAttribution(attrRes)
+      setPayments(paymentsData)
+      setAttribution(attrData)
     } catch {
       // Payments load failed — UI will show empty state
     }
