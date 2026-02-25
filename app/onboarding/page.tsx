@@ -1,12 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Script from 'next/script'
 import { API_URL } from '@/lib/supabase'
 import {
   ArrowRight, ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare,
-  Eye, EyeOff, ExternalLink, Shield
+  Eye, EyeOff, ExternalLink, Shield, Mail, RefreshCw
 } from 'lucide-react'
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
+
+// Cloudflare Turnstile type declarations
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (element: HTMLElement, options: Record<string, unknown>) => string
+      reset: (widgetId: string) => void
+      remove: (widgetId: string) => void
+    }
+  }
+}
 
 const SPECIALTIES = [
   { value: 'Estética y Odontología', label: 'Estética + Odontología', icon: '🦷✨' },
@@ -53,6 +67,73 @@ export default function OnboardingPage() {
 
   const [acceptTerms, setAcceptTerms] = useState(false)
 
+  // Turnstile CAPTCHA
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const turnstileRef = useRef<HTMLDivElement>(null)
+  const turnstileWidgetId = useRef<string | null>(null)
+
+  // Email verification flow
+  const [resendCooldown, setResendCooldown] = useState(0)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
+
+  // Countdown timer for resend button
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+    const timer = setInterval(() => {
+      setResendCooldown(prev => prev - 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [resendCooldown])
+
+  // Render Turnstile widget when Step 4 is active
+  const renderTurnstile = useCallback(() => {
+    if (!TURNSTILE_SITE_KEY || !turnstileRef.current) return
+    // Clean up previous widget if any
+    if (turnstileWidgetId.current !== null && window.turnstile) {
+      try { window.turnstile.remove(turnstileWidgetId.current) } catch {}
+      turnstileWidgetId.current = null
+    }
+    if (window.turnstile) {
+      turnstileWidgetId.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: 'dark',
+        callback: (token: string) => setTurnstileToken(token),
+        'expired-callback': () => setTurnstileToken(''),
+        'error-callback': () => setTurnstileToken(''),
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (step === 4 && TURNSTILE_SITE_KEY) {
+      // Small delay to let the DOM render the container
+      const t = setTimeout(renderTurnstile, 300)
+      return () => clearTimeout(t)
+    }
+  }, [step, renderTurnstile])
+
+  // Resend verification email
+  const handleResend = async () => {
+    if (resendCooldown > 0 || resendLoading) return
+    setResendLoading(true)
+    setResendSuccess(false)
+    try {
+      const res = await fetch(`${API_URL}/onboarding/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.owner_email }),
+      })
+      if (res.ok) {
+        setResendSuccess(true)
+        setResendCooldown(60)
+      }
+    } catch {
+      // Silently fail — user can retry
+    }
+    setResendLoading(false)
+  }
+
   const passwordsMatch = form.password === form.password_confirm
   const passwordValid = form.password.length >= 8
   const phoneValid = /^57\d{10}$/.test(form.phone.replace(/\s/g, ''))
@@ -62,7 +143,7 @@ export default function OnboardingPage() {
       case 1: return form.clinic_name && form.specialty
       case 2: return form.owner_name && form.owner_email && form.phone && phoneValid && passwordValid && passwordsMatch
       case 3: return true
-      case 4: return acceptTerms
+      case 4: return acceptTerms && (TURNSTILE_SITE_KEY ? !!turnstileToken : true)
       default: return false
     }
   }
@@ -72,20 +153,27 @@ export default function OnboardingPage() {
     setError('')
 
     try {
+      const payload: Record<string, unknown> = {
+        clinic_name: form.clinic_name,
+        owner_email: form.owner_email,
+        owner_name: form.owner_name,
+        password: form.password,
+        phone: form.phone,
+        city: form.city,
+        specialty: form.specialty,
+        whatsapp_phone_id: form.whatsapp_phone_id,
+        plan: 'TRIAL',
+      }
+
+      // Include Turnstile token when CAPTCHA is enabled
+      if (TURNSTILE_SITE_KEY && turnstileToken) {
+        payload.turnstile_token = turnstileToken
+      }
+
       const res = await fetch(`${API_URL}/onboarding/create-clinic`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clinic_name: form.clinic_name,
-          owner_email: form.owner_email,
-          owner_name: form.owner_name,
-          password: form.password,
-          phone: form.phone,
-          city: form.city,
-          specialty: form.specialty,
-          whatsapp_phone_id: form.whatsapp_phone_id,
-          plan: 'TRIAL',
-        }),
+        body: JSON.stringify(payload),
       })
 
       const data = await res.json()
@@ -98,13 +186,19 @@ export default function OnboardingPage() {
           setError(msg)
         }
         setLoading(false)
+        // Reset Turnstile on error so user can retry
+        if (TURNSTILE_SITE_KEY && window.turnstile && turnstileWidgetId.current !== null) {
+          window.turnstile.reset(turnstileWidgetId.current)
+          setTurnstileToken('')
+        }
         return
       }
 
       setResult(data)
       setSuccess(true)
+      setResendCooldown(60) // Start cooldown immediately after registration
     } catch (e: any) {
-      setError(e.message || 'Error de conexión')
+      setError(e.message || 'Error de conexion')
     }
 
     setLoading(false)
@@ -114,38 +208,78 @@ export default function OnboardingPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-lg w-full text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-status-success to-status-info flex items-center justify-center mx-auto mb-6">
-            <Check size={32} className="text-white" />
+          {/* Envelope icon with animated pulse ring */}
+          <div className="relative w-20 h-20 mx-auto mb-8">
+            <div className="absolute inset-0 rounded-2xl bg-brand-purple/20 animate-ping" style={{ animationDuration: '2s' }} />
+            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center">
+              <Mail size={36} className="text-white" />
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-text-primary mb-2">¡{form.clinic_name} está lista!</h1>
-          <p className="text-text-muted mb-8">SofIA ya puede atender pacientes para tu clínica.</p>
 
-          <div className="glass-card p-6 text-left space-y-3 mb-6">
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Setup completado</h3>
+          <h1 className="text-2xl font-bold text-text-primary mb-2">Revisa tu correo</h1>
+          <p className="text-text-muted mb-2 leading-relaxed">
+            Te enviamos un link de verificacion a
+          </p>
+          <p className="text-brand-purple font-semibold text-sm mb-8 break-all">
+            {form.owner_email}
+          </p>
+
+          <div className="glass-card p-5 text-left mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Mail size={14} className="text-brand-purple" />
+              </div>
+              <div>
+                <p className="text-sm text-text-primary font-medium mb-1">Verifica tu email para continuar</p>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  Revisa tu bandeja de entrada (y la carpeta de spam).
+                  Haz clic en el link de verificacion para activar tu cuenta y acceder al dashboard.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-card p-5 text-left mb-6">
+            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Tu clinica esta lista</h3>
             <div className="space-y-2">
-              <SetupItem done={true} label="Organización creada" />
-              <SetupItem done={true} label="Horarios configurados (Lun-Sáb)" />
+              <SetupItem done={true} label="Organizacion creada" />
+              <SetupItem done={true} label="Horarios configurados (Lun-Sab)" />
               <SetupItem done={true} label={`${result.setup?.services || 0} servicios de ejemplo`} />
               <SetupItem done={result.setup?.whatsapp} label="WhatsApp conectado" />
-              <SetupItem done={result.setup?.payments} label="Pagos (Wompi) configurados" />
             </div>
           </div>
 
-          <div className="glass-card p-6 text-left mb-6">
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Próximos pasos</h3>
-            <div className="space-y-2 text-sm text-text-muted">
-              {!result.setup?.whatsapp && <p>1. Conectar WhatsApp Business (Meta Cloud API)</p>}
-              <p>{result.setup?.whatsapp ? '1' : '2'}. Personalizar catálogo de servicios y precios</p>
-              <p>{result.setup?.whatsapp ? '2' : '3'}. Configurar Wompi para aceptar pagos</p>
-              <p>{result.setup?.whatsapp ? '3' : '4'}. Personalizar el system prompt de SofIA</p>
-            </div>
-          </div>
+          {/* Resend email button */}
+          <button
+            onClick={handleResend}
+            disabled={resendCooldown > 0 || resendLoading}
+            className="w-full py-3 rounded-xl bg-surface-2 border border-border text-text-muted font-semibold text-sm flex items-center justify-center gap-2 hover:border-brand-purple/30 hover:text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-3"
+          >
+            {resendLoading ? (
+              <div className="w-4 h-4 border-2 border-text-dim/30 border-t-text-muted rounded-full animate-spin" />
+            ) : (
+              <RefreshCw size={14} className={resendSuccess ? 'text-status-success' : ''} />
+            )}
+            {resendCooldown > 0
+              ? `Reenviar email (${resendCooldown}s)`
+              : resendSuccess
+                ? 'Email reenviado'
+                : 'Reenviar email de verificacion'
+            }
+          </button>
 
+          {resendSuccess && resendCooldown > 0 && (
+            <p className="text-xs text-status-success mb-3 flex items-center justify-center gap-1">
+              <Check size={12} /> Email de verificacion reenviado exitosamente
+            </p>
+          )}
+
+          {/* Go to login button */}
           <button
             onClick={() => router.push('/login')}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-brand-purple/20 transition-all"
           >
-            Ir al Dashboard <ArrowRight size={16} />
+            Ya verifique mi email <ArrowRight size={16} />
           </button>
         </div>
       </div>
@@ -154,6 +288,19 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen flex">
+      {/* Cloudflare Turnstile script — loaded only when site key is configured */}
+      {TURNSTILE_SITE_KEY && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          async
+          defer
+          onLoad={() => {
+            // If already on step 4, render immediately
+            if (step === 4) renderTurnstile()
+          }}
+        />
+      )}
+
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden bg-surface items-center justify-center">
         <div className="absolute top-1/4 -left-20 w-80 h-80 bg-brand-purple/10 rounded-full blur-[100px]" />
@@ -352,6 +499,13 @@ export default function OnboardingPage() {
                   servicios de ejemplo segun tu especialidad, y el system prompt personalizado para <strong>{form.clinic_name}</strong>.
                 </p>
               </div>
+
+              {/* Cloudflare Turnstile CAPTCHA */}
+              {TURNSTILE_SITE_KEY && (
+                <div className="flex justify-center">
+                  <div ref={turnstileRef} />
+                </div>
+              )}
 
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input

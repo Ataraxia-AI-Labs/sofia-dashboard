@@ -13,12 +13,13 @@ import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, Bell, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown, Shield
+  MapPin, ChevronDown, Shield, MessageSquare
 } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
   { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes' },
+  { href: '/dashboard/conversaciones', icon: MessageSquare, label: 'Conversaciones' },
   { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline' },
   { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario' },
   { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos' },

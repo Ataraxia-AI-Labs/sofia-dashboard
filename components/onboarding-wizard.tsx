@@ -146,6 +146,18 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
     }
   }
 
+  const handleUpdateTime = async (hour: BusinessHour, field: 'open_time' | 'close_time', value: string) => {
+    try {
+      await updateBusinessHour(hour.id, { [field]: value })
+      // Update local state immediately for responsive UX
+      setHours(prev => prev.map(h =>
+        h.id === hour.id ? { ...h, [field]: value } : h
+      ))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const handleComplete = async () => {
     setSaving(true)
     try {
@@ -337,29 +349,75 @@ FLUJO TÍPICO:
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-text-primary mb-1">Horarios de Atención</h3>
-                <p className="text-xs text-text-dim">SofIA agendará citas dentro de estos horarios</p>
+                <h3 className="text-sm font-semibold text-text-primary mb-1">Horarios de Atencion</h3>
+                <p className="text-xs text-text-dim">SofIA agendara citas dentro de estos horarios. Ajusta el horario de apertura y cierre de cada dia.</p>
               </div>
               <div className="space-y-2">
                 {hours.sort((a, b) => a.day_of_week - b.day_of_week).map(h => (
-                  <div key={h.id} className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${h.is_open ? 'bg-surface-2 border-border' : 'bg-surface-3/30 border-border/50'}`}>
-                    <div className="flex items-center gap-3">
-                      <button onClick={() => handleToggleDay(h)} className={`w-9 h-5 rounded-full transition-all relative ${h.is_open ? 'bg-status-success' : 'bg-surface-3'}`}>
-                        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${h.is_open ? 'left-4' : 'left-0.5'}`} />
-                      </button>
-                      <span className={`text-sm font-medium w-28 ${h.is_open ? 'text-text-primary' : 'text-text-dim'}`}>
-                        {DAY_NAMES[h.day_of_week]}
-                      </span>
+                  <div
+                    key={h.id}
+                    className={`p-3 rounded-xl border transition-all ${
+                      h.is_open
+                        ? 'bg-surface-2 border-border'
+                        : 'bg-surface-3/30 border-border/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleToggleDay(h)}
+                          className={`w-9 h-5 rounded-full transition-all relative flex-shrink-0 ${
+                            h.is_open ? 'bg-status-success' : 'bg-surface-3'
+                          }`}
+                          aria-label={`${h.is_open ? 'Desactivar' : 'Activar'} ${DAY_NAMES[h.day_of_week]}`}
+                        >
+                          <div
+                            className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
+                              h.is_open ? 'left-4' : 'left-0.5'
+                            }`}
+                          />
+                        </button>
+                        <span
+                          className={`text-sm font-medium w-24 ${
+                            h.is_open ? 'text-text-primary' : 'text-text-dim'
+                          }`}
+                        >
+                          {DAY_NAMES[h.day_of_week]}
+                        </span>
+                      </div>
+                      {!h.is_open && (
+                        <span className="text-xs text-text-dim">Cerrado</span>
+                      )}
                     </div>
-                    {h.is_open ? (
-                      <span className="text-xs font-mono text-text-muted">{h.open_time} — {h.close_time}</span>
-                    ) : (
-                      <span className="text-xs text-text-dim">Cerrado</span>
+
+                    {/* Time pickers — shown only when day is open */}
+                    {h.is_open && (
+                      <div className="flex items-center gap-2 mt-3 ml-12 animate-fade-in">
+                        <div className="flex items-center gap-1.5">
+                          <label className="text-[10px] text-text-dim uppercase tracking-wider font-medium w-10">Abre</label>
+                          <input
+                            type="time"
+                            value={h.open_time?.slice(0, 5) || '08:00'}
+                            onChange={(e) => handleUpdateTime(h, 'open_time', e.target.value + ':00')}
+                            className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-colors w-[100px]"
+                          />
+                        </div>
+                        <span className="text-text-dim text-xs">—</span>
+                        <div className="flex items-center gap-1.5">
+                          <label className="text-[10px] text-text-dim uppercase tracking-wider font-medium w-10">Cierra</label>
+                          <input
+                            type="time"
+                            value={h.close_time?.slice(0, 5) || '18:00'}
+                            onChange={(e) => handleUpdateTime(h, 'close_time', e.target.value + ':00')}
+                            className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-colors w-[100px]"
+                          />
+                        </div>
+                      </div>
                     )}
                   </div>
                 ))}
                 {hours.length === 0 && (
-                  <p className="text-xs text-text-dim text-center py-4">Los horarios se crearán al completar el setup</p>
+                  <p className="text-xs text-text-dim text-center py-4">Los horarios se crearan al completar el setup</p>
                 )}
               </div>
             </div>
