@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { fetchOpportunities, formatCOP, timeAgo } from '@/lib/api'
-import { supabase } from '@/lib/supabase'
+import { fetchOpportunities, updateOpportunity, formatCOP, timeAgo } from '@/lib/api'
 import type { Opportunity } from '@/types'
 import {
   Target, DollarSign, TrendingUp, Clock, User, Phone,
@@ -53,10 +52,8 @@ export default function OportunidadesPage() {
   const updateStatus = async (oppId: string, newStatus: string) => {
     try {
       const updateData: Record<string, string> = { status: newStatus }
-      if (newStatus === 'ACTED_ON') updateData.acted_on_at = new Date().toISOString()
-      if (newStatus === 'CONVERTED') updateData.converted_at = new Date().toISOString()
-
-      await supabase.from('detected_opportunities').update(updateData).eq('id', oppId)
+      if (newStatus === 'ACTED_ON') updateData.notes = `Acción tomada el ${new Date().toLocaleDateString('es-CO')}`
+      await updateOpportunity(oppId, updateData)
       loadData()
     } catch {
       // Status update failed — user can retry

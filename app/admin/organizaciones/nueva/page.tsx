@@ -234,7 +234,7 @@ export default function CreateOrgPage() {
       // Step 3: Update business hours to match wizard selection
       const existingHours = await fetchBusinessHours(orgId)
       for (const wh of wizardHours) {
-        const existing = existingHours.find(h => h.day_of_week === wh.day)
+        const existing = existingHours.find((h: { day_of_week: number }) => h.day_of_week === wh.day)
         if (existing) {
           await updateBusinessHour(existing.id, {
             is_open: wh.isOpen,
