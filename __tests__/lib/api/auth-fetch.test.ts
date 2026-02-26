@@ -8,6 +8,7 @@
 //   - Test the REAL authFetch implementation (not a re-implementation)
 // ---------------------------------------------------------------------------
 
+// @ts-expect-error — __mockSupabaseClient is exported by our manual mock (__mocks__/@supabase/ssr.ts)
 import { __mockSupabaseClient } from '@supabase/ssr'
 
 // The import resolves lib/supabase.ts which calls createBrowserClient at module level.

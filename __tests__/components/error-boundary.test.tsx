@@ -210,7 +210,7 @@ describe('ErrorBoundary', () => {
   // -----------------------------------------------------------------------
 
   it('should handle errors that occur deep in the component tree', () => {
-    function DeepChild() {
+    function DeepChild(): React.ReactElement {
       throw new Error('Deep tree error')
     }
 
