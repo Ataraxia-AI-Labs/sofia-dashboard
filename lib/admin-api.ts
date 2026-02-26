@@ -8,14 +8,9 @@ import type { User } from '@supabase/supabase-js'
 // ============================================================
 
 export function isSuperAdmin(user: User): boolean {
-  // Primary: Supabase app_metadata (set via Supabase dashboard or admin API)
-  if (user.app_metadata?.is_super_admin === true) return true
-  // Fallback: env var with comma-separated emails
-  const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '')
-    .split(',')
-    .map(e => e.trim().toLowerCase())
-    .filter(Boolean)
-  return adminEmails.includes(user.email?.toLowerCase() || '')
+  // C-02: Only trust server-side app_metadata (set via Supabase dashboard or admin API)
+  // NEXT_PUBLIC_ADMIN_EMAILS was removed — it was exposed in the client bundle
+  return user.app_metadata?.is_super_admin === true
 }
 
 // ============================================================
