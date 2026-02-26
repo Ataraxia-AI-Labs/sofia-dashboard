@@ -26,7 +26,7 @@ const BREAKER_ICONS: Record<string, LucideIcon> = {
   openai: Brain,
   supabase: Database,
   meta: MessageSquare,
-  vapi: Phone,
+  voice: Phone,
   wompi: CreditCard,
 }
 

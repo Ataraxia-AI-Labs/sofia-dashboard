@@ -243,10 +243,12 @@ export interface Opportunity {
 export interface Organization {
   id: string
   name: string
+  plan: 'TRIAL' | 'BASIC' | 'PRO' | 'ENTERPRISE'
   status: string
   system_prompt?: string
   whatsapp_phone_id?: string
   config_settings?: Record<string, unknown>
+  created_at?: string
 }
 
 // ============================================================

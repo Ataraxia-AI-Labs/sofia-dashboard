@@ -117,7 +117,9 @@ export default function PipelinePage() {
     RECURRENTE: [],
   }
   for (const p of patients) {
-    grouped[p.stage].push(p)
+    if (grouped[p.stage]) {
+      grouped[p.stage].push(p)
+    }
   }
 
   const totalPatients = patients.length
