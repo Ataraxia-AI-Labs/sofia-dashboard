@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Outfit, JetBrains_Mono, Playfair_Display } from 'next/font/google'
+import { Providers } from '@/components/providers'
 import './globals.css'
 
 const outfit = Outfit({
@@ -21,8 +22,9 @@ const playfairDisplay = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'SofIA Dashboard — Ataraxia IA Labs',
-  description: 'Panel de control inteligente para tu clínica. Gestiona pacientes, citas, oportunidades y configuración de tu asistente IA.',
+  title: 'SofIA by Ataraxia IA Labs — Asistente IA para Clinicas',
+  description: 'SofIA atiende pacientes 24/7 por WhatsApp, agenda citas, cobra anticipos y detecta oportunidades — automaticamente. Prueba gratis 7 dias.',
+  keywords: 'IA clinicas, chatbot dental, WhatsApp dental, asistente IA clinica, automatizacion clinicas, SofIA, Ataraxia',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -31,10 +33,16 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'SofIA Dashboard',
-    description: 'Gestión inteligente de clínicas con IA',
-    siteName: 'Ataraxia IA Labs',
+    title: 'SofIA — Tu clinica llena, sin levantar el telefono',
+    description: 'Asistente IA que atiende pacientes 24/7 por WhatsApp. Agenda citas, cobra anticipos y detecta oportunidades automaticamente.',
+    siteName: 'SofIA by Ataraxia IA Labs',
     type: 'website',
+    url: 'https://ataraxiaialabs.ai',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SofIA — Asistente IA para clinicas',
+    description: 'Tu clinica llena. Sin levantar el telefono. Prueba gratis 7 dias.',
   },
 }
 
@@ -48,7 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}>
       <body className="min-h-screen">
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )

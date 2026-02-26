@@ -1,0 +1,7 @@
+export { NewPatientForm } from './new-patient-form'
+export { PatientDetailPanel } from './patient-detail-panel'
+export { PatientInfoTab } from './patient-info-tab'
+export { PatientMLTab } from './patient-ml-tab'
+export { PatientNotesTab } from './patient-notes-tab'
+export { PatientMediaTab } from './patient-media-tab'
+export { WhatsAppForm, TreatmentForm, EditPatientForm } from './patient-action-forms'

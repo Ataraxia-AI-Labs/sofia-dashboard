@@ -269,7 +269,7 @@ describe('LoginPage', () => {
     await user.click(screen.getByRole('button', { name: /entrar/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/email o contraseña incorrectos/i)).toBeInTheDocument()
+      expect(screen.getByText(/email o contrase.a incorrectos/i)).toBeInTheDocument()
     })
   })
 
@@ -320,7 +320,7 @@ describe('LoginPage', () => {
     await user.click(screen.getByRole('button', { name: /entrar/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/email o contraseña incorrectos/i)).toBeInTheDocument()
+      expect(screen.getByText(/email o contrase.a incorrectos/i)).toBeInTheDocument()
     })
 
     expect(mockReplace).not.toHaveBeenCalled()
@@ -381,7 +381,7 @@ describe('LoginPage', () => {
     await user.click(screen.getByRole('button', { name: /entrar/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/email o contraseña incorrectos/i)).toBeInTheDocument()
+      expect(screen.getByText(/email o contrase.a incorrectos/i)).toBeInTheDocument()
     })
 
     // Submit button should be re-enabled

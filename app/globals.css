@@ -100,7 +100,46 @@
 @keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-up-lg { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.35); }
+}
 
 .animate-slide-in { animation: slide-in 0.25s ease-out; }
 .animate-fade-up { animation: fade-up 0.2s ease-out; }
 .animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-fade-up-lg { animation: fade-up-lg 0.5s ease-out; }
+.animate-scale-in { animation: scale-in 0.3s ease-out; }
+.animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Landing page smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  border-radius: 9999px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #8B5CF6;
+  cursor: pointer;
+  border: 2px solid #0D0D15;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #8B5CF6;
+  cursor: pointer;
+  border: 2px solid #0D0D15;
+}

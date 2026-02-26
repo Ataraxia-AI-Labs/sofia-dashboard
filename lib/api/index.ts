@@ -63,3 +63,7 @@ export { fetchPayments, fetchRevenueAttribution } from './payments'
 
 // Health
 export { fetchSystemHealth } from './health'
+
+// Team management
+export { fetchTeamMembers, inviteTeamMember, updateMemberRole, deactivateMember } from './team'
+export type { TeamMember } from './team'

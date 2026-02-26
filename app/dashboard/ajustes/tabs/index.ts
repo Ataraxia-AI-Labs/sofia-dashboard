@@ -1,0 +1,6 @@
+export { PromptTab } from './prompt-tab'
+export { ServicesTab } from './services-tab'
+export { HoursTab } from './hours-tab'
+export { NotificationsTab } from './notifications-tab'
+export { TemplatesTab } from './templates-tab'
+export { BotsTab } from './bots-tab'

@@ -2,8 +2,10 @@
 
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { Eye, EyeOff, ArrowRight, Zap } from 'lucide-react'
+import { SofiaLogo } from '@/components/sofia-logo'
+import { Eye, EyeOff, ArrowRight, Zap, Star } from 'lucide-react'
 
 export default function LoginPage() {
   return (
@@ -36,7 +38,7 @@ function LoginForm() {
       if (authError) {
         setError(
           authError.message === 'Invalid login credentials'
-            ? 'Email o contraseña incorrectos'
+            ? 'Email o contrasena incorrectos'
             : authError.message
         )
         setLoading(false)
@@ -48,7 +50,7 @@ function LoginForm() {
       const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
       router.replace(redirect)
     } catch {
-      setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
+      setError('Error de conexion. Verifica tu internet e intenta de nuevo.')
       setLoading(false)
     }
   }
@@ -63,36 +65,41 @@ function LoginForm() {
 
         <div className="relative z-10 px-16 max-w-lg">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-purple/20">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
-            <span className="text-text-primary font-display text-xl font-semibold tracking-tight">
-              Ataraxia <span className="text-text-muted font-body font-light">IA Labs</span>
-            </span>
+          <div className="mb-12">
+            <SofiaLogo size="lg" variant="full" />
           </div>
 
           <h1 className="font-display text-4xl font-bold text-text-primary leading-tight mb-4">
-            Tu clínica opera sola.{' '}
+            Tu clinica opera sola.{' '}
             <span className="gradient-text italic">Siempre.</span>
           </h1>
 
           <p className="text-text-muted text-lg leading-relaxed mb-10">
-            SofIA gestiona pacientes, agenda citas, cobra anticipos y detecta oportunidades de negocio — 24/7, sin intervención humana.
+            SofIA gestiona pacientes, agenda citas, cobra anticipos y detecta oportunidades de negocio — 24/7, sin intervencion humana.
           </p>
 
           {/* Stats teaser */}
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-6 mb-10">
             {[
               { value: '<3s', label: 'Tiempo de respuesta' },
               { value: '24/7', label: 'Disponibilidad' },
-              { value: '100%', label: 'Citas agendadas automáticamente' },
+              { value: '40%', label: 'Menos no-shows' },
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="text-2xl font-bold font-mono gradient-text">{stat.value}</div>
                 <div className="text-xs text-text-dim mt-1">{stat.label}</div>
               </div>
             ))}
+          </div>
+
+          {/* Social proof mini */}
+          <div className="glass-card p-4 flex items-center gap-3">
+            <div className="flex gap-0.5">
+              {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-gold text-brand-gold" />)}
+            </div>
+            <p className="text-text-muted text-xs leading-relaxed">
+              <span className="text-text-primary font-medium">40+ clinicas</span> confian en SofIA — Calificacion 4.9/5
+            </p>
           </div>
         </div>
 
@@ -104,11 +111,8 @@ function LoginForm() {
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-10 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
-            <span className="text-text-primary font-display text-xl font-semibold">Ataraxia</span>
+          <div className="lg:hidden flex justify-center mb-10">
+            <SofiaLogo size="md" variant="full" />
           </div>
 
           <div className="mb-8">
@@ -133,7 +137,7 @@ function LoginForm() {
 
             <div>
               <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">
-                Contraseña
+                Contrasena
               </label>
               <div className="relative">
                 <input
@@ -148,10 +152,20 @@ function LoginForm() {
                   type="button"
                   onClick={() => setShowPw(!showPw)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors"
+                  aria-label={showPw ? 'Ocultar contrasena' : 'Mostrar contrasena'}
                 >
                   {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+            </div>
+
+            <div className="flex justify-end -mt-1">
+              <a
+                href="/forgot-password"
+                className="text-xs text-brand-purple hover:text-brand-purple-light transition-colors"
+              >
+                Olvide mi contrasena
+              </a>
             </div>
 
             {error && (
@@ -169,17 +183,36 @@ function LoginForm() {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  Entrar
+                  Entrar al Dashboard
                   <ArrowRight size={16} />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-10 pt-6 border-t border-border">
-            <div className="flex items-center gap-2 text-text-dim text-xs">
+          {/* Trial CTA — convert browsers into customers */}
+          <div className="mt-6 p-4 rounded-xl bg-brand-purple/5 border border-brand-purple/20">
+            <p className="text-text-muted text-sm text-center mb-3">
+              Aun no tienes cuenta?
+            </p>
+            <Link
+              href="/onboarding"
+              className="w-full py-3 rounded-xl bg-surface-2 border border-brand-purple/30 text-brand-purple font-semibold text-sm flex items-center justify-center gap-2 hover:bg-brand-purple/10 transition-all"
+            >
+              <Zap size={14} />
+              Empieza tu prueba gratis de 7 dias
+              <ArrowRight size={14} />
+            </Link>
+            <p className="text-center text-text-dim text-xs mt-2">Sin tarjeta. Setup en 5 minutos.</p>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-border">
+            <div className="flex items-center gap-2 text-text-dim text-xs justify-center">
               <Zap size={12} className="text-brand-purple" />
-              <span>Powered by <span className="text-text-muted">SofIA</span> — Ataraxia IA Labs</span>
+              <span>
+                Powered by <span className="text-text-muted font-medium">SofIA</span>{' '}
+                &mdash; Ataraxia IA Labs
+              </span>
             </div>
           </div>
         </div>

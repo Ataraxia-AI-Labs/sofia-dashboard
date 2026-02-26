@@ -8,12 +8,14 @@ import { isSuperAdmin } from '@/lib/admin-api'
 import { OrgContext } from '@/lib/org-context'
 import { ErrorBoundary } from '@/components/error-boundary'
 import OnboardingWizard from '@/components/onboarding-wizard'
+import { NotificationsDropdown } from '@/components/notifications-dropdown'
+import { SofiaLogo } from '@/components/sofia-logo'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
-  LogOut, ChevronLeft, ChevronRight, Bell, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown, Shield, MessageSquare
+  LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
+  MapPin, ChevronDown, Shield, MessageSquare, UserCog
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -25,6 +27,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos' },
   { href: '/dashboard/datalake', icon: Database, label: 'Data Lake' },
   { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades' },
+  { href: '/dashboard/equipo', icon: UserCog, label: 'Equipo' },
   { href: '/dashboard/health', icon: Activity, label: 'System Health' },
   { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
 ]
@@ -55,18 +58,17 @@ function Sidebar({
   return (
     <>
       {/* Logo */}
-      <div className={`px-5 py-6 flex items-center ${isOpen ? 'gap-3' : 'justify-center'}`}>
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-bold text-sm">A</span>
-        </div>
-        {isOpen && (
-          <div className="animate-fade-in overflow-hidden flex-1 min-w-0">
-            <div className="text-text-primary font-semibold text-sm leading-tight">SofIA</div>
-            <div className="text-text-dim text-[10px] truncate">{orgName}</div>
+      <div className={`px-4 py-5 flex items-center ${isOpen ? 'gap-2' : 'justify-center'} border-b border-border/50`}>
+        {isOpen ? (
+          <div className="animate-fade-in flex-1 min-w-0">
+            <SofiaLogo size="sm" variant="full" />
+            <div className="text-text-dim text-[10px] truncate mt-1 pl-[38px]">{orgName}</div>
           </div>
+        ) : (
+          <SofiaLogo size="sm" variant="mark" />
         )}
         {mobile && onClose && (
-          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto" aria-label="Cerrar menú">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto flex-shrink-0" aria-label="Cerrar menu">
             <X size={16} />
           </button>
         )}
@@ -251,8 +253,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center animate-pulse-soft">
-            <span className="text-white font-bold text-lg">A</span>
+          <div className="animate-pulse-soft">
+            <SofiaLogo size="md" variant="mark" />
           </div>
           <p className="text-text-muted text-sm">Cargando dashboard...</p>
         </div>
@@ -332,9 +334,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* Mobile: just the dot */}
             <div className="sm:hidden w-2 h-2 rounded-full bg-status-success animate-pulse" />
 
-            <button className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors relative" aria-label="Notificaciones">
-              <Bell size={16} />
-            </button>
+            <NotificationsDropdown orgId={org?.id || ''} />
 
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/20 flex items-center justify-center text-brand-purple font-semibold text-xs">
               {user?.email?.[0]?.toUpperCase() || 'U'}
