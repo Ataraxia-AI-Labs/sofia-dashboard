@@ -37,6 +37,14 @@ export async function middleware(request: NextRequest) {
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
+
+    // /admin routes require is_super_admin — server-side enforcement
+    if (pathname.startsWith('/admin')) {
+      const isSuperAdmin = user.app_metadata?.is_super_admin === true
+      if (!isSuperAdmin) {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+    }
   }
 
   // Already logged in — redirect away from login

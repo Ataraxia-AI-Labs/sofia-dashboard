@@ -4,14 +4,16 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   fetchAllOrganizations, fetchGlobalMetrics, fetchOrgStats, fetchOrgLastActivity,
+  ensureSuperAdminMembership,
   type AdminOrgRow,
 } from '@/lib/admin-api'
+import { startImpersonation } from '@/lib/impersonation'
 import { formatCOP, timeAgo } from '@/lib/api'
 import {
   Building2, Users, Calendar, MessageSquare, DollarSign,
-  Database, RefreshCw, Search, Plus, ExternalLink,
+  Database, RefreshCw, Search, Plus, ExternalLink, Eye,
   CheckCircle2, PauseCircle, XCircle, Settings2,
-  TrendingUp, Zap
+  TrendingUp, Zap, Shield
 } from 'lucide-react'
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
@@ -41,6 +43,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statsLoading, setStatsLoading] = useState(false)
+  const [enteringGodMode, setEnteringGodMode] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -89,6 +92,19 @@ export default function AdminPage() {
 
   useEffect(() => { loadData() }, [loadData])
 
+  /** God Mode — enter clinic's dashboard */
+  const handleGodMode = async (orgId: string, orgName: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Don't navigate to org detail page
+    setEnteringGodMode(orgId)
+    try {
+      await ensureSuperAdminMembership(orgId)
+      startImpersonation(orgId, orgName)
+      router.push('/dashboard')
+    } catch {
+      setEnteringGodMode(null)
+    }
+  }
+
   const filtered = search
     ? orgs.filter(o => o.name.toLowerCase().includes(search.toLowerCase()))
     : orgs
@@ -131,7 +147,7 @@ export default function AdminPage() {
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar organización..."
+          placeholder="Buscar organizacion..."
           className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-sm outline-none focus:border-brand-purple/40 focus:ring-1 focus:ring-brand-purple/20 transition-all"
         />
       </div>
@@ -142,30 +158,29 @@ export default function AdminPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Organización</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Organizacion</th>
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Plan</th>
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Pacientes</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Citas</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Interacciones</th>
                 <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Revenue</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Última Actividad</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Creada</th>
-                <th className="px-4 py-3" />
+                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Ultima Actividad</th>
+                <th className="text-center px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="border-b border-border/50">
-                    <td colSpan={10} className="px-4 py-4">
+                    <td colSpan={9} className="px-4 py-4">
                       <div className="h-5 bg-surface-3 rounded w-full animate-pulse" />
                     </td>
                   </tr>
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-12 text-center">
+                  <td colSpan={9} className="px-4 py-12 text-center">
                     <Building2 size={28} className="mx-auto text-text-dim mb-3" />
                     <p className="text-text-muted text-sm">
                       {search ? `No se encontraron organizaciones para "${search}"` : 'No hay organizaciones registradas'}
@@ -175,7 +190,7 @@ export default function AdminPage() {
                         onClick={() => router.push('/admin/organizaciones/nueva')}
                         className="mt-3 text-brand-purple text-xs font-semibold hover:underline"
                       >
-                        Crear primera organización
+                        Crear primera organizacion
                       </button>
                     )}
                   </td>
@@ -185,6 +200,7 @@ export default function AdminPage() {
                   const statusCfg = STATUS_MAP[org.status] || STATUS_MAP.ACTIVE
                   const StatusIcon = statusCfg.icon
                   const planColor = PLAN_COLORS[org.plan || 'TRIAL'] || PLAN_COLORS.TRIAL
+                  const isEntering = enteringGodMode === org.id
 
                   return (
                     <tr
@@ -238,14 +254,35 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3.5 text-right">
                         <span className={`text-xs ${org.lastActivity ? 'text-text-muted' : 'text-text-dim'}`}>
-                          {org.lastActivity ? timeAgo(org.lastActivity) : '—'}
+                          {org.lastActivity ? timeAgo(org.lastActivity) : '\u2014'}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className="text-xs text-text-dim">{timeAgo(org.created_at)}</span>
-                      </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <ExternalLink size={14} className="text-text-dim" />
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center justify-center gap-1.5">
+                          {/* God Mode — view clinic dashboard */}
+                          <button
+                            onClick={(e) => handleGodMode(org.id, org.name, e)}
+                            disabled={isEntering}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-status-danger/10 to-brand-purple/10 border border-status-danger/20 text-status-danger text-[10px] font-semibold hover:from-status-danger/20 hover:to-brand-purple/20 transition-all disabled:opacity-50"
+                            title="Ver dashboard de esta clinica (God Mode)"
+                          >
+                            {isEntering ? (
+                              <RefreshCw size={10} className="animate-spin" />
+                            ) : (
+                              <Eye size={10} />
+                            )}
+                            <span className="hidden lg:inline">{isEntering ? 'Entrando...' : 'God Mode'}</span>
+                          </button>
+                          {/* Org detail */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); router.push(`/admin/organizaciones/${org.id}`) }}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border text-text-dim text-[10px] font-semibold hover:text-text-primary hover:border-brand-purple/30 transition-all"
+                            title="Ver detalle"
+                          >
+                            <ExternalLink size={10} />
+                            <span className="hidden lg:inline">Detalle</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )

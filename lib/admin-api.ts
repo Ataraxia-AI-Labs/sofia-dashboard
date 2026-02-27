@@ -406,3 +406,34 @@ export async function testWhatsApp(orgId: string, phone: string) {
   if (!res.ok) throw new Error(`Error: ${res.status}`)
   return res.json()
 }
+
+// ============================================================
+// GOD MODE — Ensure super admin has org_members access
+// ============================================================
+
+/**
+ * Ensures the super admin is an org_member of the target org.
+ * This is needed for RLS-protected Supabase queries to work in God Mode.
+ * If already a member, this is a no-op.
+ */
+export async function ensureSuperAdminMembership(orgId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return
+
+  const userId = session.user.id
+
+  // Check if already a member
+  const { data: existing } = await supabase
+    .from('org_members')
+    .select('id')
+    .eq('organization_id', orgId)
+    .eq('user_id', userId)
+    .limit(1)
+
+  if (existing && existing.length > 0) return
+
+  // Add as ADMIN (not OWNER — only the real clinic owner is OWNER)
+  await supabase
+    .from('org_members')
+    .insert({ organization_id: orgId, user_id: userId, role: 'ADMIN', is_active: true })
+}

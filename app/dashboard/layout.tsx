@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization, fetchBranches } from '@/lib/api'
 import { isSuperAdmin } from '@/lib/admin-api'
+import { getImpersonatedOrgId, getImpersonatedOrgName, stopImpersonation, isImpersonating } from '@/lib/impersonation'
 import { OrgContext } from '@/lib/org-context'
 import { ErrorBoundary } from '@/components/error-boundary'
 import OnboardingWizard from '@/components/onboarding-wizard'
@@ -15,7 +16,7 @@ import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown, Shield, MessageSquare, UserCog
+  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -44,7 +45,8 @@ function Sidebar({
   onNavigate,
   onLogout,
   onClose,
-  showAdmin,
+  godMode,
+  onExitGodMode,
 }: {
   isOpen: boolean
   mobile?: boolean
@@ -53,7 +55,8 @@ function Sidebar({
   onNavigate: (href: string) => void
   onLogout: () => void
   onClose?: () => void
-  showAdmin?: boolean
+  godMode?: boolean
+  onExitGodMode?: () => void
 }) {
   return (
     <>
@@ -96,28 +99,56 @@ function Sidebar({
         })}
       </nav>
 
-      {/* Admin + Logout */}
+      {/* Bottom actions */}
       <div className="px-3 py-4 border-t border-border space-y-1">
-        {showAdmin && (
+        {/* God Mode: back to admin panel */}
+        {godMode && onExitGodMode && (
           <button
-            onClick={() => onNavigate('/admin')}
-            className={`sidebar-link w-full text-brand-purple/70 hover:text-brand-purple hover:bg-brand-purple/5 ${!isOpen ? 'justify-center' : ''}`}
-            aria-label="Super Admin"
+            onClick={onExitGodMode}
+            className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
+            aria-label="Volver a Admin"
           >
-            <Shield size={18} className="flex-shrink-0" />
-            {isOpen && <span className="animate-fade-in">Super Admin</span>}
+            <ArrowLeft size={18} className="flex-shrink-0" />
+            {isOpen && <span className="animate-fade-in">Volver a Admin</span>}
           </button>
         )}
         <button
           onClick={onLogout}
           className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
-          aria-label="Cerrar sesión"
+          aria-label="Cerrar sesion"
         >
           <LogOut size={18} className="flex-shrink-0" />
-          {isOpen && <span className="animate-fade-in">Cerrar sesión</span>}
+          {isOpen && <span className="animate-fade-in">Cerrar sesion</span>}
         </button>
       </div>
     </>
+  )
+}
+
+// ============================================================
+// GOD MODE BANNER — shown when super admin is impersonating
+// ============================================================
+
+function GodModeBanner({ orgName, onExit }: { orgName: string; onExit: () => void }) {
+  return (
+    <div className="bg-gradient-to-r from-status-danger/10 via-brand-purple/10 to-status-danger/10 border-b border-status-danger/20 px-4 py-2 flex items-center justify-between">
+      <div className="flex items-center gap-2.5">
+        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-status-danger to-brand-purple flex items-center justify-center">
+          <Shield size={12} className="text-white" />
+        </div>
+        <div>
+          <span className="text-xs font-bold text-status-danger">GOD MODE</span>
+          <span className="text-xs text-text-muted ml-2">Viendo dashboard de <strong className="text-text-primary">{orgName}</strong></span>
+        </div>
+      </div>
+      <button
+        onClick={onExit}
+        className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-semibold hover:bg-status-danger/20 transition-colors"
+      >
+        <ArrowLeft size={10} />
+        Volver a Admin
+      </button>
+    </div>
   )
 }
 
@@ -192,6 +223,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [godMode, setGodMode] = useState(false)
+  const [godModeOrgName, setGodModeOrgName] = useState('')
 
   const setBranchId = useCallback((id: string | null) => {
     setSelectedBranchId(id)
@@ -208,12 +241,45 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       setUser(session.user)
 
-      try {
-        const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
-        setOrg(organization)
-        setRole(userRole)
-      } catch {
-        // Organization fetch failed — will show fallback UI
+      // Check God Mode: super admin impersonating a clinic
+      const impersonatedOrgId = getImpersonatedOrgId()
+      const impersonatedOrgName = getImpersonatedOrgName()
+      const isAdmin = isSuperAdmin(session.user)
+
+      if (isAdmin && impersonatedOrgId) {
+        // God Mode — load the impersonated org directly
+        setGodMode(true)
+        setGodModeOrgName(impersonatedOrgName || 'Org desconocida')
+
+        try {
+          const { data, error } = await supabase
+            .from('organizations')
+            .select('id, name, status')
+            .eq('id', impersonatedOrgId)
+            .single()
+          if (!error && data) {
+            setOrg(data as Organization)
+            setRole('OWNER') // Super admin has full access in God Mode
+          }
+        } catch {
+          // Impersonated org not found — clear and redirect
+          stopImpersonation()
+          router.replace('/admin')
+          return
+        }
+      } else if (isAdmin && !impersonatedOrgId) {
+        // Super admin without impersonation — redirect to admin panel
+        router.replace('/admin')
+        return
+      } else {
+        // Normal clinic user
+        try {
+          const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
+          setOrg(organization)
+          setRole(userRole)
+        } catch {
+          // Organization fetch failed — will show fallback UI
+        }
       }
 
       setLoading(false)
@@ -240,8 +306,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [org?.id])
 
   const handleLogout = async () => {
+    stopImpersonation()
     await supabase.auth.signOut()
     router.replace('/login')
+  }
+
+  const handleExitGodMode = () => {
+    stopImpersonation()
+    router.replace('/admin')
   }
 
   const navigateTo = (href: string) => {
@@ -267,100 +339,106 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     orgName: org?.name || 'Dashboard',
     onNavigate: navigateTo,
     onLogout: handleLogout,
-    showAdmin: user ? isSuperAdmin(user) : false,
+    godMode,
+    onExitGodMode: handleExitGodMode,
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* ========== DESKTOP SIDEBAR ========== */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-surface border-r border-border hidden lg:flex flex-col transition-all duration-300 relative flex-shrink-0`}>
-        <Sidebar isOpen={sidebarOpen} {...sidebarProps} />
-        {/* Collapse button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-all z-10"
-          aria-label={sidebarOpen ? 'Colapsar sidebar' : 'Expandir sidebar'}
-        >
-          {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
-        </button>
-      </aside>
+    <div className="min-h-screen flex flex-col">
+      {/* GOD MODE BANNER */}
+      {godMode && <GodModeBanner orgName={godModeOrgName} onExit={handleExitGodMode} />}
 
-      {/* ========== MOBILE SIDEBAR OVERLAY ========== */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="relative w-72 h-full bg-surface border-r border-border flex flex-col animate-slide-in">
-            <Sidebar isOpen mobile onClose={() => setMobileMenuOpen(false)} {...sidebarProps} />
-          </aside>
-        </div>
-      )}
+      <div className="flex-1 flex">
+        {/* ========== DESKTOP SIDEBAR ========== */}
+        <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-surface border-r border-border hidden lg:flex flex-col transition-all duration-300 relative flex-shrink-0`}>
+          <Sidebar isOpen={sidebarOpen} {...sidebarProps} />
+          {/* Collapse button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-all z-10"
+            aria-label={sidebarOpen ? 'Colapsar sidebar' : 'Expandir sidebar'}
+          >
+            {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
+          </button>
+        </aside>
 
-      {/* ========== MAIN CONTENT ========== */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="h-14 lg:h-16 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 lg:px-6 sticky top-0 z-20">
-          <div className="flex items-center gap-3">
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors"
-              aria-label="Abrir menú"
-            >
-              <Menu size={18} />
-            </button>
-            <div>
-              <h1 className="text-text-primary font-semibold text-sm">
-                {NAV_ITEMS.find(i => i.href === pathname)?.label || 'Dashboard'}
-              </h1>
-              <p className="text-text-dim text-xs hidden sm:block">{org?.name}</p>
-            </div>
+        {/* ========== MOBILE SIDEBAR OVERLAY ========== */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+            <aside className="relative w-72 h-full bg-surface border-r border-border flex flex-col animate-slide-in">
+              <Sidebar isOpen mobile onClose={() => setMobileMenuOpen(false)} {...sidebarProps} />
+            </aside>
           </div>
+        )}
 
-          <div className="flex items-center gap-2 lg:gap-3">
-            {/* Branch selector — only if org has multiple branches (B10) */}
-            {branches.length > 1 && (
-              <BranchSelector
-                branches={branches}
-                selectedBranchId={selectedBranchId}
-                onSelect={setBranchId}
-              />
+        {/* ========== MAIN CONTENT ========== */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Topbar */}
+          <header className="h-14 lg:h-16 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 lg:px-6 sticky top-0 z-20">
+            <div className="flex items-center gap-3">
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+                aria-label="Abrir menu"
+              >
+                <Menu size={18} />
+              </button>
+              <div>
+                <h1 className="text-text-primary font-semibold text-sm">
+                  {NAV_ITEMS.find(i => i.href === pathname)?.label || 'Dashboard'}
+                </h1>
+                <p className="text-text-dim text-xs hidden sm:block">{org?.name}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 lg:gap-3">
+              {/* Branch selector — only if org has multiple branches (B10) */}
+              {branches.length > 1 && (
+                <BranchSelector
+                  branches={branches}
+                  selectedBranchId={selectedBranchId}
+                  onSelect={setBranchId}
+                />
+              )}
+
+              {/* Live indicator */}
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-success/5 border border-status-success/10">
+                <div className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse" />
+                <span className="text-status-success text-xs font-medium">SofIA Online</span>
+              </div>
+              {/* Mobile: just the dot */}
+              <div className="sm:hidden w-2 h-2 rounded-full bg-status-success animate-pulse" />
+
+              <NotificationsDropdown orgId={org?.id || ''} />
+
+              <div className={`w-9 h-9 rounded-lg border flex items-center justify-center font-semibold text-xs ${godMode ? 'bg-gradient-to-br from-status-danger/20 to-brand-purple/20 border-status-danger/20 text-status-danger' : 'bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border-brand-purple/20 text-brand-purple'}`}>
+                {user?.email?.[0]?.toUpperCase() || 'U'}
+              </div>
+            </div>
+          </header>
+
+          {/* Page content */}
+          <main className="flex-1 p-4 lg:p-6 overflow-auto">
+            {org && user ? (
+              <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
+                <ErrorBoundary>
+                  {org.status === 'SETUP' && !godMode ? (
+                    <OnboardingWizard org={org} orgId={org.id} onComplete={() => window.location.reload()} />
+                  ) : (
+                    children
+                  )}
+                </ErrorBoundary>
+              </OrgContext.Provider>
+            ) : (
+              <div className="glass-card p-8 text-center">
+                <p className="text-text-muted">No se encontro organizacion asociada a tu cuenta.</p>
+                <p className="text-text-dim text-sm mt-2">Contacta al administrador de Ataraxia.</p>
+              </div>
             )}
-
-            {/* Live indicator */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-success/5 border border-status-success/10">
-              <div className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse" />
-              <span className="text-status-success text-xs font-medium">SofIA Online</span>
-            </div>
-            {/* Mobile: just the dot */}
-            <div className="sm:hidden w-2 h-2 rounded-full bg-status-success animate-pulse" />
-
-            <NotificationsDropdown orgId={org?.id || ''} />
-
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/20 flex items-center justify-center text-brand-purple font-semibold text-xs">
-              {user?.email?.[0]?.toUpperCase() || 'U'}
-            </div>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">
-          {org && user ? (
-            <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
-              <ErrorBoundary>
-                {org.status === 'SETUP' ? (
-                  <OnboardingWizard org={org} orgId={org.id} onComplete={() => window.location.reload()} />
-                ) : (
-                  children
-                )}
-              </ErrorBoundary>
-            </OrgContext.Provider>
-          ) : (
-            <div className="glass-card p-8 text-center">
-              <p className="text-text-muted">No se encontró organización asociada a tu cuenta.</p>
-              <p className="text-text-dim text-sm mt-2">Contacta al administrador de Ataraxia.</p>
-            </div>
-          )}
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   )

@@ -8,13 +8,13 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import type { User } from '@supabase/supabase-js'
 import {
   Shield, Building2, BarChart3, Plus, LogOut, ChevronLeft,
-  ChevronRight, Menu, X, LayoutDashboard, Activity
+  ChevronRight, Menu, X, Activity
 } from 'lucide-react'
 
 const ADMIN_NAV = [
   { href: '/admin', icon: Building2, label: 'Organizaciones' },
   { href: '/admin/organizaciones/nueva', icon: Plus, label: 'Crear Org' },
-  { href: '/admin/metricas', icon: BarChart3, label: 'Métricas' },
+  { href: '/admin/metricas', icon: BarChart3, label: 'Metricas' },
   { href: '/admin/health', icon: Activity, label: 'System Health' },
 ]
 
@@ -75,12 +75,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="glass-card p-8 text-center max-w-md">
           <Shield size={40} className="mx-auto text-status-danger mb-4" />
           <h2 className="text-lg font-semibold text-text-primary mb-2">Acceso Denegado</h2>
-          <p className="text-text-muted text-sm mb-6">No tienes permisos de Super Admin. Solo los propietarios de organizaciones pueden acceder al panel de administración.</p>
+          <p className="text-text-muted text-sm mb-6">No tienes permisos de Super Admin.</p>
           <button
-            onClick={() => router.replace('/dashboard')}
+            onClick={() => router.replace('/login')}
             className="px-6 py-2.5 rounded-xl bg-brand-purple/15 text-brand-purple font-semibold text-sm hover:bg-brand-purple/25 transition-colors"
           >
-            Ir al Dashboard
+            Ir al Login
           </button>
         </div>
       </div>
@@ -121,19 +121,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </button>
             )
           })}
-
-          {/* Separator */}
-          <div className="h-px bg-border my-3" />
-
-          {/* Back to Dashboard */}
-          <button
-            onClick={() => navigateTo('/dashboard')}
-            className="sidebar-link w-full cursor-pointer"
-            title={!sidebarOpen ? 'Dashboard Clínica' : undefined}
-          >
-            <LayoutDashboard size={18} className="flex-shrink-0" />
-            {sidebarOpen && <span className="animate-fade-in truncate">Dashboard Clínica</span>}
-          </button>
         </nav>
 
         {/* Logout */}
@@ -143,7 +130,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!sidebarOpen ? 'justify-center' : ''}`}
           >
             <LogOut size={18} className="flex-shrink-0" />
-            {sidebarOpen && <span className="animate-fade-in">Cerrar sesión</span>}
+            {sidebarOpen && <span className="animate-fade-in">Cerrar sesion</span>}
           </button>
         </div>
 
@@ -183,11 +170,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   </button>
                 )
               })}
-              <div className="h-px bg-border my-3" />
-              <button onClick={() => navigateTo('/dashboard')} className="sidebar-link w-full cursor-pointer">
-                <LayoutDashboard size={18} className="flex-shrink-0" />
-                <span>Dashboard Clínica</span>
-              </button>
             </nav>
           </aside>
         </div>
@@ -204,7 +186,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <h1 className="text-text-primary font-semibold text-sm">
                 {ADMIN_NAV.find(i => i.href === pathname)?.label || 'Admin'}
               </h1>
-              <p className="text-text-dim text-xs hidden sm:block">Panel de Administración</p>
+              <p className="text-text-dim text-xs hidden sm:block">Panel de Administracion</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

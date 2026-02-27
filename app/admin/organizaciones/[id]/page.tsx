@@ -6,14 +6,16 @@ import { supabase } from '@/lib/supabase'
 import {
   fetchOrgFull, fetchOrgStats, fetchOrgUsers, fetchOrgActivityLog,
   updateOrgStatus, populateKnowledgeBase, testWhatsApp,
+  ensureSuperAdminMembership,
   type ActivityLogEntry,
 } from '@/lib/admin-api'
+import { startImpersonation } from '@/lib/impersonation'
 import { fetchServicesCatalog, fetchBusinessHours, updateOrganization, createService, deleteService, updateBusinessHour, formatCOP, timeAgo } from '@/lib/api'
 import type { ServiceCatalog, BusinessHour } from '@/types'
 import {
   Building2, Users, Calendar, MessageSquare, DollarSign,
   Settings2, Save, ChevronLeft, RefreshCw, Phone,
-  CheckCircle2, AlertTriangle,
+  CheckCircle2, AlertTriangle, Eye,
   Loader2, Trash2, Plus, BookOpen, Send,
   Clock, ShoppingBag, Activity, FileText
 } from 'lucide-react'
@@ -216,9 +218,22 @@ export default function OrgDetailPage() {
             <p className="text-text-dim text-xs mt-0.5 font-mono">{orgId}</p>
           </div>
         </div>
-        <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-          <RefreshCw size={14} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              await ensureSuperAdminMembership(orgId)
+              startImpersonation(orgId, (org?.name as string) || 'Org')
+              router.push('/dashboard')
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-status-danger/10 to-brand-purple/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:from-status-danger/20 hover:to-brand-purple/20 transition-all"
+          >
+            <Eye size={12} />
+            God Mode
+          </button>
+          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <RefreshCw size={14} />
+          </button>
+        </div>
       </div>
 
       {/* STATS */}
