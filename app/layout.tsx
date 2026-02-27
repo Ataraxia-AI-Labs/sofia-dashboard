@@ -22,9 +22,9 @@ const playfairDisplay = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'SofIA by Ataraxia IA Labs — Asistente IA para Clinicas',
-  description: 'SofIA atiende pacientes 24/7 por WhatsApp, agenda citas, cobra anticipos y detecta oportunidades — automaticamente. Prueba gratis 7 dias.',
-  keywords: 'IA clinicas, chatbot dental, WhatsApp dental, asistente IA clinica, automatizacion clinicas, SofIA, Ataraxia',
+  title: 'SofIA by Ataraxia IA Labs — IA para Clinicas de Estetica y Odontologia',
+  description: 'SofIA es la IA especializada en clinicas de estetica y odontologia. Atiende pacientes 24/7 por WhatsApp, agenda citas, cobra anticipos y detecta oportunidades.',
+  keywords: 'IA clinicas estetica, IA odontologia, chatbot dental, WhatsApp clinica estetica, asistente IA clinica, automatizacion clinicas, SofIA, Ataraxia',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -33,16 +33,16 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'SofIA — Tu clinica llena, sin levantar el telefono',
-    description: 'Asistente IA que atiende pacientes 24/7 por WhatsApp. Agenda citas, cobra anticipos y detecta oportunidades automaticamente.',
+    title: 'SofIA — IA para Clinicas de Estetica y Odontologia',
+    description: 'La IA especializada en clinicas de estetica y odontologia. Atiende pacientes 24/7 por WhatsApp, agenda citas y cobra anticipos.',
     siteName: 'SofIA by Ataraxia IA Labs',
     type: 'website',
     url: 'https://ataraxiaialabs.ai',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SofIA — Asistente IA para clinicas',
-    description: 'Tu clinica llena. Sin levantar el telefono. Prueba gratis 7 dias.',
+    title: 'SofIA — IA para Clinicas de Estetica y Odontologia',
+    description: 'La IA especializada en estetica y odontologia. Prueba gratis 7 dias.',
   },
 }
 
