@@ -1,7 +1,7 @@
 {
   "name": "SofIA Dashboard",
   "short_name": "SofIA",
-  "description": "Panel de control IA para clínicas de estética y odontología — Ataraxia IA Labs",
+  "description": "Panel de control inteligente para tu clínica — Ataraxia IA Labs",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0A0A0F",

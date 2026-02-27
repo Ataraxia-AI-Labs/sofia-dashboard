@@ -36,7 +36,30 @@ export async function fetchAllOrganizations(): Promise<AdminOrgRow[]> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return []
 
-  // Get all orgs the user belongs to
+  // Super admin: query ALL organizations directly (RLS policy grants access via app_metadata)
+  if (isSuperAdmin(session.user)) {
+    const { data: allOrgs, error } = await supabase
+      .from('organizations')
+      .select('id, name, status, created_at, whatsapp_phone_id, config_settings')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching all orgs:', error.message)
+      return []
+    }
+
+    return (allOrgs || []).map(o => ({
+      id: o.id,
+      name: o.name,
+      status: o.status,
+      plan: (o.config_settings as Record<string, unknown>)?.plan as string || 'TRIAL',
+      created_at: o.created_at,
+      whatsapp_phone_id: o.whatsapp_phone_id ?? undefined,
+      config_settings: o.config_settings as Record<string, unknown> | undefined,
+    }))
+  }
+
+  // Regular user: get orgs through org_members
   const { data: memberships, error } = await supabase
     .from('org_members')
     .select('organization_id, role, organizations(id, name, status, created_at, whatsapp_phone_id, config_settings)')
