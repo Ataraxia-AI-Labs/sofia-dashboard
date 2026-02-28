@@ -128,7 +128,7 @@ export async function fetchGlobalMetrics(_orgIds?: string[]) {
 // ============================================================
 
 export async function fetchOrgUsers(orgId: string) {
-  const result = await adminFetch<{ organization: Record<string, unknown>; members: unknown[] }>(
+  const result = await adminFetch<{ organization: Record<string, unknown>; members: { id: string; user_id: string; role: string; created_at: string }[] }>(
     `/organizations/${orgId}`
   )
   return result.members || []

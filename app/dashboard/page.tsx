@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
 import type { FullAnalytics, VoiceMetrics } from '@/types'
+import { MetricCard, SectionTitle, StatusPill, PerfItem, RevenueItem, BotCard, EmptyState } from '@/components/ui'
 import dynamic from 'next/dynamic'
 import {
   MessageSquare, Users, CalendarCheck, DollarSign, Cpu, Target,
@@ -372,7 +373,7 @@ export default function DashboardOverview() {
               <LazyIntentsChart data={intentData} />
             </div>
           ) : (
-            <EmptyState />
+            <EmptyState title="Sin datos aún" />
           )}
         </div>
 
@@ -398,7 +399,7 @@ export default function DashboardOverview() {
               </div>
             </div>
           ) : (
-            <EmptyState />
+            <EmptyState title="Sin datos aún" />
           )}
         </div>
 
@@ -435,6 +436,7 @@ export default function DashboardOverview() {
             label="recordatorios enviados"
             desc={b?.reminder_bot?.descripcion}
             gradient="from-brand-purple to-brand-purple-dark"
+            formatNumber={formatNumber}
           />
           <BotCard
             emoji="🎯"
@@ -444,6 +446,7 @@ export default function DashboardOverview() {
             extra={`${b?.hunter_bot?.conversiones_post_followup || 0} conversiones`}
             desc={b?.hunter_bot?.descripcion}
             gradient="from-brand-gold to-amber-600"
+            formatNumber={formatNumber}
           />
           <BotCard
             emoji="💊"
@@ -452,6 +455,7 @@ export default function DashboardOverview() {
             label="recordatorios de medicamento"
             desc={b?.nurse_bot?.descripcion}
             gradient="from-brand-cyan to-emerald-500"
+            formatNumber={formatNumber}
           />
         </div>
       </div>
@@ -464,89 +468,3 @@ export default function DashboardOverview() {
   )
 }
 
-// ============================================================
-// SUB-COMPONENTS
-// ============================================================
-
-function MetricCard({ icon, iconColor, value, label, sub, subColor, delay }: {
-  icon: React.ReactNode; iconColor: string; value: string; label: string
-  sub?: string; subColor?: string; delay: number
-}) {
-  return (
-    <div className="glass-card metric-glow p-5 animate-fade-up" style={{ animationDelay: `${delay * 80}ms` }}>
-      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${iconColor} flex items-center justify-center text-white mb-3 shadow-lg`}>
-        {icon}
-      </div>
-      <div className="stat-number text-text-primary">{value}</div>
-      <div className="text-xs text-text-muted mt-1 font-medium">{label}</div>
-      {sub && <div className={`text-[11px] mt-1.5 font-semibold ${subColor || 'text-text-dim'}`}>{sub}</div>}
-    </div>
-  )
-}
-
-function SectionTitle({ icon, title, className }: { icon: React.ReactNode; title: string; className?: string }) {
-  return (
-    <div className={`flex items-center gap-2.5 ${className || ''}`}>
-      <span className="text-brand-purple">{icon}</span>
-      <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wide">{title}</h3>
-      <div className="flex-1 h-px bg-border ml-2" />
-    </div>
-  )
-}
-
-function StatusPill({ label, value, color }: { label: string; value: string; color: 'success' | 'danger' | 'warning' }) {
-  const colors = {
-    success: 'bg-status-success/8 border-status-success/15 text-status-success',
-    danger: 'bg-status-danger/8 border-status-danger/15 text-status-danger',
-    warning: 'bg-status-warning/8 border-status-warning/15 text-status-warning',
-  }
-  return (
-    <div className={`badge ${colors[color]}`}>
-      <div className={`w-1.5 h-1.5 rounded-full bg-status-${color}`} />
-      <span className="text-text-muted text-[11px]">{label}</span>
-      <span className="font-bold text-xs">{value}</span>
-    </div>
-  )
-}
-
-function RevenueItem({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div>
-      <div className="text-xs text-text-muted mb-1">{label}</div>
-      <div className={`text-xl font-bold font-mono ${color}`}>{value}</div>
-    </div>
-  )
-}
-
-function PerfItem({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
-  return (
-    <div className="flex justify-between items-center">
-      <span className="text-xs text-text-muted">{label}</span>
-      <span className={`text-sm font-semibold font-mono ${accent ? 'text-brand-purple' : 'text-text-primary'}`}>{value}</span>
-    </div>
-  )
-}
-
-function BotCard({ emoji, name, value, label, extra, desc, gradient }: {
-  emoji: string; name: string; value: number; label: string
-  extra?: string; desc?: string; gradient: string
-}) {
-  return (
-    <div className="glass-card p-5">
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-base`}>
-          {emoji}
-        </div>
-        <span className="text-sm font-semibold text-text-primary">{name}</span>
-      </div>
-      <div className="text-3xl font-bold font-mono text-text-primary">{formatNumber(value)}</div>
-      <div className="text-xs text-text-muted mt-0.5">{label}</div>
-      {extra && <div className="text-xs text-brand-purple font-semibold mt-1.5">{extra}</div>}
-      {desc && <div className="text-[11px] text-text-dim mt-3">{desc}</div>}
-    </div>
-  )
-}
-
-function EmptyState() {
-  return <div className="text-text-dim text-xs py-8 text-center">Sin datos aún</div>
-}

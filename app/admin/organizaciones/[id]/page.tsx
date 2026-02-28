@@ -81,11 +81,11 @@ export default function OrgDetailPage() {
       setHours(hoursData)
       setActivityLog(activityData)
 
-      setEditName(orgData.name || '')
-      setEditStatus(orgData.status || 'ACTIVE')
+      setEditName((orgData.name as string) || '')
+      setEditStatus((orgData.status as string) || 'ACTIVE')
       setEditPlan((orgData.config_settings as Record<string, unknown>)?.plan as string || 'TRIAL')
-      setEditPrompt(orgData.system_prompt || '')
-      setEditWhatsApp(orgData.whatsapp_phone_id || '')
+      setEditPrompt((orgData.system_prompt as string) || '')
+      setEditWhatsApp((orgData.whatsapp_phone_id as string) || '')
     } catch {
       setMessage({ type: 'error', text: 'Error cargando datos de la organización' })
     }

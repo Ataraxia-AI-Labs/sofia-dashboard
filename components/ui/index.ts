@@ -9,3 +9,10 @@ export { Card, StatCard } from './card'
 export { EmptyState } from './empty-state'
 export { Spinner } from './spinner'
 export { ToastProvider, useToast } from './toast'
+
+// Dashboard-specific reusable components
+export { MetricCard } from './metric-card'
+export { SectionTitle } from './section-title'
+export { StatusPill } from './status-pill'
+export { PerfItem, RevenueItem } from './perf-item'
+export { BotCard } from './bot-card'
