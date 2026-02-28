@@ -14,7 +14,21 @@ export function isSuperAdmin(user: User): boolean {
 }
 
 // ============================================================
-// ORGANIZATIONS — List all (via org_members join)
+// ADMIN API HELPER — All admin queries go through backend
+// ============================================================
+
+async function adminFetch<T = unknown>(path: string, options?: RequestInit): Promise<T> {
+  const url = `${API_URL}/admin${path}`
+  const res = await authFetch(url, options)
+  if (!res.ok) {
+    const text = await res.text().catch(() => `Error ${res.status}`)
+    throw new Error(text)
+  }
+  return res.json()
+}
+
+// ============================================================
+// ORGANIZATIONS — List all (via backend)
 // ============================================================
 
 export interface AdminOrgRow {
@@ -25,7 +39,7 @@ export interface AdminOrgRow {
   created_at: string
   whatsapp_phone_id?: string
   config_settings?: Record<string, unknown>
-  // Aggregated counts (fetched separately)
+  // Aggregated counts (from backend)
   patient_count?: number
   appointment_count?: number
   interaction_count?: number
@@ -36,137 +50,92 @@ export async function fetchAllOrganizations(): Promise<AdminOrgRow[]> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return []
 
-  // Super admin: query ALL organizations directly (RLS policy grants access via app_metadata)
   if (isSuperAdmin(session.user)) {
-    const { data: allOrgs, error } = await supabase
-      .from('organizations')
-      .select('id, name, status, created_at, whatsapp_phone_id, config_settings')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      if (process.env.NODE_ENV === 'development') console.error('Error fetching all orgs:', error.message)
-      return []
-    }
-
-    return (allOrgs || []).map(o => ({
-      id: o.id,
-      name: o.name,
-      status: o.status,
-      plan: (o.config_settings as Record<string, unknown>)?.plan as string || 'TRIAL',
-      created_at: o.created_at,
-      whatsapp_phone_id: o.whatsapp_phone_id ?? undefined,
-      config_settings: o.config_settings as Record<string, unknown> | undefined,
-    }))
+    // Route through backend — no direct Supabase queries
+    const result = await adminFetch<{ data: AdminOrgRow[] }>('/organizations?limit=200')
+    return result.data || []
   }
 
-  // Regular user: get orgs through org_members
+  // Regular user: get orgs through org_members (still via Supabase RLS)
   const { data: memberships, error } = await supabase
     .from('org_members')
     .select('organization_id, role, organizations(id, name, status, created_at, whatsapp_phone_id, config_settings)')
     .eq('user_id', session.user.id)
     .eq('is_active', true)
 
-  if (error) {
-    if (process.env.NODE_ENV === 'development') console.error('Error fetching admin orgs:', error.message)
-    return []
-  }
+  if (error) return []
 
-  const orgs = (memberships || [])
-    .reduce<AdminOrgRow[]>((acc, m) => {
-      const o = m.organizations as unknown as Record<string, unknown>
-      if (!o) return acc
-      acc.push({
-        id: o.id as string,
-        name: o.name as string,
-        status: o.status as string,
-        plan: ((o.config_settings as Record<string, unknown>)?.plan as string) || 'TRIAL',
-        created_at: o.created_at as string,
-        whatsapp_phone_id: o.whatsapp_phone_id as string | undefined,
-        config_settings: o.config_settings as Record<string, unknown> | undefined,
-      })
-      return acc
-    }, [])
-
-  return orgs
+  return (memberships || []).reduce<AdminOrgRow[]>((acc, m) => {
+    const o = m.organizations as unknown as Record<string, unknown>
+    if (!o) return acc
+    acc.push({
+      id: o.id as string,
+      name: o.name as string,
+      status: o.status as string,
+      plan: ((o.config_settings as Record<string, unknown>)?.plan as string) || 'TRIAL',
+      created_at: o.created_at as string,
+      whatsapp_phone_id: o.whatsapp_phone_id as string | undefined,
+      config_settings: o.config_settings as Record<string, unknown> | undefined,
+    })
+    return acc
+  }, [])
 }
 
 // ============================================================
-// ORGANIZATION — Full detail
+// ORGANIZATION — Full detail (via backend)
 // ============================================================
 
 export async function fetchOrgFull(orgId: string) {
-  const { data, error } = await supabase
-    .from('organizations')
-    .select('*')
-    .eq('id', orgId)
-    .single()
-  if (error) throw error
-  return data
+  const result = await adminFetch<{ organization: Record<string, unknown>; members: unknown[]; services: unknown[] }>(
+    `/organizations/${orgId}`
+  )
+  return result.organization
 }
 
 // ============================================================
-// ORG STATS — Patient, appointment, interaction counts
+// ORG STATS — Patient, appointment, interaction counts (via backend)
 // ============================================================
 
 export async function fetchOrgStats(orgId: string) {
-  const [patientsRes, appointmentsRes, interactionsRes, paymentsRes] = await Promise.all([
-    supabase.from('patients').select('id', { count: 'exact', head: true }).eq('organization_id', orgId),
-    supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('organization_id', orgId),
-    supabase.from('interaction_logs').select('id', { count: 'exact', head: true }).eq('organization_id', orgId),
-    supabase.from('payments').select('amount_cop').eq('organization_id', orgId).eq('status', 'PAID'),
-  ])
+  return adminFetch<{ patients: number; appointments: number; interactions: number; revenue: number }>(
+    `/organizations/${orgId}/stats`
+  )
+}
 
-  const revenue = (paymentsRes.data || []).reduce((sum, p) => sum + ((p as Record<string, number>).amount_cop || 0), 0)
+// ============================================================
+// GLOBAL METRICS — Across all orgs (via backend)
+// ============================================================
 
+export async function fetchGlobalMetrics(_orgIds?: string[]) {
+  const result = await adminFetch<{
+    total_organizations: number
+    total_patients: number
+    total_interactions: number
+    total_revenue_cop: number
+    total_cost_usd: number
+  }>('/metrics')
   return {
-    patients: patientsRes.count || 0,
-    appointments: appointmentsRes.count || 0,
-    interactions: interactionsRes.count || 0,
-    revenue,
+    patients: result.total_patients,
+    appointments: 0,
+    interactions: result.total_interactions,
+    revenue: result.total_revenue_cop,
+    dataLake: 0,
   }
 }
 
 // ============================================================
-// GLOBAL METRICS — Across all orgs
-// ============================================================
-
-export async function fetchGlobalMetrics(orgIds: string[]) {
-  if (orgIds.length === 0) return { patients: 0, appointments: 0, interactions: 0, revenue: 0, dataLake: 0 }
-
-  const [patientsRes, appointmentsRes, interactionsRes, paymentsRes, dataLakeRes] = await Promise.all([
-    supabase.from('patients').select('id', { count: 'exact', head: true }).in('organization_id', orgIds),
-    supabase.from('appointments').select('id', { count: 'exact', head: true }).in('organization_id', orgIds),
-    supabase.from('interaction_logs').select('id', { count: 'exact', head: true }).in('organization_id', orgIds),
-    supabase.from('payments').select('amount_cop').in('organization_id', orgIds).eq('status', 'PAID'),
-    supabase.from('data_lake_raw').select('id', { count: 'exact', head: true }).in('organization_id', orgIds),
-  ])
-
-  const revenue = (paymentsRes.data || []).reduce((sum, p) => sum + ((p as Record<string, number>).amount_cop || 0), 0)
-
-  return {
-    patients: patientsRes.count || 0,
-    appointments: appointmentsRes.count || 0,
-    interactions: interactionsRes.count || 0,
-    revenue,
-    dataLake: dataLakeRes.count || 0,
-  }
-}
-
-// ============================================================
-// ORG MEMBERS — List members
+// ORG MEMBERS — List members (via backend)
 // ============================================================
 
 export async function fetchOrgUsers(orgId: string) {
-  const { data, error } = await supabase
-    .from('org_members')
-    .select('id, user_id, role, is_active, created_at')
-    .eq('organization_id', orgId)
-  if (error) throw error
-  return data || []
+  const result = await adminFetch<{ organization: Record<string, unknown>; members: unknown[] }>(
+    `/organizations/${orgId}`
+  )
+  return result.members || []
 }
 
 // ============================================================
-// CREATE ORGANIZATION — Full wizard flow
+// CREATE ORGANIZATION — Via backend (fully server-side)
 // ============================================================
 
 export interface CreateOrgInput {
@@ -184,106 +153,28 @@ export interface CreateOrgInput {
 }
 
 export async function createOrganizationFull(input: CreateOrgInput): Promise<{ orgId: string; userId: string }> {
-  // Step 1: Create auth user via backend (needs service role)
-  // We'll try the backend endpoint first, fall back to client-side
-  let userId: string
-
-  try {
-    const res = await authFetch(`${API_URL}/admin/create-user`, {
-      method: 'POST',
-      body: JSON.stringify({ email: input.owner_email, password: input.owner_password, name: input.owner_name }),
-    })
-    if (res.ok) {
-      const data = await res.json()
-      userId = data.user_id
-    } else {
-      throw new Error('Backend user creation failed')
-    }
-  } catch {
-    // Fallback: create via Supabase Auth (only works if admin has rights)
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email: input.owner_email,
+  const result = await adminFetch<{ org_id: string; user_id: string }>('/organizations', {
+    method: 'POST',
+    body: JSON.stringify({
+      clinic_name: input.name,
+      owner_email: input.owner_email,
+      owner_name: input.owner_name || '',
+      phone: input.phone || '',
+      city: input.city || '',
+      specialty: input.specialty,
+      whatsapp_phone_id: input.whatsapp_phone_id || '',
+      plan: input.plan,
       password: input.owner_password,
-      email_confirm: true,
-      user_metadata: { full_name: input.owner_name },
-    })
-    if (authError) throw new Error(`Error creando usuario: ${authError.message}`)
-    userId = authData.user.id
-  }
-
-  // Step 2: Create organization
-  const { data: org, error: orgError } = await supabase
-    .from('organizations')
-    .insert({
-      name: input.name,
-      status: 'SETUP',
-      whatsapp_phone_id: input.whatsapp_phone_id || null,
-      config_settings: {
-        plan: input.plan,
-        specialty: input.specialty,
-        city: input.city || null,
-        address: input.address || null,
-        phone: input.phone || null,
-      },
-    })
-    .select('id')
-    .single()
-  if (orgError) throw new Error(`Error creando organización: ${orgError.message}`)
-
-  const orgId = org.id
-
-  // Step 3: Create org_members mapping (owner)
-  const { error: mappingError } = await supabase
-    .from('org_members')
-    .insert({ organization_id: orgId, user_id: userId, role: 'OWNER', is_active: true })
-  if (mappingError) throw new Error(`Error asignando rol: ${mappingError.message}`)
-
-  // Step 4: Also add current super admin to org_members
-  const { data: { session } } = await supabase.auth.getSession()
-  if (session && session.user.id !== userId) {
-    await supabase
-      .from('org_members')
-      .insert({ organization_id: orgId, user_id: session.user.id, role: 'ADMIN', is_active: true })
-  }
-
-  // Step 5: Create default business hours (Mon-Fri 8-18, Sat 8-13)
-  const defaultHours = [
-    { day: 1, open: '08:00', close: '18:00', isOpen: true },
-    { day: 2, open: '08:00', close: '18:00', isOpen: true },
-    { day: 3, open: '08:00', close: '18:00', isOpen: true },
-    { day: 4, open: '08:00', close: '18:00', isOpen: true },
-    { day: 5, open: '08:00', close: '18:00', isOpen: true },
-    { day: 6, open: '08:00', close: '13:00', isOpen: true },
-    { day: 0, open: '00:00', close: '00:00', isOpen: false },
-  ]
-
-  await supabase.from('business_hours').insert(
-    defaultHours.map(h => ({
-      organization_id: orgId,
-      day_of_week: h.day,
-      open_time: h.open,
-      close_time: h.close,
-      slot_duration_minutes: 30,
-      is_open: h.isOpen,
-      is_active: true,
-    }))
-  )
-
-  // Step 6: Generate default system prompt
-  const defaultPrompt = generateSystemPrompt(input.name, input.specialty)
-  await supabase
-    .from('organizations')
-    .update({ system_prompt: defaultPrompt })
-    .eq('id', orgId)
-
-  return { orgId, userId }
+    }),
+  })
+  return { orgId: result.org_id, userId: result.user_id }
 }
 
 // ============================================================
-// SYSTEM PROMPT GENERATOR
+// SYSTEM PROMPT GENERATOR (kept client-side — used in org creation wizard)
 // ============================================================
 
-function generateSystemPrompt(clinicName: string, specialty: string): string {
+export function generateSystemPrompt(clinicName: string, specialty: string): string {
   const specialtyMap: Record<string, string> = {
     estetica: 'estética (botox, ácido hialurónico, lipoescultura, etc.)',
     odontologia: 'odontología (ortodoncia, implantes, blanqueamiento, etc.)',
@@ -317,21 +208,22 @@ FLUJO TÍPICO:
 }
 
 // ============================================================
-// LAST ACTIVITY — Most recent interaction per org
+// LAST ACTIVITY — Most recent interaction per org (via backend)
 // ============================================================
 
 export async function fetchOrgLastActivity(orgId: string): Promise<string | null> {
-  const { data } = await supabase
-    .from('interaction_logs')
-    .select('created_at')
-    .eq('organization_id', orgId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-  return data?.[0]?.created_at || null
+  try {
+    const result = await adminFetch<{ data: { created_at: string }[] }>(
+      `/organizations/${orgId}/activity?limit=1`
+    )
+    return result.data?.[0]?.created_at || null
+  } catch {
+    return null
+  }
 }
 
 // ============================================================
-// ACTIVITY LOG — Recent interactions for an org
+// ACTIVITY LOG — Recent interactions for an org (via backend)
 // ============================================================
 
 export interface ActivityLogEntry {
@@ -343,24 +235,14 @@ export interface ActivityLogEntry {
 }
 
 export async function fetchOrgActivityLog(orgId: string, limit: number = 50): Promise<ActivityLogEntry[]> {
-  const { data, error } = await supabase
-    .from('interaction_logs')
-    .select('id, platform, ai_analysis, created_at, network_info')
-    .eq('organization_id', orgId)
-    .order('created_at', { ascending: false })
-    .limit(limit)
-  if (error) return []
-  return (data || []).map((d: Record<string, unknown>) => ({
-    id: d.id as string,
-    channel: (d.platform as string) || 'UNKNOWN',
-    intent: (d.ai_analysis as Record<string, unknown>)?.intent as string || '',
-    created_at: d.created_at as string,
-    patient_phone: (d.network_info as Record<string, unknown>)?.phone as string || undefined,
-  }))
+  const result = await adminFetch<{ data: ActivityLogEntry[] }>(
+    `/organizations/${orgId}/activity?limit=${limit}`
+  )
+  return result.data || []
 }
 
 // ============================================================
-// BOT EXECUTION LOGS — For admin health
+// BOT EXECUTION LOGS — Via backend
 // ============================================================
 
 export interface BotLogEntry {
@@ -373,35 +255,35 @@ export interface BotLogEntry {
 }
 
 export async function fetchBotLogs(limit: number = 50): Promise<BotLogEntry[]> {
-  const { data, error } = await supabase
-    .from('bot_execution_logs')
-    .select('id, bot_name, status, details, error_message, executed_at')
-    .order('executed_at', { ascending: false })
-    .limit(limit)
-  if (error) return []
-  return (data || []) as BotLogEntry[]
+  const result = await adminFetch<{ data: BotLogEntry[] }>(`/bot-logs?limit=${limit}`)
+  return result.data || []
 }
 
 export async function fetchBotErrorCount24h(): Promise<number> {
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-  const { count } = await supabase
-    .from('bot_execution_logs')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'ERROR')
-    .gte('executed_at', since)
-  return count || 0
+  const result = await adminFetch<{ count: number }>('/bot-logs/error-count')
+  return result.count || 0
 }
 
 // ============================================================
-// UPDATE ORG STATUS
+// UPDATE ORG STATUS (via backend)
 // ============================================================
 
 export async function updateOrgStatus(orgId: string, status: string) {
-  const { error } = await supabase
-    .from('organizations')
-    .update({ status, updated_at: new Date().toISOString() })
-    .eq('id', orgId)
-  if (error) throw error
+  return adminFetch(`/organizations/${orgId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  })
+}
+
+// ============================================================
+// UPDATE ORG (via backend PATCH)
+// ============================================================
+
+export async function updateOrganization(orgId: string, data: Record<string, unknown>) {
+  return adminFetch(`/organizations/${orgId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
 }
 
 // ============================================================
@@ -434,11 +316,6 @@ export async function testWhatsApp(orgId: string, phone: string) {
 // GOD MODE — Ensure super admin has org_members access
 // ============================================================
 
-/**
- * Ensures the super admin is an org_member of the target org.
- * This is needed for RLS-protected Supabase queries to work in God Mode.
- * If already a member, this is a no-op.
- */
 export async function ensureSuperAdminMembership(orgId: string): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return
