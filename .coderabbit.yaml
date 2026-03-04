@@ -1,0 +1,57 @@
+# ATARAXIA IA LABS — CodeRabbit Configuration
+# Automated PR review for dashboard (Next.js/TypeScript)
+
+language: es
+tone_instructions: |
+  Sé directo y técnico. Dashboard enterprise para clínicas reales.
+  Prioriza: seguridad > UX > performance > mantenibilidad.
+  Si encuentras datos expuestos al cliente, márcalo como BLOCKER.
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  auto_title_placeholder: "[CodeRabbit]"
+  poem: false
+
+  path_instructions:
+    - path: "app/dashboard/**"
+      instructions: |
+        Páginas del dashboard. Verificar: auth middleware protection,
+        loading.tsx y error.tsx siblings, no direct Supabase queries para business data.
+    - path: "app/admin/**"
+      instructions: |
+        Panel admin. CRÍTICO: verificar que SOLO super_admin puede acceder.
+        No usar NEXT_PUBLIC_ para admin flags. Todo via backend /admin/* endpoints.
+    - path: "lib/api/**"
+      instructions: |
+        API layer. Verificar: authFetch wrapper en toda llamada,
+        error handling consistente, no tokens expuestos.
+    - path: "components/**"
+      instructions: |
+        Componentes. Verificar: usar component library de components/ui/,
+        no re-implementar Button/Input/Modal, TypeScript strict.
+    - path: "middleware.ts"
+      instructions: |
+        Auth middleware. CRÍTICO: verificar que protege todas las rutas /dashboard/*,
+        redirect correcto a /login, no bypass posible.
+
+  tools:
+    eslint:
+      enabled: true
+    custom:
+      - pattern: "supabase\\.from\\("
+        message: "No hacer queries directas a Supabase para business data. Usa lib/api.ts authFetch."
+        severity: warning
+      - pattern: "NEXT_PUBLIC_ADMIN"
+        message: "NUNCA exponer admin flags en NEXT_PUBLIC_. Seguridad C-02 resuelta."
+        severity: error
+      - pattern: "localStorage\\.setItem.*token"
+        message: "Auth es cookie-based via @supabase/ssr. No guardar tokens en localStorage."
+        severity: error
+      - pattern: "'any'"
+        message: "Evita 'any'. Define un tipo o interface apropiado."
+        severity: warning
+
+chat:
+  auto_reply: true

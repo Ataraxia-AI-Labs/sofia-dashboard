@@ -1,0 +1,41 @@
+# ATARAXIA IA LABS — Ellipsis Configuration
+# Dashboard: Next.js 14 / TypeScript / Supabase Auth
+
+version: 1.3
+
+about: |
+  SofIA Dashboard — Admin panel for aesthetic and dental clinics.
+  Next.js 14 App Router, TypeScript strict, Supabase Auth (cookie-based).
+  18 pages, 54 API functions, component library, dark theme design system.
+  ALL data comes from backend API via lib/api.ts — never direct Supabase queries.
+
+build:
+  file_path_to_affordance_models: md/CLAUDE_DASHBOARD.md
+
+rules:
+  - "ALL API calls go through lib/api.ts authFetch wrapper — never direct Supabase for backend data"
+  - "useSearchParams() MUST be wrapped in <Suspense> boundary — Vercel build fails otherwise"
+  - "Cookie-based auth via @supabase/ssr createBrowserClient() — no localStorage tokens"
+  - "Use the component library in components/ui/ — never re-implement Button, Input, Modal"
+  - "Every new page must have loading.tsx and error.tsx siblings"
+  - "TypeScript strict: no 'any' types unless absolutely necessary"
+  - "Never expose admin functionality to non-super-admin users"
+  - "Prefer Server Components where possible — only use 'use client' when needed"
+
+pr_review:
+  confidence_threshold: 0.7
+  auto_review_enabled: true
+  review_language: es
+
+issue_automation:
+  auto_create_pr: true
+  require_tests: true
+  lint_command: "npm run lint && npx tsc --noEmit"
+  test_command: "npm test -- --ci --passWithNoTests"
+
+ignored_paths:
+  - ".github/workflows/"
+  - ".env.local"
+  - ".env.example"
+  - "md/"
+  - "public/"
