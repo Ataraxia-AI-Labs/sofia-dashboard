@@ -74,3 +74,6 @@ export type { ActiveTakeover } from './takeover'
 
 // Channels
 export { fetchChannelStatus, connectWhatsApp } from './channels'
+
+// Subscriptions
+export { fetchSubscription, createSubscription, changePlan, cancelSubscription, updatePaymentMethod, fetchInvoices, fetchUsage, fetchWompiConfig } from './subscriptions'

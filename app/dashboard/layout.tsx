@@ -16,7 +16,7 @@ import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle
+  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -31,6 +31,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/equipo', icon: UserCog, label: 'Equipo' },
   { href: '/dashboard/health', icon: Activity, label: 'System Health' },
   { href: '/dashboard/planes', icon: Gem, label: 'Planes' },
+  { href: '/dashboard/facturacion', icon: Receipt, label: 'Facturacion' },
   { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
 ]
 

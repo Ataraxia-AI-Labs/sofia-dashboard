@@ -535,6 +535,68 @@ export interface DataLakeExportResult {
 }
 
 // ============================================================
+// SUBSCRIPTIONS & BILLING
+// ============================================================
+
+export interface Subscription {
+  id: string
+  organization_id: string
+  plan: 'BASIC' | 'PRO' | 'ENTERPRISE'
+  billing_cycle: 'MONTHLY' | 'ANNUAL'
+  status: 'ACTIVE' | 'PAST_DUE' | 'GRACE_PERIOD' | 'CANCELLED' | 'EXPIRED'
+  wompi_payment_source_id?: number
+  payment_method_type?: string
+  payment_method_last_four?: string
+  payment_method_brand?: string
+  customer_email: string
+  amount_cop: number
+  current_period_start: string
+  current_period_end: string
+  next_billing_date: string
+  cancelled_at?: string
+  cancel_at_period_end: boolean
+  retry_count: number
+  grace_period_ends_at?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Invoice {
+  id: string
+  organization_id: string
+  subscription_id?: string
+  wompi_transaction_id?: string
+  wompi_reference?: string
+  wompi_status?: string
+  amount_cop: number
+  currency: string
+  plan: string
+  billing_cycle: string
+  period_start?: string
+  period_end?: string
+  description?: string
+  status: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED' | 'VOID'
+  paid_at?: string
+  failed_at?: string
+  failure_reason?: string
+  created_at: string
+}
+
+export interface UsageData {
+  message_count: number
+  message_limit: number | null
+  percent: number
+  period_start: string
+  period_end: string
+}
+
+export interface WompiConfig {
+  public_key: string
+  sandbox: boolean
+  acceptance_token: string | null
+}
+
+// ============================================================
 // INTERACTION LOGS
 // ============================================================
 
