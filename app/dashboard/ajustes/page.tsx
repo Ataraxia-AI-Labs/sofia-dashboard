@@ -5,9 +5,9 @@ import { useOrg } from '@/lib/org-context'
 import { fetchOrganization, fetchServicesCatalog, fetchBusinessHours, updateOrganization } from '@/lib/api'
 import { Tabs } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
-import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab } from './tabs'
+import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab } from './tabs'
 import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
-import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield } from 'lucide-react'
+import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi } from 'lucide-react'
 
 const TAB_DEFS = [
   { id: 'prompt', label: 'System Prompt', icon: MessageSquare },
@@ -16,6 +16,7 @@ const TAB_DEFS = [
   { id: 'notifications', label: 'Notificaciones', icon: Bell },
   { id: 'templates', label: 'Plantillas WA', icon: Phone },
   { id: 'bots', label: 'Bot Monitor', icon: Activity },
+  { id: 'channels', label: 'Canales', icon: Wifi },
 ]
 
 export default function AjustesPage() {
@@ -121,6 +122,9 @@ export default function AjustesPage() {
       )}
       {activeTab === 'bots' && (
         <BotsTab orgId={orgId} />
+      )}
+      {activeTab === 'channels' && (
+        <ChannelsTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
       )}
     </div>
   )

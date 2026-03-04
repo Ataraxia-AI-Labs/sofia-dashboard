@@ -16,7 +16,7 @@ import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft
+  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -30,6 +30,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades' },
   { href: '/dashboard/equipo', icon: UserCog, label: 'Equipo' },
   { href: '/dashboard/health', icon: Activity, label: 'System Health' },
+  { href: '/dashboard/planes', icon: Gem, label: 'Planes' },
   { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
 ]
 
@@ -347,6 +348,53 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen flex flex-col">
       {/* GOD MODE BANNER */}
       {godMode && <GodModeBanner orgName={godModeOrgName} onExit={handleExitGodMode} />}
+
+      {/* TRIAL BANNER */}
+      {org?.plan === 'TRIAL' && org.status !== 'TRIAL_EXPIRED' && !godMode && (() => {
+        const trialEnds = org.trial_ends_at ? new Date(org.trial_ends_at) : null
+        const daysLeft = trialEnds ? Math.max(0, Math.ceil((trialEnds.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : null
+        if (daysLeft === null) return null
+        return (
+          <div className={`px-4 py-2 flex items-center justify-between border-b ${daysLeft <= 2 ? 'bg-status-danger/10 border-status-danger/20' : 'bg-status-warning/10 border-status-warning/20'}`}>
+            <div className="flex items-center gap-2">
+              <Clock size={14} className={daysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'} />
+              <span className={`text-xs font-semibold ${daysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'}`}>
+                Periodo de prueba: {daysLeft === 0 ? 'expira hoy' : `${daysLeft} dias restantes`}
+              </span>
+            </div>
+            <button
+              onClick={() => navigateTo('/dashboard/planes')}
+              className={`px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors ${daysLeft <= 2 ? 'bg-status-danger/20 text-status-danger hover:bg-status-danger/30' : 'bg-status-warning/20 text-status-warning hover:bg-status-warning/30'}`}
+            >
+              Activar plan
+            </button>
+          </div>
+        )
+      })()}
+
+      {/* TRIAL EXPIRED OVERLAY */}
+      {org?.status === 'TRIAL_EXPIRED' && !godMode && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass-card p-8 max-w-md text-center">
+            <div className="w-16 h-16 rounded-2xl bg-status-danger/10 border border-status-danger/20 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle size={28} className="text-status-danger" />
+            </div>
+            <h2 className="text-lg font-bold text-text-primary mb-2">Tu periodo de prueba ha expirado</h2>
+            <p className="text-text-muted text-xs mb-4">
+              Para seguir usando SofIA y que tus pacientes sigan siendo atendidos, activa un plan.
+            </p>
+            <button
+              onClick={() => navigateTo('/dashboard/planes')}
+              className="px-6 py-2.5 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors"
+            >
+              Ver planes
+            </button>
+            <p className="text-text-dim text-[10px] mt-3">
+              ¿Necesitas ayuda? Escribenos a hola@ataraxiaialabs.ai
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 flex">
         {/* ========== DESKTOP SIDEBAR ========== */}

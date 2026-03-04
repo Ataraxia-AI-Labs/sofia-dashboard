@@ -67,3 +67,10 @@ export { fetchSystemHealth } from './health'
 // Team management
 export { fetchTeamMembers, inviteTeamMember, updateMemberRole, deactivateMember } from './team'
 export type { TeamMember } from './team'
+
+// Takeover
+export { fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage } from './takeover'
+export type { ActiveTakeover } from './takeover'
+
+// Channels
+export { fetchChannelStatus, connectWhatsApp } from './channels'

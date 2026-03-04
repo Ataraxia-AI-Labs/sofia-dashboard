@@ -2,16 +2,17 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { fetchInteractions, fetchPatients, timeAgo } from '@/lib/api'
-import type { InteractionLog } from '@/lib/api'
+import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage } from '@/lib/api'
+import type { InteractionLog, ActiveTakeover } from '@/lib/api'
 import type { Patient } from '@/types'
+import { ChatInput } from '@/components/chat-input'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock
+  Hash, Clock, Shield, Loader2
 } from 'lucide-react'
 
 // ============================================================
@@ -495,9 +496,48 @@ function ConversationDetail({
   thread: ConversationThread
   onBack: () => void
 }) {
+  const { orgId, role } = useOrg()
   const scrollRef = useRef<HTMLDivElement>(null)
   const platformCfg = PLATFORM_CONFIG[thread.channel] || PLATFORM_CONFIG.WHATSAPP
   const PlatformIcon = platformCfg.icon
+
+  // Takeover state
+  const [isTakeover, setIsTakeover] = useState(false)
+  const [takeoverLoading, setTakeoverLoading] = useState(false)
+  const canTakeover = role === 'OWNER' || role === 'ADMIN'
+
+  // Check if this patient has an active takeover
+  useEffect(() => {
+    if (!canTakeover) return
+    fetchActiveTakeovers(orgId).then((takeovers) => {
+      const active = takeovers.some((t: ActiveTakeover) => t.patient_id === thread.patientId)
+      setIsTakeover(active)
+    }).catch(() => {})
+  }, [orgId, thread.patientId, canTakeover])
+
+  const handleStartTakeover = async () => {
+    setTakeoverLoading(true)
+    try {
+      await startTakeover(orgId, thread.patientId)
+      setIsTakeover(true)
+    } catch { /* ignore */ }
+    setTakeoverLoading(false)
+  }
+
+  const handleEndTakeover = async () => {
+    setTakeoverLoading(true)
+    try {
+      await endTakeover(orgId, thread.patientId)
+      setIsTakeover(false)
+    } catch { /* ignore */ }
+    setTakeoverLoading(false)
+  }
+
+  const handleSendMessage = async (text: string) => {
+    try {
+      await sendTakeoverMessage(orgId, thread.patientId, text)
+    } catch { /* ignore */ }
+  }
 
   // Auto-scroll to bottom on mount and when messages change
   useEffect(() => {
@@ -567,6 +607,26 @@ function ConversationDetail({
             {thread.sentimentLabel === 'POSITIVE' ? 'Positivo' : thread.sentimentLabel === 'NEGATIVE' ? 'Negativo' : 'Neutral'}
           </span>
         </div>
+
+        {/* Takeover button */}
+        {canTakeover && (
+          <button
+            onClick={isTakeover ? handleEndTakeover : handleStartTakeover}
+            disabled={takeoverLoading}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${
+              isTakeover
+                ? 'bg-status-danger/10 border border-status-danger/20 text-status-danger hover:bg-status-danger/20'
+                : 'bg-brand-purple/10 border border-brand-purple/20 text-brand-purple hover:bg-brand-purple/20'
+            } disabled:opacity-50`}
+          >
+            {takeoverLoading ? (
+              <Loader2 size={10} className="animate-spin" />
+            ) : (
+              <Shield size={10} />
+            )}
+            {isTakeover ? 'Devolver a SofIA' : 'Tomar control'}
+          </button>
+        )}
       </div>
 
       {/* Messages area */}
@@ -599,12 +659,22 @@ function ConversationDetail({
         )}
       </div>
 
-      {/* Bottom bar (informational) */}
+      {/* Bottom bar */}
       <div className="px-4 py-2.5 border-t border-border flex-shrink-0">
-        <div className="flex items-center gap-2 text-[10px] text-text-dim">
-          <Bot size={12} className="text-brand-purple/50" />
-          <span>Las respuestas de SofIA se generan automaticamente via IA.</span>
-        </div>
+        {isTakeover ? (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] text-status-warning">
+              <Shield size={10} />
+              <span className="font-semibold">Modo doctor — Los mensajes se envian directamente al paciente</span>
+            </div>
+            <ChatInput onSend={handleSendMessage} placeholder="Escribe como doctor..." />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 text-[10px] text-text-dim">
+            <Bot size={12} className="text-brand-purple/50" />
+            <span>Las respuestas de SofIA se generan automaticamente via IA.</span>
+          </div>
+        )}
       </div>
     </>
   )

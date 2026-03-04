@@ -249,6 +249,9 @@ export interface Organization {
   whatsapp_phone_id?: string
   config_settings?: Record<string, unknown>
   created_at?: string
+  trial_ends_at?: string
+  plan_started_at?: string
+  billing_cycle?: 'MONTHLY' | 'YEARLY'
 }
 
 // ============================================================
