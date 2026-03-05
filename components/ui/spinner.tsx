@@ -20,3 +20,4 @@ export function Spinner({ size = 'md', className }: SpinnerProps) {
     )} />
   )
 }
+// Pipeline test - CodeRabbit verification
