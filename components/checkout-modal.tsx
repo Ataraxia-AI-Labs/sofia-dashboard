@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { X, Check, AlertCircle, ShieldCheck, CreditCard, Zap } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
-import { CardTokenizationForm } from '@/components/card-tokenization-form'
+import CardTokenizationForm from '@/components/card-tokenization-form'
 import { createSubscription } from '@/lib/api/subscriptions'
 
 /* ------------------------------------------------------------------ */
