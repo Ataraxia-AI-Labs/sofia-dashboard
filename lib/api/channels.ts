@@ -28,3 +28,15 @@ export async function connectWhatsApp(orgId: string, data: { phone_number_id: st
   if (!res.ok) throw new Error(`Connect WhatsApp failed: ${res.status}`)
   return res.json()
 }
+
+export async function connectWhatsAppEmbedded(orgId: string, code: string) {
+  const res = await authFetch(`${API_URL}/channels/${orgId}/whatsapp-embedded`, {
+    method: 'POST',
+    body: JSON.stringify({ code }),
+  })
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }))
+    throw new Error(errorData.detail || `Embedded signup failed: ${res.status}`)
+  }
+  return res.json()
+}

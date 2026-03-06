@@ -516,7 +516,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Ver planes
             </button>
             <p className="text-text-dim text-[10px] mt-3">
-              ¿Necesitas ayuda? Escribenos a hola@ataraxiaialabs.ai
+              ¿Necesitas ayuda? Escribenos a gestion@ataraxiaialabs.ai
             </p>
           </div>
         </div>

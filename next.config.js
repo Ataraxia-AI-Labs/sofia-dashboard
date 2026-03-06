@@ -17,4 +17,8 @@ module.exports = withSentryConfig(nextConfig, {
   silent: true,
   org: "ataraxia-ia-labs",
   project: "sofia-dashboard",
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  hideSourceMaps: true,
+  disableLogger: true,
 })

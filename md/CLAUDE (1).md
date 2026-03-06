@@ -14,7 +14,7 @@ CTO técnico de Ataraxia IA Labs. No asistente — socio builder. Cada commit ti
 ## LA EMPRESA
 
 **Ataraxia IA Labs** = empresa (como Apple). **SofIA** = primer producto (como iPhone).
-Web: ataraxiaialabs.ai · Email: hola@ataraxialabs.com · Colombia 🇨🇴
+Web: ataraxiaialabs.ai · Email: gestion@ataraxiaialabs.ai · Colombia 🇨🇴
 La infra escala a verticales: bienes raíces (JAMES), restaurantes (LUCIA), legal (MARCUS).
 
 ---

@@ -8,8 +8,8 @@ import { MetricCard, SectionTitle, StatusPill, PerfItem, RevenueItem, BotCard, E
 import dynamic from 'next/dynamic'
 import {
   MessageSquare, Users, CalendarCheck, DollarSign, Cpu, Target,
-  TrendingUp, ArrowDownRight, ArrowUpRight, Clock, Zap, AlertTriangle,
-  RefreshCw, Bot, PhoneCall, Smartphone, Sparkles, ArrowRight
+  TrendingUp, Clock, Zap, AlertTriangle,
+  RefreshCw, Bot, PhoneCall, Smartphone, ArrowRight
 } from 'lucide-react'
 
 const LazyIntentsChart = dynamic(

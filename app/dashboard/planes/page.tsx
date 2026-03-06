@@ -149,7 +149,7 @@ export default function PlanesPage() {
   /* CTA logic */
   function handleActivate(planId: PlanId) {
     if (planId === 'ENTERPRISE') {
-      window.open('mailto:hola@ataraxiaialabs.ai?subject=Plan%20Enterprise', '_blank')
+      window.open('mailto:gestion@ataraxiaialabs.ai?subject=Plan%20Enterprise', '_blank')
       return
     }
     setCheckoutPlan(planId)
@@ -347,7 +347,7 @@ export default function PlanesPage() {
           Necesitas un plan personalizado o tienes preguntas?
         </p>
         <p className="text-text-dim text-[10px] mt-1">
-          Escribenos a <span className="text-brand-purple font-semibold">hola@ataraxiaialabs.ai</span> y te ayudamos.
+          Escribenos a <span className="text-brand-purple font-semibold">gestion@ataraxiaialabs.ai</span> y te ayudamos.
         </p>
       </div>
 
