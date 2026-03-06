@@ -1,0 +1,7 @@
+export const captureException = jest.fn(() => 'mock-event-id')
+export const captureMessage = jest.fn()
+export const setUser = jest.fn()
+export const setContext = jest.fn()
+export const init = jest.fn()
+export const browserTracingIntegration = jest.fn(() => ({}))
+export const replayIntegration = jest.fn(() => ({}))

@@ -102,8 +102,8 @@ describe('ErrorBoundary', () => {
     // The component generates a reference like "Ref: XXXXXXX"
     const refElement = screen.getByText(/Ref:/i)
     expect(refElement).toBeInTheDocument()
-    // The ref value is Date.now().toString(36).toUpperCase() — alphanumeric
-    expect(refElement.textContent).toMatch(/Ref:\s+[A-Z0-9]+/)
+    // The ref shows Sentry eventId (if available) or Date.now().toString(36)
+    expect(refElement.textContent).toMatch(/Ref:\s+.+/)
   })
 
   it('should display the retry button', () => {
@@ -132,20 +132,20 @@ describe('ErrorBoundary', () => {
   // Error logging
   // -----------------------------------------------------------------------
 
-  it('should log the error details via console.error', () => {
+  it('should report the error to Sentry via captureException', () => {
+    const Sentry = require('@sentry/nextjs')
+
     render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>
     )
 
-    // componentDidCatch calls console.error with the error
-    expect(consoleErrorSpy).toHaveBeenCalled()
-    // Find the call that includes our boundary message
-    const boundaryCall = consoleErrorSpy.mock.calls.find(
-      (call: unknown[]) => typeof call[0] === 'string' && call[0].includes('Dashboard error boundary caught')
-    )
-    expect(boundaryCall).toBeDefined()
+    // componentDidCatch calls Sentry.captureException
+    expect(Sentry.captureException).toHaveBeenCalled()
+    const capturedError = Sentry.captureException.mock.calls[0][0]
+    expect(capturedError).toBeInstanceOf(Error)
+    expect(capturedError.message).toBe('Test explosion: something broke in a child component')
   })
 
   // -----------------------------------------------------------------------
