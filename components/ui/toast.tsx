@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useRef } from 'react'
 import { X, CheckCircle2, AlertTriangle, Info, XCircle } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -43,14 +43,33 @@ const bgMap: Record<ToastType, string> = {
   info: 'border-status-info/20 bg-status-info/5',
 }
 
+/** Deduplication window in ms — same message within this window is skipped */
+const DEDUP_WINDOW_MS = 2000
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
+  // Track recent messages for deduplication: message -> timestamp
+  const recentRef = useRef<Map<string, number>>(new Map())
 
   const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
   const addToast = useCallback((type: ToastType, message: string, duration = 4000) => {
+    // Deduplication: skip if the same message was shown within the last 2 seconds
+    const now = Date.now()
+    const dedupeKey = `${type}:${message}`
+    const lastShown = recentRef.current.get(dedupeKey)
+    if (lastShown && now - lastShown < DEDUP_WINDOW_MS) return
+    recentRef.current.set(dedupeKey, now)
+
+    // Clean old entries periodically (keep map from growing unbounded)
+    if (recentRef.current.size > 50) {
+      for (const [key, ts] of recentRef.current.entries()) {
+        if (now - ts > DEDUP_WINDOW_MS) recentRef.current.delete(key)
+      }
+    }
+
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
     setToasts(prev => [...prev.slice(-4), { id, type, message, duration }])
     if (duration > 0) {

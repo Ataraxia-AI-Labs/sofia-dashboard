@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Plus, Trash2, Edit3 } from 'lucide-react'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, Modal } from '@/components/ui'
 import { createService, updateService, deleteService, formatCOP } from '@/lib/api'
 import type { ServiceCatalog } from '@/types'
 
@@ -20,6 +20,7 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
   const [saving, setSaving] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<ServiceCatalog>>({})
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   const handleCreate = async () => {
     if (!newSvc.name || !newSvc.price) return
@@ -49,15 +50,20 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
     setSaving(false)
   }
 
-  const handleDelete = async (serviceId: string) => {
-    if (!confirm('Desactivar este servicio?')) return
+  const handleDelete = (serviceId: string) => {
+    setDeleteTarget(serviceId)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
     try {
-      await deleteService(serviceId)
+      await deleteService(deleteTarget)
       onRefresh()
       onMessage('Servicio desactivado')
     } catch (e) {
       onMessage('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
+    setDeleteTarget(null)
   }
 
   return (
@@ -142,6 +148,21 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
           No hay servicios configurados. Agrega tu primer servicio.
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Confirmar desactivacion" size="sm">
+        <div className="space-y-4">
+          <p className="text-sm text-text-muted">
+            Desactivar este servicio? Los pacientes ya no podran agendar citas con este servicio.
+          </p>
+          <div className="flex gap-2 justify-end">
+            <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+            <Button size="sm" onClick={confirmDelete} icon={<Trash2 size={13} />} className="bg-status-danger/10 text-status-danger border-status-danger/20 hover:bg-status-danger/20">
+              Desactivar
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

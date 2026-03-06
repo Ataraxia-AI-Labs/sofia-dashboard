@@ -136,7 +136,8 @@ export default function OnboardingPage() {
 
   const passwordsMatch = form.password === form.password_confirm
   const passwordValid = form.password.length >= 8
-  const phoneValid = /^57\d{10}$/.test(form.phone.replace(/\s/g, ''))
+  // International phone: + followed by 7-15 digits (supports 20+ countries per i18n)
+  const phoneValid = /^\+?\d{7,15}$/.test(form.phone.replace(/[\s\-()]/g, ''))
 
   const canProceed = () => {
     switch (step) {
@@ -434,9 +435,9 @@ export default function OnboardingPage() {
 
               <div>
                 <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp del doctor *</label>
-                <input type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="573001234567" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm font-mono outline-none transition-colors ${form.phone && !phoneValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                <input type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="+573001234567" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm font-mono outline-none transition-colors ${form.phone && !phoneValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
                 {form.phone && !phoneValid ? (
-                  <p className="text-[10px] text-status-danger mt-1">Formato: 57 + 10 digitos (ej: 573001234567)</p>
+                  <p className="text-[10px] text-status-danger mt-1">Formato internacional: codigo de pais + numero (ej: +573001234567)</p>
                 ) : (
                   <p className="text-[10px] text-text-dim mt-1">Aqui SofIA enviara alertas de emergencia y escalamiento</p>
                 )}
@@ -449,14 +450,32 @@ export default function OnboardingPage() {
             <div className="space-y-6 animate-fade-in">
               <div>
                 <h2 className="text-xl font-semibold text-text-primary mb-1">WhatsApp Business</h2>
-                <p className="text-text-muted text-sm">Conecta el WhatsApp de tu clínica (puedes hacerlo después)</p>
+                <p className="text-text-muted text-sm">Conecta el WhatsApp de tu clinica para que SofIA atienda pacientes</p>
               </div>
 
+              {/* Primary: Embedded Signup (post-registration in dashboard) */}
+              <div className="glass-card p-5 space-y-3 border-brand-purple/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 flex items-center justify-center">
+                    <Zap size={18} className="text-brand-purple" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-text-primary">Conexion con un clic</h3>
+                    <p className="text-[10px] text-text-dim">Disponible despues del registro, en Ajustes &rarr; Canales</p>
+                  </div>
+                </div>
+                <p className="text-xs text-text-muted">
+                  Despues de crear tu cuenta, podras conectar WhatsApp, Instagram y Messenger
+                  con un solo clic desde el dashboard. Solo necesitas tu cuenta de Meta Business.
+                </p>
+              </div>
+
+              {/* Secondary: Manual Phone ID (optional, for users who already have it) */}
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp Phone Number ID</label>
+                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Phone Number ID (opcional)</label>
                 <input type="text" value={form.whatsapp_phone_id} onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)} placeholder="Ej: 123456789012345" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/50" />
                 <p className="text-[10px] text-text-dim mt-1 flex items-center gap-1">
-                  Se obtiene de Meta Business &rarr; WhatsApp &rarr; API Setup
+                  Si ya tienes el Phone ID de Meta Business, puedes ingresarlo ahora
                   <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:text-brand-purple-light inline-flex items-center gap-0.5">
                     Ir a Meta <ExternalLink size={9} />
                   </a>
@@ -467,8 +486,8 @@ export default function OnboardingPage() {
                 <div className="flex items-start gap-2">
                   <Shield size={14} className="text-brand-purple mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-text-muted">
-                    Si no tienes el Phone ID ahora, puedes configurarlo después en <strong>Ajustes</strong>.
-                    SofIA empezará a atender apenas lo conectes.
+                    No te preocupes si no tienes el Phone ID ahora. Puedes conectar WhatsApp en segundos
+                    desde <strong>Ajustes &rarr; Canales</strong> despues de iniciar sesion.
                   </p>
                 </div>
               </div>

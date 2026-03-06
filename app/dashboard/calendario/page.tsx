@@ -51,9 +51,12 @@ export default function CalendarioPage() {
   const { fromDate, toDate } = useMemo(() => {
     const d = new Date(currentDate)
     if (viewMode === 'week') {
+      // getDay(): 0=Sunday, 1=Monday, ... 6=Saturday
+      // For LATAM calendars (week starts Monday), Sunday (0) belongs to the previous week
       const day = d.getDay()
+      const diffToMonday = day === 0 ? 6 : day - 1
       const start = new Date(d)
-      start.setDate(d.getDate() - day + 1) // Monday
+      start.setDate(d.getDate() - diffToMonday) // Monday
       const end = new Date(start)
       end.setDate(start.getDate() + 6) // Sunday
       return { fromDate: start, toDate: end }

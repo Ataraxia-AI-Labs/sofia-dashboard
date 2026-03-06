@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, withBranch } from './helpers'
 import type { Patient } from '@/types'
 
 export async function fetchPatients(orgId: string, opts?: {
@@ -16,7 +16,7 @@ export async function fetchPatients(orgId: string, opts?: {
   if (opts?.orderBy) params.set('orderBy', opts.orderBy)
   if (opts?.orderDir) params.set('orderDir', opts.orderDir)
 
-  const url = `${API_URL}/patients/${orgId}?${params.toString()}`
+  const url = withBranch(`${API_URL}/patients/${orgId}?${params.toString()}`, opts?.branchId)
   const res = await authFetch(url)
   if (!res.ok) throw new Error(`Patients error: ${res.status}`)
   return res.json() as Promise<{ patients: Patient[]; total: number }>

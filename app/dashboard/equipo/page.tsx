@@ -31,6 +31,7 @@ export default function EquipoPage() {
   const [inviteRole, setInviteRole] = useState('STAFF')
   const [inviting, setInviting] = useState(false)
   const [menuOpen, setMenuOpen] = useState<string | null>(null)
+  const [deactivateTarget, setDeactivateTarget] = useState<{ id: string; name: string } | null>(null)
 
   const loadMembers = useCallback(async () => {
     setLoading(true)
@@ -73,15 +74,20 @@ export default function EquipoPage() {
   }
 
   const handleDeactivate = async (memberId: string, name: string) => {
-    if (!confirm(`Desactivar a ${name}? Ya no tendra acceso al dashboard.`)) return
+    setDeactivateTarget({ id: memberId, name })
+    setMenuOpen(null)
+  }
+
+  const confirmDeactivate = async () => {
+    if (!deactivateTarget) return
     try {
-      await deactivateMember(orgId, memberId)
+      await deactivateMember(orgId, deactivateTarget.id)
       toast.success('Miembro desactivado')
       loadMembers()
     } catch {
       toast.error('Error desactivando miembro')
     }
-    setMenuOpen(null)
+    setDeactivateTarget(null)
   }
 
   const activeMembers = members.filter(m => m.is_active)
@@ -245,6 +251,21 @@ export default function EquipoPage() {
             <Button variant="ghost" onClick={() => setShowInvite(false)}>Cancelar</Button>
             <Button onClick={handleInvite} loading={inviting} disabled={!inviteEmail.trim()} icon={<Mail size={14} />}>
               Enviar invitacion
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Deactivate Confirmation Modal */}
+      <Modal open={!!deactivateTarget} onClose={() => setDeactivateTarget(null)} title="Confirmar desactivacion" size="sm">
+        <div className="space-y-4">
+          <p className="text-sm text-text-muted">
+            Desactivar a <strong className="text-text-primary">{deactivateTarget?.name}</strong>? Ya no tendra acceso al dashboard.
+          </p>
+          <div className="flex gap-2 justify-end">
+            <Button variant="ghost" onClick={() => setDeactivateTarget(null)}>Cancelar</Button>
+            <Button onClick={confirmDeactivate} icon={<Trash2 size={14} />} className="bg-status-danger/10 text-status-danger border-status-danger/20 hover:bg-status-danger/20">
+              Desactivar
             </Button>
           </div>
         </div>

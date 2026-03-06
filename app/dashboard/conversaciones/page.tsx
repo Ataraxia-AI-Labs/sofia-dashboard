@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { supabase } from '@/lib/supabase'
 import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage } from '@/lib/api'
 import type { InteractionLog, ActiveTakeover } from '@/lib/api'
 import type { Patient } from '@/types'
@@ -155,6 +156,39 @@ export default function ConversacionesPage() {
   }, [orgId, branchId, platformFilter, dateFrom, dateTo])
 
   useEffect(() => { loadData() }, [loadData])
+
+  // Supabase Realtime: listen for new interaction_logs
+  useEffect(() => {
+    const channel = supabase
+      .channel(`interactions-${orgId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'interaction_logs',
+          filter: `organization_id=eq.${orgId}`,
+        },
+        (payload) => {
+          const newLog = payload.new as InteractionLog
+          // Attach patient info from the already-loaded patients list
+          // so the thread card shows the correct name/phone
+          setPatients(currentPatients => {
+            const patient = currentPatients.find(p => p.id === newLog.patient_id)
+            if (patient && !newLog.patients) {
+              newLog.patients = { full_name: patient.full_name, phone: patient.phone }
+            }
+            return currentPatients
+          })
+          setInteractions(prev => [newLog, ...prev])
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [orgId])
 
   // Build conversation threads
   const threads = useMemo(

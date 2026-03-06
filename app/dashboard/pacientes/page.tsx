@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, fetchPatientMedia, createPatient, updatePatient, createStaffNote, createTreatment, exportPatientsCSV, sendWhatsAppMessage, formatNumber, timeAgo } from '@/lib/api'
 import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
 import {
@@ -24,6 +26,7 @@ const PAGE_SIZE = 20
 
 export default function PacientesPage() {
   const { orgId, branchId } = useOrg()
+  const toast = useToast()
   const [patients, setPatients] = useState<Patient[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -86,8 +89,10 @@ export default function PacientesPage() {
       })
       setPatients(data)
       setTotal(count)
-    } catch {
-      // Patients load failed — UI will show empty state
+    } catch (err) {
+      console.error('Error loading patients:', err)
+      Sentry.captureException(err)
+      toast.error('Error cargando pacientes')
     }
     setLoading(false)
   }, [orgId, page, searchDebounced, sortBy, sortDir, branchId])
@@ -120,8 +125,10 @@ export default function PacientesPage() {
       if (notes.status === 'fulfilled') setStaffNotes(notes.value)
       if (treats.status === 'fulfilled') setTreatments(treats.value)
       if (media.status === 'fulfilled') setPatientMedia(media.value)
-    } catch {
-      // Patient detail load failed
+    } catch (err) {
+      console.error('Error loading patient detail:', err)
+      Sentry.captureException(err)
+      toast.error('Error cargando detalle del paciente')
     }
     setDetailLoading(false)
   }
@@ -133,8 +140,10 @@ export default function PacientesPage() {
       setShowNewPatient(false)
       setNewPatient({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
       loadPatients()
-    } catch {
-      // Patient creation failed
+    } catch (err) {
+      console.error('Error creating patient:', err)
+      Sentry.captureException(err)
+      toast.error('Error creando paciente')
     }
   }
 
@@ -145,8 +154,10 @@ export default function PacientesPage() {
       setEditingPatient(false)
       openDetail(selectedPatient)
       loadPatients()
-    } catch {
-      // Patient edit save failed
+    } catch (err) {
+      console.error('Error saving patient edit:', err)
+      Sentry.captureException(err)
+      toast.error('Error guardando cambios del paciente')
     }
   }
 
@@ -158,8 +169,10 @@ export default function PacientesPage() {
       setNewNote('')
       const notes = await fetchStaffNotes(selectedPatient.id)
       setStaffNotes(notes)
-    } catch {
-      // Note creation failed
+    } catch (err) {
+      console.error('Error creating note:', err)
+      Sentry.captureException(err)
+      toast.error('Error guardando nota')
     }
     setSavingNote(false)
   }
@@ -171,8 +184,10 @@ export default function PacientesPage() {
       await sendWhatsAppMessage(orgId, selectedPatient.phone, waMessage.trim())
       setWaMessage('')
       setShowWhatsApp(false)
-    } catch {
-      alert('Error enviando mensaje. Verifica que el backend tenga el endpoint /dashboard/send-message')
+    } catch (err) {
+      console.error('Error sending WhatsApp:', err)
+      Sentry.captureException(err)
+      toast.error('Error enviando mensaje de WhatsApp')
     }
     setSendingWa(false)
   }
@@ -185,14 +200,22 @@ export default function PacientesPage() {
       setNewTreatment({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
       const treats = await fetchPatientTreatments(selectedPatient.id)
       setTreatments(treats)
-    } catch {
-      // Treatment creation failed
+    } catch (err) {
+      console.error('Error creating treatment:', err)
+      Sentry.captureException(err)
+      toast.error('Error creando tratamiento')
     }
   }
 
   const handleExport = async () => {
     if (!orgId) return
-    try { await exportPatientsCSV(orgId) } catch { /* CSV export failed */ }
+    try {
+      await exportPatientsCSV(orgId)
+    } catch (err) {
+      console.error('Error exporting CSV:', err)
+      Sentry.captureException(err)
+      toast.error('Error exportando CSV')
+    }
   }
 
   const totalPages = Math.ceil(total / PAGE_SIZE)

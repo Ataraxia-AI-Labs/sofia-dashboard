@@ -241,8 +241,11 @@ FLUJO TÍPICO:
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center mx-auto mb-4">
             <Sparkles size={24} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-text-primary">Configura {org.name}</h1>
-          <p className="text-text-muted text-sm mt-1">4 pasos rápidos y SofIA estará lista para atender pacientes</p>
+          <h1 className="text-2xl font-bold text-text-primary">
+            Activa SofIA en{' '}
+            <span className="bg-gradient-to-r from-brand-purple to-brand-cyan bg-clip-text text-transparent">{org.name}</span>
+          </h1>
+          <p className="text-text-muted text-sm mt-1">4 pasos y tu clínica empieza a vender sola — incluso cuando duermes</p>
         </div>
 
         {/* Step indicator */}
@@ -482,25 +485,27 @@ FLUJO TÍPICO:
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text-muted font-semibold text-xs hover:text-text-primary transition-colors disabled:opacity-30"
           >
             <ChevronLeft size={14} />
-            Anterior
+            Volver
           </button>
 
           {step < STEPS.length - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-xs hover:shadow-lg hover:shadow-brand-purple/20 transition-all"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-xs hover:shadow-lg hover:shadow-brand-purple/20 hover:-translate-y-0.5 transition-all"
             >
-              Siguiente
+              {step === 0 && 'Agregar servicios'}
+              {step === 1 && 'Definir horarios'}
+              {step === 2 && 'Personalizar SofIA'}
               <ChevronRight size={14} />
             </button>
           ) : (
             <button
               onClick={handleComplete}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-status-success to-emerald-600 text-white font-semibold text-xs hover:shadow-lg hover:shadow-status-success/20 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-status-success to-emerald-600 text-white font-semibold text-xs hover:shadow-lg hover:shadow-status-success/20 hover:-translate-y-0.5 transition-all disabled:opacity-50"
             >
-              {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
-              {saving ? 'Activando...' : 'Activar SofIA'}
+              {saving ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+              {saving ? 'Lanzando tu clínica...' : 'Lanzar mi Clínica'}
             </button>
           )}
         </div>

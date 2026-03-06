@@ -8,6 +8,7 @@ import { isSuperAdmin } from '@/lib/admin-api'
 import { getImpersonatedOrgId, getImpersonatedOrgName, stopImpersonation, isImpersonating } from '@/lib/impersonation'
 import { OrgContext } from '@/lib/org-context'
 import { ErrorBoundary } from '@/components/error-boundary'
+import * as Sentry from '@sentry/nextjs'
 import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 import { SofiaLogo } from '@/components/sofia-logo'
@@ -16,24 +17,48 @@ import type { Organization, Branch } from '@/types'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
-  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt
+  MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
+  Zap, ArrowRight
 } from 'lucide-react'
 
-const NAV_ITEMS = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
-  { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes' },
-  { href: '/dashboard/conversaciones', icon: MessageSquare, label: 'Conversaciones' },
-  { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline' },
-  { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario' },
-  { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos' },
-  { href: '/dashboard/datalake', icon: Database, label: 'Data Lake' },
-  { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades' },
-  { href: '/dashboard/equipo', icon: UserCog, label: 'Equipo' },
-  { href: '/dashboard/health', icon: Activity, label: 'System Health' },
-  { href: '/dashboard/planes', icon: Gem, label: 'Planes' },
-  { href: '/dashboard/facturacion', icon: Receipt, label: 'Facturacion' },
-  { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
+const NAV_GROUPS = [
+  {
+    label: 'Principal',
+    items: [
+      { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
+      { href: '/dashboard/conversaciones', icon: MessageSquare, label: 'Conversaciones' },
+      { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes' },
+      { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario' },
+    ],
+  },
+  {
+    label: 'Ventas',
+    items: [
+      { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline' },
+      { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades' },
+      { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos' },
+    ],
+  },
+  {
+    label: 'Admin',
+    items: [
+      { href: '/dashboard/equipo', icon: UserCog, label: 'Equipo' },
+      { href: '/dashboard/datalake', icon: Database, label: 'Data Lake' },
+      { href: '/dashboard/health', icon: Activity, label: 'System Health' },
+    ],
+  },
+  {
+    label: 'Configuracion',
+    items: [
+      { href: '/dashboard/planes', icon: Gem, label: 'Planes' },
+      { href: '/dashboard/facturacion', icon: Receipt, label: 'Facturacion' },
+      { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
+    ],
+  },
 ]
+
+// Flat list kept for topbar label lookup
+const NAV_ITEMS = NAV_GROUPS.flatMap(g => g.items)
 
 // ============================================================
 // SIDEBAR (extracted as a standalone component — not inside render)
@@ -80,25 +105,47 @@ function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href
-          const Icon = item.icon
-          return (
-            <button
-              key={item.href}
-              onClick={() => onNavigate(item.href)}
-              className={`sidebar-link w-full ${isActive ? 'active' : ''} cursor-pointer`}
-              title={!isOpen ? item.label : undefined}
-              aria-label={item.label}
-            >
-              <Icon size={18} className="flex-shrink-0" />
-              {isOpen && (
-                <span className="animate-fade-in truncate">{item.label}</span>
-              )}
-            </button>
-          )
-        })}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto">
+        {NAV_GROUPS.map((group, gi) => (
+          <div key={group.label} className={gi > 0 ? 'mt-4' : ''}>
+            {/* Group label — only visible when sidebar is expanded */}
+            {isOpen && (
+              <div className="px-3 mb-1 animate-fade-in">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-text-dim">
+                  {group.label}
+                </span>
+              </div>
+            )}
+            {/* Collapsed: thin divider between groups */}
+            {!isOpen && gi > 0 && (
+              <div className="mx-3 mb-2 border-t border-border/50" />
+            )}
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                // Exact match for /dashboard, startsWith for all other sections
+                // so nested routes like /dashboard/pacientes/[id] still highlight the parent nav item
+                const isActive = item.href === '/dashboard'
+                  ? pathname === '/dashboard'
+                  : pathname.startsWith(item.href)
+                const Icon = item.icon
+                return (
+                  <button
+                    key={item.href}
+                    onClick={() => onNavigate(item.href)}
+                    className={`sidebar-link w-full ${isActive ? 'active' : ''} cursor-pointer`}
+                    title={!isOpen ? item.label : undefined}
+                    aria-label={item.label}
+                  >
+                    <Icon size={18} className="flex-shrink-0" />
+                    {isOpen && (
+                      <span className="animate-fade-in truncate">{item.label}</span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Bottom actions */}
@@ -211,6 +258,98 @@ function BranchSelector({
 }
 
 // ============================================================
+// TRIAL BANNER — Dismissible, loss-aversion copywriting
+// ============================================================
+
+function TrialBanner({
+  org,
+  godMode,
+  onNavigate,
+}: {
+  org: Organization | null
+  godMode: boolean
+  onNavigate: (href: string) => void
+}) {
+  const [dismissed, setDismissed] = useState(false)
+
+  // Read dismiss state from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const key = `sofia_trial_banner_dismissed_${org?.id}`
+      const val = localStorage.getItem(key)
+      if (val) setDismissed(true)
+    }
+  }, [org?.id])
+
+  if (!org || org.plan !== 'TRIAL' || org.status === 'TRIAL_EXPIRED' || godMode || dismissed) {
+    return null
+  }
+
+  const trialEnds = org.trial_ends_at ? new Date(org.trial_ends_at) : null
+  if (!trialEnds) return null
+
+  const daysLeft = Math.max(0, Math.ceil((trialEnds.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+  const isUrgent = daysLeft <= 5
+
+  const handleDismiss = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`sofia_trial_banner_dismissed_${org.id}`, '1')
+    }
+    setDismissed(true)
+  }
+
+  const copy = isUrgent
+    ? daysLeft === 0
+      ? 'Tu prueba gratuita expira hoy. No pierdas tu configuracion ni tus pacientes.'
+      : `Quedan solo ${daysLeft} ${daysLeft === 1 ? 'dia' : 'dias'} de prueba. No pierdas tu configuracion.`
+    : `Tu prueba gratuita termina en ${daysLeft} dias. Elige un plan para seguir creciendo.`
+
+  return (
+    <div
+      className={`px-4 py-2.5 flex items-center justify-between border-b transition-all ${
+        isUrgent
+          ? 'bg-status-warning/8 border-status-warning/20'
+          : 'bg-amber-950/30 border-amber-800/20'
+      }`}
+    >
+      <div className="flex items-center gap-2.5 min-w-0">
+        <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 ${isUrgent ? 'bg-status-warning/20' : 'bg-amber-700/20'}`}>
+          {isUrgent ? (
+            <Clock size={11} className="text-status-warning" />
+          ) : (
+            <Zap size={11} className="text-amber-400" />
+          )}
+        </div>
+        <span className={`text-xs font-medium truncate ${isUrgent ? 'text-status-warning' : 'text-amber-300'}`}>
+          {copy}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+        <button
+          onClick={() => onNavigate('/dashboard/planes')}
+          className={`flex items-center gap-1 px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+            isUrgent
+              ? 'bg-status-warning/15 text-status-warning hover:bg-status-warning/25'
+              : 'bg-amber-700/20 text-amber-300 hover:bg-amber-700/35'
+          }`}
+        >
+          Elegir plan
+          <ArrowRight size={10} />
+        </button>
+        <button
+          onClick={handleDismiss}
+          className="w-5 h-5 rounded flex items-center justify-center text-text-dim hover:text-text-muted transition-colors"
+          aria-label="Cerrar banner"
+        >
+          <X size={12} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
 // DASHBOARD LAYOUT
 // ============================================================
 
@@ -242,6 +381,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }
 
       setUser(session.user)
+      Sentry.setUser({ id: session.user.id, email: session.user.email ?? undefined })
 
       // Check God Mode: super admin impersonating a clinic
       const impersonatedOrgId = getImpersonatedOrgId()
@@ -261,6 +401,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             .single()
           if (!error && data) {
             setOrg(data as Organization)
+            Sentry.setContext('organization', { id: data.id, name: data.name })
             setRole('OWNER') // Super admin has full access in God Mode
           }
         } catch {
@@ -279,6 +420,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
           setOrg(organization)
           setRole(userRole)
+          if (organization) {
+            Sentry.setContext('organization', { id: organization.id, name: organization.name })
+          }
         } catch {
           // Organization fetch failed — will show fallback UI
         }
@@ -351,27 +495,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {godMode && <GodModeBanner orgName={godModeOrgName} onExit={handleExitGodMode} />}
 
       {/* TRIAL BANNER */}
-      {org?.plan === 'TRIAL' && org.status !== 'TRIAL_EXPIRED' && !godMode && (() => {
-        const trialEnds = org.trial_ends_at ? new Date(org.trial_ends_at) : null
-        const daysLeft = trialEnds ? Math.max(0, Math.ceil((trialEnds.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : null
-        if (daysLeft === null) return null
-        return (
-          <div className={`px-4 py-2 flex items-center justify-between border-b ${daysLeft <= 2 ? 'bg-status-danger/10 border-status-danger/20' : 'bg-status-warning/10 border-status-warning/20'}`}>
-            <div className="flex items-center gap-2">
-              <Clock size={14} className={daysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'} />
-              <span className={`text-xs font-semibold ${daysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'}`}>
-                Periodo de prueba: {daysLeft === 0 ? 'expira hoy' : `${daysLeft} dias restantes`}
-              </span>
-            </div>
-            <button
-              onClick={() => navigateTo('/dashboard/planes')}
-              className={`px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors ${daysLeft <= 2 ? 'bg-status-danger/20 text-status-danger hover:bg-status-danger/30' : 'bg-status-warning/20 text-status-warning hover:bg-status-warning/30'}`}
-            >
-              Activar plan
-            </button>
-          </div>
-        )
-      })()}
+      <TrialBanner org={org} godMode={godMode} onNavigate={navigateTo} />
 
       {/* TRIAL EXPIRED OVERLAY */}
       {org?.status === 'TRIAL_EXPIRED' && !godMode && (
@@ -436,7 +560,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </button>
               <div>
                 <h1 className="text-text-primary font-semibold text-sm">
-                  {NAV_ITEMS.find(i => i.href === pathname)?.label || 'Dashboard'}
+                  {NAV_ITEMS.find(i => i.href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(i.href))?.label || 'Dashboard'}
                 </h1>
                 <p className="text-text-dim text-xs hidden sm:block">{org?.name}</p>
               </div>

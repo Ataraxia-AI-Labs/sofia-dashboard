@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
 import type { FullAnalytics, VoiceMetrics } from '@/types'
@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic'
 import {
   MessageSquare, Users, CalendarCheck, DollarSign, Cpu, Target,
   TrendingUp, ArrowDownRight, ArrowUpRight, Clock, Zap, AlertTriangle,
-  RefreshCw, Bot, PhoneCall, Smartphone
+  RefreshCw, Bot, PhoneCall, Smartphone, Sparkles, ArrowRight
 } from 'lucide-react'
 
 const LazyIntentsChart = dynamic(
@@ -48,9 +48,16 @@ export default function DashboardOverview() {
   const [error, setError] = useState('')
   const [days, setDays] = useState(30)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
+  const retryingRef = useRef(false)
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const loadData = useCallback(async (retryCount = 0) => {
     if (!orgId) return
+
+    // Prevent concurrent retries — only the first call proceeds
+    if (retryCount > 0 && retryingRef.current) return
+    if (retryCount > 0) retryingRef.current = true
+
     setLoading(true)
     if (retryCount > 0) setError('Conectando con el servidor...')
 
@@ -65,25 +72,34 @@ export default function DashboardOverview() {
       setData(analytics)
       setLastUpdate(new Date())
       setError('')
+      retryingRef.current = false
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Error desconocido'
       if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502') || msg.includes('autenticación'))) {
         setError('Conectando con el servidor... (reintentando)')
-        setTimeout(() => loadData(retryCount + 1), 10000)
+        // Clear any existing retry timer before scheduling a new one
+        if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
+        retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), 10000)
         return
       }
       setError(msg)
+      retryingRef.current = false
     } finally {
       setLoading(false)
     }
   }, [orgId, days, branchId])
 
   useEffect(() => {
+    retryingRef.current = false
     loadData()
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') loadData()
     }, 60000)
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
+      retryingRef.current = false
+    }
   }, [loadData])
 
   if (loading && !data) {
@@ -113,6 +129,81 @@ export default function DashboardOverview() {
         <button onClick={() => loadData()} className="mt-4 px-4 py-2 rounded-lg bg-brand-purple/10 text-brand-purple text-sm hover:bg-brand-purple/20 transition-colors">
           Reintentar
         </button>
+      </div>
+    )
+  }
+
+  // ===== EMPTY STATE — New clinic with no activity yet =====
+  const totalMensajes = data?.conversiones?.total_mensajes_inbound ?? 0
+  const totalPacientes = data?.conversiones?.pacientes_unicos ?? 0
+  const isNewClinic = !loading && !!data && totalMensajes === 0 && totalPacientes === 0
+
+  if (isNewClinic) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="w-full max-w-lg animate-fade-up">
+          {/* Glowing icon */}
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-purple/30 to-brand-cyan/20 blur-xl scale-150" />
+              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-purple/30">
+                <Zap size={28} className="text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* Card */}
+          <div className="glass-card p-8 text-center gradient-border">
+            <h2 className="text-2xl font-bold text-text-primary mb-2">
+              Tu clínica está lista.{' '}
+              <span className="gradient-text">Activa SofIA.</span>
+            </h2>
+            <p className="text-text-muted text-sm leading-relaxed mb-6">
+              Conecta tu WhatsApp para que SofIA empiece a atender pacientes
+              automáticamente — responde 24/7, agenda citas y aumenta tus ventas.
+            </p>
+
+            {/* Primary CTA */}
+            <a
+              href="/dashboard/ajustes"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white text-sm font-semibold hover:shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              <MessageSquare size={16} />
+              Conectar WhatsApp
+              <ArrowRight size={14} />
+            </a>
+
+            {/* Secondary copy */}
+            <p className="text-text-dim text-xs mt-4">
+              SofIA responde 24/7, agenda citas y aumenta tus ventas.
+            </p>
+
+            {/* Trust indicators */}
+            <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 gap-4">
+              {[
+                { value: '< 5 min', label: 'para activar' },
+                { value: '24/7', label: 'disponibilidad' },
+                { value: '80%', label: 'menos carga operativa' },
+              ].map((item) => (
+                <div key={item.label} className="text-center">
+                  <div className="text-lg font-bold font-mono gradient-text">{item.value}</div>
+                  <div className="text-[10px] text-text-dim mt-0.5">{item.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick start hint */}
+          <p className="text-center text-text-dim text-xs mt-4">
+            ¿Ya conectaste WhatsApp?{' '}
+            <button
+              onClick={() => loadData()}
+              className="text-brand-purple hover:underline font-medium"
+            >
+              Actualizar métricas
+            </button>
+          </p>
+        </div>
       </div>
     )
   }
