@@ -105,7 +105,7 @@ function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 overflow-y-auto" role="navigation" aria-label="Menu principal">
         {NAV_GROUPS.map((group, gi) => (
           <div key={group.label} className={gi > 0 ? 'mt-4' : ''}>
             {/* Group label — only visible when sidebar is expanded */}
@@ -135,6 +135,7 @@ function Sidebar({
                     className={`sidebar-link w-full ${isActive ? 'active' : ''} cursor-pointer`}
                     title={!isOpen ? item.label : undefined}
                     aria-label={item.label}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     <Icon size={18} className="flex-shrink-0" />
                     {isOpen && (
@@ -593,7 +594,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </header>
 
           {/* Page content */}
-          <main className="flex-1 p-4 lg:p-6 overflow-auto">
+          <main className="flex-1 p-4 lg:p-6 overflow-auto" role="main">
             {org && user ? (
               <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
                 <ErrorBoundary>

@@ -287,8 +287,8 @@ export default function CalendarioPage() {
       <div className="glass-card overflow-hidden">
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-border">
-          {DAYS_ES.map((d, i) => (
-            <div key={i} className="text-center text-[11px] font-semibold text-text-muted uppercase tracking-wider py-2.5 border-r border-border last:border-r-0">
+          {DAYS_ES.map((d) => (
+            <div key={d} className="text-center text-[11px] font-semibold text-text-muted uppercase tracking-wider py-2.5 border-r border-border last:border-r-0">
               {d}
             </div>
           ))}

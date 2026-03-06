@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { X } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -21,28 +21,54 @@ const sizeStyles = {
   xl: 'max-w-4xl',
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 export function Modal({ open, onClose, title, description, children, size = 'md', showClose = true }: ModalProps) {
-  const handleEscape = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') { onClose(); return }
+    if (e.key !== 'Tab' || !panelRef.current) return
+
+    const focusable = panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)
+    if (focusable.length === 0) return
+
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus() }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
   }, [onClose])
 
   useEffect(() => {
     if (open) {
-      document.addEventListener('keydown', handleEscape)
+      previousFocusRef.current = document.activeElement as HTMLElement
+      document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
+      // Auto-focus first focusable element inside modal
+      requestAnimationFrame(() => {
+        const first = panelRef.current?.querySelector<HTMLElement>(FOCUSABLE)
+        first?.focus()
+      })
     }
     return () => {
-      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
+      // Return focus to the element that opened the modal
+      previousFocusRef.current?.focus()
     }
-  }, [open, handleEscape])
+  }, [open, handleKeyDown])
 
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={title || 'Modal'}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose} />
-      <div className={clsx(
+      <div ref={panelRef} className={clsx(
         'relative w-full bg-surface border border-border rounded-2xl shadow-2xl shadow-black/40 animate-fade-up overflow-hidden',
         sizeStyles[size],
       )}>
