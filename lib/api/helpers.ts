@@ -17,15 +17,35 @@ export function withBranch(url: string, branchId?: string | null): string {
 // FORMATTERS
 // ============================================================
 
-export function formatCOP(n: number): string {
+/**
+ * Format a monetary amount using the browser's Intl.NumberFormat.
+ * Supports any currency code (COP, USD, MXN, BRL, PEN, etc.)
+ */
+export function formatCurrency(n: number, currency: string = 'COP', locale: string = 'es-CO'): string {
   if (n == null || Number.isNaN(n)) return '$0'
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`
-  return `$${n.toLocaleString('es-CO')}`
+  try {
+    if (n >= 1_000_000) {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency', currency, notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(n)
+    }
+    return new Intl.NumberFormat(locale, {
+      style: 'currency', currency, maximumFractionDigits: 0,
+    }).format(n)
+  } catch {
+    return `$${n.toLocaleString(locale)}`
+  }
 }
 
+/** @deprecated Use formatCurrency(n, 'COP') instead */
+export function formatCOP(n: number): string {
+  return formatCurrency(n, 'COP', 'es-CO')
+}
+
+/** @deprecated Use formatCurrency(n, 'USD', 'en-US') instead */
 export function formatUSD(n: number): string {
-  return `$${n.toFixed(2)}`
+  return formatCurrency(n, 'USD', 'en-US')
 }
 
 export function formatNumber(n: number): string {
