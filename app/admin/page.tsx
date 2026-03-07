@@ -26,7 +26,8 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof Ch
 
 const PLAN_COLORS: Record<string, string> = {
   TRIAL: 'bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20',
-  BASIC: 'bg-status-info/10 text-status-info border-status-info/20',
+  STARTER: 'bg-status-info/10 text-status-info border-status-info/20',
+  BUSINESS: 'bg-status-success/10 text-status-success border-status-success/20',
   PRO: 'bg-brand-purple/10 text-brand-purple border-brand-purple/20',
   ENTERPRISE: 'bg-brand-gold/10 text-brand-gold border-brand-gold/20',
 }

@@ -302,8 +302,9 @@ export default function OrgDetailPage() {
               <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Plan</label>
               <select value={editPlan} onChange={e => setEditPlan(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 transition-all">
                 <option value="TRIAL">Trial</option>
-                <option value="BASIC">Starter</option>
+                <option value="STARTER">Starter</option>
                 <option value="PRO">Pro</option>
+                <option value="BUSINESS">Business</option>
                 <option value="ENTERPRISE">Enterprise</option>
               </select>
             </div>

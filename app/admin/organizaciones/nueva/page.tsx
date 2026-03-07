@@ -30,10 +30,11 @@ const SPECIALTIES = [
 ]
 
 const PLANS = [
-  { value: 'TRIAL', label: 'Trial', desc: 'Gratis 14 días — Ideal para pruebas', color: 'border-brand-cyan/30 bg-brand-cyan/5' },
-  { value: 'BASIC', label: 'Starter', desc: '$497 USD/mes — WhatsApp + Agenda + Dashboard', color: 'border-status-info/30 bg-status-info/5' },
-  { value: 'PRO', label: 'Pro', desc: '$997 USD/mes — Todo Starter + Voice AI + Bots', color: 'border-brand-purple/30 bg-brand-purple/5' },
-  { value: 'ENTERPRISE', label: 'Enterprise', desc: 'Custom — Multi-sede, API, White-label', color: 'border-brand-gold/30 bg-brand-gold/5' },
+  { value: 'TRIAL', label: 'Trial', desc: 'Gratis 7 dias — Todas las features Pro sin voz', color: 'border-brand-cyan/30 bg-brand-cyan/5' },
+  { value: 'STARTER', label: 'Starter', desc: '$99.000 COP/mes — WhatsApp + Agenda + Dashboard', color: 'border-status-info/30 bg-status-info/5' },
+  { value: 'PRO', label: 'Pro', desc: '$299.000 COP/mes — + Voice AI + Bots + Pipeline', color: 'border-brand-purple/30 bg-brand-purple/5' },
+  { value: 'BUSINESS', label: 'Business', desc: '$499.000 COP/mes — + Outbound + Revenue Engine', color: 'border-status-success/30 bg-status-success/5' },
+  { value: 'ENTERPRISE', label: 'Enterprise', desc: 'Custom — Multi-sede ilimitada, API, Fine-tuning', color: 'border-brand-gold/30 bg-brand-gold/5' },
 ]
 
 const SERVICE_TEMPLATES: Record<string, { name: string; price: number; duration: number; category: string }[]> = {

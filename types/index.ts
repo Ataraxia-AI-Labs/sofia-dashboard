@@ -243,7 +243,7 @@ export interface Opportunity {
 export interface Organization {
   id: string
   name: string
-  plan: 'TRIAL' | 'BASIC' | 'PRO' | 'ENTERPRISE'
+  plan: 'TRIAL' | 'STARTER' | 'PRO' | 'BUSINESS' | 'ENTERPRISE'
   status: string
   system_prompt?: string
   whatsapp_phone_id?: string
@@ -251,7 +251,7 @@ export interface Organization {
   created_at?: string
   trial_ends_at?: string
   plan_started_at?: string
-  billing_cycle?: 'MONTHLY' | 'YEARLY'
+  billing_cycle?: 'MONTHLY' | 'ANNUAL'
 }
 
 // ============================================================
@@ -541,7 +541,7 @@ export interface DataLakeExportResult {
 export interface Subscription {
   id: string
   organization_id: string
-  plan: 'BASIC' | 'PRO' | 'ENTERPRISE'
+  plan: 'STARTER' | 'PRO' | 'BUSINESS' | 'ENTERPRISE'
   billing_cycle: 'MONTHLY' | 'ANNUAL'
   status: 'ACTIVE' | 'PAST_DUE' | 'GRACE_PERIOD' | 'CANCELLED' | 'EXPIRED'
   wompi_payment_source_id?: number

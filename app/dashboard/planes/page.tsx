@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchSubscription, fetchUsage, fetchWompiConfig } from '@/lib/api/subscriptions'
 import { CheckoutModal } from '@/components/checkout-modal'
-import { Check, X, Gem, Crown, Zap, Clock } from 'lucide-react'
+import { Check, X, Gem, Crown, Zap, Clock, Rocket, Building2 } from 'lucide-react'
 import type { Subscription, UsageData, WompiConfig } from '@/types'
 
 /* ------------------------------------------------------------------ */
@@ -12,13 +12,15 @@ import type { Subscription, UsageData, WompiConfig } from '@/types'
 /* ------------------------------------------------------------------ */
 
 type BillingCycle = 'MONTHLY' | 'ANNUAL'
-type PlanId = 'BASIC' | 'PRO' | 'ENTERPRISE'
+type PlanId = 'STARTER' | 'PRO' | 'BUSINESS' | 'ENTERPRISE'
 
 const PRICES: Record<string, number> = {
-  BASIC_MONTHLY: 149_000,
-  BASIC_ANNUAL: 1_490_000,
-  PRO_MONTHLY: 349_000,
-  PRO_ANNUAL: 3_490_000,
+  STARTER_MONTHLY: 99_000,
+  STARTER_ANNUAL: 990_000,
+  PRO_MONTHLY: 299_000,
+  PRO_ANNUAL: 2_990_000,
+  BUSINESS_MONTHLY: 499_000,
+  BUSINESS_ANNUAL: 4_990_000,
 }
 
 function formatCOP(amount: number): string {
@@ -32,6 +34,7 @@ function monthlyEquivalent(annual: number): string {
 interface PlanDef {
   id: PlanId
   name: string
+  description: string
   icon: typeof Zap
   color: string
   popular?: boolean
@@ -40,55 +43,78 @@ interface PlanDef {
 
 const PLANS: PlanDef[] = [
   {
-    id: 'BASIC',
-    name: 'Basic',
+    id: 'STARTER',
+    name: 'Starter',
+    description: 'Para clinicas que inician con IA',
     icon: Zap,
     color: 'brand-cyan',
     features: [
       { name: 'WhatsApp AI (SofIA)', included: true },
       { name: 'Agenda inteligente', included: true },
-      { name: 'Pipeline de pacientes', included: true },
-      { name: 'Analytics basico', included: true },
-      { name: 'Bots automaticos (3)', included: true },
+      { name: 'Dashboard basico', included: true },
+      { name: 'Hasta 300 conversaciones/mes', included: true },
+      { name: 'Bots automaticos (2)', included: true },
+      { name: '1 sede', included: true },
       { name: 'Voice AI', included: false },
-      { name: 'Multi-sede', included: false },
-      { name: 'API & integraciones', included: false },
-      { name: 'Data Lake & fine-tuning', included: false },
+      { name: 'Links de pago', included: false },
+      { name: 'Pipeline CRM', included: false },
+      { name: 'Outbound calls', included: false },
     ],
   },
   {
     id: 'PRO',
     name: 'Pro',
+    description: 'Maximiza revenue con voz + bots',
     icon: Crown,
     color: 'brand-purple',
     popular: true,
     features: [
-      { name: 'WhatsApp AI (SofIA)', included: true },
-      { name: 'Agenda inteligente', included: true },
-      { name: 'Pipeline de pacientes', included: true },
-      { name: 'Analytics avanzado', included: true },
+      { name: 'Todo en Starter, mas:', included: true },
+      { name: 'Voice AI (100 llamadas/mes)', included: true },
+      { name: 'Conversaciones ilimitadas', included: true },
+      { name: 'Todos los bots (5)', included: true },
+      { name: 'Links de pago (Wompi)', included: true },
+      { name: 'Pipeline CRM basico', included: true },
+      { name: 'Hasta 3 sedes', included: true },
+      { name: 'Outbound calls', included: false },
+      { name: 'Revenue engine', included: false },
+      { name: 'Data Lake & export', included: false },
+    ],
+  },
+  {
+    id: 'BUSINESS',
+    name: 'Business',
+    description: 'Operacion completa multicanal',
+    icon: Rocket,
+    color: 'status-success',
+    features: [
+      { name: 'Todo en Pro, mas:', included: true },
+      { name: 'Outbound calls ilimitados', included: true },
+      { name: 'Voice AI ilimitada', included: true },
       { name: 'Todos los bots (7)', included: true },
-      { name: 'Voice AI', included: true },
-      { name: 'Multi-sede (hasta 3)', included: true },
-      { name: 'API & integraciones', included: false },
-      { name: 'Data Lake & fine-tuning', included: false },
+      { name: 'Revenue engine completo', included: true },
+      { name: 'Data Lake & export', included: true },
+      { name: 'Hasta 10 sedes', included: true },
+      { name: 'Soporte prioritario', included: true },
+      { name: 'API access', included: false },
+      { name: 'Fine-tuning IA', included: false },
     ],
   },
   {
     id: 'ENTERPRISE',
     name: 'Enterprise',
-    icon: Gem,
+    description: 'Para grupos y operaciones a escala',
+    icon: Building2,
     color: 'status-warning',
     features: [
-      { name: 'WhatsApp AI (SofIA)', included: true },
-      { name: 'Agenda inteligente', included: true },
-      { name: 'Pipeline de pacientes', included: true },
-      { name: 'Analytics avanzado', included: true },
-      { name: 'Todos los bots (7)', included: true },
-      { name: 'Voice AI', included: true },
-      { name: 'Multi-sede (ilimitadas)', included: true },
-      { name: 'API & integraciones', included: true },
-      { name: 'Data Lake & fine-tuning', included: true },
+      { name: 'Todo en Business, mas:', included: true },
+      { name: 'Sedes ilimitadas', included: true },
+      { name: 'API & integraciones custom', included: true },
+      { name: 'Fine-tuning IA propietario', included: true },
+      { name: 'A/B testing avanzado', included: true },
+      { name: 'Account manager dedicado', included: true },
+      { name: 'SLA garantizado 99.9%', included: true },
+      { name: 'Onboarding asistido', included: true },
     ],
   },
 ]
@@ -107,7 +133,7 @@ export default function PlanesPage() {
   const [loading, setLoading] = useState(true)
 
   // Checkout modal state
-  const [checkoutPlan, setCheckoutPlan] = useState<'BASIC' | 'PRO' | null>(null)
+  const [checkoutPlan, setCheckoutPlan] = useState<PlanId | null>(null)
 
   const currentPlan = org?.plan || 'TRIAL'
   const isActive = subscription?.status === 'ACTIVE'
@@ -174,7 +200,7 @@ export default function PlanesPage() {
     : null
 
   return (
-    <div className="max-w-[1100px] mx-auto space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-text-primary">Planes</h2>
@@ -214,13 +240,13 @@ export default function PlanesPage() {
           </div>
         </div>
 
-        {/* Usage bar for BASIC plan */}
-        {currentPlan === 'BASIC' && usage && (
+        {/* Usage bar for STARTER plan */}
+        {currentPlan === 'STARTER' && usage && (
           <div className="mt-4 pt-4 border-t border-border">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[10px] text-text-muted font-medium">Mensajes utilizados</span>
               <span className="text-[10px] text-text-secondary font-semibold">
-                {usage.message_count} / {usage.message_limit ?? 500}
+                {usage.message_count} / {usage.message_limit ?? 300}
               </span>
             </div>
             <div className="w-full h-2 rounded-full bg-brand-purple/20 overflow-hidden">
@@ -267,15 +293,15 @@ export default function PlanesPage() {
 
       {/* Plan comparison grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[0, 1, 2].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map((i) => (
             <div key={i} className="glass-card p-5 animate-pulse">
               <div className="h-40 bg-surface-3 rounded-xl" />
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {PLANS.map((plan) => {
             const Icon = plan.icon
             const price = getPriceDisplay(plan.id)
@@ -290,7 +316,7 @@ export default function PlanesPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand-purple text-white text-[9px] font-bold uppercase tracking-wider">
-                    Popular
+                    Recomendado
                   </div>
                 )}
 
@@ -299,7 +325,8 @@ export default function PlanesPage() {
                     <Icon size={24} className={`text-${plan.color}`} />
                   </div>
                   <h3 className="text-lg font-bold text-text-primary">{plan.name}</h3>
-                  <div className="mt-1">
+                  <p className="text-[10px] text-text-muted mt-0.5">{plan.description}</p>
+                  <div className="mt-2">
                     <span className="text-2xl font-bold text-text-primary">{price.main}</span>
                   </div>
                   {price.sub && (
@@ -352,7 +379,7 @@ export default function PlanesPage() {
       </div>
 
       {/* Checkout modal */}
-      {checkoutPlan && wompi && (
+      {checkoutPlan && checkoutPlan !== 'ENTERPRISE' && wompi && (
         <CheckoutModal
           isOpen={!!checkoutPlan}
           onClose={() => setCheckoutPlan(null)}

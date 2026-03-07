@@ -13,7 +13,7 @@ import { createSubscription } from '@/lib/api/subscriptions'
 interface CheckoutModalProps {
   isOpen: boolean
   onClose: () => void
-  plan: 'BASIC' | 'PRO'
+  plan: 'STARTER' | 'PRO' | 'BUSINESS'
   billingCycle: 'MONTHLY' | 'ANNUAL'
   orgId: string
   customerEmail: string
@@ -27,26 +27,46 @@ type Step = 'summary' | 'card' | 'confirm' | 'result'
 const STEPS: Step[] = ['summary', 'card', 'confirm', 'result']
 
 const PRICES: Record<string, number> = {
-  BASIC_MONTHLY: 149_000,
-  BASIC_ANNUAL: 1_490_000,
-  PRO_MONTHLY: 349_000,
-  PRO_ANNUAL: 3_490_000,
+  STARTER_MONTHLY: 99_000,
+  STARTER_ANNUAL: 990_000,
+  PRO_MONTHLY: 299_000,
+  PRO_ANNUAL: 2_990_000,
+  BUSINESS_MONTHLY: 499_000,
+  BUSINESS_ANNUAL: 4_990_000,
 }
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  BASIC: [
-    '1 bot de WhatsApp',
-    'Hasta 500 conversaciones/mes',
-    'Agendamiento automatico',
-    'Soporte por correo',
+  STARTER: [
+    'WhatsApp AI (SofIA)',
+    'Hasta 300 conversaciones/mes',
+    'Agendamiento inteligente',
+    'Dashboard basico',
+    '1 sede',
   ],
   PRO: [
-    'Bots ilimitados',
+    'Todo en Starter, mas:',
+    'Voice AI (100 llamadas/mes)',
     'Conversaciones ilimitadas',
-    'Agendamiento + CRM integrado',
-    'Soporte prioritario 24/7',
-    'Analiticas avanzadas',
+    'Todos los bots (5)',
+    'Links de pago',
+    'Pipeline CRM',
+    'Hasta 3 sedes',
   ],
+  BUSINESS: [
+    'Todo en Pro, mas:',
+    'Outbound calls ilimitados',
+    'Voice AI ilimitada',
+    'Revenue engine completo',
+    'Data Lake & export',
+    'Hasta 10 sedes',
+    'Soporte prioritario',
+  ],
+}
+
+const PLAN_DISPLAY_NAMES: Record<string, string> = {
+  STARTER: 'Starter',
+  PRO: 'Pro',
+  BUSINESS: 'Business',
 }
 
 /* ------------------------------------------------------------------ */
@@ -82,6 +102,7 @@ export function CheckoutModal({
 
   const price = PRICES[`${plan}_${billingCycle}`]
   const stepIndex = STEPS.indexOf(step)
+  const planName = PLAN_DISPLAY_NAMES[plan] || plan
 
   /* -- Reset state when modal opens/closes -- */
   const handleClose = useCallback(() => {
@@ -155,11 +176,11 @@ export function CheckoutModal({
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label={`Checkout ${plan}`}
+        aria-label={`Checkout ${planName}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-sm text-text-primary font-semibold">Activar plan {plan}</h2>
+          <h2 className="text-sm text-text-primary font-semibold">Activar plan {planName}</h2>
           <button
             onClick={handleClose}
             disabled={loading}
@@ -190,7 +211,7 @@ export function CheckoutModal({
                 <Zap size={16} className="text-brand-purple" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-text-primary font-semibold text-xs">Plan {plan}</p>
+                <p className="text-text-primary font-semibold text-xs">Plan {planName}</p>
                 <p className="text-text-muted text-xs">
                   {billingCycle === 'MONTHLY' ? 'Facturacion mensual' : 'Facturacion anual'}
                 </p>
@@ -256,7 +277,7 @@ export function CheckoutModal({
             <div className="p-3 rounded-xl bg-surface-2 border border-border space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-text-muted text-xs">Plan</span>
-                <span className="text-text-primary text-xs font-semibold">{plan}</span>
+                <span className="text-text-primary text-xs font-semibold">{planName}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-text-muted text-xs">Ciclo</span>
@@ -326,7 +347,7 @@ export function CheckoutModal({
                 <div>
                   <p className="text-text-primary font-semibold text-sm">Plan activado</p>
                   <p className="text-text-muted text-xs mt-1">
-                    Tu plan {plan} esta activo. Ya puedes disfrutar de todas las funcionalidades.
+                    Tu plan {planName} esta activo. Ya puedes disfrutar de todas las funcionalidades.
                   </p>
                 </div>
                 <button

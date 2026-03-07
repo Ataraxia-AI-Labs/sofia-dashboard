@@ -167,7 +167,7 @@ export default function FacturacionPage() {
   const paymentLabel = sub.payment_method_brand && sub.payment_method_last_four
     ? `${sub.payment_method_brand} ****${sub.payment_method_last_four}`
     : 'No registrado'
-  const isBasic = sub.plan === 'BASIC'
+  const isStarter = sub.plan === 'STARTER'
   const usagePercent = usage?.percent ?? 0
   const usageWarning = usagePercent > 80
 
@@ -216,8 +216,8 @@ export default function FacturacionPage() {
         )}
       </div>
 
-      {/* ── Section 2: Uso del mes (BASIC only) ── */}
-      {isBasic && usage && (
+      {/* ── Section 2: Uso del mes (STARTER only) ── */}
+      {isStarter && usage && (
         <div className="glass-card p-5">
           <h3 className="text-sm font-semibold text-text-primary mb-4">Uso del mes</h3>
           <div className="space-y-2">
