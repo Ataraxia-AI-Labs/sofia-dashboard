@@ -7,8 +7,8 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 // Next.js middleware can read the session via createServerClient.
 export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
 
-// API base URL for the FastAPI backend (required — no hardcoded fallback)
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ataraxia-api-core.onrender.com'
+// API base URL for the FastAPI backend
+export const API_URL = process.env.NEXT_PUBLIC_API_URL!
 
 // ============================================================
 // Standardized API error format (from backend Sesion 18)

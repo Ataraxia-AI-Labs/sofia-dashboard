@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 
 export default function AdminError({
   error,
@@ -10,7 +11,7 @@ export default function AdminError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Admin error:', error)
+    Sentry.captureException(error)
   }, [error])
 
   const errorId = Date.now().toString(36).toUpperCase()

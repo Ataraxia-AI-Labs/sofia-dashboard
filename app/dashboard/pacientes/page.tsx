@@ -90,7 +90,7 @@ export default function PacientesPage() {
       setPatients(data)
       setTotal(count)
     } catch (err) {
-      console.error('Error loading patients:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error cargando pacientes')
     }
@@ -126,7 +126,7 @@ export default function PacientesPage() {
       if (treats.status === 'fulfilled') setTreatments(treats.value)
       if (media.status === 'fulfilled') setPatientMedia(media.value)
     } catch (err) {
-      console.error('Error loading patient detail:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error cargando detalle del paciente')
     }
@@ -141,7 +141,7 @@ export default function PacientesPage() {
       setNewPatient({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
       loadPatients()
     } catch (err) {
-      console.error('Error creating patient:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error creando paciente')
     }
@@ -155,7 +155,7 @@ export default function PacientesPage() {
       openDetail(selectedPatient)
       loadPatients()
     } catch (err) {
-      console.error('Error saving patient edit:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error guardando cambios del paciente')
     }
@@ -170,7 +170,7 @@ export default function PacientesPage() {
       const notes = await fetchStaffNotes(selectedPatient.id)
       setStaffNotes(notes)
     } catch (err) {
-      console.error('Error creating note:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error guardando nota')
     }
@@ -185,7 +185,7 @@ export default function PacientesPage() {
       setWaMessage('')
       setShowWhatsApp(false)
     } catch (err) {
-      console.error('Error sending WhatsApp:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error enviando mensaje de WhatsApp')
     }
@@ -201,7 +201,7 @@ export default function PacientesPage() {
       const treats = await fetchPatientTreatments(selectedPatient.id)
       setTreatments(treats)
     } catch (err) {
-      console.error('Error creating treatment:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error creando tratamiento')
     }
@@ -212,7 +212,7 @@ export default function PacientesPage() {
     try {
       await exportPatientsCSV(orgId)
     } catch (err) {
-      console.error('Error exporting CSV:', err)
+      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error('Error exportando CSV')
     }

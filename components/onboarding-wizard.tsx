@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import { supabase } from '@/lib/supabase'
 import {
   fetchServicesCatalog, fetchBusinessHours,
@@ -92,7 +93,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
       setServices(svc)
       setHours(hrs)
     } catch (e) {
-      console.error('Error loading existing data:', e)
+      Sentry.captureException(e)
     }
   }
 
@@ -124,7 +125,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
       setNewPrice('')
       await loadExistingData()
     } catch (e) {
-      console.error(e)
+      Sentry.captureException(e)
     }
   }
 
@@ -133,7 +134,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
       await supabase.from('services_catalog').update({ is_active: false }).eq('id', id)
       await loadExistingData()
     } catch (e) {
-      console.error(e)
+      Sentry.captureException(e)
     }
   }
 
@@ -142,7 +143,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
       await updateBusinessHour(hour.id, { is_open: !hour.is_open })
       await loadExistingData()
     } catch (e) {
-      console.error(e)
+      Sentry.captureException(e)
     }
   }
 
@@ -154,7 +155,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
         h.id === hour.id ? { ...h, [field]: value } : h
       ))
     } catch (e) {
-      console.error(e)
+      Sentry.captureException(e)
     }
   }
 
@@ -182,7 +183,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
 
       onComplete()
     } catch (e) {
-      console.error('Error completing onboarding:', e)
+      Sentry.captureException(e)
     }
     setSaving(false)
   }
