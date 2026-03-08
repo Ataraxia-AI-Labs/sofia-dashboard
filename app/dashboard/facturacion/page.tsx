@@ -13,6 +13,7 @@ import {
 } from '@/lib/api/subscriptions'
 import CardTokenizationForm from '@/components/card-tokenization-form'
 import type { Subscription, Invoice, UsageData, WompiConfig } from '@/types'
+import { formatCOP } from '@/lib/api'
 import {
   CreditCard,
   CalendarDays,
@@ -22,12 +23,6 @@ import {
   X,
   Loader2,
 } from 'lucide-react'
-
-/* ── Helpers ── */
-
-function formatCOP(amount: number): string {
-  return '$' + amount.toLocaleString('es-CO', { maximumFractionDigits: 0 })
-}
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('es-CO', {

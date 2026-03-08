@@ -10,7 +10,7 @@
  */
 
 // Helpers & formatters
-export { withBranch, formatCOP, formatUSD, formatNumber, formatPercent, timeAgo } from './helpers'
+export { withBranch, formatCurrency, formatCOP, formatUSD, formatNumber, formatPercent, timeAgo } from './helpers'
 
 // Branches
 export { fetchBranches } from './branches'

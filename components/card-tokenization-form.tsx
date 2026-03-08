@@ -175,9 +175,10 @@ export default function CardTokenizationForm({
     <form onSubmit={handleSubmit} className="glass-card p-5" autoComplete="off">
       {/* Card Number */}
       <div className="mb-4">
-        <label className={labelClass}>Numero de tarjeta</label>
+        <label htmlFor="ct-number" className={labelClass}>Numero de tarjeta</label>
         <div className="relative">
           <input
+            id="ct-number"
             type="text"
             inputMode="numeric"
             className={inputClass + ' pr-12'}
@@ -198,8 +199,9 @@ export default function CardTokenizationForm({
       {/* Expiry + CVC row */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div>
-          <label className={labelClass}>Expiracion</label>
+          <label htmlFor="ct-expiry" className={labelClass}>Expiracion</label>
           <input
+            id="ct-expiry"
             type="text"
             inputMode="numeric"
             className={inputClass}
@@ -213,8 +215,9 @@ export default function CardTokenizationForm({
           {touched.expiry && errors.expiry && <p className={errorClass}>{errors.expiry}</p>}
         </div>
         <div>
-          <label className={labelClass}>CVC</label>
+          <label htmlFor="ct-cvc" className={labelClass}>CVC</label>
           <input
+            id="ct-cvc"
             type="text"
             inputMode="numeric"
             className={inputClass}
@@ -231,8 +234,9 @@ export default function CardTokenizationForm({
 
       {/* Cardholder */}
       <div className="mb-5">
-        <label className={labelClass}>Titular de la tarjeta</label>
+        <label htmlFor="ct-holder" className={labelClass}>Titular de la tarjeta</label>
         <input
+          id="ct-holder"
           type="text"
           className={inputClass}
           placeholder="NOMBRE COMO APARECE EN LA TARJETA"

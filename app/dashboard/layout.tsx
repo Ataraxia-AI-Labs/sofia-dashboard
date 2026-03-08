@@ -14,6 +14,7 @@ import { NotificationsDropdown } from '@/components/notifications-dropdown'
 import { SofiaLogo } from '@/components/sofia-logo'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
+import { useTranslations } from 'next-intl'
 import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
@@ -21,44 +22,44 @@ import {
   Zap, ArrowRight
 } from 'lucide-react'
 
-const NAV_GROUPS = [
-  {
-    label: 'Principal',
-    items: [
-      { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
-      { href: '/dashboard/conversaciones', icon: MessageSquare, label: 'Conversaciones' },
-      { href: '/dashboard/pacientes', icon: Users, label: 'Pacientes' },
-      { href: '/dashboard/calendario', icon: Calendar, label: 'Calendario' },
-    ],
-  },
-  {
-    label: 'Ventas',
-    items: [
-      { href: '/dashboard/pipeline', icon: Kanban, label: 'Pipeline' },
-      { href: '/dashboard/oportunidades', icon: Target, label: 'Oportunidades' },
-      { href: '/dashboard/pagos', icon: CreditCard, label: 'Pagos' },
-    ],
-  },
-  {
-    label: 'Admin',
-    items: [
-      { href: '/dashboard/equipo', icon: UserCog, label: 'Equipo' },
-      { href: '/dashboard/datalake', icon: Database, label: 'Data Lake' },
-      { href: '/dashboard/health', icon: Activity, label: 'System Health' },
-    ],
-  },
-  {
-    label: 'Configuracion',
-    items: [
-      { href: '/dashboard/planes', icon: Gem, label: 'Planes' },
-      { href: '/dashboard/facturacion', icon: Receipt, label: 'Facturacion' },
-      { href: '/dashboard/ajustes', icon: Settings, label: 'Ajustes' },
-    ],
-  },
-]
-
-// Flat list kept for topbar label lookup
-const NAV_ITEMS = NAV_GROUPS.flatMap(g => g.items)
+function useNavGroups() {
+  const t = useTranslations('nav')
+  return [
+    {
+      label: t('principal'),
+      items: [
+        { href: '/dashboard', icon: LayoutDashboard, label: t('overview') },
+        { href: '/dashboard/conversaciones', icon: MessageSquare, label: t('conversations') },
+        { href: '/dashboard/pacientes', icon: Users, label: t('patients') },
+        { href: '/dashboard/calendario', icon: Calendar, label: t('calendar') },
+      ],
+    },
+    {
+      label: t('sales'),
+      items: [
+        { href: '/dashboard/pipeline', icon: Kanban, label: t('pipeline') },
+        { href: '/dashboard/oportunidades', icon: Target, label: t('opportunities') },
+        { href: '/dashboard/pagos', icon: CreditCard, label: t('payments') },
+      ],
+    },
+    {
+      label: t('admin'),
+      items: [
+        { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
+        { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
+        { href: '/dashboard/health', icon: Activity, label: t('systemHealth') },
+      ],
+    },
+    {
+      label: t('config'),
+      items: [
+        { href: '/dashboard/planes', icon: Gem, label: t('plans') },
+        { href: '/dashboard/facturacion', icon: Receipt, label: t('billing') },
+        { href: '/dashboard/ajustes', icon: Settings, label: t('settings') },
+      ],
+    },
+  ]
+}
 
 // ============================================================
 // SIDEBAR (extracted as a standalone component — not inside render)
@@ -69,21 +70,27 @@ function Sidebar({
   mobile,
   pathname,
   orgName,
+  navGroups,
   onNavigate,
   onLogout,
   onClose,
   godMode,
   onExitGodMode,
+  backLabel,
+  logoutLabel,
 }: {
   isOpen: boolean
   mobile?: boolean
   pathname: string
   orgName: string
+  navGroups: ReturnType<typeof useNavGroups>
   onNavigate: (href: string) => void
   onLogout: () => void
   onClose?: () => void
   godMode?: boolean
   onExitGodMode?: () => void
+  backLabel: string
+  logoutLabel: string
 }) {
   return (
     <>
@@ -106,7 +113,7 @@ function Sidebar({
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto" role="navigation" aria-label="Menu principal">
-        {NAV_GROUPS.map((group, gi) => (
+        {navGroups.map((group, gi) => (
           <div key={group.label} className={gi > 0 ? 'mt-4' : ''}>
             {/* Group label — only visible when sidebar is expanded */}
             {isOpen && (
@@ -156,19 +163,19 @@ function Sidebar({
           <button
             onClick={onExitGodMode}
             className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
-            aria-label="Volver a Admin"
+            aria-label={backLabel}
           >
             <ArrowLeft size={18} className="flex-shrink-0" />
-            {isOpen && <span className="animate-fade-in">Volver a Admin</span>}
+            {isOpen && <span className="animate-fade-in">{backLabel}</span>}
           </button>
         )}
         <button
           onClick={onLogout}
           className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
-          aria-label="Cerrar sesion"
+          aria-label={logoutLabel}
         >
           <LogOut size={18} className="flex-shrink-0" />
-          {isOpen && <span className="animate-fade-in">Cerrar sesion</span>}
+          {isOpen && <span className="animate-fade-in">{logoutLabel}</span>}
         </button>
       </div>
     </>
@@ -357,6 +364,9 @@ function TrialBanner({
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
+  const NAV_GROUPS = useNavGroups()
+  const NAV_ITEMS = NAV_GROUPS.flatMap(g => g.items)
+  const t = useTranslations('nav')
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
   const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'STAFF'>('STAFF')
@@ -484,10 +494,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const sidebarProps = {
     pathname,
     orgName: org?.name || 'Dashboard',
+    navGroups: NAV_GROUPS,
     onNavigate: navigateTo,
     onLogout: handleLogout,
     godMode,
     onExitGodMode: handleExitGodMode,
+    backLabel: t('backToAdmin'),
+    logoutLabel: t('logout'),
   }
 
   return (

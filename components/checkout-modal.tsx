@@ -5,6 +5,7 @@ import { X, Check, AlertCircle, ShieldCheck, CreditCard, Zap } from 'lucide-reac
 import { Spinner } from '@/components/ui/spinner'
 import CardTokenizationForm from '@/components/card-tokenization-form'
 import { createSubscription } from '@/lib/api/subscriptions'
+import { formatCOP } from '@/lib/api'
 
 /* ------------------------------------------------------------------ */
 /*  Types & constants                                                  */
@@ -67,14 +68,6 @@ const PLAN_DISPLAY_NAMES: Record<string, string> = {
   STARTER: 'Starter',
   PRO: 'Pro',
   BUSINESS: 'Business',
-}
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-function formatCOP(value: number): string {
-  return `$${value.toLocaleString('es-CO')} COP`
 }
 
 /* ------------------------------------------------------------------ */
@@ -293,6 +286,7 @@ export function CheckoutModal({
 
             <label className="flex items-start gap-2 cursor-pointer group">
               <input
+                id="checkout-terms"
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}

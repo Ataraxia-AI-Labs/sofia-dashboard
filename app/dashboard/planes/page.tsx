@@ -6,6 +6,7 @@ import { fetchSubscription, fetchUsage, fetchWompiConfig } from '@/lib/api/subsc
 import { CheckoutModal } from '@/components/checkout-modal'
 import { Check, X, Gem, Crown, Zap, Clock, Rocket, Building2 } from 'lucide-react'
 import type { Subscription, UsageData, WompiConfig } from '@/types'
+import { formatCOP } from '@/lib/api'
 
 /* ------------------------------------------------------------------ */
 /*  Plan configuration                                                 */
@@ -21,10 +22,6 @@ const PRICES: Record<string, number> = {
   PRO_ANNUAL: 2_990_000,
   BUSINESS_MONTHLY: 499_000,
   BUSINESS_ANNUAL: 4_990_000,
-}
-
-function formatCOP(amount: number): string {
-  return '$' + amount.toLocaleString('es-CO')
 }
 
 function monthlyEquivalent(annual: number): string {

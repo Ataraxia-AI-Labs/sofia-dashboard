@@ -365,8 +365,8 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Nombre de la clínica *</label>
-                <input type="text" value={form.clinic_name} onChange={(e) => updateForm('clinic_name', e.target.value)} placeholder="Ej: Sonrisa Perfect" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
+                <label htmlFor="ob-clinic-name" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Nombre de la clínica *</label>
+                <input id="ob-clinic-name" type="text" value={form.clinic_name} onChange={(e) => updateForm('clinic_name', e.target.value)} placeholder="Ej: Sonrisa Perfect" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
               </div>
 
               <div>
@@ -382,8 +382,8 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Ciudad</label>
-                <select value={form.city} onChange={(e) => updateForm('city', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none">
+                <label htmlFor="ob-city" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Ciudad</label>
+                <select id="ob-city" value={form.city} onChange={(e) => updateForm('city', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none">
                   <option value="">Seleccionar...</option>
                   {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -400,19 +400,19 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Nombre completo *</label>
-                <input type="text" value={form.owner_name} onChange={(e) => updateForm('owner_name', e.target.value)} placeholder="Dr. Juan Pérez" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
+                <label htmlFor="ob-owner-name" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Nombre completo *</label>
+                <input id="ob-owner-name" type="text" value={form.owner_name} onChange={(e) => updateForm('owner_name', e.target.value)} placeholder="Dr. Juan Pérez" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Email *</label>
-                <input type="email" value={form.owner_email} onChange={(e) => updateForm('owner_email', e.target.value)} placeholder="juan@clinica.com" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
+                <label htmlFor="ob-email" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Email *</label>
+                <input id="ob-email" type="email" value={form.owner_email} onChange={(e) => updateForm('owner_email', e.target.value)} placeholder="juan@clinica.com" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/50" />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Contraseña del Dashboard *</label>
+                <label htmlFor="ob-password" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Contraseña del Dashboard *</label>
                 <div className="relative">
-                  <input type={showPw ? 'text' : 'password'} value={form.password} onChange={(e) => updateForm('password', e.target.value)} placeholder="Mínimo 8 caracteres" className={`w-full px-4 py-3 pr-12 rounded-xl bg-surface-2 border text-text-primary text-sm outline-none transition-colors ${form.password && !passwordValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                  <input id="ob-password" type={showPw ? 'text' : 'password'} value={form.password} onChange={(e) => updateForm('password', e.target.value)} placeholder="Mínimo 8 caracteres" className={`w-full px-4 py-3 pr-12 rounded-xl bg-surface-2 border text-text-primary text-sm outline-none transition-colors ${form.password && !passwordValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
                   <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors" aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
                     {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -423,8 +423,8 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Confirmar contraseña *</label>
-                <input type={showPw ? 'text' : 'password'} value={form.password_confirm} onChange={(e) => updateForm('password_confirm', e.target.value)} placeholder="Repite la contraseña" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm outline-none transition-colors ${form.password_confirm && !passwordsMatch ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                <label htmlFor="ob-pw-confirm" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Confirmar contraseña *</label>
+                <input id="ob-pw-confirm" type={showPw ? 'text' : 'password'} value={form.password_confirm} onChange={(e) => updateForm('password_confirm', e.target.value)} placeholder="Repite la contraseña" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm outline-none transition-colors ${form.password_confirm && !passwordsMatch ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
                 {form.password_confirm && !passwordsMatch && (
                   <p className="text-[10px] text-status-danger mt-1">Las contraseñas no coinciden</p>
                 )}
@@ -434,8 +434,8 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp del doctor *</label>
-                <input type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="+573001234567" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm font-mono outline-none transition-colors ${form.phone && !phoneValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                <label htmlFor="ob-phone" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp del doctor *</label>
+                <input id="ob-phone" type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="+573001234567" className={`w-full px-4 py-3 rounded-xl bg-surface-2 border text-text-primary text-sm font-mono outline-none transition-colors ${form.phone && !phoneValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
                 {form.phone && !phoneValid ? (
                   <p className="text-[10px] text-status-danger mt-1">Formato internacional: codigo de pais + numero (ej: +573001234567)</p>
                 ) : (
@@ -472,8 +472,8 @@ export default function OnboardingPage() {
 
               {/* Secondary: Manual Phone ID (optional, for users who already have it) */}
               <div>
-                <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Phone Number ID (opcional)</label>
-                <input type="text" value={form.whatsapp_phone_id} onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)} placeholder="Ej: 123456789012345" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/50" />
+                <label htmlFor="ob-phone-id" className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Phone Number ID (opcional)</label>
+                <input id="ob-phone-id" type="text" value={form.whatsapp_phone_id} onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)} placeholder="Ej: 123456789012345" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/50" />
                 <p className="text-[10px] text-text-dim mt-1 flex items-center gap-1">
                   Si ya tienes el Phone ID de Meta Business, puedes ingresarlo ahora
                   <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:text-brand-purple-light inline-flex items-center gap-0.5">
