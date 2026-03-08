@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Outfit, JetBrains_Mono, Playfair_Display } from 'next/font/google'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 import { Providers } from '@/components/providers'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -54,15 +56,20 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale()
+  const messages = await getMessages()
+
   return (
-    <html lang="es" className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}>
+    <html lang={locale} className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}>
       <body className="min-h-screen">
-        <Providers>
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </Providers>
+        <NextIntlClientProvider messages={messages}>
+          <Providers>
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   )
