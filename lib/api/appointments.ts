@@ -10,6 +10,7 @@ export async function fetchAppointments(orgId: string, opts?: {
   if (opts?.from) params.set('from', opts.from)
   if (opts?.to) params.set('to', opts.to)
   if (opts?.status) params.set('status', opts.status)
+  if (opts?.branchId) params.set('branch_id', opts.branchId)
 
   const url = `${API_URL}/appointments/${orgId}?${params.toString()}`
   const res = await authFetch(url)
