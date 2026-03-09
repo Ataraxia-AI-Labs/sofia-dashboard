@@ -40,6 +40,13 @@ npm test -- --ci                # 141 tests must pass
 npm run build                   # Production build must succeed
 ```
 
+## After You Finish (MANDATORY)
+After implementing your fix/feature, update the relevant documentation:
+1. If you added/removed/changed a page or component → update `md/CLAUDE_DASHBOARD.md`
+2. If you added/removed/changed a test → update the test count
+3. If you fixed a backlog item → note it in your PR description
+4. Add a one-line summary of what you did in your commit message
+
 ## What NOT to Do
 - Do NOT modify backend logic from this repo
 - Do NOT make direct Supabase queries for business data (only auth)
