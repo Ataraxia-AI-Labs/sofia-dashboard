@@ -5,7 +5,7 @@
 
 ## CONTEXTO
 
-Este es el FRONTEND. El backend es otro repo (ataraxia-backend-core). NO edites lógica de backend aquí. Solo consumes la API.
+Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites lógica de backend aquí. Solo consumes la API.
 
 **Stack:** Next.js 14 App Router + TypeScript + Tailwind CSS
 **Deploy:** Vercel (auto-deploy on push to main)
