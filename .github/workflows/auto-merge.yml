@@ -1,5 +1,5 @@
 # ATARAXIA IA LABS — Auto-Merge for Approved PRs (Dashboard)
-# Same logic as backend. Only auto-merges Ellipsis PRs or 'auto-merge' labeled PRs.
+# Same logic as backend. Only auto-merges Copilot PRs or 'auto-merge' labeled PRs.
 
 name: Auto-Merge Approved PRs
 
@@ -17,7 +17,7 @@ jobs:
   auto-merge:
     runs-on: ubuntu-latest
     if: |
-      (github.event.pull_request.user.login == 'ellipsis-dev[bot]' ||
+      (github.event.pull_request.user.login == 'copilot[bot]' ||
        contains(github.event.pull_request.labels.*.name, 'auto-merge'))
     steps:
       - name: Check CI status
@@ -65,5 +65,12 @@ jobs:
               pull_number: context.payload.pull_request.number,
               merge_method: 'squash',
               commit_title: `${context.payload.pull_request.title} (#${context.payload.pull_request.number})`,
-              commit_message: 'Auto-merged: CI passed + CodeRabbit approved',
+              commit_message: 'Auto-merged: CI passed + CodeRabbit approved\n\nCo-Authored-By: GitHub Copilot <copilot@github.com>',
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: '**Auto-merged** — CI passed + review approved. Deploying to production via Vercel.',
             });

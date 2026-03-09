@@ -1,0 +1,44 @@
+# ATARAXIA IA LABS — Auto-assign Copilot Coding Agent (Dashboard)
+# Any issue labeled 'copilot' or 'auto-heal' gets automatically assigned to Copilot.
+
+name: Auto-assign Copilot to Issues
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  issues: write
+
+jobs:
+  assign-copilot:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.issue.labels.*.name, 'copilot') ||
+      contains(github.event.issue.labels.*.name, 'auto-heal') ||
+      contains(github.event.issue.labels.*.name, 'autofix')
+    steps:
+      - name: Assign Copilot to issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: ['copilot']
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '**Copilot Coding Agent assigned.** Starting autonomous work.',
+                '',
+                'Pipeline: `Issue → Copilot PR → CI (tests) → CodeRabbit review → Auto-merge → Deploy`',
+                '',
+                '---',
+                '*Ataraxia IA Labs — Autonomous Engineering Pipeline*'
+              ].join('\n')
+            });
