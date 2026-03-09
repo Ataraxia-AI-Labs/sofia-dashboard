@@ -7,7 +7,7 @@
 ## Full Documentation
 
 All detailed docs live in the **backend repo** (ataraxia-backend-core):
-- GitHub: `Ataraxia-ia-labs/ataraxia-backend-core/docs/agents/`
+- GitHub: `Ataraxia-AI-Labs/ataraxia-backend-core/docs/agents/`
 
 Read in order:
 1. `00_START_HERE.md` -- Overview, rules, architecture, mindset
