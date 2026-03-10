@@ -1,0 +1,83 @@
+# ATARAXIA IA LABS — Copilot Auto-Iterate on Review Feedback
+# When CodeRabbit requests changes on a Copilot PR, this workflow
+# comments on the PR asking Copilot to address the feedback.
+#
+# Flow: CodeRabbit CHANGES_REQUESTED → this workflow → @copilot fix → Copilot pushes → CI → review again
+
+name: "Copilot: Iterate on Review Feedback"
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  request-copilot-fix:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.review.state == 'changes_requested' &&
+      (github.event.pull_request.user.login == 'copilot-swe-agent[bot]' ||
+       github.event.pull_request.user.login == 'Copilot')
+    steps:
+      - name: Collect review comments
+        id: feedback
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const { data: comments } = await github.rest.pulls.listReviewComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            // Get the latest review body
+            const latestReview = reviews
+              .filter(r => r.state === 'CHANGES_REQUESTED')
+              .pop();
+
+            // Get inline comments
+            const inlineComments = comments
+              .slice(-10)
+              .map(c => `- **${c.path}:${c.line || '?'}**: ${c.body.slice(0, 200)}`)
+              .join('\n');
+
+            const feedback = [
+              latestReview?.body?.slice(0, 500) || '',
+              inlineComments
+            ].filter(Boolean).join('\n\n');
+
+            core.setOutput('feedback', feedback.slice(0, 1500));
+
+      - name: Ask Copilot to fix
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            const feedback = `${{ steps.feedback.outputs.feedback }}`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: [
+                '@copilot Please address the review feedback below and push a fix:',
+                '',
+                '```',
+                feedback || 'See review comments above.',
+                '```',
+                '',
+                'Remember:',
+                '- Read `.github/copilot-instructions.md` rules',
+                '- Run `pytest tests/ -v --tb=short` before pushing',
+                '- Do not break existing tests',
+              ].join('\n')
+            });
