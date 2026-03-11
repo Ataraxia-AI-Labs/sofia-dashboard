@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (141 tests, 16 test files) + Playwright E2E infrastructure
+**Tests:** Jest (147 tests, 17 test files) + Playwright E2E infrastructure
 
 ## CONEXIONES
 
@@ -81,7 +81,7 @@ SENTRY_AUTH_TOKEN=<token>
 error-boundary, chat-input, notifications-dropdown, sofia-logo, providers
 
 **UI (components/ui/):** button, input (Input+Textarea+Select), modal, card (Card+StatCard),
-tabs, toggle, badge, status-pill, metric-card, toast, spinner, empty-state,
+tabs, toggle, badge, status-pill, metric-card, toast, spinner, skeleton, empty-state,
 section-title, perf-item, bot-card
 
 ## API LAYER (lib/api/ — 23 modules)
