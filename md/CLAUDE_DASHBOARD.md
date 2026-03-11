@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (141 tests, 16 test files) + Playwright E2E infrastructure
+**Tests:** Jest (143 tests, 16 test files) + Playwright E2E infrastructure
 
 ## CONEXIONES
 
@@ -78,7 +78,20 @@ SENTRY_AUTH_TOKEN=<token>
 ## COMPONENTES (9 top-level + 15 UI)
 
 **Top-level:** sidebar, onboarding-wizard, card-tokenization-form, checkout-modal,
-error-boundary, chat-input, notifications-dropdown, sofia-logo, providers
+error-boundary, route-error-fallback, chat-input, notifications-dropdown, sofia-logo, providers
+
+**ErrorBoundary** (`components/error-boundary.tsx`):
+- Class component (React limitation for error boundaries)
+- Catches client-side render errors in child components
+- Calls `Sentry.captureException()` with component stack context
+- Shows user-friendly Spanish error message + retry button
+- Shows full error details (message + stack) **in development mode only**
+- Used in `app/layout.tsx` as global fallback; also via `app/**/error.tsx` per-route
+
+**RouteErrorFallback** (`components/route-error-fallback.tsx`):
+- Shared UI for all Next.js `error.tsx` route segments
+- Calls `Sentry.captureException()`, shows dev-mode details, retry button
+- Used by: `app/dashboard/error.tsx`, `app/admin/error.tsx`, all auth route error.tsx files
 
 **UI (components/ui/):** button, input (Input+Textarea+Select), modal, card (Card+StatCard),
 tabs, toggle, badge, status-pill, metric-card, toast, spinner, empty-state,
