@@ -106,7 +106,7 @@ export default function AjustesPage() {
       <Tabs tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
 
       {activeTab === 'prompt' && (
-        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} />
+        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} orgId={orgId} />
       )}
       {activeTab === 'services' && (
         <ServicesTab orgId={orgId} services={services} isReadOnly={isReadOnly} onRefresh={loadData} onMessage={handleMessage} />

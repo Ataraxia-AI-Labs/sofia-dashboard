@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { supabase } from '@/lib/supabase'
-import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage } from '@/lib/api'
+import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage, annotateInteraction, removeAnnotation } from '@/lib/api'
 import type { InteractionLog, ActiveTakeover } from '@/lib/api'
 import type { Patient } from '@/types'
 import { ChatInput } from '@/components/chat-input'
@@ -13,7 +13,7 @@ import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock, Shield, Loader2
+  Hash, Clock, Shield, Loader2, ThumbsUp, ThumbsDown
 } from 'lucide-react'
 
 // ============================================================
@@ -540,6 +540,12 @@ function ConversationDetail({
   const [takeoverLoading, setTakeoverLoading] = useState(false)
   const canTakeover = role === 'OWNER' || role === 'ADMIN'
 
+  // Handle annotation change — update local message state
+  const handleAnnotationChange = useCallback((msgId: string, annotation: InteractionLog['annotation']) => {
+    const msg = thread.messages.find(m => m.id === msgId)
+    if (msg) msg.annotation = annotation
+  }, [thread.messages])
+
   // Check if this patient has an active takeover
   useEffect(() => {
     if (!canTakeover) return
@@ -680,7 +686,12 @@ function ConversationDetail({
             {/* Messages */}
             <div className="space-y-2">
               {group.messages.map((msg) => (
-                <MessageBubble key={msg.id} message={msg} />
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  orgId={orgId}
+                  onAnnotationChange={handleAnnotationChange}
+                />
               ))}
             </div>
           </div>
@@ -718,9 +729,14 @@ function ConversationDetail({
 // MESSAGE BUBBLE
 // ============================================================
 
-function MessageBubble({ message }: { message: InteractionLog }) {
+function MessageBubble({ message, orgId, onAnnotationChange }: {
+  message: InteractionLog
+  orgId: string
+  onAnnotationChange?: (id: string, annotation: InteractionLog['annotation']) => void
+}) {
   const isOutbound = message.direction === 'OUTBOUND'
   const sentimentLabel = getSentimentLabel(message.sentiment_score, message.sentiment_label)
+  const [annotating, setAnnotating] = useState(false)
 
   // Format time
   let time: string
@@ -733,6 +749,28 @@ function MessageBubble({ message }: { message: InteractionLog }) {
 
   // Tools used
   const tools = message.tools_used || []
+
+  // Current annotation state
+  const currentRating = message.annotation?.rating || null
+
+  // The real interaction_id (strip "-ai" suffix used for split messages)
+  const realInteractionId = message.id.endsWith('-ai') ? message.id.slice(0, -3) : message.id
+
+  const handleAnnotate = async (rating: 'thumbs_up' | 'thumbs_down') => {
+    if (annotating) return
+    setAnnotating(true)
+    try {
+      if (currentRating === rating) {
+        // Toggle off — remove annotation
+        await removeAnnotation(orgId, realInteractionId)
+        onAnnotationChange?.(message.id, null)
+      } else {
+        await annotateInteraction(orgId, realInteractionId, rating)
+        onAnnotationChange?.(message.id, { interaction_id: realInteractionId, rating })
+      }
+    } catch { /* ignore */ }
+    setAnnotating(false)
+  }
 
   return (
     <div className={`flex ${isOutbound ? 'justify-end' : 'justify-start'} group`}>
@@ -795,6 +833,38 @@ function MessageBubble({ message }: { message: InteractionLog }) {
                 ? `${message.response_time_ms}ms`
                 : `${(message.response_time_ms / 1000).toFixed(1)}s`}
             </span>
+          )}
+
+          {/* Annotation buttons — only on AI responses */}
+          {isOutbound && (
+            <div className={`flex items-center gap-0.5 ml-auto transition-opacity ${
+              currentRating ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            }`}>
+              <button
+                onClick={() => handleAnnotate('thumbs_up')}
+                disabled={annotating}
+                className={`p-1 rounded-md transition-all ${
+                  currentRating === 'thumbs_up'
+                    ? 'bg-status-success/15 text-status-success'
+                    : 'text-text-dim hover:text-status-success hover:bg-status-success/10'
+                } disabled:opacity-40`}
+                title="Buena respuesta"
+              >
+                <ThumbsUp size={10} className={currentRating === 'thumbs_up' ? 'fill-current' : ''} />
+              </button>
+              <button
+                onClick={() => handleAnnotate('thumbs_down')}
+                disabled={annotating}
+                className={`p-1 rounded-md transition-all ${
+                  currentRating === 'thumbs_down'
+                    ? 'bg-status-danger/15 text-status-danger'
+                    : 'text-text-dim hover:text-status-danger hover:bg-status-danger/10'
+                } disabled:opacity-40`}
+                title="Mala respuesta"
+              >
+                <ThumbsDown size={10} className={currentRating === 'thumbs_down' ? 'fill-current' : ''} />
+              </button>
+            </div>
           )}
         </div>
 
