@@ -1,0 +1,55 @@
+# ATARAXIA IA LABS — Auto-Ready Copilot PRs (Dashboard)
+# Copilot creates PRs as DRAFT. This workflow detects when Copilot
+# pushes to a draft PR and marks it as ready for review after a short
+# delay, so CI + CodeRabbit trigger automatically.
+
+name: Auto-Ready Copilot PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  auto-ready:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.draft == true &&
+      (github.event.pull_request.user.login == 'copilot-swe-agent[bot]' ||
+       github.event.pull_request.user.login == 'copilot[bot]')
+    steps:
+      - name: Wait for Copilot to finish pushing
+        run: sleep 120
+
+      - name: Mark PR as ready for review
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            if (!pr.draft) {
+              console.log('PR is already ready for review, skipping.');
+              return;
+            }
+
+            await github.graphql(`
+              mutation($id: ID!) {
+                markPullRequestReadyForReview(input: { pullRequestId: $id }) {
+                  pullRequest { isDraft }
+                }
+              }
+            `, { id: pr.node_id });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: '**Auto-ready** — Copilot PR marked as ready for review. CI + CodeRabbit will run now.\n\n---\n*Ataraxia IA Labs — Autonomous Engineering Pipeline*',
+            });
