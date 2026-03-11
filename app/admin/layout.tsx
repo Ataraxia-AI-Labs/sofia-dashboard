@@ -116,6 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => navigateTo(item.href)}
                 className={`sidebar-link w-full ${isActive ? 'active' : ''} cursor-pointer`}
                 title={!sidebarOpen ? item.label : undefined}
+                aria-label={item.label}
               >
                 <Icon size={18} className="flex-shrink-0" />
                 {sidebarOpen && <span className="animate-fade-in truncate">{item.label}</span>}
@@ -129,6 +130,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             onClick={handleLogout}
             className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!sidebarOpen ? 'justify-center' : ''}`}
+            aria-label="Cerrar sesión"
           >
             <LogOut size={18} className="flex-shrink-0" />
             {sidebarOpen && <span className="animate-fade-in">Cerrar sesion</span>}
@@ -139,6 +141,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-all z-10"
+          aria-label={sidebarOpen ? 'Colapsar sidebar' : 'Expandir sidebar'}
         >
           {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
         </button>
@@ -180,7 +183,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-14 lg:h-16 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 lg:px-6 sticky top-0 z-20">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileMenuOpen(true)} className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <button onClick={() => setMobileMenuOpen(true)} className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors" aria-label="Abrir menú de navegación">
               <Menu size={18} />
             </button>
             <div>
