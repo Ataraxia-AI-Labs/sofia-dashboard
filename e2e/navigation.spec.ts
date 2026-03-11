@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test'
+import fs from 'fs'
+import { AUTH_FILE } from './global-setup'
 
 /**
  * Dashboard Navigation E2E tests
@@ -112,10 +114,6 @@ test.describe('Public pages', () => {
 // ─────────────────────────────────────────────────────────────
 // Dashboard sidebar navigation — requires authentication
 // ─────────────────────────────────────────────────────────────
-
-import fs from 'fs'
-import path from 'path'
-import { AUTH_FILE } from './global-setup'
 
 const hasAuth = fs.existsSync(AUTH_FILE)
 

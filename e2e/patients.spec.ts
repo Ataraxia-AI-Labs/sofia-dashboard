@@ -178,7 +178,7 @@ describeFn('Patients page — authenticated with mocked API', () => {
       await expect(page.locator('text=Paciente Test 1')).toBeVisible({ timeout: 15000 })
 
       // total=45 with page_size=20 → 3 pages → pagination should be visible
-      const nextBtn = page.locator('button').filter({ has: page.locator('svg') }).last()
+      const nextBtn = page.getByRole('button', { name: 'Página siguiente' })
       await expect(nextBtn).toBeVisible()
       await nextBtn.click()
 
@@ -195,9 +195,7 @@ describeFn('Patients page — authenticated with mocked API', () => {
       await page.goto('/dashboard/pacientes')
       await expect(page.locator('text=Paciente Test 1')).toBeVisible({ timeout: 15000 })
 
-      // First chevron button in pagination = "previous"
-      const prevBtn = page.locator('button[disabled]').filter({ hasText: '' }).first()
-      // The prev button should be disabled on page 0
+      const prevBtn = page.getByRole('button', { name: 'Página anterior' })
       await expect(prevBtn).toBeDisabled()
     } finally {
       await context.close()
