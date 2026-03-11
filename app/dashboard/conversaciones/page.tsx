@@ -223,7 +223,7 @@ export default function ConversacionesPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Conversaciones</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Conversaciones</h2>
           <p className="text-text-dim text-xs mt-0.5">
             {uniquePatients} conversaciones{totalMessages > 0 && <> &middot; {totalMessages} mensajes</>}
           </p>
