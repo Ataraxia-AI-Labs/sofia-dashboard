@@ -7,6 +7,8 @@ import { fetchUserOrganization, fetchBranches } from '@/lib/api'
 import { isSuperAdmin } from '@/lib/admin-api'
 import { getImpersonatedOrgId, getImpersonatedOrgName, stopImpersonation, isImpersonating } from '@/lib/impersonation'
 import { OrgContext } from '@/lib/org-context'
+import { filterNavByRole } from '@/lib/role-permissions'
+import { RoleGuard } from '@/components/role-guard'
 import { ErrorBoundary } from '@/components/error-boundary'
 import * as Sentry from '@sentry/nextjs'
 import OnboardingWizard from '@/components/onboarding-wizard'
@@ -365,7 +367,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const pathname = usePathname()
   const NAV_GROUPS = useNavGroups()
-  const NAV_ITEMS = NAV_GROUPS.flatMap(g => g.items)
+  // Filter nav groups based on current user role (hide inaccessible items)
+  const FILTERED_NAV_GROUPS = NAV_GROUPS.map(group => ({
+    ...group,
+    items: filterNavByRole(group.items, role),
+  })).filter(group => group.items.length > 0)
+  const NAV_ITEMS = FILTERED_NAV_GROUPS.flatMap(g => g.items)
   const t = useTranslations('nav')
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
@@ -494,7 +501,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const sidebarProps = {
     pathname,
     orgName: org?.name || 'Dashboard',
-    navGroups: NAV_GROUPS,
+    navGroups: FILTERED_NAV_GROUPS,
     onNavigate: navigateTo,
     onLogout: handleLogout,
     godMode,
@@ -614,7 +621,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {org.status === 'SETUP' && !godMode ? (
                     <OnboardingWizard org={org} orgId={org.id} onComplete={() => window.location.reload()} />
                   ) : (
-                    children
+                    <RoleGuard>{children}</RoleGuard>
                   )}
                 </ErrorBoundary>
               </OrgContext.Provider>

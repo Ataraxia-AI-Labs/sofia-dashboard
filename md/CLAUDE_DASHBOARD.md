@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (141 tests, 16 test files) + Playwright E2E infrastructure
+**Tests:** Jest (190 tests, 17 test files) + Playwright E2E infrastructure
 
 ## CONEXIONES
 
@@ -59,6 +59,7 @@ SENTRY_AUTH_TOKEN=<token>
 | Forgot Password | /forgot-password | ✅ Reset request |
 | Reset Password | /reset-password | ✅ New password form |
 | Onboarding | /onboarding | ✅ 4-step wizard + Turnstile |
+| 403 Forbidden | /403 | ✅ Role-based access denied page |
 
 ### Admin (5 páginas — Super Admin only)
 | Página | Ruta | Estado |
@@ -78,7 +79,7 @@ SENTRY_AUTH_TOKEN=<token>
 ## COMPONENTES (9 top-level + 15 UI)
 
 **Top-level:** sidebar, onboarding-wizard, card-tokenization-form, checkout-modal,
-error-boundary, chat-input, notifications-dropdown, sofia-logo, providers
+error-boundary, chat-input, notifications-dropdown, sofia-logo, providers, role-guard
 
 **UI (components/ui/):** button, input (Input+Textarea+Select), modal, card (Card+StatCard),
 tabs, toggle, badge, status-pill, metric-card, toast, spinner, empty-state,
@@ -99,8 +100,29 @@ treatments, voice
 |------|---------|
 | `lib/supabase.ts` | createBrowserClient (anon key), API_URL export |
 | `lib/impersonation.ts` | God Mode (sessionStorage) |
-| `lib/org-context.tsx` | Organization context provider |
+| `lib/org-context.tsx` | Organization context provider, OrgRole type, permission helpers |
+| `lib/role-permissions.ts` | RBAC: route→role mapping, canAccessRoute(), filterNavByRole() |
 | `lib/admin-api.ts` | Admin API functions |
+
+## ROLE-BASED ACCESS CONTROL (RBAC)
+
+Roles are stored in `org_members.role` (Supabase). Three levels:
+
+| Role | Access |
+|------|--------|
+| `OWNER` | Full access to all dashboard routes |
+| `ADMIN` | All routes except Plans (`/planes`) and Billing (`/facturacion`) |
+| `STAFF` | Read-only: Overview, Conversations, Patients, Calendar |
+
+**Key files:**
+- `lib/role-permissions.ts` — `ROUTE_PERMISSIONS` map + `canAccessRoute(role, pathname)` + `filterNavByRole(items, role)`
+- `components/role-guard.tsx` — Client component wrapping page content; redirects to `/403` if unauthorized
+- `app/403/page.tsx` — 403 Forbidden page
+
+**How it works:**
+1. `DashboardLayout` filters sidebar nav items via `filterNavByRole()` before rendering
+2. `<RoleGuard>` wraps every page's children inside `OrgContext.Provider`; if `canAccessRoute()` returns false it redirects to `/403`
+3. Super-admin in God Mode always gets role `OWNER` so all routes are accessible
 
 ## SUPER ADMIN ARCHITECTURE
 
