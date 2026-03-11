@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (141 tests, 16 test files) + Playwright E2E infrastructure
+**Tests:** Jest (173 tests, 19 test files) + Playwright E2E infrastructure
 
 ## CONEXIONES
 
@@ -78,7 +78,8 @@ SENTRY_AUTH_TOKEN=<token>
 ## COMPONENTES (9 top-level + 15 UI)
 
 **Top-level:** sidebar, onboarding-wizard, card-tokenization-form, checkout-modal,
-error-boundary, chat-input, notifications-dropdown, sofia-logo, providers
+error-boundary, chat-input, notifications-dropdown, sofia-logo, providers,
+command-palette, keyboard-shortcuts-dialog
 
 **UI (components/ui/):** button, input (Input+Textarea+Select), modal, card (Card+StatCard),
 tabs, toggle, badge, status-pill, metric-card, toast, spinner, empty-state,
@@ -101,6 +102,23 @@ treatments, voice
 | `lib/impersonation.ts` | God Mode (sessionStorage) |
 | `lib/org-context.tsx` | Organization context provider |
 | `lib/admin-api.ts` | Admin API functions |
+| `lib/hooks/use-cached-fetch.ts` | SWR-like fetch hook (in-memory cache, TTL, dedup) |
+| `lib/hooks/use-keyboard-shortcut.ts` | Global keyboard shortcut hook |
+
+## KEYBOARD SHORTCUTS
+
+Registered globally in `app/dashboard/layout.tsx` via `useKeyboardShortcut`.
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+K` / `Cmd+K` | Open command palette (page search) |
+| `Ctrl+N` | Navigate to Pacientes |
+| `Ctrl+Shift+A` | Navigate to Calendario |
+| `Ctrl+?` | Open keyboard shortcuts help dialog |
+| `Esc` | Close active modal or drawer |
+
+**Components:** `components/command-palette.tsx`, `components/keyboard-shortcuts-dialog.tsx`
+**Hook:** `lib/hooks/use-keyboard-shortcut.ts` — skips shortcuts when focus is in an input/textarea/select (except Escape).
 
 ## SUPER ADMIN ARCHITECTURE
 

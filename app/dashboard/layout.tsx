@@ -12,6 +12,9 @@ import * as Sentry from '@sentry/nextjs'
 import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 import { SofiaLogo } from '@/components/sofia-logo'
+import { CommandPalette } from '@/components/command-palette'
+import { KeyboardShortcutsDialog } from '@/components/keyboard-shortcuts-dialog'
+import { useKeyboardShortcut } from '@/lib/hooks/use-keyboard-shortcut'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
 import { useTranslations } from 'next-intl'
@@ -19,7 +22,7 @@ import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
   MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
-  Zap, ArrowRight
+  Zap, ArrowRight, Keyboard
 } from 'lucide-react'
 
 function useNavGroups() {
@@ -377,6 +380,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [godMode, setGodMode] = useState(false)
   const [godModeOrgName, setGodModeOrgName] = useState('')
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+  const [shortcutsDialogOpen, setShortcutsDialogOpen] = useState(false)
 
   const setBranchId = useCallback((id: string | null) => {
     setSelectedBranchId(id)
@@ -477,6 +482,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push(href)
     setMobileMenuOpen(false)
   }
+
+  // Global keyboard shortcuts — must be declared after navigateTo
+  useKeyboardShortcut('k', () => setCommandPaletteOpen(true), { ctrlOrMeta: true })
+  useKeyboardShortcut('n', () => navigateTo('/dashboard/pacientes'), { ctrl: true })
+  useKeyboardShortcut('a', () => navigateTo('/dashboard/calendario'), { ctrl: true, shift: true })
+  useKeyboardShortcut('?', () => setShortcutsDialogOpen(true), { ctrl: true })
 
   if (loading) {
     return (
@@ -600,6 +611,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               <NotificationsDropdown orgId={org?.id || ''} />
 
+              {/* Keyboard shortcuts hint */}
+              <button
+                onClick={() => setShortcutsDialogOpen(true)}
+                className="hidden md:flex w-9 h-9 rounded-lg bg-surface-2 border border-border items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-colors"
+                aria-label="Ver atajos de teclado (Ctrl+?)"
+                title="Atajos de teclado (Ctrl+?)"
+              >
+                <Keyboard size={16} />
+              </button>
+
               <div className={`w-9 h-9 rounded-lg border flex items-center justify-center font-semibold text-xs ${godMode ? 'bg-gradient-to-br from-status-danger/20 to-brand-purple/20 border-status-danger/20 text-status-danger' : 'bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border-brand-purple/20 text-brand-purple'}`}>
                 {user?.email?.[0]?.toUpperCase() || 'U'}
               </div>
@@ -627,6 +648,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </main>
         </div>
       </div>
+
+      {/* Global overlays — keyboard-driven */}
+      <CommandPalette open={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+      <KeyboardShortcutsDialog open={shortcutsDialogOpen} onClose={() => setShortcutsDialogOpen(false)} />
     </div>
   )
 }
