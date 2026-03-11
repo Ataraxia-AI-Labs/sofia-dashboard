@@ -313,6 +313,42 @@ export async function testWhatsApp(orgId: string, phone: string) {
 }
 
 // ============================================================
+// PIPELINE METRICS — From Supabase pipeline_metrics table
+// ============================================================
+
+export interface PipelineMetricsRow {
+  id: string
+  week_start: string
+  repo: string
+  prs_created: number
+  prs_merged: number
+  prs_open: number
+  prs_closed_unmerged: number
+  avg_time_to_merge_hours: number | null
+  ci_pass_rate: number | null
+  coderabbit_approved: number
+  coderabbit_changes_requested: number
+  issues_created: number
+  issues_closed: number
+  health_check_failures: number
+  sentry_errors: number
+  lines_added: number
+  lines_removed: number
+  collected_at: string
+}
+
+export async function fetchPipelineMetrics(limit: number = 20): Promise<PipelineMetricsRow[]> {
+  const { data, error } = await supabase
+    .from('pipeline_metrics')
+    .select('*')
+    .order('week_start', { ascending: false })
+    .limit(limit)
+
+  if (error) throw new Error(error.message)
+  return data || []
+}
+
+// ============================================================
 // GOD MODE — Ensure super admin has org_members access
 // ============================================================
 

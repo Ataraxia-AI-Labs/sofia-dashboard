@@ -8,13 +8,14 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import type { User } from '@supabase/supabase-js'
 import {
   Shield, Building2, BarChart3, Plus, LogOut, ChevronLeft,
-  ChevronRight, Menu, X, Activity
+  ChevronRight, Menu, X, Activity, GitPullRequest
 } from 'lucide-react'
 
 const ADMIN_NAV = [
   { href: '/admin', icon: Building2, label: 'Organizaciones' },
   { href: '/admin/organizaciones/nueva', icon: Plus, label: 'Crear Org' },
   { href: '/admin/metricas', icon: BarChart3, label: 'Metricas' },
+  { href: '/admin/pipeline', icon: GitPullRequest, label: 'Pipeline' },
   { href: '/admin/health', icon: Activity, label: 'System Health' },
 ]
 
