@@ -19,6 +19,7 @@ jobs:
     if: |
       (github.event.pull_request.user.login == 'copilot-swe-agent[bot]' ||
        github.event.pull_request.user.login == 'copilot[bot]' ||
+       github.event.pull_request.user.login == 'Copilot' ||
        contains(github.event.pull_request.labels.*.name, 'auto-merge'))
     steps:
       - name: Check CI status

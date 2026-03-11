@@ -18,7 +18,8 @@ jobs:
     if: |
       github.event.pull_request.draft == true &&
       (github.event.pull_request.user.login == 'copilot-swe-agent[bot]' ||
-       github.event.pull_request.user.login == 'copilot[bot]')
+       github.event.pull_request.user.login == 'copilot[bot]' ||
+       github.event.pull_request.user.login == 'Copilot')
     steps:
       - name: Wait for Copilot to finish pushing
         run: sleep 120
