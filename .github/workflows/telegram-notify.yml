@@ -36,6 +36,9 @@ jobs:
             const event = context.eventName;
             let msg = '';
 
+            // Helper to escape HTML
+            const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
             // ── Issue created/labeled ──
             if (event === 'issues') {
               const issue = context.payload.issue;
@@ -43,14 +46,14 @@ jobs:
               const labels = issue.labels.map(l => l.name).join(', ');
 
               if (action === 'opened') {
-                msg = `📋 *Nuevo Issue* \\| \`${repo}\`\n`;
-                msg += `*#${issue.number}*: ${issue.title}\n`;
-                msg += `Labels: \`${labels || 'none'}\`\n`;
-                msg += `[Ver issue](${issue.html_url})`;
+                msg = `📋 <b>Nuevo Issue</b> | <code>${esc(repo)}</code>\n`;
+                msg += `<b>#${issue.number}</b>: ${esc(issue.title)}\n`;
+                msg += `Labels: <code>${esc(labels || 'none')}</code>\n`;
+                msg += `<a href="${issue.html_url}">Ver issue</a>`;
               } else if (action === 'labeled' && context.payload.label?.name === 'auto-heal') {
-                msg = `🚨 *Auto\\-Heal Triggered* \\| \`${repo}\`\n`;
-                msg += `*#${issue.number}*: ${issue.title}\n`;
-                msg += `Sentry detecto un error y creo un issue automaticamente\\.`;
+                msg = `🚨 <b>Auto-Heal Triggered</b> | <code>${esc(repo)}</code>\n`;
+                msg += `<b>#${issue.number}</b>: ${esc(issue.title)}\n`;
+                msg += `Sentry detecto un error y creo un issue automaticamente.`;
               }
             }
 
@@ -61,17 +64,17 @@ jobs:
               const author = pr.user.login;
 
               if (action === 'opened') {
-                msg = `🔀 *Nuevo PR* \\| \`${repo}\`\n`;
-                msg += `*#${pr.number}*: ${pr.title}\n`;
-                msg += `Por: \`${author}\` \\| \\+${pr.additions}/\\-${pr.deletions}\n`;
-                msg += `[Ver PR](${pr.html_url})`;
+                msg = `🔀 <b>Nuevo PR</b> | <code>${esc(repo)}</code>\n`;
+                msg += `<b>#${pr.number}</b>: ${esc(pr.title)}\n`;
+                msg += `Por: <code>${esc(author)}</code> | +${pr.additions}/-${pr.deletions}\n`;
+                msg += `<a href="${pr.html_url}">Ver PR</a>`;
               } else if (action === 'closed' && pr.merged) {
-                msg = `✅ *PR Mergeado* \\| \`${repo}\`\n`;
-                msg += `*#${pr.number}*: ${pr.title}\n`;
-                msg += `Deploy en progreso\\.\\.\\.`;
+                msg = `✅ <b>PR Mergeado</b> | <code>${esc(repo)}</code>\n`;
+                msg += `<b>#${pr.number}</b>: ${esc(pr.title)}\n`;
+                msg += `Deploy en progreso...`;
               } else if (action === 'ready_for_review') {
-                msg = `👀 *PR Ready for Review* \\| \`${repo}\`\n`;
-                msg += `*#${pr.number}*: ${pr.title}`;
+                msg = `👀 <b>PR Ready for Review</b> | <code>${esc(repo)}</code>\n`;
+                msg += `<b>#${pr.number}</b>: ${esc(pr.title)}`;
               }
             }
 
@@ -83,14 +86,14 @@ jobs:
               const state = review.state;
 
               if (state === 'approved') {
-                msg = `🟢 *Review APPROVED* \\| \`${repo}\`\n`;
-                msg += `PR *#${pr.number}* aprobado por \`${reviewer}\`\n`;
-                msg += `Auto\\-merge deberia activarse\\.`;
+                msg = `🟢 <b>Review APPROVED</b> | <code>${esc(repo)}</code>\n`;
+                msg += `PR <b>#${pr.number}</b> aprobado por <code>${esc(reviewer)}</code>\n`;
+                msg += `Auto-merge deberia activarse.`;
               } else if (state === 'changes_requested') {
-                msg = `🟡 *Changes Requested* \\| \`${repo}\`\n`;
-                msg += `PR *#${pr.number}* \\| \`${reviewer}\` pide cambios\n`;
+                msg = `🟡 <b>Changes Requested</b> | <code>${esc(repo)}</code>\n`;
+                msg += `PR <b>#${pr.number}</b> | <code>${esc(reviewer)}</code> pide cambios\n`;
                 if (reviewer.includes('coderabbit')) {
-                  msg += `Copilot iterara automaticamente\\.`;
+                  msg += `Copilot iterara automaticamente.`;
                 }
               }
             }
@@ -100,9 +103,9 @@ jobs:
               const cs = context.payload.check_suite;
               if (cs.conclusion === 'failure') {
                 const branch = cs.head_branch;
-                msg = `❌ *CI Failed* \\| \`${repo}\`\n`;
-                msg += `Branch: \`${branch}\`\n`;
-                msg += `Conclusion: \`${cs.conclusion}\``;
+                msg = `❌ <b>CI Failed</b> | <code>${esc(repo)}</code>\n`;
+                msg += `Branch: <code>${esc(branch)}</code>\n`;
+                msg += `Conclusion: <code>${cs.conclusion}</code>`;
               }
             }
 
@@ -115,7 +118,7 @@ jobs:
                 body: JSON.stringify({
                   chat_id: chatId,
                   text: msg,
-                  parse_mode: 'MarkdownV2',
+                  parse_mode: 'HTML',
                   disable_web_page_preview: true,
                 }),
               });
