@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   CSS Custom Properties -- Theme Variables
+   ============================================================ */
+
+/* Dark theme (default) */
+:root,
+.dark {
+  --color-void: #050507;
+  --color-surface: #08080C;
+  --color-surface-2: #101018;
+  --color-surface-3: #141420;
+  --color-border: #1C1C2A;
+  --color-border-2: #2A2D42;
+  --color-text-primary: #F0EEF5;
+  --color-text-secondary: #D4D0E0;
+  --color-text-muted: #7E7A8E;
+  --color-text-dim: #4E4A5E;
+}
+
+/* Light theme */
+:root:not(.dark),
+.light {
+  --color-void: #F8F7FF;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F0EFF8;
+  --color-surface-3: #E8E6F5;
+  --color-border: #DDD9F0;
+  --color-border-2: #C8C3E8;
+  --color-text-primary: #1A1625;
+  --color-text-secondary: #3D3654;
+  --color-text-muted: #6B6480;
+  --color-text-dim: #9B94B0;
+}
+
 @layer base {
   body {
     @apply bg-void text-text-primary font-body antialiased;
@@ -17,18 +51,27 @@
   }
 
   /* Dark theme for native select dropdowns */
-  select {
+  .dark select {
     color-scheme: dark;
   }
-  select option {
+  .dark select option {
     background-color: #101018;
     color: #F0EEF5;
   }
+  .light select, :root:not(.dark) select {
+    color-scheme: light;
+  }
 
   /* Dark theme for date/time inputs */
-  input[type="date"],
-  input[type="time"] {
+  .dark input[type="date"],
+  .dark input[type="time"] {
     color-scheme: dark;
+  }
+  .light input[type="date"],
+  .light input[type="time"],
+  :root:not(.dark) input[type="date"],
+  :root:not(.dark) input[type="time"] {
+    color-scheme: light;
   }
 }
 

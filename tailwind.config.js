@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -7,9 +8,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        void: '#050507',
-        surface: { DEFAULT: '#08080C', 2: '#101018', 3: '#141420' },
-        border: { DEFAULT: '#1C1C2A', 2: '#2A2D42' },
+        void: 'var(--color-void)',
+        surface: {
+          DEFAULT: 'var(--color-surface)',
+          2: 'var(--color-surface-2)',
+          3: 'var(--color-surface-3)',
+        },
+        border: {
+          DEFAULT: 'var(--color-border)',
+          2: 'var(--color-border-2)',
+        },
         brand: {
           purple: '#8B5CF6',
           'purple-light': '#A78BFA',
@@ -19,10 +27,10 @@ module.exports = {
           gold: '#F5C842',
         },
         text: {
-          primary: '#F0EEF5',
-          secondary: '#D4D0E0',
-          muted: '#7E7A8E',
-          dim: '#4E4A5E',
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          muted: 'var(--color-text-muted)',
+          dim: 'var(--color-text-dim)',
         },
         status: {
           success: '#06D6A0',
