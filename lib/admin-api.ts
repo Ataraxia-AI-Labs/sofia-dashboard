@@ -349,6 +349,55 @@ export async function fetchPipelineMetrics(limit: number = 20): Promise<Pipeline
 }
 
 // ============================================================
+// AUDIT LOGS — GET /admin/audit-logs
+// ============================================================
+
+export interface AuditLogEntry {
+  id: string
+  created_at: string
+  user_id: string | null
+  user_email: string | null
+  action: string
+  resource_type: string
+  resource_id: string | null
+  organization_id: string | null
+  org_name: string | null
+  details: Record<string, unknown> | null
+}
+
+export interface AuditLogsParams {
+  page?: number
+  limit?: number
+  action?: string
+  org_id?: string
+  search?: string
+  date_from?: string
+  date_to?: string
+}
+
+export interface AuditLogsResponse {
+  data: AuditLogEntry[]
+  total: number
+  page: number
+  limit: number
+}
+
+export async function fetchAuditLogs(params: AuditLogsParams = {}): Promise<AuditLogsResponse> {
+  const { page = 1, limit = 50, action, org_id, search, date_from, date_to } = params
+  const qs = new URLSearchParams()
+  qs.set('page', String(page))
+  qs.set('limit', String(limit))
+  if (action) qs.set('action', action)
+  if (org_id) qs.set('org_id', org_id)
+  if (search) qs.set('search', search)
+  if (date_from) qs.set('date_from', date_from)
+  if (date_to) qs.set('date_to', date_to)
+
+  const result = await adminFetch<AuditLogsResponse>(`/audit-logs?${qs.toString()}`)
+  return result
+}
+
+// ============================================================
 // GOD MODE — Ensure super admin has org_members access
 // ============================================================
 

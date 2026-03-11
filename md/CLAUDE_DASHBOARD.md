@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (141 tests, 16 test files) + Playwright E2E infrastructure
+**Tests:** Jest (149 tests, 17 test files) + Playwright E2E infrastructure
 
 ## CONEXIONES
 
@@ -60,7 +60,7 @@ SENTRY_AUTH_TOKEN=<token>
 | Reset Password | /reset-password | ✅ New password form |
 | Onboarding | /onboarding | ✅ 4-step wizard + Turnstile |
 
-### Admin (5 páginas — Super Admin only)
+### Admin (6 páginas — Super Admin only)
 | Página | Ruta | Estado |
 |--------|------|--------|
 | Organizaciones | /admin | ✅ List all orgs, stats |
@@ -68,6 +68,7 @@ SENTRY_AUTH_TOKEN=<token>
 | Detalle Org | /admin/organizaciones/[id] | ✅ Detail + God Mode |
 | Métricas | /admin/metricas | ✅ Global metrics |
 | System Health | /admin/health | ✅ Bot logs, errors |
+| Audit Log | /admin/audit-logs | ✅ Audit log viewer (table, filters, pagination) |
 
 ### Legal (2 páginas)
 | Página | Ruta |
