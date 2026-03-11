@@ -78,6 +78,7 @@ function Sidebar({
   onExitGodMode,
   backLabel,
   logoutLabel,
+  closeMenuLabel,
 }: {
   isOpen: boolean
   mobile?: boolean
@@ -91,6 +92,7 @@ function Sidebar({
   onExitGodMode?: () => void
   backLabel: string
   logoutLabel: string
+  closeMenuLabel: string
 }) {
   return (
     <>
@@ -105,14 +107,14 @@ function Sidebar({
           <SofiaLogo size="sm" variant="mark" />
         )}
         {mobile && onClose && (
-          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto flex-shrink-0" aria-label="Cerrar menu">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto flex-shrink-0" aria-label={closeMenuLabel}>
             <X size={16} />
           </button>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto" role="navigation" aria-label="Menu principal">
+      <nav className="flex-1 px-3 py-4 overflow-y-auto" role="navigation" aria-label={navGroups[0]?.label || 'Navigation'}>
         {navGroups.map((group, gi) => (
           <div key={group.label} className={gi > 0 ? 'mt-4' : ''}>
             {/* Group label — only visible when sidebar is expanded */}
@@ -187,6 +189,8 @@ function Sidebar({
 // ============================================================
 
 function GodModeBanner({ orgName, onExit }: { orgName: string; onExit: () => void }) {
+  const t = useTranslations('godMode')
+  const tNav = useTranslations('nav')
   return (
     <div className="bg-gradient-to-r from-status-danger/10 via-brand-purple/10 to-status-danger/10 border-b border-status-danger/20 px-4 py-2 flex items-center justify-between">
       <div className="flex items-center gap-2.5">
@@ -194,8 +198,8 @@ function GodModeBanner({ orgName, onExit }: { orgName: string; onExit: () => voi
           <Shield size={12} className="text-white" />
         </div>
         <div>
-          <span className="text-xs font-bold text-status-danger">GOD MODE</span>
-          <span className="text-xs text-text-muted ml-2">Viendo dashboard de <strong className="text-text-primary">{orgName}</strong></span>
+          <span className="text-xs font-bold text-status-danger">{t('label')}</span>
+          <span className="text-xs text-text-muted ml-2">{t('viewing')} <strong className="text-text-primary">{orgName}</strong></span>
         </div>
       </div>
       <button
@@ -203,7 +207,7 @@ function GodModeBanner({ orgName, onExit }: { orgName: string; onExit: () => voi
         className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-semibold hover:bg-status-danger/20 transition-colors"
       >
         <ArrowLeft size={10} />
-        Volver a Admin
+        {tNav('backToAdmin')}
       </button>
     </div>
   )
@@ -224,6 +228,7 @@ function BranchSelector({
 }) {
   const [open, setOpen] = useState(false)
   const selected = branches.find(b => b.id === selectedBranchId)
+  const tLayout = useTranslations('layout')
 
   return (
     <div className="relative">
@@ -233,7 +238,7 @@ function BranchSelector({
       >
         <MapPin size={12} className={selectedBranchId ? 'text-brand-purple' : ''} />
         <span className="hidden sm:inline max-w-[120px] truncate">
-          {selected ? selected.name : 'Todas las sedes'}
+          {selected ? selected.name : tLayout('allBranches')}
         </span>
         <ChevronDown size={12} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
@@ -246,7 +251,7 @@ function BranchSelector({
               onClick={() => { onSelect(null); setOpen(false) }}
               className={`w-full text-left px-3 py-2 text-xs hover:bg-surface-2 transition-colors ${!selectedBranchId ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
             >
-              Todas las sedes
+              {tLayout('allBranches')}
             </button>
             {branches.map(b => (
               <button
@@ -279,6 +284,7 @@ function TrialBanner({
   onNavigate: (href: string) => void
 }) {
   const [dismissed, setDismissed] = useState(false)
+  const t = useTranslations('trial')
 
   // Read dismiss state from localStorage on mount
   useEffect(() => {
@@ -308,9 +314,9 @@ function TrialBanner({
 
   const copy = isUrgent
     ? daysLeft === 0
-      ? 'Tu prueba gratuita expira hoy. No pierdas tu configuracion ni tus pacientes.'
-      : `Quedan solo ${daysLeft} ${daysLeft === 1 ? 'dia' : 'dias'} de prueba. No pierdas tu configuracion.`
-    : `Tu prueba gratuita termina en ${daysLeft} dias. Elige un plan para seguir creciendo.`
+      ? t('expiresToday')
+      : t('daysLeft', { days: daysLeft })
+    : t('daysLeft', { days: daysLeft })
 
   return (
     <div
@@ -342,13 +348,13 @@ function TrialBanner({
               : 'bg-amber-700/20 text-amber-300 hover:bg-amber-700/35'
           }`}
         >
-          Elegir plan
+          {t('upgrade')}
           <ArrowRight size={10} />
         </button>
         <button
           onClick={handleDismiss}
           className="w-5 h-5 rounded flex items-center justify-center text-text-dim hover:text-text-muted transition-colors"
-          aria-label="Cerrar banner"
+          aria-label={t('banner')}
         >
           <X size={12} />
         </button>
@@ -367,6 +373,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const NAV_GROUPS = useNavGroups()
   const NAV_ITEMS = NAV_GROUPS.flatMap(g => g.items)
   const t = useTranslations('nav')
+  const tLayout = useTranslations('layout')
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
   const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'STAFF'>('STAFF')
@@ -402,7 +409,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (isAdmin && impersonatedOrgId) {
         // God Mode — load the impersonated org directly
         setGodMode(true)
-        setGodModeOrgName(impersonatedOrgName || 'Org desconocida')
+        setGodModeOrgName(impersonatedOrgName || tLayout('orgUnknown'))
 
         try {
           const { data, error } = await supabase
@@ -452,7 +459,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     })
 
     return () => subscription.unsubscribe()
-  }, [router])
+  }, [router, tLayout])
 
   // Fetch branches in background — never blocks dashboard loading
   useEffect(() => {
@@ -485,7 +492,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="animate-pulse-soft">
             <SofiaLogo size="md" variant="mark" />
           </div>
-          <p className="text-text-muted text-sm">Cargando dashboard...</p>
+          <p className="text-text-muted text-sm">{tLayout('loadingDashboard')}</p>
         </div>
       </div>
     )
@@ -501,6 +508,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     onExitGodMode: handleExitGodMode,
     backLabel: t('backToAdmin'),
     logoutLabel: t('logout'),
+    closeMenuLabel: tLayout('closeMenu'),
   }
 
   return (
@@ -543,7 +551,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-all z-10"
-            aria-label={sidebarOpen ? 'Colapsar sidebar' : 'Expandir sidebar'}
+            aria-label={sidebarOpen ? tLayout('closeMenu') : tLayout('mainMenu')}
           >
             {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
           </button>
@@ -568,7 +576,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors"
-                aria-label="Abrir menu"
+                aria-label={tLayout('mainMenu')}
               >
                 <Menu size={18} />
               </button>

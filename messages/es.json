@@ -39,7 +39,29 @@
     "close": "Cerrar",
     "retry": "Reintentar",
     "yes": "Si",
-    "no": "No"
+    "no": "No",
+    "update": "Actualizar",
+    "refresh": "Actualizar",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "unknown": "Desconocido",
+    "new": "Nuevo",
+    "invite": "Invitar",
+    "deactivate": "Desactivar",
+    "send": "Enviar",
+    "connecting": "Conectando...",
+    "connected": "Conectado",
+    "notConnected": "No conectado",
+    "enabled": "Activo",
+    "disabled": "Inactivo",
+    "all": "Todos",
+    "status": "Estado",
+    "actions": "Acciones",
+    "name": "Nombre",
+    "email": "Email",
+    "role": "Rol",
+    "date": "Fecha",
+    "errorUnknown": "Error desconocido"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -50,7 +72,356 @@
     "revenue": "Revenue",
     "patients": "Pacientes",
     "noShows": "No-shows",
-    "conversionRate": "Tasa de conversion"
+    "conversionRate": "Tasa de conversion",
+    "loadError": "Error cargando metricas",
+    "connecting": "Conectando con el servidor...",
+    "retrying": "Conectando con el servidor... (reintentando)",
+    "activateSofia": "Activa SofIA.",
+    "messagesReceived": "Mensajes recibidos",
+    "uniquePatients": "Pacientes unicos",
+    "scheduledAppointments": "Citas agendadas",
+    "totalAICost": "Costo IA total",
+    "conversionFunnel": "Funnel de Conversion",
+    "messages": "Mensajes",
+    "completedAppointments": "Completadas",
+    "attendance": "Asistencia",
+    "cancellation": "Cancelacion",
+    "noShow": "No-Show"
+  },
+  "layout": {
+    "loadingDashboard": "Cargando dashboard...",
+    "viewingDashboard": "Viendo dashboard de",
+    "allBranches": "Todas las sedes",
+    "closeMenu": "Cerrar menu",
+    "mainMenu": "Menu principal",
+    "trialExpiresAlert": "Tu prueba gratuita expira hoy. No pierdas tu configuracion ni tus pacientes.",
+    "orgUnknown": "Org desconocida",
+    "exitGodMode": "Salir de God Mode"
+  },
+  "godMode": {
+    "label": "GOD MODE",
+    "viewing": "Viendo dashboard de",
+    "exit": "Salir"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Configuracion de la clinica",
+    "readOnly": "Solo lectura — Tu rol ({role}) no permite modificar la configuracion. Contacta al administrador.",
+    "promptSaved": "System prompt guardado",
+    "tabs": {
+      "prompt": "System Prompt",
+      "services": "Catalogo",
+      "hours": "Horarios",
+      "notifications": "Notificaciones",
+      "templates": "Plantillas WA",
+      "bots": "Bot Monitor",
+      "channels": "Canales",
+      "language": "Idioma"
+    }
+  },
+  "prompt": {
+    "title": "System Prompt de SofIA",
+    "description": "Define la personalidad, tono, y reglas especificas de SofIA para esta clinica. Las instrucciones de seguridad (anti-diagnostico, anti-receta) son automaticas.",
+    "save": "Guardar",
+    "placeholder": "Eres Sofia, asistente virtual de la Clinica XYZ...",
+    "securityNote": "Las reglas de seguridad (anti-diagnostico, anti-receta, anti-prompt-injection, protocolo de crisis, escalamiento a humano) estan hardcodeadas en el cerebro de SofIA y NO se pueden desactivar desde aqui."
+  },
+  "services": {
+    "activeCount": "{count} servicios activos",
+    "newService": "Nuevo Servicio",
+    "newServiceTitle": "Nuevo Servicio",
+    "name": "Nombre",
+    "price": "Precio (COP)",
+    "duration": "Duracion (min)",
+    "category": "Categoria",
+    "description": "Descripcion",
+    "namePlaceholder": "Ej: Limpieza Dental",
+    "descriptionPlaceholder": "Descripcion del servicio...",
+    "categoryPlaceholder": "GENERAL",
+    "create": "Crear Servicio",
+    "created": "Servicio creado",
+    "updated": "Servicio actualizado",
+    "deactivated": "Servicio desactivado",
+    "errorCreate": "Error creando servicio",
+    "errorUpdate": "Error actualizando servicio",
+    "errorDelete": "Error eliminando servicio"
+  },
+  "hours": {
+    "title": "Horarios de Atencion",
+    "noHours": "No hay horarios configurados. Agregalos desde Supabase o business_hours.",
+    "day": "Dia",
+    "openTime": "Apertura",
+    "closeTime": "Cierre",
+    "slot": "Slot (min)",
+    "active": "Activo",
+    "days": {
+      "0": "Domingo",
+      "1": "Lunes",
+      "2": "Martes",
+      "3": "Miercoles",
+      "4": "Jueves",
+      "5": "Viernes",
+      "6": "Sabado"
+    }
+  },
+  "notifications": {
+    "notificationPhone": "Numero de Notificaciones",
+    "notificationPhoneDesc": "WhatsApp donde SofIA envia alertas de emergencia, crisis emocional, y solicitudes de escalamiento a humano.",
+    "phonePlaceholder": "573001234567",
+    "phoneSaved": "Numero guardado",
+    "vacationMode": "Modo Vacaciones",
+    "vacationModeDesc": "Cuando esta activo, SofIA sigue respondiendo pero informa que la clinica esta en descanso.",
+    "vacationActive": "VACACIONES ACTIVO — SofIA NO esta procesando mensajes. Los pacientes reciben un mensaje de que la clinica esta en descanso.",
+    "returnDate": "Fecha de retorno:",
+    "returnDateSaved": "Fecha de retorno guardada",
+    "birthdayBot": "Birthday Bot",
+    "birthdayBotDesc": "Envia un mensaje automatico de felicitacion a pacientes en su cumpleanos.",
+    "messageTemplate": "Plantilla del mensaje",
+    "messageTemplatePlaceholder": "Feliz cumpleanos {nombre}! De parte de {clinica}...",
+    "templateVariables": "Variables disponibles: {nombre} = nombre del paciente, {clinica} = nombre de la clinica",
+    "saveTemplate": "Guardar plantilla",
+    "birthdayBotUpdated": "Birthday Bot actualizado",
+    "templateSaved": "Plantilla guardada",
+    "vacationEnabled": "Modo vacaciones activado",
+    "vacationDisabled": "Modo vacaciones desactivado",
+    "returnDateInfo": "SofIA informara a los pacientes que la clinica regresa el {date}.",
+    "autoNotifications": "SofIA notifica automaticamente cuando:",
+    "events": {
+      "crisis": "Crisis emocional",
+      "crisisDesc": "Paciente menciona suicidio o autolesion — Linea 106 + alerta al doctor",
+      "emergency": "Emergencia medica",
+      "emergencyDesc": "Paciente reporta dolor extremo, sangrado, etc. — 123 + alerta al doctor",
+      "escalation": "Escalamiento a humano",
+      "escalationDesc": "Paciente pide hablar con una persona real — alerta al doctor",
+      "newAppointment": "Cita nueva agendada",
+      "newAppointmentDesc": "SofIA confirma una cita — se registra en el calendario",
+      "cancelledAppointment": "Cita cancelada",
+      "cancelledAppointmentDesc": "Paciente cancela — se actualiza el estado"
+    }
+  },
+  "bots": {
+    "subTitle": "Metricas de los bots automaticos en los ultimos 30 dias.",
+    "clickToLoad": "Haz clic en \"Actualizar\" para cargar metricas de bots.",
+    "totalAutoMessages": "Total mensajes automaticos (30d)",
+    "update": "Actualizar",
+    "reminderBot": {
+      "messagesSent": "Mensajes enviados"
+    },
+    "hunterBot": {
+      "followupsSent": "Follow-ups enviados",
+      "conversions": "Conversiones post-followup"
+    },
+    "nurseBot": {
+      "remindersSent": "Recordatorios enviados"
+    }
+  },
+  "channels": {
+    "whatsapp": "WhatsApp Business",
+    "instagram": "Instagram DM",
+    "messenger": "Messenger",
+    "voice": "Voice AI",
+    "connectWhatsApp": "Conectar WhatsApp",
+    "embeddedSignup": "Conectar con Meta (recomendado)",
+    "manualConnect": "Conexion manual",
+    "phoneId": "Phone Number ID",
+    "apiKey": "API Key / Token",
+    "connect": "Conectar",
+    "connected": "Conectado",
+    "notConnected": "No conectado",
+    "comingSoon": "Proximo",
+    "connectedSuccess": "WhatsApp conectado exitosamente",
+    "connectError": "Error conectando WhatsApp",
+    "sdkNotLoaded": "Facebook SDK no cargado. Intenta de nuevo en unos segundos.",
+    "notAvailable": "Meta Embedded Signup no disponible aun. Usa el formulario manual.",
+    "embeddedSuccess": "WhatsApp conectado via Meta!",
+    "embeddedError": "No se pudo completar la conexion con Meta. Usa el formulario manual.",
+    "embeddedCancelled": "Conexion con Meta cancelada."
+  },
+  "team": {
+    "title": "Equipo",
+    "subtitle": "Gestiona los miembros del equipo",
+    "loadError": "Error cargando equipo",
+    "inviteError": "Error enviando invitacion",
+    "inviteSent": "Invitacion enviada",
+    "roleUpdated": "Rol actualizado",
+    "roleUpdateError": "Error actualizando rol",
+    "memberDeactivated": "Miembro desactivado",
+    "deactivateError": "Error desactivando miembro",
+    "inviteMember": "Invitar",
+    "inviteTitle": "Invitar miembro",
+    "inviteDesc": "Envia una invitacion por email para unirse a tu organizacion.",
+    "sendInvitation": "Enviar invitacion",
+    "confirmDeactivate": "Confirmar desactivacion",
+    "deactivateConfirmText": "Desactivar a {name}? Ya no tendra acceso al dashboard.",
+    "changeTo": "Cambiar a {role}",
+    "deactivate": "Desactivar",
+    "noMembers": "No hay miembros en el equipo.",
+    "inactiveMembers": "Miembros inactivos",
+    "deactivated": "Desactivado",
+    "roles": {
+      "OWNER": "Propietario",
+      "ADMIN": "Administrador",
+      "STAFF": "Personal"
+    }
+  },
+  "opportunities": {
+    "title": "Oportunidades",
+    "subtitle": "Detectadas automaticamente por SofIA",
+    "loadError": "Error cargando metricas",
+    "totalDetected": "Total detectadas",
+    "pendingAction": "Pendientes de accion",
+    "converted": "Convertidas",
+    "estimatedValue": "Valor estimado total",
+    "types": {
+      "HOT_LEAD": "Lead Caliente",
+      "UPSELL": "Upsell",
+      "REACTIVATION": "Reactivacion",
+      "REFERRAL": "Referido",
+      "CHURN_RISK": "Riesgo Abandono",
+      "PRICE_SENSITIVE": "Sensible a Precio",
+      "MULTI_PROCEDURE": "Multi-procedimiento",
+      "HIGH_VALUE": "Alto Valor"
+    },
+    "statuses": {
+      "DETECTED": "Detectada",
+      "ACTED_ON": "En accion",
+      "CONVERTED": "Convertida",
+      "EXPIRED": "Expirada",
+      "DISMISSED": "Descartada"
+    }
+  },
+  "datalake": {
+    "title": "Data Lake",
+    "subtitle": "Fine-tuning & Training Pipeline",
+    "tabs": {
+      "overview": "Overview",
+      "export": "Export",
+      "models": "Modelos"
+    },
+    "rawData": "Raw Data",
+    "totalInteractions": "Interacciones totales",
+    "trainingData": "Training Data",
+    "qualityFilter": "Quality >= 0.7",
+    "trainingReady": "Training Ready",
+    "qualityScore": "Quality Score",
+    "average": "Promedio",
+    "models": "Modelos",
+    "trained": "Entrenados",
+    "fineTuningStatus": "Estado de Fine-tuning",
+    "minTarget": "Meta: 50 minimo",
+    "intentDistribution": "Distribucion por Intent",
+    "pipelineStatus": "Pipeline Status",
+    "exportTrainingData": "Exportar Training Data",
+    "exportResult": "Resultado del Export",
+    "samples": "Samples",
+    "estimatedTokens": "Tokens est.",
+    "pipeline": {
+      "capturedInteractions": "Interacciones capturadas",
+      "qualityFiltering": "Quality filtering",
+      "exported": "Exportadas (JSONL)",
+      "trainedModels": "Modelos entrenados",
+      "modelInProduction": "Modelo en produccion",
+      "approved": "{count} aprobadas",
+      "total": "{count} total",
+      "samplesCount": "{count} samples",
+      "modelsCount": "{count} modelos"
+    },
+    "milestones": {
+      "basicFineTune": "Fine-tune basico",
+      "sofiaV1": "SofIA v1",
+      "ownModel": "Modelo propio",
+      "agiLatam": "AGI LATAM"
+    }
+  },
+  "conversations": {
+    "title": "Conversaciones",
+    "loadError": "No se pudieron cargar las conversaciones. El endpoint puede no estar disponible.",
+    "noResults": "Sin resultados",
+    "noConversations": "Sin conversaciones",
+    "returnToSofia": "Devolver a SofIA",
+    "sentiment": {
+      "positive": "Positivo",
+      "negative": "Negativo",
+      "neutral": "Neutral"
+    },
+    "role": {
+      "patient": "Paciente"
+    },
+    "filters": {
+      "all": "Todos",
+      "active": "Activo",
+      "resolved": "Resuelto",
+      "human": "Humano"
+    }
+  },
+  "patients": {
+    "title": "Pacientes",
+    "loadError": "Error cargando pacientes",
+    "detailError": "Error cargando detalle del paciente",
+    "createError": "Error creando paciente",
+    "saveError": "Error guardando cambios",
+    "whatsappError": "Error enviando mensaje de WhatsApp",
+    "newPatient": "Nuevo paciente",
+    "contactInfo": "Informacion de contacto",
+    "city": "Ciudad",
+    "interest": "Interes",
+    "toIdentify": "Por identificar",
+    "channels": {
+      "CALL": "Llamada",
+      "PRESENCIAL": "Presencial",
+      "WHATSAPP": "WhatsApp",
+      "INSTAGRAM": "Instagram",
+      "MESSENGER": "Messenger",
+      "WEB": "Web"
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "loadError": "Error cargando pipeline",
+    "stages": {
+      "LEAD": "Lead",
+      "CONTACTED": "Contactado",
+      "QUOTED": "Cotizado",
+      "SCHEDULED": "Agendado",
+      "RECURRENTE": "Recurrente"
+    }
+  },
+  "payments": {
+    "title": "Pagos",
+    "loadError": "Error cargando pagos",
+    "noPayments": "No se encontraron pagos",
+    "amount": "Monto",
+    "method": "Metodo",
+    "patient": "Paciente"
+  },
+  "calendar": {
+    "title": "Calendario",
+    "loadError": "Error cargando citas",
+    "noAppointments": "Sin citas",
+    "today": "Hoy",
+    "week": "Semana",
+    "month": "Mes",
+    "day": "Dia"
+  },
+  "health": {
+    "title": "Salud del Sistema",
+    "loadError": "Error cargando estado del sistema",
+    "backend": "Backend",
+    "supabase": "Supabase",
+    "botLogs": "Logs de Bots",
+    "operational": "Operacional",
+    "degraded": "Degradado",
+    "down": "Caido"
+  },
+  "language": {
+    "title": "Idioma",
+    "description": "Selecciona el idioma de la interfaz",
+    "saved": "Idioma guardado",
+    "languages": {
+      "es": "Español",
+      "en": "English",
+      "pt": "Portugues"
+    }
   },
   "plans": {
     "title": "Planes",

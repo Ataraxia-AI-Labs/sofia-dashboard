@@ -2,9 +2,8 @@
 
 import { Toggle } from '@/components/ui'
 import { updateBusinessHour } from '@/lib/api'
+import { useTranslations } from 'next-intl'
 import type { BusinessHour } from '@/types'
-
-const DAYS_ES = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
 
 interface HoursTabProps {
   hours: BusinessHour[]
@@ -12,6 +11,8 @@ interface HoursTabProps {
 }
 
 export function HoursTab({ hours, onRefresh }: HoursTabProps) {
+  const t = useTranslations('hours')
+
   const handleToggle = async (hourId: string, currentActive: boolean) => {
     try {
       await updateBusinessHour(hourId, { is_active: !currentActive })
@@ -33,7 +34,7 @@ export function HoursTab({ hours, onRefresh }: HoursTabProps) {
   if (hours.length === 0) {
     return (
       <div className="glass-card p-8 text-center text-text-dim text-sm">
-        No hay horarios configurados. Agregalos desde Supabase o business_hours.
+        {t('noHours')}
       </div>
     )
   }
@@ -43,17 +44,17 @@ export function HoursTab({ hours, onRefresh }: HoursTabProps) {
       <table className="w-full">
         <thead>
           <tr className="border-b border-border">
-            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">Dia</th>
-            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">Apertura</th>
-            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">Cierre</th>
-            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">Slot (min)</th>
-            <th className="text-center text-[11px] font-semibold text-text-muted uppercase px-5 py-3">Activo</th>
+            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">{t('day')}</th>
+            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">{t('openTime')}</th>
+            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">{t('closeTime')}</th>
+            <th className="text-left text-[11px] font-semibold text-text-muted uppercase px-5 py-3">{t('slot')}</th>
+            <th className="text-center text-[11px] font-semibold text-text-muted uppercase px-5 py-3">{t('active')}</th>
           </tr>
         </thead>
         <tbody>
           {hours.map((h) => (
             <tr key={h.id} className={`border-b border-border/50 ${!h.is_active ? 'opacity-40' : ''}`}>
-              <td className="px-5 py-3 text-sm font-medium text-text-primary">{DAYS_ES[h.day_of_week]}</td>
+              <td className="px-5 py-3 text-sm font-medium text-text-primary">{t(`days.${h.day_of_week}`)}</td>
               <td className="px-5 py-3">
                 <input
                   type="time"
@@ -88,3 +89,4 @@ export function HoursTab({ hours, onRefresh }: HoursTabProps) {
     </div>
   )
 }
+

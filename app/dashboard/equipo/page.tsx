@@ -6,13 +6,8 @@ import { fetchTeamMembers, inviteTeamMember, updateMemberRole, deactivateMember 
 import type { TeamMember } from '@/lib/api/team'
 import { Button, Badge, Modal, Input, Select } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
+import { useTranslations } from 'next-intl'
 import { Users, UserPlus, Shield, Crown, Mail, MoreVertical, RefreshCw, Trash2 } from 'lucide-react'
-
-const ROLE_OPTIONS = [
-  { value: 'OWNER', label: 'Propietario' },
-  { value: 'ADMIN', label: 'Administrador' },
-  { value: 'STAFF', label: 'Personal' },
-]
 
 const ROLE_BADGE: Record<string, { variant: 'purple' | 'info' | 'neutral'; icon: typeof Crown }> = {
   OWNER: { variant: 'purple', icon: Crown },
@@ -23,6 +18,8 @@ const ROLE_BADGE: Record<string, { variant: 'purple' | 'info' | 'neutral'; icon:
 export default function EquipoPage() {
   const { orgId, role } = useOrg()
   const toast = useToast()
+  const t = useTranslations('team')
+  const tCommon = useTranslations('common')
   const canManage = role === 'OWNER' || role === 'ADMIN'
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,16 +30,22 @@ export default function EquipoPage() {
   const [menuOpen, setMenuOpen] = useState<string | null>(null)
   const [deactivateTarget, setDeactivateTarget] = useState<{ id: string; name: string } | null>(null)
 
+  const ROLE_OPTIONS = [
+    { value: 'OWNER', label: t('roles.OWNER') },
+    { value: 'ADMIN', label: t('roles.ADMIN') },
+    { value: 'STAFF', label: t('roles.STAFF') },
+  ]
+
   const loadMembers = useCallback(async () => {
     setLoading(true)
     try {
       const data = await fetchTeamMembers(orgId)
       setMembers(data)
     } catch {
-      toast.error('Error cargando equipo')
+      toast.error(t('loadError'))
     }
     setLoading(false)
-  }, [orgId, toast])
+  }, [orgId, toast, t])
 
   useEffect(() => { loadMembers() }, [loadMembers])
 
@@ -51,13 +54,13 @@ export default function EquipoPage() {
     setInviting(true)
     const result = await inviteTeamMember(orgId, inviteEmail.trim(), inviteRole)
     if (result.success) {
-      toast.success('Invitacion enviada')
+      toast.success(t('inviteSent'))
       setShowInvite(false)
       setInviteEmail('')
       setInviteRole('STAFF')
       loadMembers()
     } else {
-      toast.error(result.message || 'Error enviando invitacion')
+      toast.error(result.message || t('inviteError'))
     }
     setInviting(false)
   }
@@ -65,10 +68,10 @@ export default function EquipoPage() {
   const handleRoleChange = async (memberId: string, newRole: string) => {
     try {
       await updateMemberRole(orgId, memberId, newRole)
-      toast.success('Rol actualizado')
+      toast.success(t('roleUpdated'))
       loadMembers()
     } catch {
-      toast.error('Error actualizando rol')
+      toast.error(t('roleUpdateError'))
     }
     setMenuOpen(null)
   }
@@ -82,10 +85,10 @@ export default function EquipoPage() {
     if (!deactivateTarget) return
     try {
       await deactivateMember(orgId, deactivateTarget.id)
-      toast.success('Miembro desactivado')
+      toast.success(t('memberDeactivated'))
       loadMembers()
     } catch {
-      toast.error('Error desactivando miembro')
+      toast.error(t('deactivateError'))
     }
     setDeactivateTarget(null)
   }
@@ -98,16 +101,16 @@ export default function EquipoPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Equipo</h2>
-          <p className="text-text-dim text-xs mt-0.5">{activeMembers.length} miembros activos</p>
+          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-xs mt-0.5">{activeMembers.length} {t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={loadMembers} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadMembers} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} />
           </button>
           {canManage && (
             <Button size="sm" onClick={() => setShowInvite(true)} icon={<UserPlus size={14} />}>
-              Invitar miembro
+              {t('inviteMember')}
             </Button>
           )}
         </div>
@@ -115,7 +118,7 @@ export default function EquipoPage() {
 
       {/* RBAC info */}
       <div className="px-4 py-3 rounded-xl bg-status-info/10 border border-status-info/20 text-xs text-status-info leading-relaxed">
-        <strong>Roles:</strong> Propietario (acceso total) &gt; Administrador (puede editar config) &gt; Personal (solo lectura en ajustes)
+        <strong>{tCommon('role')}:</strong> {t('roles.OWNER')} &gt; {t('roles.ADMIN')} &gt; {t('roles.STAFF')}
       </div>
 
       {/* Members list */}
@@ -182,16 +185,16 @@ export default function EquipoPage() {
                                 onClick={() => handleRoleChange(member.id, r.value)}
                                 className="w-full text-left px-3 py-2 text-xs text-text-muted hover:bg-surface-2 transition-colors"
                               >
-                                Cambiar a {r.label}
+                                {t('changeTo', { role: r.label })}
                               </button>
                             ))}
                             <div className="border-t border-border my-1" />
                             <button
-                              onClick={() => handleDeactivate(member.id, member.full_name || member.email || 'este miembro')}
+                              onClick={() => handleDeactivate(member.id, member.full_name || member.email || t('deactivated'))}
                               className="w-full text-left px-3 py-2 text-xs text-status-danger hover:bg-status-danger/5 transition-colors flex items-center gap-2"
                             >
                               <Trash2 size={12} />
-                              Desactivar
+                              {t('deactivate')}
                             </button>
                           </div>
                         </>
@@ -205,13 +208,13 @@ export default function EquipoPage() {
 
           {activeMembers.length === 0 && (
             <div className="glass-card p-8 text-center text-text-dim text-sm">
-              No hay miembros en el equipo.
+              {t('noMembers')}
             </div>
           )}
 
           {inactiveMembers.length > 0 && (
             <div className="mt-6">
-              <p className="text-xs text-text-dim font-semibold uppercase tracking-wider mb-2">Miembros inactivos</p>
+              <p className="text-xs text-text-dim font-semibold uppercase tracking-wider mb-2">{t('inactiveMembers')}</p>
               {inactiveMembers.map(member => (
                 <div key={member.id} className="glass-card p-4 opacity-50">
                   <div className="flex items-center gap-3">
@@ -220,7 +223,7 @@ export default function EquipoPage() {
                     </div>
                     <div>
                       <span className="text-sm text-text-muted">{member.full_name || member.email || member.user_id.slice(0, 8)}</span>
-                      <p className="text-xs text-text-dim">Desactivado</p>
+                      <p className="text-xs text-text-dim">{t('deactivated')}</p>
                     </div>
                   </div>
                 </div>
@@ -231,10 +234,10 @@ export default function EquipoPage() {
       )}
 
       {/* Invite Modal */}
-      <Modal open={showInvite} onClose={() => setShowInvite(false)} title="Invitar miembro" description="Envia una invitacion por email para unirse a tu organizacion.">
+      <Modal open={showInvite} onClose={() => setShowInvite(false)} title={t('inviteTitle')} description={t('inviteDesc')}>
         <div className="space-y-4">
           <Input
-            label="Email"
+            label={tCommon('email')}
             type="email"
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
@@ -242,30 +245,30 @@ export default function EquipoPage() {
             autoFocus
           />
           <Select
-            label="Rol"
+            label={tCommon('role')}
             value={inviteRole}
             onChange={(e) => setInviteRole(e.target.value)}
             options={ROLE_OPTIONS.filter(r => r.value !== 'OWNER')}
           />
           <div className="flex gap-2 justify-end pt-2">
-            <Button variant="ghost" onClick={() => setShowInvite(false)}>Cancelar</Button>
+            <Button variant="ghost" onClick={() => setShowInvite(false)}>{tCommon('cancel')}</Button>
             <Button onClick={handleInvite} loading={inviting} disabled={!inviteEmail.trim()} icon={<Mail size={14} />}>
-              Enviar invitacion
+              {t('sendInvitation')}
             </Button>
           </div>
         </div>
       </Modal>
 
       {/* Deactivate Confirmation Modal */}
-      <Modal open={!!deactivateTarget} onClose={() => setDeactivateTarget(null)} title="Confirmar desactivacion" size="sm">
+      <Modal open={!!deactivateTarget} onClose={() => setDeactivateTarget(null)} title={t('confirmDeactivate')} size="sm">
         <div className="space-y-4">
           <p className="text-sm text-text-muted">
-            Desactivar a <strong className="text-text-primary">{deactivateTarget?.name}</strong>? Ya no tendra acceso al dashboard.
+            {t('deactivateConfirmText', { name: deactivateTarget?.name ?? '' })}
           </p>
           <div className="flex gap-2 justify-end">
-            <Button variant="ghost" onClick={() => setDeactivateTarget(null)}>Cancelar</Button>
+            <Button variant="ghost" onClick={() => setDeactivateTarget(null)}>{tCommon('cancel')}</Button>
             <Button onClick={confirmDeactivate} icon={<Trash2 size={14} />} className="bg-status-danger/10 text-status-danger border-status-danger/20 hover:bg-status-danger/20">
-              Desactivar
+              {t('deactivate')}
             </Button>
           </div>
         </div>
