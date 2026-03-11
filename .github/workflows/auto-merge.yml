@@ -121,16 +121,13 @@ jobs:
               }
             }
 
-            // Only human CHANGES_REQUESTED blocks merge. Bot reviews are informational.
-            const humanBlocking = [...latestByUser.entries()].some(
-              ([user, state]) => state === 'CHANGES_REQUESTED' && !user.endsWith('[bot]')
-            );
+            const hasApproval = [...latestByUser.values()].some(s => s === 'APPROVED');
+            const hasBlock = [...latestByUser.values()].some(s => s === 'CHANGES_REQUESTED');
 
-            // For Copilot PRs: CI pass is enough. No approval required.
-            // But if a human explicitly blocked, respect that.
-            const canMerge = !humanBlocking;
+            // Need at least one APPROVED and no one currently blocking
+            const canMerge = hasApproval && !hasBlock;
             core.info(`Reviews: ${JSON.stringify(Object.fromEntries(latestByUser))}`);
-            core.info(`Can merge: ${canMerge} (human blocking: ${humanBlocking})`);
+            core.info(`Can merge: ${canMerge} (approved: ${hasApproval}, blocked: ${hasBlock})`);
             core.setOutput('approved', canMerge ? 'true' : 'false');
 
       - name: Auto-merge
