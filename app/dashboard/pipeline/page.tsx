@@ -8,6 +8,7 @@ import {
   Users, UserCheck, CalendarCheck, CheckCircle2, DollarSign, Repeat,
   RefreshCw, Phone, Star, ChevronRight, TrendingUp, ArrowRight
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 // ============================================================
 // STAGE CONFIG
@@ -93,6 +94,8 @@ export default function PipelinePage() {
   const { orgId, branchId } = useOrg()
   const [patients, setPatients] = useState<PipelinePatient[]>([])
   const [loading, setLoading] = useState(true)
+  const t = useTranslations('pipeline')
+  const tCommon = useTranslations('common')
 
   const loadPipeline = useCallback(async () => {
     setLoading(true)
@@ -129,14 +132,14 @@ export default function PipelinePage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Pipeline de Pacientes</h2>
+          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
           <p className="text-text-dim text-xs mt-0.5">
             {totalPatients} pacientes en {STAGES.filter(s => grouped[s.key].length > 0).length} etapas
           </p>
         </div>
         <button
           onClick={loadPipeline}
-          aria-label="Actualizar"
+          aria-label={tCommon('refresh')}
           className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />

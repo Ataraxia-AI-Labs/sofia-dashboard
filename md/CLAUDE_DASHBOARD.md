@@ -12,7 +12,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Auth:** Supabase Auth (email + password, cookie-based via @supabase/ssr)
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
-**i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
+**i18n:** next-intl with dynamic locale (cookie-based), 3 languages: es/en/pt, 200+ keys per language
 **Tests:** Jest (141 tests, 16 test files) + Playwright E2E infrastructure
 
 ## CONEXIONES
@@ -147,8 +147,14 @@ subscriptions, invoices, usage_tracking, staff_notes, knowledge_base
 - Chat input component exists (chat-input.tsx)
 - Full integration in conversaciones page: PENDING E2E testing
 
-### i18n Expansion
-- next-intl framework installed
-- messages/es.json: 83+ keys (sidebar, common, dashboard)
-- Other languages: PENDING
-- Most page text still hardcoded: PENDING migration to useTranslations()
+### i18n — COMPLETE (Session 35)
+- next-intl with cookie-based dynamic locale switching
+- messages/es.json: 200+ keys (all pages and components)
+- messages/en.json: 200+ keys (full English translation)
+- messages/pt.json: 200+ keys (full Portuguese translation)
+- i18n/request.ts reads NEXT_LOCALE cookie (defaults to 'es')
+- app/actions/set-locale.ts: server action to persist locale preference
+- components/language-selector.tsx: UI component for switching language
+- Language tab in Settings (Ajustes > Idioma)
+- Migrated: layout.tsx, ajustes/page.tsx, equipo/page.tsx, all settings tabs
+- Migrated: oportunidades, pagos, health, datalake, pipeline pages
