@@ -1,0 +1,67 @@
+# ATARAXIA IA LABS — Discussions → Issues → Copilot (Dashboard)
+# When a Discussion is created in "Bug Report" or "Feature Request" categories,
+# automatically creates an Issue with the copilot label so Copilot picks it up.
+
+name: Discussion to Issue
+
+on:
+  discussion:
+    types: [created]
+
+permissions:
+  issues: write
+  discussions: read
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Convert discussion to issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            const discussion = context.payload.discussion;
+            const category = discussion.category?.name?.toLowerCase() || '';
+
+            const validCategories = ['bug report', 'bug reports', 'feature request', 'feature requests', 'bugs', 'features', 'ideas'];
+            if (!validCategories.some(c => category.includes(c))) {
+              console.log(`Skipping: category "${discussion.category?.name}" is not actionable.`);
+              return;
+            }
+
+            const isBug = category.includes('bug');
+            const labels = ['copilot'];
+            if (isBug) labels.push('auto-heal');
+
+            const { data: issue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[${isBug ? 'Bug' : 'Feature'}] ${discussion.title}`,
+              body: [
+                `> Converted from Discussion #${discussion.number} by @${discussion.user.login}`,
+                '',
+                discussion.body || 'No description provided.',
+                '',
+                '---',
+                `**Source**: [Discussion #${discussion.number}](${discussion.html_url})`,
+                `**Category**: ${discussion.category?.name}`,
+                `**Reporter**: @${discussion.user.login}`,
+                '',
+                '*Auto-converted by Discussion-to-Issue workflow*',
+              ].join('\n'),
+              labels: labels,
+            });
+
+            await github.graphql(`
+              mutation($discussionId: ID!, $body: String!) {
+                addDiscussionComment(input: { discussionId: $discussionId, body: $body }) {
+                  comment { id }
+                }
+              }
+            `, {
+              discussionId: discussion.node_id,
+              body: `**Issue created**: #${issue.number}\n\nThis has been picked up by our autonomous engineering pipeline. Copilot will work on it and create a PR.\n\n---\n*Ataraxia IA Labs — Autonomous Engineering Pipeline*`,
+            });
+
+            console.log(`Created issue #${issue.number} from discussion #${discussion.number}`);
