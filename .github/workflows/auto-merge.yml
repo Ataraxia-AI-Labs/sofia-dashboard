@@ -50,10 +50,22 @@ jobs:
               pull_number: context.payload.pull_request.number,
             });
 
-            const approved = reviews.some(r => r.state === 'APPROVED');
-            const changesRequested = reviews.some(r => r.state === 'CHANGES_REQUESTED');
+            // Get LATEST review state per reviewer
+            const latestByUser = new Map();
+            for (const r of reviews) {
+              if (r.state === 'APPROVED' || r.state === 'CHANGES_REQUESTED') {
+                latestByUser.set(r.user.login, r.state);
+              }
+            }
 
-            core.setOutput('approved', approved && !changesRequested ? 'true' : 'false');
+            const hasAnyApproval = [...latestByUser.values()].some(s => s === 'APPROVED');
+            // Human CHANGES_REQUESTED blocks; bot CHANGES_REQUESTED only blocks if no human approved
+            const humanBlocking = [...latestByUser.entries()].some(
+              ([user, state]) => state === 'CHANGES_REQUESTED' && !user.endsWith('[bot]')
+            );
+
+            const canMerge = hasAnyApproval && !humanBlocking;
+            core.setOutput('approved', canMerge ? 'true' : 'false');
 
       - name: Auto-merge
         if: steps.ci.outputs.passed == 'true' && steps.reviews.outputs.approved == 'true'
