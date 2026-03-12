@@ -1,21 +1,26 @@
 'use client'
 
-import { useState } from 'react'
-import { useOrganization } from '@/hooks/useOrganization'
+import { useState, useEffect } from 'react'
+import { useOrg } from '@/lib/org-context'
 import { downloadReportPdf, fetchFullAnalytics } from '@/lib/api'
 import { FileDown, TrendingUp, Users, Calendar, DollarSign, Bot, Loader2, CheckCircle } from 'lucide-react'
-import useSWR from 'swr'
 
 export default function ReportesPage() {
-  const { orgId } = useOrganization()
+  const { orgId } = useOrg()
   const [dias, setDias] = useState(30)
   const [downloading, setDownloading] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
+  const [analytics, setAnalytics] = useState<Record<string, any> | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const { data: analytics, isLoading } = useSWR(
-    orgId ? ['analytics-full', orgId, dias] : null,
-    () => fetchFullAnalytics(orgId!, dias),
-  )
+  useEffect(() => {
+    if (!orgId) return
+    setIsLoading(true)
+    fetchFullAnalytics(orgId, dias)
+      .then(setAnalytics)
+      .catch(() => setAnalytics(null))
+      .finally(() => setIsLoading(false))
+  }, [orgId, dias])
 
   const handleDownload = async () => {
     if (!orgId) return
