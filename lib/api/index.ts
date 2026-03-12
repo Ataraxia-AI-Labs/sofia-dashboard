@@ -16,7 +16,7 @@ export { withBranch, formatCurrency, formatCOP, formatUSD, formatNumber, formatP
 export { fetchBranches } from './branches'
 
 // Analytics
-export { fetchFullAnalytics, fetchQuickMetrics } from './analytics'
+export { fetchFullAnalytics, fetchQuickMetrics, fetchAiQualityMetrics } from './analytics'
 
 // Patients
 export { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, createPatient, updatePatient, exportPatientsCSV, sendWhatsAppMessage } from './patients'

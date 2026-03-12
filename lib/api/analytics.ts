@@ -11,3 +11,9 @@ export async function fetchQuickMetrics(orgId: string) {
   if (!res.ok) throw new Error(`Quick metrics error: ${res.status}`)
   return res.json()
 }
+
+export async function fetchAiQualityMetrics(orgId: string) {
+  const res = await authFetch(`${API_URL}/analytics/${orgId}/ai-quality`)
+  if (!res.ok) throw new Error(`AI quality metrics error: ${res.status}`)
+  return res.json()
+}
