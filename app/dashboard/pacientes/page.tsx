@@ -241,7 +241,7 @@ export default function PacientesPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Pacientes</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Pacientes</h2>
           <p className="text-text-dim text-xs mt-0.5">{formatNumber(total)} registrados</p>
         </div>
         <div className="flex items-center gap-2">
