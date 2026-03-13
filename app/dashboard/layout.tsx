@@ -11,6 +11,7 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import * as Sentry from '@sentry/nextjs'
 import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { SofiaLogo } from '@/components/sofia-logo'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
@@ -600,6 +601,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="sm:hidden w-2 h-2 rounded-full bg-status-success animate-pulse" />
 
               <NotificationsDropdown orgId={org?.id || ''} />
+
+              <ThemeToggle />
 
               <div className={`w-9 h-9 rounded-lg border flex items-center justify-center font-semibold text-xs ${godMode ? 'bg-gradient-to-br from-status-danger/20 to-brand-purple/20 border-status-danger/20 text-status-danger' : 'bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border-brand-purple/20 text-brand-purple'}`}>
                 {user?.email?.[0]?.toUpperCase() || 'U'}
