@@ -4,11 +4,12 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { isSuperAdmin } from '@/lib/admin-api'
+import { fetchSystemHealth } from '@/lib/api/health'
 import { ErrorBoundary } from '@/components/error-boundary'
 import type { User } from '@supabase/supabase-js'
 import {
   Shield, Building2, BarChart3, Plus, LogOut, ChevronLeft,
-  ChevronRight, Menu, X, Activity, GitPullRequest
+  ChevronRight, Menu, X, Activity, GitPullRequest, Wifi
 } from 'lucide-react'
 
 const ADMIN_NAV = [
@@ -191,6 +192,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <LivePulse />
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-danger/5 border border-status-danger/10">
               <Shield size={12} className="text-status-danger" />
               <span className="text-status-danger text-xs font-medium">Super Admin</span>
@@ -207,6 +209,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </ErrorBoundary>
         </main>
       </div>
+    </div>
+  )
+}
+
+/** Live system pulse indicator in header — polls health every 30s */
+function LivePulse() {
+  const [status, setStatus] = useState<'ok' | 'warn' | 'error' | 'loading'>('loading')
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const health = await fetchSystemHealth()
+        setStatus(health?.status === 'HEALTHY' ? 'ok' : health?.status === 'DEGRADED' ? 'warn' : 'error')
+      } catch {
+        setStatus('error')
+      }
+    }
+    check()
+    const interval = setInterval(check, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const dotColor = status === 'ok' ? 'bg-status-success' : status === 'warn' ? 'bg-status-warning' : status === 'error' ? 'bg-status-danger' : 'bg-text-dim'
+  const label = status === 'ok' ? 'Online' : status === 'warn' ? 'Degraded' : status === 'error' ? 'Offline' : '...'
+
+  return (
+    <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border text-[10px] font-medium text-text-muted">
+      <div className="relative">
+        <div className={`w-2 h-2 rounded-full ${dotColor}`} />
+        {status === 'ok' && <div className="absolute inset-0 w-2 h-2 rounded-full bg-status-success animate-ping opacity-40" />}
+      </div>
+      {label}
     </div>
   )
 }

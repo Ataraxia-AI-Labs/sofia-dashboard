@@ -107,6 +107,25 @@ jobs:
         with:
           script: |
             const prNumber = parseInt('${{ steps.resolve.outputs.pr_number }}');
+
+            // ── Fetch PR author to determine review policy ──
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const author = pr.user.login;
+            const isCopilot = ['Copilot', 'copilot[bot]', 'copilot-swe-agent[bot]'].includes(author);
+
+            // Copilot PRs: CI-only gate (CodeRabbit skips bot PRs)
+            // Human PRs with 'auto-merge' label: require at least 1 approval
+            if (isCopilot) {
+              core.info(`Copilot PR #${prNumber} — CI passed, no review required (CodeRabbit skips bots).`);
+              core.setOutput('approved', 'true');
+              return;
+            }
+
             const { data: reviews } = await github.rest.pulls.listReviews({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -124,7 +143,6 @@ jobs:
             const hasApproval = [...latestByUser.values()].some(s => s === 'APPROVED');
             const hasBlock = [...latestByUser.values()].some(s => s === 'CHANGES_REQUESTED');
 
-            // Need at least one APPROVED and no one currently blocking
             const canMerge = hasApproval && !hasBlock;
             core.info(`Reviews: ${JSON.stringify(Object.fromEntries(latestByUser))}`);
             core.info(`Can merge: ${canMerge} (approved: ${hasApproval}, blocked: ${hasBlock})`);
@@ -151,7 +169,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: '**Auto-merged** — CI passed + review approved. Deploying to production via Vercel.',
+              body: '**Auto-merged** — CI passed. Deploying to production via Vercel.\n\n---\n*Ataraxia IA Labs — Autonomous Engineering Pipeline*',
             });
 
             core.info(`PR #${prNumber} merged successfully!`);

@@ -98,7 +98,7 @@ export default function EquipoPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Equipo</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Equipo</h2>
           <p className="text-text-dim text-xs mt-0.5">{activeMembers.length} miembros activos</p>
         </div>
         <div className="flex items-center gap-2">

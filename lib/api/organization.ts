@@ -40,3 +40,15 @@ export async function updateOrganization(orgId: string, data: Record<string, unk
   })
   if (!res.ok) throw new Error(`Update organization error: ${res.status}`)
 }
+
+export async function generateSystemPrompt(orgId: string): Promise<{
+  generated_prompt: string
+  clinic_data: { name: string; specialty: string; services_count: number; has_hours: boolean }
+  tokens_used: number
+}> {
+  const res = await authFetch(`${API_URL}/organizations/${orgId}/generate-prompt`, {
+    method: 'POST',
+  })
+  if (!res.ok) throw new Error(`Generate prompt error: ${res.status}`)
+  return res.json()
+}
