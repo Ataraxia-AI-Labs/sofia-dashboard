@@ -62,7 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className={`dark ${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}>
+    <html lang={locale} className={`${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`} suppressHydrationWarning>
       <body className="min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <Providers>
