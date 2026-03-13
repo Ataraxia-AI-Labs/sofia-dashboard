@@ -600,6 +600,14 @@ export interface WompiConfig {
 // INTERACTION LOGS
 // ============================================================
 
+export interface InteractionAnnotation {
+  interaction_id: string
+  rating: 'thumbs_up' | 'thumbs_down'
+  notes?: string
+  annotated_by?: string
+  updated_at?: string
+}
+
 export interface InteractionLog {
   id: string
   organization_id: string
@@ -616,6 +624,7 @@ export interface InteractionLog {
   response_time_ms?: number
   conversation_id?: string
   created_at: string
+  annotation?: InteractionAnnotation | null
   // Joined from patients table (if backend returns it)
   patients?: { full_name: string; phone: string }
 }

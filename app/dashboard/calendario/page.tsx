@@ -191,7 +191,7 @@ export default function CalendarioPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Calendario</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Calendario</h2>
           <p className="text-text-dim text-xs mt-0.5">{appointments.length} citas en este periodo</p>
         </div>
 

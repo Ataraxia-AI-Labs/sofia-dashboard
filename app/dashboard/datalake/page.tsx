@@ -86,7 +86,7 @@ export default function DataLakePage() {
             <Database size={20} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-text-primary">Data Lake</h2>
+            <h2 className="text-xl font-bold font-display text-text-primary">Data Lake</h2>
             <p className="text-xs text-text-dim">Fine-tuning & Training Pipeline</p>
           </div>
         </div>

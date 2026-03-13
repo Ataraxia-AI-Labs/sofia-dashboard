@@ -6,7 +6,8 @@ import dynamic from 'next/dynamic'
 import {
   GitPullRequest, CheckCircle2, Bot, AlertTriangle, Clock,
   Code2, RefreshCw, TrendingUp, Shield, Bug, GitMerge,
-  ArrowUpRight, ArrowDownRight, Minus
+  ArrowUpRight, ArrowDownRight, Minus, Zap, Sparkles,
+  CircleDot, Play, Timer
 } from 'lucide-react'
 
 const PRThroughputChart = dynamic(() => import('./PipelineCharts').then(m => m.PRThroughputChart), {
@@ -75,7 +76,23 @@ function getLatestWeekAgg(rows: PipelineMetricsRow[]) {
   return agg
 }
 
-// ── Autonomy Score: % of PRs that merged without human intervention ──
+// ── Get previous week agg for trend comparison ──
+function getPreviousWeekAgg(rows: PipelineMetricsRow[]) {
+  if (rows.length === 0) return null
+  const weeks = [...new Set(rows.map(r => r.week_start))].sort().reverse()
+  if (weeks.length < 2) return null
+  const prevWeek = weeks[1]
+  const weekRows = rows.filter(r => r.week_start === prevWeek)
+
+  let prs_created = 0, prs_merged = 0
+  for (const r of weekRows) {
+    prs_created += r.prs_created
+    prs_merged += r.prs_merged
+  }
+  return { prs_created, prs_merged }
+}
+
+// ── Autonomy Score ──
 function calcAutonomyScore(rows: PipelineMetricsRow[]) {
   const total = rows.reduce((s, r) => s + r.prs_created, 0)
   const merged = rows.reduce((s, r) => s + r.prs_merged, 0)
@@ -87,6 +104,7 @@ export default function PipelinePage() {
   const [metrics, setMetrics] = useState<PipelineMetricsRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState(false)
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -102,13 +120,23 @@ export default function PipelinePage() {
 
   useEffect(() => { loadData() }, [loadData])
 
+  useEffect(() => {
+    if (!autoRefresh) return
+    const interval = setInterval(loadData, 60000)
+    return () => clearInterval(interval)
+  }, [autoRefresh, loadData])
+
   const latest = getLatestWeekAgg(metrics)
+  const prev = getPreviousWeekAgg(metrics)
   const autonomy = calcAutonomyScore(metrics)
 
-  // Per-repo breakdown for table
   const latestWeekRows = metrics.length > 0
     ? metrics.filter(r => r.week_start === metrics[0].week_start)
     : []
+
+  // Trend calculation
+  const prTrend = latest && prev ? latest.prs_created - prev.prs_created : null
+  const mergeTrend = latest && prev ? latest.prs_merged - prev.prs_merged : null
 
   return (
     <div className="max-w-[1400px] space-y-5">
@@ -120,9 +148,20 @@ export default function PipelinePage() {
             Autonomous Engineering Pipeline — Metricas en tiempo real
           </p>
         </div>
-        <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors ${
+              autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-dim'
+            }`}
+          >
+            <Zap size={10} />
+            Auto {autoRefresh ? 'ON' : 'OFF'}
+          </button>
+          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
       </div>
 
       {/* Error State */}
@@ -138,42 +177,79 @@ export default function PipelinePage() {
         </div>
       )}
 
-      {/* AUTONOMY SCORE — Hero Card */}
+      {/* AUTONOMY SCORE — Hero Card with Circular Progress */}
       <div className="glass-card p-6 relative overflow-hidden">
         <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-gradient-to-br from-brand-purple/10 to-brand-cyan/10 blur-2xl" />
-        <div className="relative flex items-center justify-between">
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-purple/20">
-              <Bot size={28} className="text-white" />
-            </div>
-            <div>
-              <div className="text-text-dim text-xs font-semibold uppercase tracking-wider mb-1">Autonomy Score</div>
-              <div className="text-4xl font-bold font-mono gradient-text">
-                {autonomy != null ? `${autonomy}%` : '—'}
-              </div>
-              <div className="text-text-muted text-xs mt-0.5">
-                PRs mergeados autonomamente sin intervencion humana
-              </div>
+        <div className="absolute -left-4 -bottom-4 w-24 h-24 rounded-full bg-gradient-to-br from-brand-cyan/5 to-brand-purple/5 blur-xl" />
+        <div className="relative flex flex-col sm:flex-row items-center gap-6">
+          {/* Circular Autonomy Score */}
+          <div className="relative w-32 h-32 flex-shrink-0">
+            <svg className="w-32 h-32 -rotate-90" viewBox="0 0 128 128">
+              <circle cx="64" cy="64" r="56" fill="none" stroke="currentColor" strokeWidth="8" className="text-surface-3" />
+              <circle
+                cx="64" cy="64" r="56" fill="none"
+                strokeWidth="8"
+                strokeLinecap="round"
+                stroke="url(#autonomyGrad)"
+                strokeDasharray={`${(autonomy ?? 0) * 3.52} 352`}
+                style={{ transition: 'stroke-dasharray 1.5s ease-out' }}
+              />
+              <defs>
+                <linearGradient id="autonomyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#8B5CF6" />
+                  <stop offset="100%" stopColor="#06D6A0" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-3xl font-bold font-mono gradient-text">
+                {autonomy != null ? autonomy : '\u2014'}
+              </span>
+              <span className="text-[9px] text-text-dim font-semibold uppercase tracking-wider">
+                {autonomy != null ? '%' : ''}
+              </span>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold font-mono text-text-primary">{latest?.prs_created ?? '—'}</div>
-              <div className="text-[10px] text-text-dim mt-0.5">PRs Creados</div>
+
+          {/* Score Details */}
+          <div className="flex-1 text-center sm:text-left">
+            <div className="text-text-dim text-xs font-semibold uppercase tracking-wider mb-1">Autonomy Score</div>
+            <div className="text-text-muted text-xs mb-4">
+              PRs mergeados autonomamente sin intervencion humana
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold font-mono text-status-success">{latest?.prs_merged ?? '—'}</div>
-              <div className="text-[10px] text-text-dim mt-0.5">Mergeados</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold font-mono text-status-warning">{latest?.prs_open ?? '—'}</div>
-              <div className="text-[10px] text-text-dim mt-0.5">Abiertos</div>
+
+            {/* Mini Stats Row */}
+            <div className="flex items-center gap-6 justify-center sm:justify-start">
+              <MiniStat
+                label="PRs Creados"
+                value={latest?.prs_created?.toString() ?? '\u2014'}
+                trend={prTrend}
+                color="text-brand-purple"
+              />
+              <MiniStat
+                label="Mergeados"
+                value={latest?.prs_merged?.toString() ?? '\u2014'}
+                trend={mergeTrend}
+                color="text-status-success"
+              />
+              <MiniStat
+                label="Abiertos"
+                value={latest?.prs_open?.toString() ?? '\u2014'}
+                color="text-status-warning"
+              />
+              <MiniStat
+                label="Sentry"
+                value={latest?.sentry_errors?.toString() ?? '\u2014'}
+                color={latest && latest.sentry_errors > 0 ? 'text-status-danger' : 'text-status-success'}
+              />
             </div>
           </div>
         </div>
         {latest && (
-          <div className="mt-4 pt-3 border-t border-border/50 text-text-dim text-[10px]">
+          <div className="mt-4 pt-3 border-t border-border/50 text-text-dim text-[10px] flex items-center gap-2">
+            <Timer size={10} />
             Semana del {latest.week} · {latest.repos} repositorios analizados
+            {prev && <span className="ml-auto">vs semana anterior</span>}
           </div>
         )}
       </div>
@@ -184,39 +260,39 @@ export default function PipelinePage() {
           icon={<GitPullRequest size={16} />}
           gradient="from-brand-purple to-brand-purple-dark"
           label="PRs Creados"
-          value={latest?.prs_created?.toString() ?? '—'}
+          value={latest?.prs_created?.toString() ?? '\u2014'}
         />
         <KPICard
           icon={<GitMerge size={16} />}
           gradient="from-status-success to-emerald-600"
           label="PRs Mergeados"
-          value={latest?.prs_merged?.toString() ?? '—'}
+          value={latest?.prs_merged?.toString() ?? '\u2014'}
         />
         <KPICard
           icon={<CheckCircle2 size={16} />}
           gradient="from-brand-cyan to-emerald-600"
           label="CI Pass Rate"
-          value={latest?.ci_pass_rate != null ? `${latest.ci_pass_rate}%` : '—'}
+          value={latest?.ci_pass_rate != null ? `${latest.ci_pass_rate}%` : '\u2014'}
           accent={latest?.ci_pass_rate != null ? (latest.ci_pass_rate >= 90 ? 'success' : latest.ci_pass_rate >= 70 ? 'warning' : 'danger') : undefined}
         />
         <KPICard
           icon={<Clock size={16} />}
           gradient="from-status-info to-blue-600"
           label="Avg Merge Time"
-          value={latest?.avg_merge_time != null ? `${latest.avg_merge_time}h` : '—'}
+          value={latest?.avg_merge_time != null ? `${latest.avg_merge_time}h` : '\u2014'}
         />
         <KPICard
           icon={<Bug size={16} />}
           gradient="from-status-danger to-red-600"
           label="Sentry Errors"
-          value={latest?.sentry_errors?.toString() ?? '—'}
+          value={latest?.sentry_errors?.toString() ?? '\u2014'}
           accent={latest ? (latest.sentry_errors === 0 ? 'success' : 'danger') : undefined}
         />
         <KPICard
           icon={<Code2 size={16} />}
           gradient="from-brand-gold to-amber-500"
           label="Lines Changed"
-          value={latest ? `+${latest.lines_added} / -${latest.lines_removed}` : '—'}
+          value={latest ? `+${latest.lines_added.toLocaleString()}` : '\u2014'}
         />
       </div>
 
@@ -290,8 +366,15 @@ export default function PipelinePage() {
                 latestWeekRows.map(r => {
                   const repoShort = r.repo.split('/').pop() || r.repo
                   return (
-                    <tr key={r.id} className="border-b border-border/50 hover:bg-surface-3/50">
-                      <td className="px-4 py-3 text-sm font-semibold text-text-primary">{repoShort}</td>
+                    <tr key={r.id} className="border-b border-border/50 hover:bg-surface-3/50 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 flex items-center justify-center text-brand-purple text-[9px] font-bold">
+                            {repoShort[0]?.toUpperCase()}
+                          </div>
+                          <span className="text-sm font-semibold text-text-primary">{repoShort}</span>
+                        </div>
+                      </td>
                       <td className="px-4 py-3 text-right text-sm font-mono text-text-muted">{r.prs_created}</td>
                       <td className="px-4 py-3 text-right text-sm font-mono text-status-success">{r.prs_merged}</td>
                       <td className="px-4 py-3 text-right">
@@ -300,13 +383,13 @@ export default function PipelinePage() {
                             ? r.ci_pass_rate >= 90 ? 'text-status-success' : r.ci_pass_rate >= 70 ? 'text-status-warning' : 'text-status-danger'
                             : 'text-text-dim'
                         }`}>
-                          {r.ci_pass_rate != null ? `${r.ci_pass_rate}%` : '—'}
+                          {r.ci_pass_rate != null ? `${r.ci_pass_rate}%` : '\u2014'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right text-sm font-mono text-status-success">{r.coderabbit_approved}</td>
                       <td className="px-4 py-3 text-right text-sm font-mono text-status-warning">{r.coderabbit_changes_requested}</td>
                       <td className="px-4 py-3 text-right text-sm font-mono text-text-muted">
-                        {r.avg_time_to_merge_hours != null ? `${r.avg_time_to_merge_hours}h` : '—'}
+                        {r.avg_time_to_merge_hours != null ? `${r.avg_time_to_merge_hours}h` : '\u2014'}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span className={`text-sm font-mono font-semibold ${r.sentry_errors > 0 ? 'text-status-danger' : 'text-status-success'}`}>
@@ -314,9 +397,9 @@ export default function PipelinePage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right text-xs font-mono">
-                        <span className="text-status-success">+{r.lines_added}</span>
+                        <span className="text-status-success">+{r.lines_added.toLocaleString()}</span>
                         <span className="text-text-dim mx-1">/</span>
-                        <span className="text-status-danger">-{r.lines_removed}</span>
+                        <span className="text-status-danger">-{r.lines_removed.toLocaleString()}</span>
                       </td>
                     </tr>
                   )
@@ -335,21 +418,26 @@ export default function PipelinePage() {
         </div>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {[
-            { label: 'Issue', icon: '📋', color: 'from-brand-purple/20 to-brand-purple/5' },
-            { label: 'Auto-Assign', icon: '🤖', color: 'from-status-info/20 to-status-info/5' },
-            { label: 'Copilot PR', icon: '🔧', color: 'from-brand-cyan/20 to-brand-cyan/5' },
-            { label: 'Auto-Ready', icon: '✅', color: 'from-status-success/20 to-status-success/5' },
-            { label: 'CI/CD', icon: '⚡', color: 'from-brand-gold/20 to-brand-gold/5' },
-            { label: 'CodeRabbit', icon: '🐰', color: 'from-status-warning/20 to-status-warning/5' },
-            { label: 'Auto-Merge', icon: '🔀', color: 'from-status-success/20 to-status-success/5' },
-            { label: 'Deploy', icon: '🚀', color: 'from-brand-purple/20 to-brand-purple/5' },
+            { label: 'Issue', icon: <CircleDot size={18} />, desc: 'Sentry / Mining / Manual' },
+            { label: 'Auto-Assign', icon: <Bot size={18} />, desc: 'Label → Copilot' },
+            { label: 'Copilot PR', icon: <GitPullRequest size={18} />, desc: 'Draft → Code' },
+            { label: 'Auto-Ready', icon: <Play size={18} />, desc: '2min → Ready' },
+            { label: 'CI/CD', icon: <Zap size={18} />, desc: 'Lint + Tests' },
+            { label: 'CodeRabbit', icon: <Sparkles size={18} />, desc: 'AI Review' },
+            { label: 'Auto-Merge', icon: <GitMerge size={18} />, desc: 'Squash Merge' },
+            { label: 'Deploy', icon: <ArrowUpRight size={18} />, desc: 'Render/Vercel' },
           ].map((step, i) => (
             <div key={step.label} className="flex items-center gap-2 flex-shrink-0">
-              <div className={`px-3 py-2 rounded-xl bg-gradient-to-br ${step.color} border border-border/50 text-center min-w-[80px]`}>
-                <div className="text-lg">{step.icon}</div>
-                <div className="text-[9px] font-semibold text-text-muted mt-0.5">{step.label}</div>
+              <div className="group px-3 py-3 rounded-xl bg-surface-2 border border-border hover:border-brand-purple/30 text-center min-w-[90px] transition-all cursor-default">
+                <div className="text-brand-purple group-hover:text-brand-cyan transition-colors flex justify-center mb-1">
+                  {step.icon}
+                </div>
+                <div className="text-[10px] font-semibold text-text-primary">{step.label}</div>
+                <div className="text-[8px] text-text-dim mt-0.5">{step.desc}</div>
               </div>
-              {i < 7 && <div className="text-text-dim text-xs">→</div>}
+              {i < 7 && (
+                <div className="text-brand-purple/40 text-sm font-mono">&rarr;</div>
+              )}
             </div>
           ))}
         </div>
@@ -360,6 +448,25 @@ export default function PipelinePage() {
 
 // ── Reusable Components ──
 
+function MiniStat({ label, value, trend, color }: {
+  label: string; value: string; trend?: number | null; color: string
+}) {
+  return (
+    <div className="text-center">
+      <div className="flex items-center justify-center gap-1">
+        <span className={`text-xl font-bold font-mono ${color}`}>{value}</span>
+        {trend != null && trend !== 0 && (
+          <span className={`text-[9px] flex items-center ${trend > 0 ? 'text-status-success' : 'text-status-danger'}`}>
+            {trend > 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+            {Math.abs(trend)}
+          </span>
+        )}
+      </div>
+      <div className="text-[9px] text-text-dim mt-0.5">{label}</div>
+    </div>
+  )
+}
+
 function KPICard({ icon, gradient, label, value, accent }: {
   icon: React.ReactNode
   gradient: string
@@ -369,8 +476,8 @@ function KPICard({ icon, gradient, label, value, accent }: {
 }) {
   const accentColor = accent === 'success' ? 'text-status-success' : accent === 'warning' ? 'text-status-warning' : accent === 'danger' ? 'text-status-danger' : 'text-text-primary'
   return (
-    <div className="glass-card p-3.5">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2`}>
+    <div className="glass-card p-3.5 group hover:border-brand-purple/20 transition-all">
+      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 group-hover:scale-110 transition-transform`}>
         {icon}
       </div>
       <div className={`text-lg font-bold font-mono ${accentColor}`}>{value}</div>

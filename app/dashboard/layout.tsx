@@ -20,7 +20,7 @@ import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
   MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
-  Zap, ArrowRight
+  Zap, ArrowRight, FileText
 } from 'lucide-react'
 
 function useNavGroups() {
@@ -47,6 +47,7 @@ function useNavGroups() {
       label: t('admin'),
       items: [
         { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
+        { href: '/dashboard/reportes', icon: FileText, label: t('reports') },
         { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
         { href: '/dashboard/health', icon: Activity, label: t('systemHealth') },
       ],
