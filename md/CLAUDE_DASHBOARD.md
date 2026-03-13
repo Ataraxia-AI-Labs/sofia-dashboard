@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (190 tests, 17 test files) + Playwright E2E infrastructure
+**Tests:** Jest (141 tests, 16 test files) + Playwright E2E (3 spec files: auth, navigation, patients)
 
 ## CONEXIONES
 
@@ -48,18 +48,18 @@ SENTRY_AUTH_TOKEN=<token>
 | Oportunidades | /dashboard/oportunidades | ✅ Lista con acciones, filtros |
 | Equipo | /dashboard/equipo | ✅ Gestión de miembros, invitaciones |
 | System Health | /dashboard/health | ✅ Backend/Supabase status, bot logs |
-| Ajustes | /dashboard/ajustes | ✅ Config org, services, hours, channels |
+| Ajustes | /dashboard/ajustes | ✅ Config org, services, hours, channels, 2FA security |
 | Planes | /dashboard/planes | ✅ Plan selector, checkout, trial countdown |
 | Facturación | /dashboard/facturacion | ✅ Invoices, subscription status |
 
 ### Auth & Onboarding (4 páginas)
 | Página | Ruta | Estado |
 |--------|------|--------|
-| Login | /login | ✅ Email + password |
+| Login | /login | ✅ Email + password, MFA redirect |
 | Forgot Password | /forgot-password | ✅ Reset request |
 | Reset Password | /reset-password | ✅ New password form |
 | Onboarding | /onboarding | ✅ 4-step wizard + Turnstile |
-| 403 Forbidden | /403 | ✅ Role-based access denied page |
+| MFA Challenge | /mfa | ✅ TOTP 6-digit verification after login |
 
 ### Admin (5 páginas — Super Admin only)
 | Página | Ruta | Estado |
@@ -79,7 +79,7 @@ SENTRY_AUTH_TOKEN=<token>
 ## COMPONENTES (9 top-level + 15 UI)
 
 **Top-level:** sidebar, onboarding-wizard, card-tokenization-form, checkout-modal,
-error-boundary, chat-input, notifications-dropdown, sofia-logo, providers, role-guard
+error-boundary, chat-input, notifications-dropdown, sofia-logo, providers
 
 **UI (components/ui/):** button, input (Input+Textarea+Select), modal, card (Card+StatCard),
 tabs, toggle, badge, status-pill, metric-card, toast, spinner, empty-state,
@@ -100,29 +100,9 @@ treatments, voice
 |------|---------|
 | `lib/supabase.ts` | createBrowserClient (anon key), API_URL export |
 | `lib/impersonation.ts` | God Mode (sessionStorage) |
-| `lib/org-context.tsx` | Organization context provider, OrgRole type, permission helpers |
-| `lib/role-permissions.ts` | RBAC: route→role mapping, canAccessRoute(), filterNavByRole() |
+| `lib/org-context.tsx` | Organization context provider |
 | `lib/admin-api.ts` | Admin API functions |
-
-## ROLE-BASED ACCESS CONTROL (RBAC)
-
-Roles are stored in `org_members.role` (Supabase). Three levels:
-
-| Role | Access |
-|------|--------|
-| `OWNER` | Full access to all dashboard routes |
-| `ADMIN` | All routes except Plans (`/planes`) and Billing (`/facturacion`) |
-| `STAFF` | Read-only: Overview, Conversations, Patients, Calendar |
-
-**Key files:**
-- `lib/role-permissions.ts` — `ROUTE_PERMISSIONS` map + `canAccessRoute(role, pathname)` + `filterNavByRole(items, role)`
-- `components/role-guard.tsx` — Client component wrapping page content; redirects to `/403` if unauthorized
-- `app/403/page.tsx` — 403 Forbidden page
-
-**How it works:**
-1. `DashboardLayout` filters sidebar nav items via `filterNavByRole()` before rendering
-2. `<RoleGuard>` wraps every page's children inside `OrgContext.Provider`; if `canAccessRoute()` returns false it redirects to `/403`
-3. Super-admin in God Mode always gets role `OWNER` so all routes are accessible
+| `lib/mfa-api.ts` | MFA/2FA: enrollMFA, verifyMFA, unenrollMFA, getMFAStatus, mfaChallengeRequired |
 
 ## SUPER ADMIN ARCHITECTURE
 
@@ -174,3 +154,24 @@ subscriptions, invoices, usage_tracking, staff_notes, knowledge_base
 - messages/es.json: 83+ keys (sidebar, common, dashboard)
 - Other languages: PENDING
 - Most page text still hardcoded: PENDING migration to useTranslations()
+
+## E2E TESTS (Playwright)
+
+```
+e2e/
+  auth.spec.ts        — login flow, invalid credentials, public pages
+  navigation.spec.ts  — redirect tests (all protected routes), login page structure
+  patients.spec.ts    — patients page redirect + authenticated load/search/pagination (mocked API)
+  global-setup.ts     — creates e2e/.auth/user.json from E2E_TEST_EMAIL/E2E_TEST_PASSWORD
+playwright.config.ts  — Chromium + iPhone 14, globalSetup, html reporter
+```
+
+```bash
+npm run test:e2e                          # run all E2E tests
+E2E_TEST_EMAIL=x E2E_TEST_PASSWORD=y npm run test:e2e   # with auth state
+npx playwright test --ui                  # interactive UI mode
+```
+
+- Unauthenticated tests always run (no env vars needed)
+- Authenticated tests (sidebar nav, patient list) skip unless e2e/.auth/user.json exists
+- Backend API responses are mocked via page.route() — no live server required
