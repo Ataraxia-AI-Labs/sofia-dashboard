@@ -200,7 +200,7 @@ export default function PlanesPage() {
     <div className="max-w-[1200px] mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-text-primary">Planes</h2>
+        <h2 className="text-xl font-bold font-display text-text-primary">Planes</h2>
         <p className="text-text-dim text-xs mt-0.5">Elige el plan que mejor se adapte a tu clinica</p>
       </div>
 

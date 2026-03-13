@@ -82,7 +82,7 @@ export default function OportunidadesPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Oportunidades</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Oportunidades</h2>
           <p className="text-text-dim text-xs mt-0.5">Detectadas automáticamente por SofIA</p>
         </div>
         <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
