@@ -107,10 +107,19 @@ jobs:
               ref: sha,
             });
 
-            // Exclude our own workflow from the check
+            // Exclude our own workflow and non-CI checks from the evaluation
             const relevant = checks.check_runs.filter(
               r => r.name !== 'auto-merge' && r.name !== 'debug-event'
             );
+
+            // If any check is still running (conclusion === null), wait
+            const pending = relevant.filter(r => r.conclusion === null);
+            if (pending.length > 0) {
+              core.info(`${pending.length} checks still running. Will retry when they complete.`);
+              pending.forEach(r => core.info(`  pending: ${r.name}`));
+              core.setOutput('passed', 'false');
+              return;
+            }
 
             const allPassed = relevant.every(
               r => r.conclusion === 'success' || r.conclusion === 'skipped'
