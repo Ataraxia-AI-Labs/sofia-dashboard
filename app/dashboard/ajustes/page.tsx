@@ -95,7 +95,7 @@ export default function AjustesPage() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Ajustes</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Ajustes</h2>
           <p className="text-text-dim text-xs mt-0.5">{org?.name || 'Configuracion de la clinica'}</p>
         </div>
         <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
@@ -106,7 +106,7 @@ export default function AjustesPage() {
       <Tabs tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
 
       {activeTab === 'prompt' && (
-        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} />
+        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} orgId={orgId} />
       )}
       {activeTab === 'services' && (
         <ServicesTab orgId={orgId} services={services} isReadOnly={isReadOnly} onRefresh={loadData} onMessage={handleMessage} />

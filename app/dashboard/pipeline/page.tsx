@@ -129,7 +129,7 @@ export default function PipelinePage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Pipeline de Pacientes</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Pipeline de Pacientes</h2>
           <p className="text-text-dim text-xs mt-0.5">
             {totalPatients} pacientes en {STAGES.filter(s => grouped[s.key].length > 0).length} etapas
           </p>

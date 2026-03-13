@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={clsx(
-              'w-full px-3 py-2 rounded-lg bg-void border text-text-primary text-sm outline-none transition-colors',
+              'w-full px-3 py-2 rounded-lg bg-surface border text-text-primary text-sm outline-none transition-colors',
               icon && 'pl-9',
               error
                 ? 'border-status-danger/50 focus:border-status-danger focus:ring-1 focus:ring-status-danger/20'
@@ -65,7 +65,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           className={clsx(
-            'w-full px-3 py-2 rounded-lg bg-void border text-text-primary text-sm outline-none transition-colors resize-y',
+            'w-full px-3 py-2 rounded-lg bg-surface border text-text-primary text-sm outline-none transition-colors resize-y',
             error
               ? 'border-status-danger/50 focus:border-status-danger'
               : 'border-border focus:border-brand-purple/40',
@@ -100,7 +100,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={clsx(
-            'w-full px-3 py-2 rounded-lg bg-void border text-text-primary text-sm outline-none transition-colors',
+            'w-full px-3 py-2 rounded-lg bg-surface border text-text-primary text-sm outline-none transition-colors',
             error ? 'border-status-danger/50' : 'border-border focus:border-brand-purple/40',
             className,
           )}
