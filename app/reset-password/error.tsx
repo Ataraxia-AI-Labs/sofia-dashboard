@@ -2,7 +2,7 @@
 
 import RouteErrorFallback from '@/components/route-error-fallback'
 
-export default function DashboardError({
+export default function ResetPasswordError({
   error,
   reset,
 }: {

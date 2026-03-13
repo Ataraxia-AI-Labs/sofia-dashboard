@@ -206,6 +206,44 @@ describe('ErrorBoundary', () => {
   })
 
   // -----------------------------------------------------------------------
+  // Dev mode error details
+  // -----------------------------------------------------------------------
+
+  it('should show error details in development mode', () => {
+    const originalEnv = process.env.NODE_ENV
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', configurable: true })
+
+    render(
+      <ErrorBoundary>
+        <ThrowingChild shouldThrow={true} />
+      </ErrorBoundary>
+    )
+
+    // In dev mode, the details summary should be visible
+    expect(screen.getByText(/Detalles del error/i)).toBeInTheDocument()
+    // The error message should appear in the details panel
+    expect(screen.getByText(/Test explosion/i)).toBeInTheDocument()
+
+    Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, configurable: true })
+  })
+
+  it('should hide error details in production mode', () => {
+    const originalEnv = process.env.NODE_ENV
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', configurable: true })
+
+    render(
+      <ErrorBoundary>
+        <ThrowingChild shouldThrow={true} />
+      </ErrorBoundary>
+    )
+
+    // In production mode, error details should not be visible
+    expect(screen.queryByText(/Detalles del error/i)).not.toBeInTheDocument()
+
+    Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, configurable: true })
+  })
+
+  // -----------------------------------------------------------------------
   // Edge cases
   // -----------------------------------------------------------------------
 
