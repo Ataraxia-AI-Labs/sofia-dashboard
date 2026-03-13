@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { useOrg } from '@/lib/org-context'
 import { fetchPayments as apiFetchPayments, fetchRevenueAttribution } from '@/lib/api/payments'
 import { formatCOP, timeAgo } from '@/lib/api'
@@ -21,6 +22,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export default function PagosPage() {
   const { orgId, branchId } = useOrg()
+  const t = useTranslations('payments')
+  const tCommon = useTranslations('common')
   const [payments, setPayments] = useState<Payment[]>([])
   const [attribution, setAttribution] = useState<RevenueAttribution | null>(null)
   const [loading, setLoading] = useState(true)
@@ -52,7 +55,7 @@ export default function PagosPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Pagos & Revenue</h2>
+          <h2 className="text-xl font-semibold text-text-primary">{t('title')} & Revenue</h2>
           <p className="text-xs text-text-dim">{payments.length} transacciones</p>
         </div>
         <div className="flex items-center gap-2">
@@ -64,7 +67,7 @@ export default function PagosPage() {
               <BarChart3 size={12} className="inline mr-1" />Attribution
             </button>
           </div>
-          <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -147,7 +150,7 @@ export default function PagosPage() {
                     </tr>
                   ))
                 ) : payments.length === 0 ? (
-                  <tr><td colSpan={7} className="text-center py-12 text-text-dim text-sm">Aún no hay pagos registrados. SofIA enviará links de pago cuando los pacientes confirmen citas.</td></tr>
+                  <tr><td colSpan={7} className="text-center py-12 text-text-dim text-sm">{t('noPayments')}</td></tr>
                 ) : payments.map((p) => {
                   const status = STATUS_CONFIG[p.status] || STATUS_CONFIG.PENDING
                   return (
