@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { mfaChallengeRequired } from '@/lib/mfa-api'
 import { SofiaLogo } from '@/components/sofia-logo'
 import { Eye, EyeOff, ArrowRight, Zap, Star } from 'lucide-react'
 
@@ -48,6 +49,14 @@ function LoginForm() {
       const rawRedirect = searchParams.get('redirect') || '/dashboard'
       // Prevent open redirect: only allow relative paths
       const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
+
+      // Check if user has MFA enrolled and needs to complete challenge
+      const needsMFA = await mfaChallengeRequired()
+      if (needsMFA) {
+        router.replace('/mfa')
+        return
+      }
+
       router.replace(redirect)
     } catch {
       setError('Error de conexion. Verifica tu internet e intenta de nuevo.')
