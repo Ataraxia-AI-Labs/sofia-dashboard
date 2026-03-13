@@ -48,9 +48,17 @@ jobs:
               }
             `, { id: pr.node_id });
 
+            // Trigger CodeRabbit review (it skips bot PRs by default)
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: '**Auto-ready** — Copilot PR marked as ready for review. CI + CodeRabbit will run now.\n\n---\n*Ataraxia IA Labs — Autonomous Engineering Pipeline*',
+              body: '@coderabbitai review',
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: '**Auto-ready** — Copilot PR marked as ready for review. CI + CodeRabbit triggered.\n\n---\n*Ataraxia IA Labs — Autonomous Engineering Pipeline*',
             });
