@@ -5,16 +5,24 @@ import { useOrg } from '@/lib/org-context'
 import { fetchOrganization, fetchServicesCatalog, fetchBusinessHours, updateOrganization } from '@/lib/api'
 import { Tabs } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
-import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, LanguageTab } from './tabs'
+import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab } from './tabs'
 import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
-import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Globe } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Lock } from 'lucide-react'
+
+const TAB_DEFS = [
+  { id: 'prompt', label: 'System Prompt', icon: MessageSquare },
+  { id: 'services', label: 'Catalogo', icon: ShoppingBag },
+  { id: 'hours', label: 'Horarios', icon: Clock },
+  { id: 'notifications', label: 'Notificaciones', icon: Bell },
+  { id: 'templates', label: 'Plantillas WA', icon: Phone },
+  { id: 'bots', label: 'Bot Monitor', icon: Activity },
+  { id: 'channels', label: 'Canales', icon: Wifi },
+  { id: 'security', label: 'Seguridad', icon: Lock },
+]
 
 export default function AjustesPage() {
   const { orgId, role } = useOrg()
   const toast = useToast()
-  const t = useTranslations('settings')
-  const tCommon = useTranslations('common')
   const isReadOnly = role === 'STAFF'
   const [activeTab, setActiveTab] = useState('prompt')
   const [org, setOrg] = useState<Organization | null>(null)
@@ -23,17 +31,6 @@ export default function AjustesPage() {
   const [loading, setLoading] = useState(true)
   const [systemPrompt, setSystemPrompt] = useState('')
   const [saving, setSaving] = useState(false)
-
-  const TAB_DEFS = [
-    { id: 'prompt', label: t('tabs.prompt'), icon: MessageSquare },
-    { id: 'services', label: t('tabs.services'), icon: ShoppingBag },
-    { id: 'hours', label: t('tabs.hours'), icon: Clock },
-    { id: 'notifications', label: t('tabs.notifications'), icon: Bell },
-    { id: 'templates', label: t('tabs.templates'), icon: Phone },
-    { id: 'bots', label: t('tabs.bots'), icon: Activity },
-    { id: 'channels', label: t('tabs.channels'), icon: Wifi },
-    { id: 'language', label: t('tabs.language'), icon: Globe },
-  ]
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -68,9 +65,9 @@ export default function AjustesPage() {
     setSaving(true)
     try {
       await updateOrganization(orgId, { system_prompt: systemPrompt })
-      toast.success(t('promptSaved'))
+      toast.success('System prompt guardado')
     } catch (e) {
-      toast.error(tCommon('error') + ': ' + (e instanceof Error ? e.message : tCommon('errorUnknown')))
+      toast.error('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
     }
     setSaving(false)
   }
@@ -93,16 +90,16 @@ export default function AjustesPage() {
       {isReadOnly && (
         <div className="px-4 py-3 rounded-xl bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold flex items-center gap-2">
           <Shield size={14} />
-          {t('readOnly', { role: role ?? '' })}
+          Solo lectura — Tu rol ({role}) no permite modificar la configuracion. Contacta al administrador.
         </div>
       )}
 
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">{org?.name || t('subtitle')}</p>
+          <h2 className="text-xl font-bold font-display text-text-primary">Ajustes</h2>
+          <p className="text-text-dim text-xs mt-0.5">{org?.name || 'Configuracion de la clinica'}</p>
         </div>
-        <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+        <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
           <RefreshCw size={14} />
         </button>
       </div>
@@ -110,7 +107,7 @@ export default function AjustesPage() {
       <Tabs tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
 
       {activeTab === 'prompt' && (
-        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} />
+        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} orgId={orgId} />
       )}
       {activeTab === 'services' && (
         <ServicesTab orgId={orgId} services={services} isReadOnly={isReadOnly} onRefresh={loadData} onMessage={handleMessage} />
@@ -130,10 +127,9 @@ export default function AjustesPage() {
       {activeTab === 'channels' && (
         <ChannelsTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
       )}
-      {activeTab === 'language' && (
-        <LanguageTab />
+      {activeTab === 'security' && (
+        <SecurityTab />
       )}
     </div>
   )
 }
-
