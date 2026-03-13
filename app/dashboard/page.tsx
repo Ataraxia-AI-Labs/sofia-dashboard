@@ -21,12 +21,12 @@ const LazyIntentsChart = dynamic(
 const OPP_COLORS: Record<string, string> = {
   HOT_LEAD: '#8B5CF6',
   UPSELL: '#06D6A0',
-  REACTIVATION: '#3B82F6',
+  REACTIVATION: '#A78BFA',
   REFERRAL: '#F5C842',
   CHURN_RISK: '#EF4444',
   PRICE_SENSITIVE: '#F59E0B',
-  MULTI_PROCEDURE: '#EC4899',
-  HIGH_VALUE: '#10B981',
+  MULTI_PROCEDURE: '#C084FC',
+  HIGH_VALUE: '#34D399',
 }
 
 const OPP_LABELS: Record<string, string> = {
@@ -166,7 +166,7 @@ export default function DashboardOverview() {
             {/* Primary CTA */}
             <a
               href="/dashboard/ajustes"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white text-sm font-semibold hover:shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-sm font-semibold hover:shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all duration-200"
             >
               <MessageSquare size={16} />
               Conectar WhatsApp
@@ -186,7 +186,7 @@ export default function DashboardOverview() {
                 { value: '80%', label: 'menos carga operativa' },
               ].map((item) => (
                 <div key={item.label} className="text-center">
-                  <div className="text-lg font-bold font-mono gradient-text">{item.value}</div>
+                  <div className="text-lg font-bold font-display gradient-text">{item.value}</div>
                   <div className="text-[10px] text-text-dim mt-0.5">{item.label}</div>
                 </div>
               ))}
@@ -228,7 +228,7 @@ export default function DashboardOverview() {
 
   const funnelData = [
     { name: 'Mensajes', value: c?.funnel?.mensajes || 0, color: '#8B5CF6' },
-    { name: 'Pacientes', value: c?.funnel?.pacientes || 0, color: '#3B82F6' },
+    { name: 'Pacientes', value: c?.funnel?.pacientes || 0, color: '#A78BFA' },
     { name: 'Citas', value: c?.funnel?.citas || 0, color: '#F5C842' },
     { name: 'Completadas', value: c?.funnel?.completadas || 0, color: '#06D6A0' },
   ]
@@ -238,7 +238,7 @@ export default function DashboardOverview() {
       {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Overview</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">Overview</h2>
           {lastUpdate && (
             <p className="text-text-dim text-xs mt-0.5">
               Actualizado {lastUpdate.toLocaleTimeString('es-CO')}
@@ -312,7 +312,7 @@ export default function DashboardOverview() {
       {/* ===== FUNNEL + REVENUE ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Funnel */}
-        <div className="glass-card p-6">
+        <div className="glass-card-accent p-6">
           <SectionTitle icon={<TrendingUp size={16} />} title="Funnel de Conversión" />
           <div className="flex items-end justify-between gap-4 mt-6 px-2">
             {funnelData.map((step, i) => {
@@ -351,7 +351,7 @@ export default function DashboardOverview() {
         </div>
 
         {/* Revenue */}
-        <div className="glass-card p-6">
+        <div className="glass-card-accent p-6">
           <SectionTitle icon={<DollarSign size={16} />} title="Revenue" />
           <div className="grid grid-cols-2 gap-6 mt-6">
             <RevenueItem label="Revenue verificado" value={formatCOP(r?.revenue_total || 0)} color="text-status-success" />
@@ -368,7 +368,7 @@ export default function DashboardOverview() {
 
       {/* ===== VOICE AI ===== */}
       {voice && (voice.total_calls > 0 || voice.total_whatsapp > 0) && (
-        <div className="glass-card p-6">
+        <div className="glass-card-accent p-6">
           <SectionTitle icon={<PhoneCall size={16} />} title="Voice AI" />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-5">
             {/* Total calls */}
@@ -473,7 +473,7 @@ export default function DashboardOverview() {
           <SectionTitle icon={<Target size={16} />} title="Oportunidades" />
           {(o?.total || 0) > 0 ? (
             <div className="mt-4">
-              <div className="text-3xl font-bold font-mono gradient-text mb-4">{o?.total}</div>
+              <div className="text-3xl font-bold font-display gradient-text mb-4">{o?.total}</div>
               <div className="space-y-2.5">
                 {oppData.map((opp) => (
                   <div key={opp.name} className="flex items-center justify-between text-sm">

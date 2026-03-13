@@ -64,7 +64,7 @@ export default function SystemHealthPage() {
             <Activity size={20} className={healthConfig.color} />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-text-primary">System Health</h2>
+            <h2 className="text-xl font-bold font-display text-text-primary">System Health</h2>
             <p className="text-xs text-text-dim">Circuit Breakers & Service Status</p>
           </div>
         </div>
