@@ -48,17 +48,18 @@ SENTRY_AUTH_TOKEN=<token>
 | Oportunidades | /dashboard/oportunidades | ✅ Lista con acciones, filtros |
 | Equipo | /dashboard/equipo | ✅ Gestión de miembros, invitaciones |
 | System Health | /dashboard/health | ✅ Backend/Supabase status, bot logs |
-| Ajustes | /dashboard/ajustes | ✅ Config org, services, hours, channels |
+| Ajustes | /dashboard/ajustes | ✅ Config org, services, hours, channels, 2FA security |
 | Planes | /dashboard/planes | ✅ Plan selector, checkout, trial countdown |
 | Facturación | /dashboard/facturacion | ✅ Invoices, subscription status |
 
 ### Auth & Onboarding (4 páginas)
 | Página | Ruta | Estado |
 |--------|------|--------|
-| Login | /login | ✅ Email + password |
+| Login | /login | ✅ Email + password, MFA redirect |
 | Forgot Password | /forgot-password | ✅ Reset request |
 | Reset Password | /reset-password | ✅ New password form |
 | Onboarding | /onboarding | ✅ 4-step wizard + Turnstile |
+| MFA Challenge | /mfa | ✅ TOTP 6-digit verification after login |
 
 ### Admin (5 páginas — Super Admin only)
 | Página | Ruta | Estado |
@@ -101,6 +102,7 @@ treatments, voice
 | `lib/impersonation.ts` | God Mode (sessionStorage) |
 | `lib/org-context.tsx` | Organization context provider |
 | `lib/admin-api.ts` | Admin API functions |
+| `lib/mfa-api.ts` | MFA/2FA: enrollMFA, verifyMFA, unenrollMFA, getMFAStatus, mfaChallengeRequired |
 
 ## SUPER ADMIN ARCHITECTURE
 

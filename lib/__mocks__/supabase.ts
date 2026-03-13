@@ -47,6 +47,30 @@ export const supabase = {
     onAuthStateChange: jest.fn().mockReturnValue({
       data: { subscription: { unsubscribe: jest.fn() } },
     }),
+    mfa: {
+      enroll: jest.fn().mockResolvedValue({
+        data: {
+          id: 'factor-uuid-123',
+          type: 'totp',
+          totp: {
+            qr_code: 'data:image/svg+xml;base64,mock-qr-code',
+            secret: 'MOCK_SECRET_KEY',
+            uri: 'otpauth://totp/SofIA?secret=MOCK_SECRET_KEY',
+          },
+        },
+        error: null,
+      }),
+      challengeAndVerify: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      unenroll: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      listFactors: jest.fn().mockResolvedValue({
+        data: { totp: [], phone: [], all: [] },
+        error: null,
+      }),
+      getAuthenticatorAssuranceLevel: jest.fn().mockResolvedValue({
+        data: { currentLevel: 'aal1', nextLevel: 'aal1' },
+        error: null,
+      }),
+    },
   },
   from: jest.fn().mockReturnValue({
     select: jest.fn().mockReturnThis(),
