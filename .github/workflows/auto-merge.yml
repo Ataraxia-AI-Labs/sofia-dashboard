@@ -11,6 +11,11 @@ on:
     types: [submitted]
   check_suite:
     types: [completed]
+  check_run:
+    types: [completed]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
 
 permissions:
   contents: write
@@ -33,6 +38,21 @@ jobs:
             } else if (context.eventName === 'check_suite') {
               const prs = context.payload.check_suite?.pull_requests;
               if (prs && prs.length > 0) prNumber = prs[0].number;
+            } else if (context.eventName === 'check_run') {
+              const prs = context.payload.check_run?.pull_requests;
+              if (prs && prs.length > 0) prNumber = prs[0].number;
+            } else if (context.eventName === 'workflow_run') {
+              // workflow_run: find PRs for the branch
+              const branch = context.payload.workflow_run?.head_branch;
+              if (branch) {
+                const { data: prs } = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  head: `${context.repo.owner}:${branch}`,
+                  state: 'open',
+                });
+                if (prs.length > 0) prNumber = prs[0].number;
+              }
             }
 
             if (!prNumber) {
