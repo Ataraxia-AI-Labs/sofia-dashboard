@@ -13,7 +13,7 @@ Este es el FRONTEND. El backend es otro repo (SofIA-backend-core). NO edites ló
 **Data:** Supabase client con anon key (RLS filtra por org)
 **Monitoring:** Sentry (client + server + edge) + Vercel Analytics + Speed Insights
 **i18n:** next-intl installed, messages/es.json (83+ keys, Spanish only)
-**Tests:** Jest (149 tests, 17 test files) + Playwright E2E infrastructure
+**Tests:** Jest (141 tests, 16 test files) + Playwright E2E (3 spec files: auth, navigation, patients)
 
 ## CONEXIONES
 
@@ -48,19 +48,20 @@ SENTRY_AUTH_TOKEN=<token>
 | Oportunidades | /dashboard/oportunidades | ✅ Lista con acciones, filtros |
 | Equipo | /dashboard/equipo | ✅ Gestión de miembros, invitaciones |
 | System Health | /dashboard/health | ✅ Backend/Supabase status, bot logs |
-| Ajustes | /dashboard/ajustes | ✅ Config org, services, hours, channels |
+| Ajustes | /dashboard/ajustes | ✅ Config org, services, hours, channels, 2FA security |
 | Planes | /dashboard/planes | ✅ Plan selector, checkout, trial countdown |
 | Facturación | /dashboard/facturacion | ✅ Invoices, subscription status |
 
 ### Auth & Onboarding (4 páginas)
 | Página | Ruta | Estado |
 |--------|------|--------|
-| Login | /login | ✅ Email + password |
+| Login | /login | ✅ Email + password, MFA redirect |
 | Forgot Password | /forgot-password | ✅ Reset request |
 | Reset Password | /reset-password | ✅ New password form |
 | Onboarding | /onboarding | ✅ 4-step wizard + Turnstile |
+| MFA Challenge | /mfa | ✅ TOTP 6-digit verification after login |
 
-### Admin (6 páginas — Super Admin only)
+### Admin (5 páginas — Super Admin only)
 | Página | Ruta | Estado |
 |--------|------|--------|
 | Organizaciones | /admin | ✅ List all orgs, stats |
@@ -68,7 +69,6 @@ SENTRY_AUTH_TOKEN=<token>
 | Detalle Org | /admin/organizaciones/[id] | ✅ Detail + God Mode |
 | Métricas | /admin/metricas | ✅ Global metrics |
 | System Health | /admin/health | ✅ Bot logs, errors |
-| Audit Log | /admin/audit-logs | ✅ Audit log viewer (table, filters, pagination) |
 
 ### Legal (2 páginas)
 | Página | Ruta |
@@ -102,6 +102,7 @@ treatments, voice
 | `lib/impersonation.ts` | God Mode (sessionStorage) |
 | `lib/org-context.tsx` | Organization context provider |
 | `lib/admin-api.ts` | Admin API functions |
+| `lib/mfa-api.ts` | MFA/2FA: enrollMFA, verifyMFA, unenrollMFA, getMFAStatus, mfaChallengeRequired |
 
 ## SUPER ADMIN ARCHITECTURE
 
@@ -153,3 +154,24 @@ subscriptions, invoices, usage_tracking, staff_notes, knowledge_base
 - messages/es.json: 83+ keys (sidebar, common, dashboard)
 - Other languages: PENDING
 - Most page text still hardcoded: PENDING migration to useTranslations()
+
+## E2E TESTS (Playwright)
+
+```
+e2e/
+  auth.spec.ts        — login flow, invalid credentials, public pages
+  navigation.spec.ts  — redirect tests (all protected routes), login page structure
+  patients.spec.ts    — patients page redirect + authenticated load/search/pagination (mocked API)
+  global-setup.ts     — creates e2e/.auth/user.json from E2E_TEST_EMAIL/E2E_TEST_PASSWORD
+playwright.config.ts  — Chromium + iPhone 14, globalSetup, html reporter
+```
+
+```bash
+npm run test:e2e                          # run all E2E tests
+E2E_TEST_EMAIL=x E2E_TEST_PASSWORD=y npm run test:e2e   # with auth state
+npx playwright test --ui                  # interactive UI mode
+```
+
+- Unauthenticated tests always run (no env vars needed)
+- Authenticated tests (sidebar nav, patient list) skip unless e2e/.auth/user.json exists
+- Backend API responses are mocked via page.route() — no live server required
