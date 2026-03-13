@@ -10,6 +10,7 @@ interface PromptTabProps {
   onSave: () => void
   saving: boolean
   isReadOnly: boolean
+  orgId: string
 }
 
 export function PromptTab({ systemPrompt, onChangePrompt, onSave, saving, isReadOnly }: PromptTabProps) {
