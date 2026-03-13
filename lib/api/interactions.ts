@@ -1,5 +1,5 @@
 import { API_URL, authFetch, withBranch } from './helpers'
-import type { InteractionLog } from '@/types'
+import type { InteractionLog, InteractionAnnotation } from '@/types'
 
 export async function fetchInteractions(orgId: string, opts?: {
   limit?: number
@@ -48,6 +48,7 @@ export async function fetchInteractions(orgId: string, opts?: {
       response_time_ms: (item.response_time_ms || 0) as number,
       conversation_id: (item.conversation_id || '') as string,
       created_at: (item.created_at || '') as string,
+      annotation: (item.annotation || null) as InteractionAnnotation | null,
       patients: item.patients as InteractionLog['patients'],
     }
 
@@ -91,6 +92,47 @@ export async function fetchInteractions(orgId: string, opts?: {
     }
   }
   return messages
+}
+
+// ============================================================
+// ANNOTATIONS (P4-06)
+// ============================================================
+
+export async function annotateInteraction(
+  orgId: string,
+  interactionId: string,
+  rating: 'thumbs_up' | 'thumbs_down',
+  notes?: string,
+): Promise<{ ok: boolean }> {
+  const res = await authFetch(`${API_URL}/interactions/${orgId}/${interactionId}/annotate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rating, notes }),
+  })
+  if (!res.ok) return { ok: false }
+  return res.json()
+}
+
+export async function removeAnnotation(
+  orgId: string,
+  interactionId: string,
+): Promise<{ ok: boolean }> {
+  const res = await authFetch(`${API_URL}/interactions/${orgId}/${interactionId}/annotate`, {
+    method: 'DELETE',
+  })
+  if (!res.ok) return { ok: false }
+  return res.json()
+}
+
+export async function fetchAnnotationStats(orgId: string): Promise<{
+  total: number
+  thumbs_up: number
+  thumbs_down: number
+  approval_rate: number
+}> {
+  const res = await authFetch(`${API_URL}/interactions/${orgId}/annotations/stats`)
+  if (!res.ok) return { total: 0, thumbs_up: 0, thumbs_down: 0, approval_rate: 0 }
+  return res.json()
 }
 
 // Re-export the type from types/index.ts for backward compatibility
