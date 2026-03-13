@@ -76,7 +76,15 @@
   }
 
   .stat-number {
-    @apply text-3xl font-bold font-mono tracking-tight;
+    @apply text-3xl font-bold font-display tracking-tight;
+  }
+
+  .glass-card-accent {
+    @apply bg-surface-2 border border-border rounded-2xl backdrop-blur-sm relative overflow-hidden;
+  }
+  .glass-card-accent::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-brand-purple to-brand-cyan;
   }
 
   .badge {
@@ -113,6 +121,17 @@
 .animate-fade-up-lg { animation: fade-up-lg 0.5s ease-out; }
 .animate-scale-in { animation: scale-in 0.3s ease-out; }
 .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Film grain overlay — premium texture (matches landing) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
 /* Landing page smooth scroll */
 html { scroll-behavior: smooth; }

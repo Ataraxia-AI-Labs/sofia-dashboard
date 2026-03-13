@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   fetchAllOrganizations, fetchGlobalMetrics, fetchOrgStats, fetchOrgLastActivity,
-  fetchPipelineMetrics, fetchBotErrorCount24h,
+  fetchPipelineMetrics, fetchBotErrorCount24h, fetchBotLogs,
   ensureSuperAdminMembership,
-  type AdminOrgRow, type PipelineMetricsRow,
+  type AdminOrgRow, type PipelineMetricsRow, type BotLogEntry,
 } from '@/lib/admin-api'
 import { fetchSystemHealth } from '@/lib/api/health'
 import { startImpersonation } from '@/lib/impersonation'
@@ -16,7 +16,8 @@ import {
   Database, RefreshCw, Search, Plus, ExternalLink, Eye,
   CheckCircle2, PauseCircle, XCircle, Settings2,
   TrendingUp, Zap, Shield, Activity, GitPullRequest,
-  Bot, AlertTriangle, BarChart3, ArrowRight
+  Bot, AlertTriangle, BarChart3, ArrowRight, Clock,
+  Sparkles, Cpu, GitMerge
 } from 'lucide-react'
 
 const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
@@ -40,6 +41,13 @@ interface OrgWithStats extends AdminOrgRow {
   lastActivity?: string | null
 }
 
+function getGreeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Buenos dias'
+  if (h < 18) return 'Buenas tardes'
+  return 'Buenas noches'
+}
+
 export default function AdminPage() {
   const router = useRouter()
   const [orgs, setOrgs] = useState<OrgWithStats[]>([])
@@ -48,11 +56,16 @@ export default function AdminPage() {
   const [search, setSearch] = useState('')
   const [statsLoading, setStatsLoading] = useState(false)
   const [enteringGodMode, setEnteringGodMode] = useState<string | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   // CEO Pulse state
   const [pipelineMetrics, setPipelineMetrics] = useState<PipelineMetricsRow[]>([])
   const [healthStatus, setHealthStatus] = useState<string | null>(null)
   const [errorCount24h, setErrorCount24h] = useState(0)
+
+  // Activity feed
+  const [recentLogs, setRecentLogs] = useState<BotLogEntry[]>([])
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -60,45 +73,30 @@ export default function AdminPage() {
       const orgList = await fetchAllOrganizations()
       setOrgs(orgList)
 
-      // Fetch global metrics
       const orgIds = orgList.map(o => o.id)
       if (orgIds.length > 0) {
         const m = await fetchGlobalMetrics(orgIds)
         setMetrics(m)
       }
     } catch {
-      // Admin data load failed — UI will show empty state
+      // Admin data load failed
     }
     setLoading(false)
+    setLastUpdated(new Date())
 
-    // Load per-org stats in background
     loadOrgStats()
-
-    // Load CEO pulse data in background
     loadPulseData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadPulseData = useCallback(async () => {
-    // Pipeline metrics
-    try {
-      const pm = await fetchPipelineMetrics(10)
-      setPipelineMetrics(pm)
-    } catch { /* pipeline_metrics may not have RLS policy yet */ }
-
-    // Health status
+    try { setPipelineMetrics(await fetchPipelineMetrics(10)) } catch { /* */ }
     try {
       const health = await fetchSystemHealth()
       setHealthStatus(health?.status || 'UNKNOWN')
-    } catch {
-      setHealthStatus('CRITICAL')
-    }
-
-    // Bot errors 24h
-    try {
-      const errors = await fetchBotErrorCount24h()
-      setErrorCount24h(errors)
-    } catch { /* silent */ }
+    } catch { setHealthStatus('CRITICAL') }
+    try { setErrorCount24h(await fetchBotErrorCount24h()) } catch { /* */ }
+    try { setRecentLogs(await fetchBotLogs(8)) } catch { /* */ }
   }, [])
 
   const loadOrgStats = useCallback(async () => {
@@ -113,21 +111,24 @@ export default function AdminPage() {
               fetchOrgLastActivity(org.id),
             ])
             return { ...org, stats, lastActivity }
-          } catch {
-            return org
-          }
+          } catch { return org }
         })
       )
       setOrgs(withStats)
-    } catch {
-      // Org stats load failed — will show partial data
-    }
+    } catch { /* */ }
     setStatsLoading(false)
   }, [])
 
   useEffect(() => { loadData() }, [loadData])
 
-  /** God Mode — enter clinic's dashboard */
+  // Auto-refresh every 30s
+  useEffect(() => {
+    if (!autoRefresh) return
+    const interval = setInterval(loadData, 30000)
+    return () => clearInterval(interval)
+  }, [autoRefresh, loadData])
+
+  /** God Mode */
   const handleGodMode = async (orgId: string, orgName: string, e: React.MouseEvent) => {
     e.stopPropagation()
     setEnteringGodMode(orgId)
@@ -135,9 +136,7 @@ export default function AdminPage() {
       await ensureSuperAdminMembership(orgId)
       startImpersonation(orgId, orgName)
       router.push('/dashboard')
-    } catch {
-      setEnteringGodMode(null)
-    }
+    } catch { setEnteringGodMode(null) }
   }
 
   const filtered = search
@@ -175,15 +174,35 @@ export default function AdminPage() {
     ? pulseScore >= 80 ? 'from-status-success/10 to-brand-cyan/5' : pulseScore >= 50 ? 'from-status-warning/10 to-brand-gold/5' : 'from-status-danger/10 to-red-900/5'
     : 'from-surface-3 to-surface-2'
 
+  const autonomyScore = totalPRs > 0 ? Math.round((mergedPRs / totalPRs) * 100) : null
+
   return (
     <div className="max-w-[1400px] space-y-5">
       {/* CEO COMMAND CENTER HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Command Center</h2>
-          <p className="text-text-dim text-xs mt-0.5">Ataraxia IA Labs — Vista CEO</p>
+          <h2 className="text-xl font-semibold text-text-primary">
+            {getGreeting()}, CEO
+          </h2>
+          <p className="text-text-dim text-xs mt-0.5 flex items-center gap-2">
+            Ataraxia IA Labs — Command Center
+            {lastUpdated && (
+              <span className="text-text-dim/60">
+                · {lastUpdated.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            )}
+          </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors ${
+              autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-dim'
+            }`}
+          >
+            <Zap size={10} />
+            Live {autoRefresh ? 'ON' : 'OFF'}
+          </button>
           <button
             onClick={() => router.push('/admin/organizaciones/nueva')}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-xs hover:shadow-lg hover:shadow-brand-purple/20 transition-all"
@@ -202,13 +221,30 @@ export default function AdminPage() {
         <div className="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-gradient-to-br from-brand-purple/5 to-brand-cyan/5 blur-2xl" />
         <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${pulseScore != null && pulseScore >= 80 ? 'from-status-success to-brand-cyan' : pulseScore != null && pulseScore >= 50 ? 'from-status-warning to-brand-gold' : 'from-status-danger to-red-600'} flex items-center justify-center shadow-lg`}>
-              <Activity size={24} className="text-white" />
+            {/* Circular Pulse Score */}
+            <div className="relative w-16 h-16 flex-shrink-0">
+              <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" strokeWidth="4" className="text-surface-3" />
+                <circle
+                  cx="32" cy="32" r="28" fill="none"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  className={pulseColor}
+                  stroke="currentColor"
+                  strokeDasharray={`${(pulseScore ?? 0) * 1.76} 176`}
+                  style={{ transition: 'stroke-dasharray 1s ease-out' }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className={`text-sm font-bold font-mono ${pulseColor}`}>
+                  {pulseScore != null ? pulseScore : '...'}
+                </span>
+              </div>
             </div>
             <div>
               <div className="text-text-dim text-[10px] font-semibold uppercase tracking-wider">System Pulse</div>
-              <div className={`text-3xl font-bold font-mono ${pulseColor}`}>
-                {pulseScore != null ? `${pulseScore}%` : '...'}
+              <div className={`text-lg font-bold ${pulseColor}`}>
+                {pulseScore != null && pulseScore >= 80 ? 'Todo operativo' : pulseScore != null && pulseScore >= 50 ? 'Atention requerida' : pulseScore != null ? 'Sistema critico' : 'Verificando...'}
               </div>
             </div>
           </div>
@@ -225,23 +261,62 @@ export default function AdminPage() {
             <PulseIndicator
               label="CI Rate"
               status={avgCI != null ? (avgCI >= 90 ? 'ok' : avgCI >= 70 ? 'warn' : 'error') : 'loading'}
-              value={avgCI != null ? `${avgCI.toFixed(0)}%` : '—'}
+              value={avgCI != null ? `${avgCI.toFixed(0)}%` : '\u2014'}
             />
             <PulseIndicator
               label="Sentry"
               status={sentryErrors === 0 ? 'ok' : 'error'}
               value={sentryErrors.toString()}
             />
+            {autonomyScore != null && (
+              <PulseIndicator
+                label="Autonomy"
+                status={autonomyScore >= 80 ? 'ok' : autonomyScore >= 50 ? 'warn' : 'error'}
+                value={`${autonomyScore}%`}
+              />
+            )}
           </div>
         </div>
       </div>
 
-      {/* QUICK ACTIONS */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <QuickAction icon={<GitPullRequest size={16} />} label="Pipeline" sublabel={`${totalPRs} PRs esta semana`} onClick={() => router.push('/admin/pipeline')} color="text-brand-purple" />
-        <QuickAction icon={<BarChart3 size={16} />} label="Metricas" sublabel={`${metrics.interactions.toLocaleString()} interacciones`} onClick={() => router.push('/admin/metricas')} color="text-brand-cyan" />
-        <QuickAction icon={<Activity size={16} />} label="System Health" sublabel={healthStatus || 'Verificando...'} onClick={() => router.push('/admin/health')} color="text-status-success" />
-        <QuickAction icon={<Bot size={16} />} label="God Mode" sublabel={`${orgs.length} clinicas disponibles`} onClick={() => document.getElementById('org-table')?.scrollIntoView({ behavior: 'smooth' })} color="text-status-danger" />
+      {/* QUICK ACTIONS + ACTIVITY FEED — 2 Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Quick Actions */}
+        <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <QuickAction icon={<GitPullRequest size={16} />} label="Pipeline" sublabel={`${totalPRs} PRs esta semana`} onClick={() => router.push('/admin/pipeline')} color="text-brand-purple" />
+          <QuickAction icon={<BarChart3 size={16} />} label="Metricas" sublabel={`${metrics.interactions.toLocaleString()} interacciones`} onClick={() => router.push('/admin/metricas')} color="text-brand-cyan" />
+          <QuickAction icon={<Activity size={16} />} label="System Health" sublabel={healthStatus || 'Verificando...'} onClick={() => router.push('/admin/health')} color="text-status-success" />
+          <QuickAction icon={<Bot size={16} />} label="God Mode" sublabel={`${orgs.length} clinicas`} onClick={() => document.getElementById('org-table')?.scrollIntoView({ behavior: 'smooth' })} color="text-status-danger" />
+        </div>
+
+        {/* Live Activity Feed */}
+        <div className="glass-card p-4 max-h-[200px] overflow-hidden">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="relative">
+              <Sparkles size={12} className="text-brand-gold" />
+            </div>
+            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Actividad Reciente</span>
+            {autoRefresh && <div className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse ml-auto" />}
+          </div>
+          <div className="space-y-2 overflow-y-auto max-h-[140px]">
+            {recentLogs.length === 0 ? (
+              <p className="text-text-dim text-[10px]">Sin actividad reciente</p>
+            ) : (
+              recentLogs.map(log => (
+                <div key={log.id} className="flex items-start gap-2 text-[10px]">
+                  <div className={`w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0 ${
+                    log.status === 'SUCCESS' ? 'bg-status-success' : log.status === 'ERROR' ? 'bg-status-danger' : 'bg-status-warning'
+                  }`} />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-text-primary font-medium">{log.bot_name}</span>
+                    <span className="text-text-dim ml-1">{log.error_message ? `Error: ${log.error_message.slice(0, 40)}` : log.status}</span>
+                  </div>
+                  <span className="text-text-dim/60 flex-shrink-0 whitespace-nowrap">{timeAgo(log.executed_at)}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
       {/* GLOBAL METRICS */}
@@ -372,7 +447,6 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3.5">
                         <div className="flex items-center justify-center gap-1.5">
-                          {/* God Mode — view clinic dashboard */}
                           <button
                             onClick={(e) => handleGodMode(org.id, org.name, e)}
                             disabled={isEntering}
@@ -386,7 +460,6 @@ export default function AdminPage() {
                             )}
                             <span className="hidden lg:inline">{isEntering ? 'Entrando...' : 'God Mode'}</span>
                           </button>
-                          {/* Org detail */}
                           <button
                             onClick={(e) => { e.stopPropagation(); router.push(`/admin/organizaciones/${org.id}`) }}
                             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border text-text-dim text-[10px] font-semibold hover:text-text-primary hover:border-brand-purple/30 transition-all"
@@ -411,8 +484,8 @@ export default function AdminPage() {
 
 function MetricCard({ icon, gradient, value, label }: { icon: React.ReactNode; gradient: string; value: string; label: string }) {
   return (
-    <div className="glass-card p-3.5">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2`}>
+    <div className="glass-card p-3.5 group hover:border-brand-purple/20 transition-all">
+      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 group-hover:scale-110 transition-transform`}>
         {icon}
       </div>
       <div className="text-lg font-bold font-mono text-text-primary">{value}</div>
@@ -444,8 +517,8 @@ function QuickAction({ icon, label, sublabel, onClick, color }: {
       className="glass-card p-3.5 text-left hover:border-brand-purple/30 transition-all group cursor-pointer"
     >
       <div className="flex items-center justify-between mb-1.5">
-        <span className={color}>{icon}</span>
-        <ArrowRight size={12} className="text-text-dim group-hover:text-brand-purple transition-colors" />
+        <span className={`${color} group-hover:scale-110 transition-transform`}>{icon}</span>
+        <ArrowRight size={12} className="text-text-dim group-hover:text-brand-purple group-hover:translate-x-0.5 transition-all" />
       </div>
       <div className="text-sm font-semibold text-text-primary">{label}</div>
       <div className="text-[10px] text-text-dim">{sublabel}</div>
