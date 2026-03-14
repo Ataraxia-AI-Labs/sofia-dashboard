@@ -19,6 +19,7 @@ const ADMIN_NAV = [
   { href: '/admin/pipeline', icon: GitPullRequest, label: 'Pipeline' },
   { href: '/admin/health', icon: Activity, label: 'System Health' },
   { href: '/admin/api-keys', icon: KeyRound, label: 'API Keys' },
+  { href: '/admin/audit-logs', icon: Shield, label: 'Audit Log' },
   { href: '/admin/latency', icon: Timer, label: 'Latency' },
 ]
 
