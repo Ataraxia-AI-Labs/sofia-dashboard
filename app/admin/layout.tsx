@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import type { User } from '@supabase/supabase-js'
 import {
   Shield, Building2, BarChart3, Plus, LogOut, ChevronLeft,
-  ChevronRight, Menu, X, Activity, GitPullRequest, Wifi, KeyRound
+  ChevronRight, Menu, X, Activity, GitPullRequest, Wifi, KeyRound, Timer
 } from 'lucide-react'
 
 const ADMIN_NAV = [
@@ -19,6 +19,7 @@ const ADMIN_NAV = [
   { href: '/admin/pipeline', icon: GitPullRequest, label: 'Pipeline' },
   { href: '/admin/health', icon: Activity, label: 'System Health' },
   { href: '/admin/api-keys', icon: KeyRound, label: 'API Keys' },
+  { href: '/admin/latency', icon: Timer, label: 'Latency' },
 ]
 
 export interface AdminContextValue {

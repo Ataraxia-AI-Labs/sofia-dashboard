@@ -10,6 +10,8 @@ export { EmptyState } from './empty-state'
 export { Spinner } from './spinner'
 export { ToastProvider, useToast } from './toast'
 
+export { Skeleton } from './skeleton'
+
 // Dashboard-specific reusable components
 export { MetricCard } from './metric-card'
 export { SectionTitle } from './section-title'

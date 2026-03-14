@@ -395,6 +395,26 @@ export async function revokeAPIKey(keyId: string): Promise<void> {
 }
 
 // ============================================================
+// LATENCY METRICS — P50/P95/P99 per endpoint (via backend)
+// ============================================================
+
+export interface LatencyMetricRow {
+  endpoint: string
+  method: string
+  p50_ms: number
+  p95_ms: number
+  p99_ms: number
+  avg_ms: number
+  request_count: number
+  history?: number[] // Optional sparkline data points (recent p95 values)
+}
+
+export async function fetchLatencyMetrics(): Promise<LatencyMetricRow[]> {
+  const result = await adminFetch<{ data: LatencyMetricRow[] }>('/latency')
+  return result.data || []
+}
+
+// ============================================================
 // GOD MODE — Ensure super admin has org_members access
 // ============================================================
 
