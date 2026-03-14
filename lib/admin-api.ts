@@ -349,6 +349,52 @@ export async function fetchPipelineMetrics(limit: number = 20): Promise<Pipeline
 }
 
 // ============================================================
+// API KEYS — Create, list, revoke (via backend)
+// ============================================================
+
+export interface APIKeyRow {
+  id: string
+  name: string
+  scopes: string[]
+  key_hint: string // last 8 chars of the key
+  status: 'active' | 'revoked'
+  created_at: string
+  last_used_at: string | null
+  expires_at: string | null
+  organization_id: string | null
+  organization_name?: string
+}
+
+export interface CreateAPIKeyInput {
+  name: string
+  scopes: string[]
+  expires_in_days?: number
+  organization_id?: string
+}
+
+export interface CreateAPIKeyResponse {
+  key: string // full key — shown ONCE
+  api_key: APIKeyRow
+}
+
+export async function listAPIKeys(orgId?: string): Promise<APIKeyRow[]> {
+  const qs = orgId ? `?organization_id=${encodeURIComponent(orgId)}` : ''
+  const result = await adminFetch<{ data: APIKeyRow[] }>(`/api-keys${qs}`)
+  return result.data || []
+}
+
+export async function createAPIKey(input: CreateAPIKeyInput): Promise<CreateAPIKeyResponse> {
+  return adminFetch<CreateAPIKeyResponse>('/api-keys', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+}
+
+export async function revokeAPIKey(keyId: string): Promise<void> {
+  await adminFetch(`/api-keys/${keyId}/revoke`, { method: 'POST' })
+}
+
+// ============================================================
 // AUDIT LOGS — GET /admin/audit-logs
 // ============================================================
 
