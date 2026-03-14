@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Plus, Trash2, Edit3 } from 'lucide-react'
 import { Button, Input, Modal } from '@/components/ui'
 import { createService, updateService, deleteService, formatCOP } from '@/lib/api'
+import { useTranslations } from 'next-intl'
 import type { ServiceCatalog } from '@/types'
 
 interface ServicesTabProps {
@@ -21,6 +22,8 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<ServiceCatalog>>({})
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+  const t = useTranslations('services')
+  const tCommon = useTranslations('common')
 
   const handleCreate = async () => {
     if (!newSvc.name || !newSvc.price) return
@@ -30,9 +33,9 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
       setShowNew(false)
       setNewSvc({ name: '', description: '', price: 0, duration_minutes: 60, category: 'GENERAL' })
       onRefresh()
-      onMessage('Servicio creado')
+      onMessage(t('created'))
     } catch (e) {
-      onMessage('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+      onMessage(tCommon('error') + ': ' + (e instanceof Error ? e.message : tCommon('errorUnknown')))
     }
     setSaving(false)
   }
@@ -43,9 +46,9 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
       await updateService(serviceId, editData)
       setEditingId(null)
       onRefresh()
-      onMessage('Servicio actualizado')
+      onMessage(t('updated'))
     } catch (e) {
-      onMessage('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+      onMessage(tCommon('error') + ': ' + (e instanceof Error ? e.message : tCommon('errorUnknown')))
     }
     setSaving(false)
   }
@@ -59,9 +62,9 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
     try {
       await deleteService(deleteTarget)
       onRefresh()
-      onMessage('Servicio desactivado')
+      onMessage(t('deactivated'))
     } catch (e) {
-      onMessage('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+      onMessage(tCommon('error') + ': ' + (e instanceof Error ? e.message : tCommon('errorUnknown')))
     }
     setDeleteTarget(null)
   }
@@ -69,27 +72,27 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-text-dim">{services.length} servicios activos</p>
+        <p className="text-xs text-text-dim">{t('activeCount', { count: services.length })}</p>
         {!isReadOnly && (
           <Button variant="secondary" size="sm" onClick={() => setShowNew(true)} icon={<Plus size={13} />}>
-            Nuevo Servicio
+            {t('newService')}
           </Button>
         )}
       </div>
 
       {showNew && (
         <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-sm font-semibold text-text-primary">Nuevo Servicio</h4>
+          <h4 className="text-sm font-semibold text-text-primary">{t('newServiceTitle')}</h4>
           <div className="grid grid-cols-2 gap-3">
-            <Input label="Nombre" value={newSvc.name} onChange={(e) => setNewSvc({ ...newSvc, name: e.target.value })} placeholder="Ej: Limpieza Dental" />
-            <Input label="Precio (COP)" value={newSvc.price.toString()} onChange={(e) => setNewSvc({ ...newSvc, price: Number(e.target.value) || 0 })} placeholder="150000" type="number" />
-            <Input label="Duracion (min)" value={newSvc.duration_minutes.toString()} onChange={(e) => setNewSvc({ ...newSvc, duration_minutes: Number(e.target.value) || 60 })} type="number" />
-            <Input label="Categoria" value={newSvc.category} onChange={(e) => setNewSvc({ ...newSvc, category: e.target.value })} placeholder="GENERAL" />
+            <Input label={t('name')} value={newSvc.name} onChange={(e) => setNewSvc({ ...newSvc, name: e.target.value })} placeholder={t('namePlaceholder')} />
+            <Input label={t('price')} value={newSvc.price.toString()} onChange={(e) => setNewSvc({ ...newSvc, price: Number(e.target.value) || 0 })} placeholder="150000" type="number" />
+            <Input label={t('duration')} value={newSvc.duration_minutes.toString()} onChange={(e) => setNewSvc({ ...newSvc, duration_minutes: Number(e.target.value) || 60 })} type="number" />
+            <Input label={t('category')} value={newSvc.category} onChange={(e) => setNewSvc({ ...newSvc, category: e.target.value })} placeholder={t('categoryPlaceholder')} />
           </div>
-          <Input label="Descripcion" value={newSvc.description} onChange={(e) => setNewSvc({ ...newSvc, description: e.target.value })} placeholder="Descripcion del servicio..." />
+          <Input label={t('description')} value={newSvc.description} onChange={(e) => setNewSvc({ ...newSvc, description: e.target.value })} placeholder={t('descriptionPlaceholder')} />
           <div className="flex gap-2 justify-end">
-            <Button variant="ghost" size="sm" onClick={() => setShowNew(false)}>Cancelar</Button>
-            <Button size="sm" onClick={handleCreate} disabled={saving || !newSvc.name} loading={saving}>Crear Servicio</Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowNew(false)}>{tCommon('cancel')}</Button>
+            <Button size="sm" onClick={handleCreate} disabled={saving || !newSvc.name} loading={saving}>{t('create')}</Button>
           </div>
         </div>
       )}
@@ -99,14 +102,14 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
           {editingId === svc.id ? (
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <Input label="Nombre" value={editData.name ?? svc.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} />
-                <Input label="Precio" value={(editData.price ?? svc.price).toString()} onChange={(e) => setEditData({ ...editData, price: Number(e.target.value) })} type="number" />
-                <Input label="Duracion (min)" value={(editData.duration_minutes ?? svc.duration_minutes).toString()} onChange={(e) => setEditData({ ...editData, duration_minutes: Number(e.target.value) })} type="number" />
-                <Input label="Categoria" value={editData.category ?? svc.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} />
+                <Input label={t('name')} value={editData.name ?? svc.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} />
+                <Input label={t('price')} value={(editData.price ?? svc.price).toString()} onChange={(e) => setEditData({ ...editData, price: Number(e.target.value) })} type="number" />
+                <Input label={t('duration')} value={(editData.duration_minutes ?? svc.duration_minutes).toString()} onChange={(e) => setEditData({ ...editData, duration_minutes: Number(e.target.value) })} type="number" />
+                <Input label={t('category')} value={editData.category ?? svc.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} />
               </div>
               <div className="flex gap-2 justify-end">
-                <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>Cancelar</Button>
-                <Button size="sm" onClick={() => handleUpdate(svc.id)} loading={saving}>Guardar</Button>
+                <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>{tCommon('cancel')}</Button>
+                <Button size="sm" onClick={() => handleUpdate(svc.id)} loading={saving}>{tCommon('save')}</Button>
               </div>
             </div>
           ) : (
@@ -145,20 +148,20 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
 
       {services.length === 0 && !showNew && (
         <div className="glass-card p-8 text-center text-text-dim text-sm">
-          No hay servicios configurados. Agrega tu primer servicio.
+          {tCommon('noResults')}
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Confirmar desactivacion" size="sm">
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title={tCommon('confirm')} size="sm">
         <div className="space-y-4">
           <p className="text-sm text-text-muted">
-            Desactivar este servicio? Los pacientes ya no podran agendar citas con este servicio.
+            {t('deactivated')}?
           </p>
           <div className="flex gap-2 justify-end">
-            <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+            <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(null)}>{tCommon('cancel')}</Button>
             <Button size="sm" onClick={confirmDelete} icon={<Trash2 size={13} />} className="bg-status-danger/10 text-status-danger border-status-danger/20 hover:bg-status-danger/20">
-              Desactivar
+              {tCommon('deactivate')}
             </Button>
           </div>
         </div>
@@ -166,3 +169,4 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
     </div>
   )
 }
+

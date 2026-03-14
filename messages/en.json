@@ -40,7 +40,29 @@
     "close": "Close",
     "retry": "Retry",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "update": "Update",
+    "refresh": "Refresh",
+    "active": "Active",
+    "inactive": "Inactive",
+    "unknown": "Unknown",
+    "new": "New",
+    "invite": "Invite",
+    "deactivate": "Deactivate",
+    "send": "Send",
+    "connecting": "Connecting...",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "all": "All",
+    "status": "Status",
+    "actions": "Actions",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "date": "Date",
+    "errorUnknown": "Unknown error"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -51,7 +73,356 @@
     "revenue": "Revenue",
     "patients": "Patients",
     "noShows": "No-shows",
-    "conversionRate": "Conversion rate"
+    "conversionRate": "Conversion rate",
+    "loadError": "Error loading metrics",
+    "connecting": "Connecting to server...",
+    "retrying": "Connecting to server... (retrying)",
+    "activateSofia": "Activate SofIA.",
+    "messagesReceived": "Messages received",
+    "uniquePatients": "Unique patients",
+    "scheduledAppointments": "Scheduled appointments",
+    "totalAICost": "Total AI cost",
+    "conversionFunnel": "Conversion Funnel",
+    "messages": "Messages",
+    "completedAppointments": "Completed",
+    "attendance": "Attendance",
+    "cancellation": "Cancellation",
+    "noShow": "No-show"
+  },
+  "layout": {
+    "loadingDashboard": "Loading dashboard...",
+    "viewingDashboard": "Viewing dashboard of",
+    "allBranches": "All branches",
+    "closeMenu": "Close menu",
+    "mainMenu": "Main menu",
+    "trialExpiresAlert": "Your free trial expires today. Don't lose your configuration or your patients.",
+    "orgUnknown": "Unknown org",
+    "exitGodMode": "Exit God Mode"
+  },
+  "godMode": {
+    "label": "GOD MODE",
+    "viewing": "Viewing dashboard of",
+    "exit": "Exit"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Clinic configuration",
+    "readOnly": "Read only — Your role ({role}) does not allow modifying settings. Contact the administrator.",
+    "promptSaved": "System prompt saved",
+    "tabs": {
+      "prompt": "System Prompt",
+      "services": "Catalog",
+      "hours": "Hours",
+      "notifications": "Notifications",
+      "templates": "WA Templates",
+      "bots": "Bot Monitor",
+      "channels": "Channels",
+      "language": "Language"
+    }
+  },
+  "prompt": {
+    "title": "SofIA System Prompt",
+    "description": "Define SofIA's personality, tone, and specific rules for this clinic. Security instructions (anti-diagnosis, anti-prescription) are automatic.",
+    "save": "Save",
+    "placeholder": "You are Sofia, virtual assistant for Clinic XYZ...",
+    "securityNote": "Security rules (anti-diagnosis, anti-prescription, anti-prompt-injection, crisis protocol, escalation to human) are hardcoded in SofIA's core and CANNOT be disabled from here."
+  },
+  "services": {
+    "activeCount": "{count} active services",
+    "newService": "New Service",
+    "newServiceTitle": "New Service",
+    "name": "Name",
+    "price": "Price (COP)",
+    "duration": "Duration (min)",
+    "category": "Category",
+    "description": "Description",
+    "namePlaceholder": "E.g.: Dental Cleaning",
+    "descriptionPlaceholder": "Service description...",
+    "categoryPlaceholder": "GENERAL",
+    "create": "Create Service",
+    "created": "Service created",
+    "updated": "Service updated",
+    "deactivated": "Service deactivated",
+    "errorCreate": "Error creating service",
+    "errorUpdate": "Error updating service",
+    "errorDelete": "Error deleting service"
+  },
+  "hours": {
+    "title": "Business Hours",
+    "noHours": "No hours configured. Add them from Supabase or business_hours.",
+    "day": "Day",
+    "openTime": "Open",
+    "closeTime": "Close",
+    "slot": "Slot (min)",
+    "active": "Active",
+    "days": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
+  "notifications": {
+    "notificationPhone": "Notification Number",
+    "notificationPhoneDesc": "WhatsApp where SofIA sends emergency alerts, emotional crisis, and escalation requests.",
+    "phonePlaceholder": "573001234567",
+    "phoneSaved": "Number saved",
+    "vacationMode": "Vacation Mode",
+    "vacationModeDesc": "When active, SofIA keeps responding but informs that the clinic is on break.",
+    "vacationActive": "VACATIONS ACTIVE — SofIA is NOT processing messages. Patients receive a rest message.",
+    "returnDate": "Return date:",
+    "returnDateSaved": "Return date saved",
+    "birthdayBot": "Birthday Bot",
+    "birthdayBotDesc": "Sends an automatic birthday greeting to patients.",
+    "messageTemplate": "Message template",
+    "messageTemplatePlaceholder": "Happy birthday {nombre}! From {clinica}...",
+    "templateVariables": "Available variables: {nombre} = patient name, {clinica} = clinic name",
+    "saveTemplate": "Save template",
+    "birthdayBotUpdated": "Birthday Bot updated",
+    "templateSaved": "Template saved",
+    "vacationEnabled": "Vacation mode enabled",
+    "vacationDisabled": "Vacation mode disabled",
+    "returnDateInfo": "SofIA will inform patients that the clinic returns on {date}.",
+    "autoNotifications": "SofIA automatically notifies when:",
+    "events": {
+      "crisis": "Emotional crisis",
+      "crisisDesc": "Patient mentions suicide or self-harm — Line 106 + doctor alert",
+      "emergency": "Medical emergency",
+      "emergencyDesc": "Patient reports extreme pain, bleeding, etc. — 123 + doctor alert",
+      "escalation": "Human escalation",
+      "escalationDesc": "Patient asks to speak with a real person — doctor alert",
+      "newAppointment": "New appointment scheduled",
+      "newAppointmentDesc": "SofIA confirms an appointment — registered in calendar",
+      "cancelledAppointment": "Appointment cancelled",
+      "cancelledAppointmentDesc": "Patient cancels — status updated"
+    }
+  },
+  "bots": {
+    "subTitle": "Metrics of automatic bots in the last 30 days.",
+    "clickToLoad": "Click \"Update\" to load bot metrics.",
+    "totalAutoMessages": "Total automatic messages (30d)",
+    "update": "Update",
+    "reminderBot": {
+      "messagesSent": "Messages sent"
+    },
+    "hunterBot": {
+      "followupsSent": "Follow-ups sent",
+      "conversions": "Post-follow-up conversions"
+    },
+    "nurseBot": {
+      "remindersSent": "Reminders sent"
+    }
+  },
+  "channels": {
+    "whatsapp": "WhatsApp Business",
+    "instagram": "Instagram DM",
+    "messenger": "Messenger",
+    "voice": "Voice AI",
+    "connectWhatsApp": "Connect WhatsApp",
+    "embeddedSignup": "Connect with Meta (recommended)",
+    "manualConnect": "Manual connection",
+    "phoneId": "Phone Number ID",
+    "apiKey": "API Key / Token",
+    "connect": "Connect",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "comingSoon": "Coming soon",
+    "connectedSuccess": "WhatsApp connected successfully",
+    "connectError": "Error connecting WhatsApp",
+    "sdkNotLoaded": "Facebook SDK not loaded. Try again in a few seconds.",
+    "notAvailable": "Meta Embedded Signup not yet available. Use the manual form.",
+    "embeddedSuccess": "WhatsApp connected via Meta!",
+    "embeddedError": "Could not complete Meta connection. Use manual form.",
+    "embeddedCancelled": "Meta connection cancelled."
+  },
+  "team": {
+    "title": "Team",
+    "subtitle": "Manage team members",
+    "loadError": "Error loading team",
+    "inviteError": "Error sending invitation",
+    "inviteSent": "Invitation sent",
+    "roleUpdated": "Role updated",
+    "roleUpdateError": "Error updating role",
+    "memberDeactivated": "Member deactivated",
+    "deactivateError": "Error deactivating member",
+    "inviteMember": "Invite",
+    "inviteTitle": "Invite member",
+    "inviteDesc": "Send an email invitation to join your organization.",
+    "sendInvitation": "Send invitation",
+    "confirmDeactivate": "Confirm deactivation",
+    "deactivateConfirmText": "Deactivate {name}? They will no longer have access to the dashboard.",
+    "changeTo": "Change to {role}",
+    "deactivate": "Deactivate",
+    "noMembers": "No team members.",
+    "inactiveMembers": "Inactive members",
+    "deactivated": "Deactivated",
+    "roles": {
+      "OWNER": "Owner",
+      "ADMIN": "Administrator",
+      "STAFF": "Staff"
+    }
+  },
+  "opportunities": {
+    "title": "Opportunities",
+    "subtitle": "Automatically detected by SofIA",
+    "loadError": "Error loading metrics",
+    "totalDetected": "Total detected",
+    "pendingAction": "Pending action",
+    "converted": "Converted",
+    "estimatedValue": "Estimated total value",
+    "types": {
+      "HOT_LEAD": "Hot Lead",
+      "UPSELL": "Upsell",
+      "REACTIVATION": "Reactivation",
+      "REFERRAL": "Referral",
+      "CHURN_RISK": "Churn Risk",
+      "PRICE_SENSITIVE": "Price Sensitive",
+      "MULTI_PROCEDURE": "Multi-procedure",
+      "HIGH_VALUE": "High Value"
+    },
+    "statuses": {
+      "DETECTED": "Detected",
+      "ACTED_ON": "In action",
+      "CONVERTED": "Converted",
+      "EXPIRED": "Expired",
+      "DISMISSED": "Dismissed"
+    }
+  },
+  "datalake": {
+    "title": "Data Lake",
+    "subtitle": "Fine-tuning & Training Pipeline",
+    "tabs": {
+      "overview": "Overview",
+      "export": "Export",
+      "models": "Models"
+    },
+    "rawData": "Raw Data",
+    "totalInteractions": "Total interactions",
+    "trainingData": "Training Data",
+    "qualityFilter": "Quality >= 0.7",
+    "trainingReady": "Training Ready",
+    "qualityScore": "Quality Score",
+    "average": "Average",
+    "models": "Models",
+    "trained": "Trained",
+    "fineTuningStatus": "Fine-tuning Status",
+    "minTarget": "Target: 50 minimum",
+    "intentDistribution": "Intent Distribution",
+    "pipelineStatus": "Pipeline Status",
+    "exportTrainingData": "Export Training Data",
+    "exportResult": "Export Result",
+    "samples": "Samples",
+    "estimatedTokens": "Estimated tokens",
+    "pipeline": {
+      "capturedInteractions": "Captured interactions",
+      "qualityFiltering": "Quality filtering",
+      "exported": "Exported (JSONL)",
+      "trainedModels": "Trained models",
+      "modelInProduction": "Model in production",
+      "approved": "{count} approved",
+      "total": "{count} total",
+      "samplesCount": "{count} samples",
+      "modelsCount": "{count} models"
+    },
+    "milestones": {
+      "basicFineTune": "Basic fine-tune",
+      "sofiaV1": "SofIA v1",
+      "ownModel": "Own model",
+      "agiLatam": "AGI LATAM"
+    }
+  },
+  "conversations": {
+    "title": "Conversations",
+    "loadError": "Could not load conversations. The endpoint may not be available.",
+    "noResults": "No results",
+    "noConversations": "No conversations",
+    "returnToSofia": "Return to SofIA",
+    "sentiment": {
+      "positive": "Positive",
+      "negative": "Negative",
+      "neutral": "Neutral"
+    },
+    "role": {
+      "patient": "Patient"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "resolved": "Resolved",
+      "human": "Human"
+    }
+  },
+  "patients": {
+    "title": "Patients",
+    "loadError": "Error loading patients",
+    "detailError": "Error loading patient detail",
+    "createError": "Error creating patient",
+    "saveError": "Error saving changes",
+    "whatsappError": "Error sending WhatsApp message",
+    "newPatient": "New patient",
+    "contactInfo": "Contact info",
+    "city": "City",
+    "interest": "Interest",
+    "toIdentify": "To identify",
+    "channels": {
+      "CALL": "Call",
+      "PRESENCIAL": "In-person",
+      "WHATSAPP": "WhatsApp",
+      "INSTAGRAM": "Instagram",
+      "MESSENGER": "Messenger",
+      "WEB": "Web"
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "loadError": "Error loading pipeline",
+    "stages": {
+      "LEAD": "Lead",
+      "CONTACTED": "Contacted",
+      "QUOTED": "Quoted",
+      "SCHEDULED": "Scheduled",
+      "RECURRENTE": "Recurring"
+    }
+  },
+  "payments": {
+    "title": "Payments",
+    "loadError": "Error loading payments",
+    "noPayments": "No payments found",
+    "amount": "Amount",
+    "method": "Method",
+    "patient": "Patient"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "loadError": "Error loading appointments",
+    "noAppointments": "No appointments",
+    "today": "Today",
+    "week": "Week",
+    "month": "Month",
+    "day": "Day"
+  },
+  "health": {
+    "title": "System Health",
+    "loadError": "Error loading health status",
+    "backend": "Backend",
+    "supabase": "Supabase",
+    "botLogs": "Bot Logs",
+    "operational": "Operational",
+    "degraded": "Degraded",
+    "down": "Down"
+  },
+  "language": {
+    "title": "Language",
+    "description": "Select the interface language",
+    "saved": "Language saved",
+    "languages": {
+      "es": "Español",
+      "en": "English",
+      "pt": "Português"
+    }
   },
   "plans": {
     "title": "Plans",

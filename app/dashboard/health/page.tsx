@@ -9,18 +9,7 @@ import {
   CheckCircle, AlertTriangle, XCircle, Server
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-
-const STATUS_CONFIG: Record<string, { color: string; icon: LucideIcon; label: string }> = {
-  CLOSED: { color: 'text-status-success', icon: CheckCircle, label: 'Operativo' },
-  HALF_OPEN: { color: 'text-status-warning', icon: AlertTriangle, label: 'Recuperando' },
-  OPEN: { color: 'text-status-danger', icon: XCircle, label: 'Caído' },
-}
-
-const HEALTH_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
-  HEALTHY: { color: 'text-status-success', bg: 'bg-status-success/10', label: 'Todo operativo' },
-  DEGRADED: { color: 'text-status-warning', bg: 'bg-status-warning/10', label: 'Degradado' },
-  CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: 'Crítico' },
-}
+import { useTranslations } from 'next-intl'
 
 const BREAKER_ICONS: Record<string, LucideIcon> = {
   openai: Brain,
@@ -34,16 +23,30 @@ export default function SystemHealthPage() {
   const [health, setHealth] = useState<SystemHealth | null>(null)
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const t = useTranslations('health')
+  const tCommon = useTranslations('common')
+
+  const STATUS_CONFIG: Record<string, { color: string; icon: LucideIcon; label: string }> = {
+    CLOSED: { color: 'text-status-success', icon: CheckCircle, label: t('operational') },
+    HALF_OPEN: { color: 'text-status-warning', icon: AlertTriangle, label: t('degraded') },
+    OPEN: { color: 'text-status-danger', icon: XCircle, label: t('down') },
+  }
+
+  const HEALTH_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
+    HEALTHY: { color: 'text-status-success', bg: 'bg-status-success/10', label: t('operational') },
+    DEGRADED: { color: 'text-status-warning', bg: 'bg-status-warning/10', label: t('degraded') },
+    CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: t('down') },
+  }
 
   const loadHealth = useCallback(async () => {
     try {
       const data = await fetchSystemHealth()
       setHealth(data)
     } catch {
-      setHealth({ status: 'CRITICAL', error: 'No se pudo conectar con el backend' })
+      setHealth({ status: 'CRITICAL', error: t('loadError') })
     }
     setLoading(false)
-  }, [])
+  }, [t])
 
   useEffect(() => { loadHealth() }, [loadHealth])
 
@@ -64,7 +67,7 @@ export default function SystemHealthPage() {
             <Activity size={20} className={healthConfig.color} />
           </div>
           <div>
-            <h2 className="text-xl font-bold font-display text-text-primary">System Health</h2>
+            <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
             <p className="text-xs text-text-dim">Circuit Breakers & Service Status</p>
           </div>
         </div>
@@ -75,7 +78,7 @@ export default function SystemHealthPage() {
           >
             {autoRefresh ? '● Auto-refresh ON' : '○ Auto-refresh OFF'}
           </button>
-          <button onClick={loadHealth} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadHealth} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>

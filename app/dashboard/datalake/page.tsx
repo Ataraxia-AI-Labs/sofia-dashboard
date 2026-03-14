@@ -10,6 +10,7 @@ import {
   Zap, Target, HardDrive, Layers,
   FileJson, CheckCircle, Clock, Sparkles
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 const IngestionChart = dynamic(() => import('./IngestionChart'), {
   ssr: false,
@@ -31,6 +32,8 @@ export default function DataLakePage() {
   const [exporting, setExporting] = useState(false)
   const [exportResult, setExportResult] = useState<DataLakeExportResult | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models'>('overview')
+  const t = useTranslations('datalake')
+  const tCommon = useTranslations('common')
 
   const loadStats = useCallback(async () => {
     setLoading(true)
@@ -86,7 +89,7 @@ export default function DataLakePage() {
             <Database size={20} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold font-display text-text-primary">Data Lake</h2>
+            <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
             <p className="text-xs text-text-dim">Fine-tuning & Training Pipeline</p>
           </div>
         </div>
@@ -94,11 +97,11 @@ export default function DataLakePage() {
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             {(['overview', 'export', 'models'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${activeTab === tab ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
-                {tab === 'overview' ? 'Overview' : tab === 'export' ? 'Export' : 'Modelos'}
+                {tab === 'overview' ? t('tabs.overview') : tab === 'export' ? t('tabs.export') : t('tabs.models')}
               </button>
             ))}
           </div>
-          <button onClick={loadStats} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadStats} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>

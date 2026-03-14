@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { useOrg } from '@/lib/org-context'
 import { fetchOpportunities, updateOpportunity, formatCOP, timeAgo } from '@/lib/api'
 import type { Opportunity } from '@/types'
@@ -10,27 +11,29 @@ import {
   Heart, ArrowUpRight, UserPlus, ShoppingBag, Flame, RotateCcw
 } from 'lucide-react'
 
-const OPP_CONFIG: Record<string, { label: string; icon: typeof Flame; color: string; bg: string }> = {
-  HOT_LEAD:           { label: 'Lead Caliente', icon: Flame, color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20' },
-  UPSELL:             { label: 'Upsell', icon: ArrowUpRight, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
-  REACTIVATION:       { label: 'Reactivación', icon: RotateCcw, color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20' },
-  REFERRAL:           { label: 'Referido', icon: UserPlus, color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20' },
-  CHURN_RISK:         { label: 'Riesgo de Abandono', icon: AlertTriangle, color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20' },
-  PRICE_SENSITIVE:    { label: 'Sensible a Precio', icon: DollarSign, color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20' },
-  MULTI_PROCEDURE:    { label: 'Multi-procedimiento', icon: ShoppingBag, color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
-  HIGH_VALUE:         { label: 'Alto Valor', icon: Heart, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
-}
-
-const STATUS_OPTIONS: Record<string, { label: string; color: string }> = {
-  DETECTED:  { label: 'Detectada', color: 'text-brand-purple' },
-  ACTED_ON:  { label: 'En acción', color: 'text-status-info' },
-  CONVERTED: { label: 'Convertida', color: 'text-status-success' },
-  EXPIRED:   { label: 'Expirada', color: 'text-text-dim' },
-  DISMISSED: { label: 'Descartada', color: 'text-text-dim' },
-}
-
 export default function OportunidadesPage() {
   const { orgId, branchId } = useOrg()
+  const t = useTranslations('opportunities')
+  const tCommon = useTranslations('common')
+
+  const OPP_CONFIG: Record<string, { label: string; icon: typeof Flame; color: string; bg: string }> = {
+    HOT_LEAD:        { label: t('types.HOT_LEAD'), icon: Flame, color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20' },
+    UPSELL:          { label: t('types.UPSELL'), icon: ArrowUpRight, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
+    REACTIVATION:    { label: t('types.REACTIVATION'), icon: RotateCcw, color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20' },
+    REFERRAL:        { label: t('types.REFERRAL'), icon: UserPlus, color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20' },
+    CHURN_RISK:      { label: t('types.CHURN_RISK'), icon: AlertTriangle, color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20' },
+    PRICE_SENSITIVE: { label: t('types.PRICE_SENSITIVE'), icon: DollarSign, color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20' },
+    MULTI_PROCEDURE: { label: t('types.MULTI_PROCEDURE'), icon: ShoppingBag, color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
+    HIGH_VALUE:      { label: t('types.HIGH_VALUE'), icon: Heart, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
+  }
+
+  const STATUS_OPTIONS: Record<string, { label: string; color: string }> = {
+    DETECTED:  { label: t('statuses.DETECTED'), color: 'text-brand-purple' },
+    ACTED_ON:  { label: t('statuses.ACTED_ON'), color: 'text-status-info' },
+    CONVERTED: { label: t('statuses.CONVERTED'), color: 'text-status-success' },
+    EXPIRED:   { label: t('statuses.EXPIRED'), color: 'text-text-dim' },
+    DISMISSED: { label: t('statuses.DISMISSED'), color: 'text-text-dim' },
+  }
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
@@ -82,10 +85,10 @@ export default function OportunidadesPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Oportunidades</h2>
-          <p className="text-text-dim text-xs mt-0.5">Detectadas automáticamente por SofIA</p>
+          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-xs mt-0.5">{t('subtitle')}</p>
         </div>
-        <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+        <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
         </button>
       </div>
@@ -96,25 +99,25 @@ export default function OportunidadesPage() {
           icon={<Target size={18} />}
           gradient="from-brand-purple to-brand-purple-dark"
           value={opportunities.length.toString()}
-          label="Total detectadas"
+          label={t('totalDetected')}
         />
         <SummaryCard
           icon={<Zap size={18} />}
           gradient="from-status-warning to-amber-600"
           value={detected.toString()}
-          label="Pendientes de acción"
+          label={t('pendingAction')}
         />
         <SummaryCard
           icon={<Check size={18} />}
           gradient="from-status-success to-emerald-600"
           value={converted.toString()}
-          label="Convertidas"
+          label={t('converted')}
         />
         <SummaryCard
           icon={<DollarSign size={18} />}
           gradient="from-brand-gold to-amber-500"
           value={formatCOP(totalValue)}
-          label="Valor estimado total"
+          label={t('estimatedValue')}
         />
         <SummaryCard
           icon={<TrendingUp size={18} />}

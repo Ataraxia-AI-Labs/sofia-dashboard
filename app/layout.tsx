@@ -3,6 +3,7 @@ import { Outfit, JetBrains_Mono, Playfair_Display } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import { Providers } from '@/components/providers'
+import { ErrorBoundary } from '@/components/error-boundary'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
@@ -65,7 +66,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
             <Analytics />
             <SpeedInsights />
           </Providers>

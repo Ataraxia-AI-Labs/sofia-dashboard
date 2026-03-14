@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { Activity, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { fetchFullAnalytics } from '@/lib/api'
+import { useTranslations } from 'next-intl'
 import type { SubBotMetrics } from '@/types'
 
 interface BotsTabProps {
@@ -13,6 +14,8 @@ interface BotsTabProps {
 export function BotsTab({ orgId }: BotsTabProps) {
   const [metrics, setMetrics] = useState<SubBotMetrics | null>(null)
   const [loading, setLoading] = useState(false)
+  const t = useTranslations('bots')
+  const tCommon = useTranslations('common')
 
   const loadMetrics = useCallback(async () => {
     setLoading(true)
@@ -30,17 +33,17 @@ export function BotsTab({ orgId }: BotsTabProps) {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-text-primary">Sub-Bot Monitor</h3>
-          <p className="text-xs text-text-dim mt-0.5">Metricas de los bots automaticos en los ultimos 30 dias.</p>
+          <p className="text-xs text-text-dim mt-0.5">{t('subTitle')}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={loadMetrics} disabled={loading} icon={<RefreshCw size={12} className={loading ? 'animate-spin' : ''} />}>
-          {loading ? 'Cargando...' : 'Actualizar'}
+          {loading ? tCommon('loading') : t('update')}
         </Button>
       </div>
 
       {!metrics && !loading && (
         <div className="glass-card p-8 text-center">
           <Activity size={24} className="mx-auto text-text-dim mb-3" />
-          <p className="text-text-muted text-sm">Haz clic en &quot;Actualizar&quot; para cargar metricas de bots.</p>
+          <p className="text-text-muted text-sm">{t('clickToLoad')}</p>
         </div>
       )}
 
@@ -48,7 +51,7 @@ export function BotsTab({ orgId }: BotsTabProps) {
         <div className="space-y-3">
           <div className="glass-card p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-text-muted font-semibold">Total mensajes automaticos (30d)</span>
+              <span className="text-xs text-text-muted font-semibold">{t('totalAutoMessages')}</span>
               <span className="text-lg font-bold text-brand-purple">{metrics.total_mensajes_automaticos.toLocaleString()}</span>
             </div>
           </div>
@@ -56,22 +59,22 @@ export function BotsTab({ orgId }: BotsTabProps) {
           <BotCard
             name="Reminder Bot"
             description={metrics.reminder_bot.descripcion}
-            stats={[{ label: 'Mensajes enviados', value: metrics.reminder_bot.mensajes_enviados }]}
+            stats={[{ label: t('reminderBot.messagesSent'), value: metrics.reminder_bot.mensajes_enviados }]}
             color="text-brand-cyan"
           />
           <BotCard
             name="Hunter Bot"
             description={metrics.hunter_bot.descripcion}
             stats={[
-              { label: 'Follow-ups enviados', value: metrics.hunter_bot.followups_enviados },
-              { label: 'Conversiones post-followup', value: metrics.hunter_bot.conversiones_post_followup },
+              { label: t('hunterBot.followupsSent'), value: metrics.hunter_bot.followups_enviados },
+              { label: t('hunterBot.conversions'), value: metrics.hunter_bot.conversiones_post_followup },
             ]}
             color="text-status-warning"
           />
           <BotCard
             name="Nurse Bot"
             description={metrics.nurse_bot.descripcion}
-            stats={[{ label: 'Recordatorios enviados', value: metrics.nurse_bot.recordatorios_enviados }]}
+            stats={[{ label: t('nurseBot.remindersSent'), value: metrics.nurse_bot.recordatorios_enviados }]}
             color="text-status-success"
           />
         </div>
@@ -101,3 +104,4 @@ function BotCard({ name, description, stats, color }: {
     </div>
   )
 }
+
