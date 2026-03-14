@@ -18,6 +18,7 @@ const ADMIN_NAV = [
   { href: '/admin/metricas', icon: BarChart3, label: 'Metricas' },
   { href: '/admin/pipeline', icon: GitPullRequest, label: 'Pipeline' },
   { href: '/admin/health', icon: Activity, label: 'System Health' },
+  { href: '/admin/audit-logs', icon: Shield, label: 'Audit Log' },
   { href: '/admin/latency', icon: Timer, label: 'Latency' },
 ]
 
