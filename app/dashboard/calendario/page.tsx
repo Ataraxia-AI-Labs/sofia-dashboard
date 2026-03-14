@@ -2,24 +2,29 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
-import { fetchAppointments, updateAppointmentStatus, createAppointment, fetchPatients, fetchServicesCatalog, fetchPatientMLFeatures, timeAgo } from '@/lib/api'
-import type { Appointment, Patient, ServiceCatalog, PatientMLFeatures } from '@/types'
+import {
+  fetchAppointments, updateAppointmentStatus, createAppointment,
+  fetchPatients, fetchServicesCatalog, fetchPatientMLFeatures,
+  rescheduleAppointment, assignStaff, fetchStaffList, timeAgo,
+} from '@/lib/api'
+import type { Appointment, Patient, ServiceCatalog, PatientMLFeatures, StaffMember } from '@/types'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
-  User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus, TrendingDown
+  User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus, TrendingDown,
+  UserCheck, Repeat, ArrowRightLeft,
 } from 'lucide-react'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof CheckCircle }> = {
   CONFIRMED: { label: 'Confirmada', color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20', icon: CheckCircle },
   COMPLETED: { label: 'Completada', color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', icon: CheckCircle },
   CANCELLED: { label: 'Cancelada', color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20', icon: XCircle },
-  NO_SHOW: { label: 'No asistió', color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', icon: AlertTriangle },
+  NO_SHOW: { label: 'No asistio', color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', icon: AlertTriangle },
   REQUESTED: { label: 'Solicitada', color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20', icon: HelpCircle },
   RESCHEDULED: { label: 'Reagendada', color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20', icon: CalIcon },
   SCHEDULED: { label: 'Programada', color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20', icon: CalIcon },
 }
 
-const DAYS_ES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+const DAYS_ES = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
 const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 type ViewMode = 'week' | 'month'
@@ -31,34 +36,45 @@ export default function CalendarioPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<ViewMode>('week')
   const [statusFilter, setStatusFilter] = useState<string>('')
+  const [staffFilter, setStaffFilter] = useState<string>('')
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null)
   const [selectedMLFeatures, setSelectedMLFeatures] = useState<PatientMLFeatures | null>(null)
   const [showNewAppt, setShowNewAppt] = useState(false)
   const [patients, setPatients] = useState<Patient[]>([])
   const [services, setServices] = useState<ServiceCatalog[]>([])
-  const [newAppt, setNewAppt] = useState({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
+  const [staffList, setStaffList] = useState<StaffMember[]>([])
+  const [newAppt, setNewAppt] = useState({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60, staff_id: '' })
+
+  // Reschedule state
+  const [showReschedule, setShowReschedule] = useState(false)
+  const [rescheduleData, setRescheduleData] = useState({ date: '', time: '09:00', reason: '' })
+  const [rescheduleLoading, setRescheduleLoading] = useState(false)
 
   // Close modal on Escape
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setSelectedAppt(null); setShowNewAppt(false) }
+      if (e.key === 'Escape') { setSelectedAppt(null); setShowNewAppt(false); setShowReschedule(false) }
     }
     document.addEventListener('keydown', handleEsc)
     return () => document.removeEventListener('keydown', handleEsc)
   }, [])
 
+  // Load staff list on mount
+  useEffect(() => {
+    if (!orgId) return
+    fetchStaffList(orgId).then((data) => setStaffList(data || [])).catch(() => {})
+  }, [orgId])
+
   // Date range based on view
   const { fromDate, toDate } = useMemo(() => {
     const d = new Date(currentDate)
     if (viewMode === 'week') {
-      // getDay(): 0=Sunday, 1=Monday, ... 6=Saturday
-      // For LATAM calendars (week starts Monday), Sunday (0) belongs to the previous week
       const day = d.getDay()
       const diffToMonday = day === 0 ? 6 : day - 1
       const start = new Date(d)
-      start.setDate(d.getDate() - diffToMonday) // Monday
+      start.setDate(d.getDate() - diffToMonday)
       const end = new Date(start)
-      end.setDate(start.getDate() + 6) // Sunday
+      end.setDate(start.getDate() + 6)
       return { fromDate: start, toDate: end }
     } else {
       const start = new Date(d.getFullYear(), d.getMonth(), 1)
@@ -76,27 +92,26 @@ export default function CalendarioPage() {
         to: toDate.toISOString(),
         status: statusFilter || undefined,
         branchId,
+        staffId: staffFilter || undefined,
       })
       setAppointments(data as unknown as Appointment[])
     } catch {
-      // Appointments load failed — UI will show empty calendar
+      // Appointments load failed
     }
     setLoading(false)
-  }, [orgId, fromDate, toDate, statusFilter, branchId])
+  }, [orgId, fromDate, toDate, statusFilter, staffFilter, branchId])
 
   useEffect(() => { loadAppointments() }, [loadAppointments])
 
-  // When selecting an appointment, fetch ML features for no-show badge
   const handleSelectAppt = async (appt: Appointment) => {
     setSelectedAppt(appt)
     setSelectedMLFeatures(null)
+    setShowReschedule(false)
     if (appt.patient_id) {
       try {
         const features = await fetchPatientMLFeatures(appt.patient_id)
         setSelectedMLFeatures(features as PatientMLFeatures | null)
-      } catch {
-        // ML features may not exist yet
-      }
+      } catch { /* ML features may not exist */ }
     }
   }
 
@@ -110,7 +125,7 @@ export default function CalendarioPage() {
         ])
         setPatients(pats.patients || [])
         setServices(svcs || [])
-      } catch { /* Failed to load patients/services for form */ }
+      } catch { /* Failed to load */ }
     }
   }
 
@@ -121,11 +136,44 @@ export default function CalendarioPage() {
       const endDate = new Date(`${newAppt.date}T${newAppt.time}:00`)
       endDate.setMinutes(endDate.getMinutes() + newAppt.duration)
       const end = endDate.toISOString()
-      await createAppointment(orgId, { patient_id: newAppt.patient_id, start_time: start, end_time: end, service_name: newAppt.service_name })
+      await createAppointment(orgId, {
+        patient_id: newAppt.patient_id,
+        start_time: start,
+        end_time: end,
+        service_name: newAppt.service_name,
+        staff_id: newAppt.staff_id || undefined,
+      })
       setShowNewAppt(false)
-      setNewAppt({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60 })
+      setNewAppt({ patient_id: '', date: '', time: '09:00', service_name: '', duration: 60, staff_id: '' })
       loadAppointments()
-    } catch { /* Appointment creation failed */ }
+    } catch { /* Create failed */ }
+  }
+
+  const handleReschedule = async () => {
+    if (!selectedAppt || !rescheduleData.date || !rescheduleData.time) return
+    setRescheduleLoading(true)
+    try {
+      const newStart = `${rescheduleData.date}T${rescheduleData.time}:00`
+      await rescheduleAppointment(selectedAppt.id, {
+        new_start_time: newStart,
+        reason: rescheduleData.reason || 'Reagendado desde dashboard',
+      })
+      setShowReschedule(false)
+      setSelectedAppt(null)
+      setRescheduleData({ date: '', time: '09:00', reason: '' })
+      loadAppointments()
+    } catch { /* Reschedule failed */ }
+    setRescheduleLoading(false)
+  }
+
+  const handleAssignStaff = async (apptId: string, staffId: string | null) => {
+    try {
+      await assignStaff(apptId, staffId)
+      loadAppointments()
+      if (selectedAppt?.id === apptId) {
+        setSelectedAppt({ ...selectedAppt, staff_id: staffId })
+      }
+    } catch { /* Assign failed */ }
   }
 
   const navigate = (dir: number) => {
@@ -136,6 +184,13 @@ export default function CalendarioPage() {
   }
 
   const goToday = () => setCurrentDate(new Date())
+
+  // Staff name resolver
+  const getStaffName = useCallback((staffId: string | null | undefined) => {
+    if (!staffId) return null
+    const staff = staffList.find((s) => s.id === staffId)
+    return staff?.display_name || null
+  }, [staffList])
 
   // Group appointments by date
   const groupedByDate = useMemo(() => {
@@ -161,9 +216,8 @@ export default function CalendarioPage() {
         cells.push({ date: d, key, isToday: key === today, isCurrentMonth: true })
       }
     } else {
-      // Start from Monday of the week containing the 1st
       const firstDay = new Date(fromDate)
-      const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1 // Monday=0
+      const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1
       const start = new Date(firstDay)
       start.setDate(start.getDate() - startDay)
 
@@ -195,7 +249,21 @@ export default function CalendarioPage() {
           <p className="text-text-dim text-xs mt-0.5">{appointments.length} citas en este periodo</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Staff filter */}
+          {staffList.length > 0 && (
+            <select
+              value={staffFilter}
+              onChange={(e) => setStaffFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs outline-none"
+            >
+              <option value="">Todos los profesionales</option>
+              {staffList.map((s) => (
+                <option key={s.id} value={s.id}>{s.display_name || s.role}</option>
+              ))}
+            </select>
+          )}
+
           {/* Status filter */}
           <select
             value={statusFilter}
@@ -252,7 +320,7 @@ export default function CalendarioPage() {
       {showNewAppt && (
         <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
           <h4 className="text-sm font-semibold text-text-primary">Nueva Cita Manual</h4>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
             <div>
               <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Paciente *</label>
               <select value={newAppt.patient_id} onChange={(e) => setNewAppt({...newAppt, patient_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
@@ -267,6 +335,15 @@ export default function CalendarioPage() {
                 {services.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
               </select>
             </div>
+            {staffList.length > 0 && (
+              <div>
+                <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Profesional</label>
+                <select value={newAppt.staff_id} onChange={(e) => setNewAppt({...newAppt, staff_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
+                  <option value="">Sin asignar</option>
+                  {staffList.map((s) => <option key={s.id} value={s.id}>{s.display_name || s.role}</option>)}
+                </select>
+              </div>
+            )}
             <div>
               <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Fecha *</label>
               <input type="date" value={newAppt.date} onChange={(e) => setNewAppt({...newAppt, date: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
@@ -305,7 +382,6 @@ export default function CalendarioPage() {
                   !cell.isCurrentMonth ? 'bg-void/30' : ''
                 } ${cell.isToday ? 'bg-brand-purple/5' : ''}`}
               >
-                {/* Date number */}
                 <div className={`text-xs font-semibold mb-1 px-1 ${
                   cell.isToday ? 'text-brand-purple' : cell.isCurrentMonth ? 'text-text-secondary' : 'text-text-dim'
                 }`}>
@@ -313,12 +389,12 @@ export default function CalendarioPage() {
                   {cell.date.getDate()}
                 </div>
 
-                {/* Appointments */}
                 <div className="space-y-0.5">
                   {dayAppts.slice(0, viewMode === 'week' ? 20 : 3).map((appt) => {
                     const cfg = STATUS_CONFIG[appt.status] || STATUS_CONFIG.REQUESTED
                     const time = new Date(appt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })
                     const patientName = appt.patients?.full_name || 'Sin nombre'
+                    const staffName = getStaffName(appt.staff_id)
                     return (
                       <button
                         key={appt.id}
@@ -327,7 +403,10 @@ export default function CalendarioPage() {
                       >
                         <span className={`font-semibold ${cfg.color}`}>{time}</span>
                         <span className="text-text-muted ml-1 truncate">
-                          {viewMode === 'week' ? `${patientName} — ${appt.service_name || ''}` : patientName}
+                          {viewMode === 'week'
+                            ? `${patientName}${staffName ? ` · ${staffName}` : ''} — ${appt.service_name || ''}`
+                            : patientName
+                          }
                         </span>
                       </button>
                     )
@@ -355,16 +434,16 @@ export default function CalendarioPage() {
       {/* ========== APPOINTMENT DETAIL MODAL ========== */}
       {selectedAppt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedAppt(null)} />
-          <div className="relative glass-card-elevated w-full max-w-md p-6 space-y-4 animate-fade-up">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => { setSelectedAppt(null); setShowReschedule(false) }} />
+          <div className="relative glass-card-elevated w-full max-w-md p-6 space-y-4 animate-fade-up max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-semibold text-text-primary">Detalle de Cita</h3>
-              <button onClick={() => setSelectedAppt(null)} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
+              <button onClick={() => { setSelectedAppt(null); setShowReschedule(false) }} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
             </div>
 
-            {/* Status badge */}
+            {/* Status + No-show badge */}
             {(() => {
               const cfg = STATUS_CONFIG[selectedAppt.status] || STATUS_CONFIG.REQUESTED
               const StatusIcon = cfg.icon
@@ -374,9 +453,13 @@ export default function CalendarioPage() {
                     <StatusIcon size={12} className={cfg.color} />
                     <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
                   </div>
-                  {/* No-Show risk badge (Sesion 18 — from patient_ml_features) */}
                   {selectedMLFeatures?.no_show_probability != null && selectedAppt.status !== 'COMPLETED' && selectedAppt.status !== 'CANCELLED' && (
                     <NoShowBadge probability={selectedMLFeatures.no_show_probability} />
+                  )}
+                  {selectedAppt.series_id && (
+                    <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full border bg-brand-cyan/10 border-brand-cyan/20 text-brand-cyan text-[10px] font-semibold">
+                      <Repeat size={10} /> Serie
+                    </div>
                   )}
                 </div>
               )
@@ -387,11 +470,64 @@ export default function CalendarioPage() {
               <ApptRow icon={<CalIcon size={14} />} label="Fecha" value={new Date(selectedAppt.start_time).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} />
               <ApptRow icon={<Clock size={14} />} label="Hora" value={`${new Date(selectedAppt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}${selectedAppt.end_time ? ` — ${new Date(selectedAppt.end_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''}`} />
               <ApptRow icon={<Eye size={14} />} label="Servicio" value={selectedAppt.service_name || '—'} />
+
+              {/* Staff assignment */}
+              <div className="flex items-start gap-3">
+                <span className="text-text-dim mt-0.5"><UserCheck size={14} /></span>
+                <div className="flex-1">
+                  <div className="text-[10px] text-text-dim uppercase">Profesional</div>
+                  {staffList.length > 0 ? (
+                    <select
+                      value={selectedAppt.staff_id || ''}
+                      onChange={(e) => handleAssignStaff(selectedAppt.id, e.target.value || null)}
+                      className="mt-0.5 px-2 py-1 rounded-lg bg-void border border-border text-text-primary text-sm outline-none w-full"
+                    >
+                      <option value="">Sin asignar</option>
+                      {staffList.map((s) => (
+                        <option key={s.id} value={s.id}>{s.display_name || s.role}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="text-sm text-text-primary">{getStaffName(selectedAppt.staff_id) || 'Sin asignar'}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Previous time (if rescheduled) */}
+              {selectedAppt.previous_start_time && (
+                <div className="flex items-start gap-3">
+                  <span className="text-text-dim mt-0.5"><ArrowRightLeft size={14} /></span>
+                  <div>
+                    <div className="text-[10px] text-text-dim uppercase">Hora anterior</div>
+                    <div className="text-sm text-text-muted line-through">
+                      {new Date(selectedAppt.previous_start_time).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="pt-2 border-t border-border text-xs text-text-dim">
               Creada {timeAgo(selectedAppt.created_at)}
             </div>
+
+            {/* RESCHEDULE FORM */}
+            {showReschedule && (
+              <div className="p-3 rounded-lg bg-brand-gold/5 border border-brand-gold/20 space-y-2">
+                <h4 className="text-xs font-semibold text-brand-gold">Reagendar Cita</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <input type="date" value={rescheduleData.date} onChange={(e) => setRescheduleData({...rescheduleData, date: e.target.value})} className="px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
+                  <input type="time" value={rescheduleData.time} onChange={(e) => setRescheduleData({...rescheduleData, time: e.target.value})} className="px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
+                </div>
+                <input type="text" placeholder="Razon (opcional)" value={rescheduleData.reason} onChange={(e) => setRescheduleData({...rescheduleData, reason: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
+                <div className="flex gap-2 justify-end">
+                  <button onClick={() => setShowReschedule(false)} className="px-2 py-1 rounded-lg bg-surface-3 text-text-muted text-xs">Cancelar</button>
+                  <button onClick={handleReschedule} disabled={!rescheduleData.date || rescheduleLoading} className="px-3 py-1 rounded-lg bg-brand-gold/15 text-brand-gold text-xs font-semibold disabled:opacity-50">
+                    {rescheduleLoading ? 'Reagendando...' : 'Confirmar'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* STATUS ACTIONS */}
             {selectedAppt.status !== 'COMPLETED' && selectedAppt.status !== 'CANCELLED' && (
@@ -401,6 +537,12 @@ export default function CalendarioPage() {
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs font-semibold hover:bg-status-success/20 transition-colors"
                 >
                   <CheckCircle size={12} /> Completada
+                </button>
+                <button
+                  onClick={() => { setShowReschedule(!showReschedule); setRescheduleData({ date: '', time: '09:00', reason: '' }) }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-xs font-semibold hover:bg-brand-gold/20 transition-colors"
+                >
+                  <CalIcon size={12} /> Reagendar
                 </button>
                 <button
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'NO_SHOW'); setSelectedAppt(null); loadAppointments() }}
@@ -424,7 +566,7 @@ export default function CalendarioPage() {
 }
 
 // ============================================================
-// No-Show Risk Badge (Sesion 18 — ML no_show_probability)
+// No-Show Risk Badge
 // ============================================================
 
 function NoShowBadge({ probability }: { probability: number }) {

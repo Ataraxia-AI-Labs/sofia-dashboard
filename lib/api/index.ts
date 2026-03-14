@@ -22,7 +22,11 @@ export { fetchFullAnalytics, fetchQuickMetrics, fetchAiQualityMetrics, downloadR
 export { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, createPatient, updatePatient, exportPatientsCSV, sendWhatsAppMessage } from './patients'
 
 // Appointments
-export { fetchAppointments, fetchPatientAppointments, updateAppointmentStatus, createAppointment } from './appointments'
+export {
+  fetchAppointments, fetchPatientAppointments, updateAppointmentStatus, createAppointment,
+  rescheduleAppointment, assignStaff, fetchStaffList, fetchAppointmentSeries,
+  createAppointmentSeries, updateAppointmentSeries,
+} from './appointments'
 
 // Opportunities
 export { fetchOpportunities, updateOpportunity } from './opportunities'

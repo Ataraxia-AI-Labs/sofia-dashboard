@@ -212,6 +212,37 @@ export interface Appointment {
   service_name: string
   status: AppointmentStatus
   created_at: string
+  staff_id?: string | null
+  series_id?: string | null
+  previous_start_time?: string | null
+  previous_end_time?: string | null
+  patients?: { full_name: string; phone: string }
+}
+
+export interface StaffMember {
+  id: string
+  user_id: string
+  display_name: string
+  role: 'OWNER' | 'ADMIN' | 'STAFF'
+}
+
+export interface AppointmentSeries {
+  id: string
+  organization_id: string
+  patient_id: string
+  staff_id?: string | null
+  service_name: string
+  recurrence_rule: 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY'
+  recurrence_interval: number
+  day_of_week?: number | null
+  preferred_time: string
+  total_occurrences: number
+  generated_count: number
+  status: 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED'
+  starts_at: string
+  ends_at?: string | null
+  notes: string
+  created_at: string
   patients?: { full_name: string; phone: string }
 }
 
@@ -386,6 +417,7 @@ export interface BusinessHour {
   open_time: string
   close_time: string
   slot_duration_minutes: number
+  buffer_minutes?: number
   is_open: boolean
   is_active: boolean
 }
