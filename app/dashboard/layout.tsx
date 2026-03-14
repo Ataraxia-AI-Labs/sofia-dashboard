@@ -369,16 +369,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const pathname = usePathname()
   const NAV_GROUPS = useNavGroups()
+  const t = useTranslations('nav')
+  const [user, setUser] = useState<User | null>(null)
+  const [org, setOrg] = useState<Organization | null>(null)
+  const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'STAFF'>('STAFF')
   // Filter nav groups based on current user role (hide inaccessible items)
   const FILTERED_NAV_GROUPS = NAV_GROUPS.map(group => ({
     ...group,
     items: filterNavByRole(group.items, role),
   })).filter(group => group.items.length > 0)
   const NAV_ITEMS = FILTERED_NAV_GROUPS.flatMap(g => g.items)
-  const t = useTranslations('nav')
-  const [user, setUser] = useState<User | null>(null)
-  const [org, setOrg] = useState<Organization | null>(null)
-  const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'STAFF'>('STAFF')
   const [branches, setBranches] = useState<Branch[]>([])
   const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
