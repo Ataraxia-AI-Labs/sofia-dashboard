@@ -341,7 +341,8 @@
     "tabs": {
       "overview": "Overview",
       "export": "Export",
-      "models": "Modelos"
+      "models": "Modelos",
+      "optimizer": "Optimizador"
     },
     "rawData": "Raw Data",
     "totalInteractions": "Interacciones totales",
@@ -376,6 +377,46 @@
       "sofiaV1": "SofIA v1",
       "ownModel": "Modelo propio",
       "agiLatam": "AGI LATAM"
+    }
+  },
+  "annotations": {
+    "goodResponse": "Buena respuesta",
+    "badResponse": "Mala respuesta",
+    "addNotes": "Agregar notas",
+    "notesPlaceholder": "Escribe una nota sobre esta respuesta...",
+    "cancel": "Cancelar",
+    "saveNotes": "Guardar nota",
+    "statsTitle": "Calidad de Respuestas IA",
+    "refresh": "Actualizar",
+    "noAnnotations": "Sin anotaciones aun",
+    "noAnnotationsHint": "Califica las respuestas de SofIA con pulgar arriba/abajo en Conversaciones.",
+    "totalAnnotations": "Anotaciones totales",
+    "humanFeedback": "Feedback humano",
+    "positive": "Positivas",
+    "negative": "Negativas",
+    "approvalRate": "Tasa de aprobacion"
+  },
+  "promptOptimizer": {
+    "title": "Optimizador de Prompts",
+    "subtitle": "Analiza conversaciones y sugiere mejoras al system prompt",
+    "description": "SofIA analiza patrones en las conversaciones recientes, identifica areas de mejora, y genera sugerencias para optimizar el system prompt de tu clinica.",
+    "analyzeButton": "Analizar Conversaciones",
+    "analyzing": "Analizando...",
+    "analysisError": "Error al analizar. Intenta de nuevo.",
+    "noSuggestions": "Sin sugerencias",
+    "noSuggestionsHint": "Haz clic en \"Analizar Conversaciones\" para que SofIA genere recomendaciones.",
+    "currentPrompt": "Prompt Actual",
+    "suggestedPrompt": "Prompt Sugerido",
+    "noPromptSet": "(sin prompt configurado)",
+    "patternsAnalyzed": "{count} patrones analizados",
+    "apply": "Aplicar",
+    "reject": "Rechazar",
+    "appliedAt": "Aplicado: {date}",
+    "rejectedAt": "Rechazado: {date}",
+    "statusLabels": {
+      "pending": "Pendiente",
+      "applied": "Aplicado",
+      "rejected": "Rechazado"
     }
   },
   "conversations": {

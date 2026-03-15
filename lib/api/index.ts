@@ -81,3 +81,11 @@ export { fetchChannelStatus, connectWhatsApp } from './channels'
 
 // Subscriptions
 export { fetchSubscription, createSubscription, changePlan, cancelSubscription, updatePaymentMethod, fetchInvoices, fetchUsage, fetchWompiConfig } from './subscriptions'
+
+// Annotations (P4-06)
+export { createAnnotation as createAnnotationExtended, getAnnotations, getAnnotationStats as getAnnotationStatsExtended, deleteAnnotation as deleteAnnotationExtended } from './annotations'
+export type { AnnotationRecord, AnnotationStats as AnnotationStatsExtended, AnnotationFilters } from './annotations'
+
+// Prompt Optimizer (P4-08)
+export { triggerPromptAnalysis, getPromptSuggestions, updatePromptSuggestion } from './prompt-optimizer'
+export type { PromptSuggestion, SuggestionStatus, AnalysisResult } from './prompt-optimizer'

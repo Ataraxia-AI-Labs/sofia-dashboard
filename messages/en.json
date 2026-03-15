@@ -341,7 +341,8 @@
     "tabs": {
       "overview": "Overview",
       "export": "Export",
-      "models": "Models"
+      "models": "Models",
+      "optimizer": "Optimizer"
     },
     "rawData": "Raw Data",
     "totalInteractions": "Total interactions",
@@ -376,6 +377,46 @@
       "sofiaV1": "SofIA v1",
       "ownModel": "Own model",
       "agiLatam": "AGI LATAM"
+    }
+  },
+  "annotations": {
+    "goodResponse": "Good response",
+    "badResponse": "Bad response",
+    "addNotes": "Add notes",
+    "notesPlaceholder": "Write a note about this response...",
+    "cancel": "Cancel",
+    "saveNotes": "Save note",
+    "statsTitle": "AI Response Quality",
+    "refresh": "Refresh",
+    "noAnnotations": "No annotations yet",
+    "noAnnotationsHint": "Rate SofIA's responses with thumbs up/down in Conversations.",
+    "totalAnnotations": "Total annotations",
+    "humanFeedback": "Human feedback",
+    "positive": "Positive",
+    "negative": "Negative",
+    "approvalRate": "Approval rate"
+  },
+  "promptOptimizer": {
+    "title": "Prompt Optimizer",
+    "subtitle": "Analyze conversations and suggest system prompt improvements",
+    "description": "SofIA analyzes patterns in recent conversations, identifies areas for improvement, and generates suggestions to optimize your clinic's system prompt.",
+    "analyzeButton": "Analyze Conversations",
+    "analyzing": "Analyzing...",
+    "analysisError": "Analysis error. Please try again.",
+    "noSuggestions": "No suggestions",
+    "noSuggestionsHint": "Click \"Analyze Conversations\" to have SofIA generate recommendations.",
+    "currentPrompt": "Current Prompt",
+    "suggestedPrompt": "Suggested Prompt",
+    "noPromptSet": "(no prompt configured)",
+    "patternsAnalyzed": "{count} patterns analyzed",
+    "apply": "Apply",
+    "reject": "Reject",
+    "appliedAt": "Applied: {date}",
+    "rejectedAt": "Rejected: {date}",
+    "statusLabels": {
+      "pending": "Pending",
+      "applied": "Applied",
+      "rejected": "Rejected"
     }
   },
   "conversations": {

@@ -11,6 +11,12 @@ import {
   FileJson, CheckCircle, Clock, Sparkles
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { AnnotationStatsCard } from '@/components/annotation-stats-card'
+
+const PromptOptimizer = dynamic(() => import('./prompt-optimizer'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
+})
 
 const IngestionChart = dynamic(() => import('./IngestionChart'), {
   ssr: false,
@@ -31,7 +37,7 @@ export default function DataLakePage() {
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
   const [exportResult, setExportResult] = useState<DataLakeExportResult | null>(null)
-  const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models' | 'optimizer'>('overview')
   const t = useTranslations('datalake')
   const tCommon = useTranslations('common')
 
@@ -95,9 +101,9 @@ export default function DataLakePage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
-            {(['overview', 'export', 'models'] as const).map(tab => (
+            {(['overview', 'export', 'models', 'optimizer'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${activeTab === tab ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
-                {tab === 'overview' ? t('tabs.overview') : tab === 'export' ? t('tabs.export') : t('tabs.models')}
+                {tab === 'overview' ? t('tabs.overview') : tab === 'export' ? t('tabs.export') : tab === 'models' ? t('tabs.models') : t('tabs.optimizer')}
               </button>
             ))}
           </div>
@@ -239,42 +245,49 @@ export default function DataLakePage() {
         </div>
       )}
 
-      {/* TAB: OVERVIEW — Intent distribution + Pipeline */}
-      {activeTab === 'overview' && stats?.por_intent && (
+      {/* TAB: OVERVIEW — Intent distribution + Pipeline + Annotations */}
+      {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Intent distribution */}
-          <div className="glass-card p-5">
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Distribución por Intent</h3>
-            <div className="space-y-3">
-              {Object.entries(stats.por_intent).sort(([, a], [, b]) => (b as number) - (a as number)).map(([intent, count]) => {
-                const max = Math.max(...Object.values(stats.por_intent) as number[])
-                const pct = max > 0 ? (count / max) * 100 : 0
-                return (
-                  <div key={intent}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-text-muted">{intent}</span>
-                      <span className="text-text-primary font-semibold font-mono">{count}</span>
+          {stats?.por_intent && (
+            <div className="glass-card p-5">
+              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Distribución por Intent</h3>
+              <div className="space-y-3">
+                {Object.entries(stats.por_intent).sort(([, a], [, b]) => (b as number) - (a as number)).map(([intent, count]) => {
+                  const max = Math.max(...Object.values(stats.por_intent) as number[])
+                  const pct = max > 0 ? (count / max) * 100 : 0
+                  return (
+                    <div key={intent}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-text-muted">{intent}</span>
+                        <span className="text-text-primary font-semibold font-mono">{count}</span>
+                      </div>
+                      <div className="h-2 bg-void rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan rounded-full" style={{ width: `${pct}%` }} />
+                      </div>
                     </div>
-                    <div className="h-2 bg-void rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan rounded-full" style={{ width: `${pct}%` }} />
-                    </div>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Data pipeline status */}
-          <div className="glass-card p-5">
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Pipeline Status</h3>
-            <div className="space-y-4">
-              <PipelineStep icon={<HardDrive size={16} />} label="Interacciones capturadas" value={`${formatNumber(stats.raw_data_total)} total`} status="active" />
-              <PipelineStep icon={<Target size={16} />} label="Quality filtering" value={`${formatNumber(stats.training_data_total)} aprobadas`} status="active" />
-              <PipelineStep icon={<FileJson size={16} />} label="Exportadas (JSONL)" value={`${formatNumber(stats.training_exported || 0)} samples`} status={(stats.training_exported || 0) > 0 ? 'active' : 'waiting'} />
-              <PipelineStep icon={<Brain size={16} />} label="Modelos entrenados" value={`${stats.modelos_entrenados} modelos`} status={stats.modelos_entrenados > 0 ? 'active' : 'waiting'} />
-              <PipelineStep icon={<Zap size={16} />} label="Modelo en producción" value={stats.ultimo_modelo?.model_name || 'GPT-4o (temporal)'} status={stats.ultimo_modelo ? 'active' : 'waiting'} />
+          {stats?.por_intent && (
+            <div className="glass-card p-5">
+              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Pipeline Status</h3>
+              <div className="space-y-4">
+                <PipelineStep icon={<HardDrive size={16} />} label="Interacciones capturadas" value={`${formatNumber(stats.raw_data_total)} total`} status="active" />
+                <PipelineStep icon={<Target size={16} />} label="Quality filtering" value={`${formatNumber(stats.training_data_total)} aprobadas`} status="active" />
+                <PipelineStep icon={<FileJson size={16} />} label="Exportadas (JSONL)" value={`${formatNumber(stats.training_exported || 0)} samples`} status={(stats.training_exported || 0) > 0 ? 'active' : 'waiting'} />
+                <PipelineStep icon={<Brain size={16} />} label="Modelos entrenados" value={`${stats.modelos_entrenados} modelos`} status={stats.modelos_entrenados > 0 ? 'active' : 'waiting'} />
+                <PipelineStep icon={<Zap size={16} />} label="Modelo en producción" value={stats.ultimo_modelo?.model_name || 'GPT-4o (temporal)'} status={stats.ultimo_modelo ? 'active' : 'waiting'} />
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Annotation stats card */}
+          <AnnotationStatsCard orgId={orgId} className="lg:col-span-2" />
         </div>
       )}
 
@@ -366,6 +379,11 @@ export default function DataLakePage() {
             </div>
           )}
         </div>
+      )}
+
+      {/* TAB: OPTIMIZER */}
+      {activeTab === 'optimizer' && (
+        <PromptOptimizer orgId={orgId} />
       )}
     </div>
   )

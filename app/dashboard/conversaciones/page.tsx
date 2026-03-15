@@ -3,10 +3,11 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { supabase } from '@/lib/supabase'
-import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage, annotateInteraction, removeAnnotation } from '@/lib/api'
+import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage } from '@/lib/api'
 import type { InteractionLog, ActiveTakeover } from '@/lib/api'
 import type { Patient } from '@/types'
 import { ChatInput } from '@/components/chat-input'
+import { AnnotationButton } from '@/components/annotation-button'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useTranslations } from 'next-intl'
@@ -14,7 +15,7 @@ import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock, Shield, Loader2, ThumbsUp, ThumbsDown
+  Hash, Clock, Shield, Loader2
 } from 'lucide-react'
 
 // ============================================================
@@ -742,7 +743,6 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
   const t = useTranslations('conversations')
   const isOutbound = message.direction === 'OUTBOUND'
   const sentimentLabel = getSentimentLabel(message.sentiment_score, message.sentiment_label)
-  const [annotating, setAnnotating] = useState(false)
 
   // Format time
   let time: string
@@ -758,24 +758,17 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
 
   // Current annotation state
   const currentRating = message.annotation?.rating || null
+  const currentNotes = message.annotation?.notes || ''
 
   // The real interaction_id (strip "-ai" suffix used for split messages)
   const realInteractionId = message.id.endsWith('-ai') ? message.id.slice(0, -3) : message.id
 
-  const handleAnnotate = async (rating: 'thumbs_up' | 'thumbs_down') => {
-    if (annotating) return
-    setAnnotating(true)
-    try {
-      if (currentRating === rating) {
-        // Toggle off — remove annotation
-        await removeAnnotation(orgId, realInteractionId)
-        onAnnotationChange?.(message.id, null)
-      } else {
-        await annotateInteraction(orgId, realInteractionId, rating)
-        onAnnotationChange?.(message.id, { interaction_id: realInteractionId, rating })
-      }
-    } catch { /* ignore */ }
-    setAnnotating(false)
+  const handleAnnotationChange = (rating: 'thumbs_up' | 'thumbs_down' | null, notes?: string) => {
+    if (rating) {
+      onAnnotationChange?.(message.id, { interaction_id: realInteractionId, rating, notes })
+    } else {
+      onAnnotationChange?.(message.id, null)
+    }
   }
 
   return (
@@ -841,35 +834,20 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             </span>
           )}
 
-          {/* Annotation buttons — only on AI responses */}
+          {/* Annotation buttons -- only on AI responses */}
           {isOutbound && (
-            <div className={`flex items-center gap-0.5 ml-auto transition-opacity ${
+            <div className={`ml-auto transition-opacity ${
               currentRating ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             }`}>
-              <button
-                onClick={() => handleAnnotate('thumbs_up')}
-                disabled={annotating}
-                className={`p-1 rounded-md transition-all ${
-                  currentRating === 'thumbs_up'
-                    ? 'bg-status-success/15 text-status-success'
-                    : 'text-text-dim hover:text-status-success hover:bg-status-success/10'
-                } disabled:opacity-40`}
-                title={t('goodResponse')}
-              >
-                <ThumbsUp size={10} className={currentRating === 'thumbs_up' ? 'fill-current' : ''} />
-              </button>
-              <button
-                onClick={() => handleAnnotate('thumbs_down')}
-                disabled={annotating}
-                className={`p-1 rounded-md transition-all ${
-                  currentRating === 'thumbs_down'
-                    ? 'bg-status-danger/15 text-status-danger'
-                    : 'text-text-dim hover:text-status-danger hover:bg-status-danger/10'
-                } disabled:opacity-40`}
-                title={t('badResponse')}
-              >
-                <ThumbsDown size={10} className={currentRating === 'thumbs_down' ? 'fill-current' : ''} />
-              </button>
+              <AnnotationButton
+                orgId={orgId}
+                interactionId={realInteractionId}
+                currentRating={currentRating}
+                currentNotes={currentNotes}
+                onAnnotationChange={handleAnnotationChange}
+                size="sm"
+                showNotes={true}
+              />
             </div>
           )}
         </div>

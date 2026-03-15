@@ -341,7 +341,8 @@
     "tabs": {
       "overview": "Visao Geral",
       "export": "Exportar",
-      "models": "Modelos"
+      "models": "Modelos",
+      "optimizer": "Otimizador"
     },
     "rawData": "Dados Brutos",
     "totalInteráctions": "Interácoes totais",
@@ -374,8 +375,48 @@
     "milestones": {
       "basicFineTune": "Fine-tune basico",
       "sofiaV1": "SofIA v1",
-      "ownModel": "Modelo próprio",
+      "ownModel": "Modelo proprio",
       "agiLatam": "AGI LATAM"
+    }
+  },
+  "annotations": {
+    "goodResponse": "Boa resposta",
+    "badResponse": "Resposta ruim",
+    "addNotes": "Adicionar notas",
+    "notesPlaceholder": "Escreva uma nota sobre esta resposta...",
+    "cancel": "Cancelar",
+    "saveNotes": "Salvar nota",
+    "statsTitle": "Qualidade das Respostas IA",
+    "refresh": "Atualizar",
+    "noAnnotations": "Sem anotacoes ainda",
+    "noAnnotationsHint": "Avalie as respostas da SofIA com polegar para cima/baixo em Conversas.",
+    "totalAnnotations": "Anotacoes totais",
+    "humanFeedback": "Feedback humano",
+    "positive": "Positivas",
+    "negative": "Negativas",
+    "approvalRate": "Taxa de aprovacao"
+  },
+  "promptOptimizer": {
+    "title": "Otimizador de Prompts",
+    "subtitle": "Analisa conversas e sugere melhorias no system prompt",
+    "description": "SofIA analisa padroes nas conversas recentes, identifica areas de melhoria e gera sugestoes para otimizar o system prompt da sua clinica.",
+    "analyzeButton": "Analisar Conversas",
+    "analyzing": "Analisando...",
+    "analysisError": "Erro ao analisar. Tente novamente.",
+    "noSuggestions": "Sem sugestoes",
+    "noSuggestionsHint": "Clique em \"Analisar Conversas\" para que a SofIA gere recomendacoes.",
+    "currentPrompt": "Prompt Atual",
+    "suggestedPrompt": "Prompt Sugerido",
+    "noPromptSet": "(sem prompt configurado)",
+    "patternsAnalyzed": "{count} padroes analisados",
+    "apply": "Aplicar",
+    "reject": "Rejeitar",
+    "appliedAt": "Aplicado: {date}",
+    "rejectedAt": "Rejeitado: {date}",
+    "statusLabels": {
+      "pending": "Pendente",
+      "applied": "Aplicado",
+      "rejected": "Rejeitado"
     }
   },
   "conversations": {
