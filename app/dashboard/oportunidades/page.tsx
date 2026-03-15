@@ -21,6 +21,16 @@ const LeadScoringPanel = dynamic(() => import('./lead-scoring-panel'), {
   loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
+const ConversionPanel = dynamic(() => import('./conversion-panel').then(m => ({ default: m.default })), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const FollowUpQueuePanel = dynamic(() => import('./conversion-panel').then(m => ({ default: m.FollowUpQueue })), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
 export default function OportunidadesPage() {
   const { orgId, branchId } = useOrg()
   const t = useTranslations('opportunities')
@@ -49,7 +59,7 @@ export default function OportunidadesPage() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
-  const [activeView, setActiveView] = useState<'list' | 'scoring'>('list')
+  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue'>('list')
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -128,6 +138,24 @@ export default function OportunidadesPage() {
               <BarChart3 size={11} />
               {t('views.scoring')}
             </button>
+            <button
+              onClick={() => setActiveView('predictions')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'predictions' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <TrendingUp size={11} />
+              {t('views.predictions')}
+            </button>
+            <button
+              onClick={() => setActiveView('queue')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'queue' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Phone size={11} />
+              {t('views.queue')}
+            </button>
           </div>
           <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
@@ -172,6 +200,16 @@ export default function OportunidadesPage() {
       {/* SCORING VIEW */}
       {activeView === 'scoring' && (
         <LeadScoringPanel orgId={orgId} />
+      )}
+
+      {/* PREDICTIONS VIEW */}
+      {activeView === 'predictions' && (
+        <ConversionPanel orgId={orgId} />
+      )}
+
+      {/* QUEUE VIEW */}
+      {activeView === 'queue' && (
+        <FollowUpQueuePanel orgId={orgId} />
       )}
 
       {/* LIST VIEW — Filters and cards below only when in list mode */}

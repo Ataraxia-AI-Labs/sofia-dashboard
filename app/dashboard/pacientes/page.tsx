@@ -9,10 +9,16 @@ import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, P
 import { useTranslations } from 'next-intl'
 import {
   Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  X, RefreshCw, Download, UserPlus
+  X, RefreshCw, Download, UserPlus, Layers
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import { NewPatientForm } from './panels/new-patient-form'
 import { PatientDetailPanel } from './panels/patient-detail-panel'
+
+const SegmentationPanel = dynamic(() => import('./segmentation-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
 
 const CHANNEL_COLORS: Record<string, string> = {
   WHATSAPP: 'text-status-success',
@@ -57,6 +63,7 @@ export default function PacientesPage() {
   const [showTreatmentForm, setShowTreatmentForm] = useState(false)
   const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
+  const [activeView, setActiveView] = useState<'list' | 'segments'>('list')
 
   // Escape key closes panels
   useEffect(() => {
@@ -249,6 +256,25 @@ export default function PacientesPage() {
           <p className="text-text-dim text-xs mt-0.5">{t('registered', { count: formatNumber(total) })}</p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
+            <button
+              onClick={() => setActiveView('list')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              {t('views.list')}
+            </button>
+            <button
+              onClick={() => setActiveView('segments')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'segments' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Layers size={11} />
+              {t('views.segments')}
+            </button>
+          </div>
           <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
             <Download size={13} /> {t('exportCSV')}
           </button>
@@ -261,6 +287,14 @@ export default function PacientesPage() {
         </div>
       </div>
 
+      {/* SEGMENTS VIEW */}
+      {activeView === 'segments' && (
+        <SegmentationPanel orgId={orgId} />
+      )}
+
+      {/* LIST VIEW — Search, table, detail below only when in list mode */}
+      {activeView !== 'list' ? null : (
+      <>
       {/* SEARCH */}
       <div className="flex gap-3">
         <div className="flex-1 relative">
@@ -421,6 +455,9 @@ export default function PacientesPage() {
           </div>
         )}
       </div>
+
+      </>
+      )}
 
       {/* DETAIL PANEL */}
       {selectedPatient && (

@@ -724,3 +724,98 @@ export interface LeadScoreAllResult {
   scored: number
   message: string
 }
+
+// ============================================================
+// PATIENT SEGMENTATION (P4-04)
+// ============================================================
+
+export interface PatientSegment {
+  id: string
+  organization_id: string
+  segment_label: string
+  patient_count: number
+  avg_ticket: number
+  top_services: string[]
+  color: string
+  created_at: string
+}
+
+export interface SegmentPatient {
+  patient_id: string
+  full_name: string
+  phone: string
+  similarity_score?: number
+  avg_ticket?: number
+  total_appointments?: number
+}
+
+export interface CampaignSuggestion {
+  segment_id: string
+  segment_label: string
+  campaign_type: string
+  subject: string
+  message: string
+  channel: string
+  estimated_reach: number
+}
+
+export interface ClusteringResult {
+  segments_created: number
+  patients_assigned: number
+  message: string
+}
+
+export interface EmbeddingsResult {
+  embeddings_generated: number
+  message: string
+}
+
+export interface SimilarPatient {
+  patient_id: string
+  full_name: string
+  phone: string
+  similarity_score: number
+  segment_label?: string
+}
+
+// ============================================================
+// CONVERSION PREDICTION (P4-05)
+// ============================================================
+
+export interface ConversionPrediction {
+  patient_id: string
+  conversion_probability: number
+  best_contact_time: string
+  best_contact_day: string
+  factors: ConversionFactor[]
+  predicted_at: string
+}
+
+export interface ConversionFactor {
+  name: string
+  impact: number
+  direction: 'positive' | 'negative'
+}
+
+export interface ConversionInsights {
+  avg_conversion_rate: number
+  quincena_boost: number
+  top_factors: ConversionFactor[]
+  heatmap: Record<string, Record<string, number>>
+  total_predicted: number
+}
+
+export interface FollowUpItem {
+  patient_id: string
+  full_name: string
+  phone: string
+  conversion_probability: number
+  best_contact_time: string
+  best_contact_day: string
+  last_interaction_days_ago: number
+}
+
+export interface PredictAllResult {
+  predicted: number
+  message: string
+}

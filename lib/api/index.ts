@@ -95,3 +95,9 @@ export { getModels, deployModel, evaluateModel, getEvaluations, compareModels, g
 
 // Lead Scoring (P4-02)
 export { scorePatient, scoreAllLeads, getLeadScores, getLeadInsights, getTopLeads } from './leads'
+
+// Segmentation (P4-04)
+export { generateEmbeddings, runClustering, getSegments, getPatientSegment, getSegmentPatients, findSimilarPatients, getCampaignSuggestion } from './segments'
+
+// Conversion Predictions (P4-05)
+export { predictConversion, predictAll, getConversionInsights, getFollowUpQueue, getBestContactTime } from './conversions'
