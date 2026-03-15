@@ -819,3 +819,114 @@ export interface PredictAllResult {
   predicted: number
   message: string
 }
+
+// ============================================================
+// DYNAMIC PRICING (P4-03)
+// ============================================================
+
+export interface PricingRules {
+  max_discount_pct: number
+  max_premium_pct: number
+  demand_weight: number
+  segment_weight: number
+  temporal_weight: number
+  excluded_services: string[]
+  auto_apply: boolean
+  min_prices: Record<string, number>
+  max_prices: Record<string, number>
+}
+
+export interface PriceSuggestion {
+  id: string
+  service_id: string
+  patient_id: string
+  base_price: number
+  suggested_price: number
+  demand_factor: number
+  segment_factor: number
+  temporal_factor: number
+  final_factor: number
+  confidence: number
+  status: string
+  target_date: string
+  created_at: string
+}
+
+export interface PricingInsights {
+  avg_discount_pct: number
+  total_suggestions: number
+  applied_count: number
+  rejected_count: number
+  revenue_impact: number
+  most_adjusted_services: Array<{ service: string; adjustments: number }>
+}
+
+export interface SuggestPriceRequest {
+  service_id: string
+  patient_id: string
+  target_date?: string
+}
+
+export interface SuggestPriceBatchRequest {
+  items: SuggestPriceRequest[]
+}
+
+// ============================================================
+// NETWORK INTELLIGENCE (P4-07)
+// ============================================================
+
+export interface NetworkBenchmarks {
+  conversion_rate: { yours: number; market_avg: number; percentile: number }
+  avg_ticket: { yours: number; market_avg: number; percentile: number }
+  satisfaction: { yours: number; market_avg: number; percentile: number }
+  response_time: { yours: number; market_avg: number; percentile: number }
+}
+
+export interface ServiceTrend {
+  service_name: string
+  trend: 'UP' | 'DOWN' | 'STABLE'
+  change_pct: number
+  demand_count: number
+}
+
+export interface PricingBenchmark {
+  service: string
+  your_price: number
+  market_min: number
+  market_avg: number
+  market_max: number
+}
+
+export interface ConversionPattern {
+  pattern: string
+  impact_factor: number
+  description: string
+}
+
+export interface OptimalHour {
+  hour: number
+  day: string
+  score: number
+}
+
+export interface NetworkAlert {
+  id: string
+  alert_type: string
+  severity: 'INFO' | 'WARNING' | 'CRITICAL'
+  title: string
+  description: string
+  is_read: boolean
+  created_at: string
+}
+
+export interface NetworkNarrative {
+  narrative: string
+  generated_at: string
+}
+
+export interface NetworkStats {
+  total_clinics: number
+  total_countries: number
+  total_interactions: number
+  total_patients: number
+}

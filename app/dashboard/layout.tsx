@@ -24,7 +24,7 @@ import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
   MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
-  Zap, ArrowRight, FileText
+  Zap, ArrowRight, FileText, Brain
 } from 'lucide-react'
 
 function useNavGroups() {
@@ -53,6 +53,7 @@ function useNavGroups() {
         { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
         { href: '/dashboard/reportes', icon: FileText, label: t('reports') },
         { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
+        { href: '/dashboard/network', icon: Brain, label: t('network') },
         { href: '/dashboard/health', icon: Activity, label: t('systemHealth') },
       ],
     },

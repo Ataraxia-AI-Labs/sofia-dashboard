@@ -13,6 +13,7 @@
     "team": "Equipo",
     "reports": "Reportes",
     "datalake": "Data Lake",
+    "network": "Red Neuronal",
     "systemHealth": "Salud del Sistema",
     "config": "Configuracion",
     "plans": "Planes",
@@ -161,7 +162,8 @@
       "channels": "Canales",
       "language": "Idioma",
       "security": "Seguridad",
-      "branding": "Marca"
+      "branding": "Marca",
+      "pricing": "Pricing"
     }
   },
   "prompt": {
@@ -321,7 +323,8 @@
       "list": "Lista",
       "scoring": "Scoring",
       "predictions": "Predicciones",
-      "queue": "Cola"
+      "queue": "Cola",
+      "pricing": "Pricing"
     },
     "types": {
       "HOT_LEAD": "Lead Caliente",
@@ -933,5 +936,78 @@
     "expiresToday": "Expira hoy",
     "expired": "Prueba expirada",
     "upgrade": "Activar plan"
+  },
+  "pricing": {
+    "title": "Pricing Dinamico",
+    "rules": "Reglas de Precio",
+    "suggestions": "Sugerencias",
+    "maxDiscount": "Descuento Maximo",
+    "maxPremium": "Premium Maximo",
+    "demandWeight": "Peso Demanda",
+    "segmentWeight": "Peso Segmento",
+    "temporalWeight": "Peso Temporal",
+    "autoApply": "Aplicar Automaticamente",
+    "autoApplyDesc": "Las sugerencias de precio se aplican sin aprobacion manual",
+    "excluded": "Servicios Excluidos",
+    "excludedPlaceholder": "Nombre del servicio...",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "rejectReason": "Razon...",
+    "batchApprove": "Aprobar todas",
+    "basePriceLabel": "Precio Base",
+    "suggestedPriceLabel": "Precio Sugerido",
+    "confidence": "Confianza",
+    "insights": "Analisis de Pricing",
+    "limits": "Limites de Precio",
+    "weights": "Pesos de los Factores",
+    "weightsDesc": "Distribuye la importancia entre demanda, segmento y temporalidad. Deben sumar 100%.",
+    "priceOverrides": "Precios Minimos y Maximos",
+    "minPrices": "Precios minimos",
+    "maxPrices": "Precios maximos",
+    "rulesSaved": "Reglas de pricing guardadas",
+    "totalSuggestions": "Sugerencias totales",
+    "applied": "Aplicadas",
+    "rejected": "Rechazadas",
+    "avgDiscount": "Descuento promedio",
+    "revenueImpact": "Impacto en revenue",
+    "mostAdjusted": "Servicios mas ajustados",
+    "noSuggestions": "No hay sugerencias de pricing aun",
+    "statuses": {
+      "PENDING": "Pendiente",
+      "APPLIED": "Aplicada",
+      "REJECTED": "Rechazada"
+    }
+  },
+  "network": {
+    "title": "Red Neuronal LATAM",
+    "subtitle": "Inteligencia colectiva de la red SofIA",
+    "benchmarks": "Tu Clinica vs El Mercado",
+    "trends": "Tendencias de Servicios",
+    "pricingBenchmark": "Precios del Mercado",
+    "conversionPatterns": "Patrones de Conversion",
+    "optimalHours": "Horarios Optimos",
+    "alerts": "Alertas del Mercado",
+    "narrative": "Resumen IA",
+    "stats": "Red SofIA",
+    "publish": "Publicar Metricas",
+    "yourClinic": "Tu Clinica",
+    "marketAvg": "Promedio del Mercado",
+    "aboveAvg": "Por encima",
+    "belowAvg": "Por debajo",
+    "totalClinics": "Clinicas Conectadas",
+    "totalCountries": "Paises",
+    "totalInteractions": "Interacciones Procesadas",
+    "totalPatients": "Pacientes en la Red",
+    "low": "Baja",
+    "high": "Alta",
+    "demands": "consultas",
+    "noData": "Sin datos de la red",
+    "noDataHint": "Publica tus metricas para participar en la red y recibir benchmarks.",
+    "metrics": {
+      "conversionRate": "Tasa de Conversion",
+      "avgTicket": "Ticket Promedio",
+      "satisfaction": "Satisfaccion",
+      "responseTime": "Tiempo de Respuesta"
+    }
   }
 }

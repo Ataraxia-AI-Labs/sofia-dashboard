@@ -5,10 +5,10 @@ import { useOrg } from '@/lib/org-context'
 import { fetchOrganization, fetchServicesCatalog, fetchBusinessHours, updateOrganization } from '@/lib/api'
 import { Tabs } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
-import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab, BrandingTab } from './tabs'
+import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab, BrandingTab, PricingTab } from './tabs'
 import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
 import { useTranslations } from 'next-intl'
-import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Lock, Palette } from 'lucide-react'
+import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Lock, Palette, DollarSign } from 'lucide-react'
 
 const TAB_ICONS: Record<string, typeof MessageSquare> = {
   prompt: MessageSquare,
@@ -20,9 +20,10 @@ const TAB_ICONS: Record<string, typeof MessageSquare> = {
   channels: Wifi,
   security: Lock,
   branding: Palette,
+  pricing: DollarSign,
 }
 
-const TAB_IDS = ['prompt', 'services', 'hours', 'notifications', 'templates', 'bots', 'channels', 'security', 'branding']
+const TAB_IDS = ['prompt', 'services', 'hours', 'notifications', 'templates', 'bots', 'channels', 'security', 'branding', 'pricing']
 
 export default function AjustesPage() {
   const { orgId, role } = useOrg()
@@ -144,6 +145,9 @@ export default function AjustesPage() {
       )}
       {activeTab === 'branding' && org && (
         <BrandingTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} />
+      )}
+      {activeTab === 'pricing' && (
+        <PricingTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
       )}
     </div>
   )

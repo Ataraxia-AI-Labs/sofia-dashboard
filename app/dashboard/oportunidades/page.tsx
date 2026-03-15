@@ -9,12 +9,17 @@ import {
   Target, DollarSign, TrendingUp, Clock, User, Phone,
   RefreshCw, Check, Zap, AlertTriangle,
   Heart, ArrowUpRight, UserPlus, ShoppingBag, Flame, RotateCcw,
-  BarChart3
+  BarChart3, DollarSign as DollarSignIcon
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { LeadScoreBadge } from '@/components/lead-score-badge'
 import { getLeadScores } from '@/lib/api/leads'
 import type { LeadScore } from '@/types'
+
+const PricingSuggestionsPanel = dynamic(() => import('./pricing-suggestions-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
 
 const LeadScoringPanel = dynamic(() => import('./lead-scoring-panel'), {
   ssr: false,
@@ -59,7 +64,7 @@ export default function OportunidadesPage() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
-  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue'>('list')
+  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue' | 'pricing'>('list')
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -156,6 +161,15 @@ export default function OportunidadesPage() {
               <Phone size={11} />
               {t('views.queue')}
             </button>
+            <button
+              onClick={() => setActiveView('pricing')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'pricing' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <DollarSign size={11} />
+              {t('views.pricing')}
+            </button>
           </div>
           <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
@@ -210,6 +224,11 @@ export default function OportunidadesPage() {
       {/* QUEUE VIEW */}
       {activeView === 'queue' && (
         <FollowUpQueuePanel orgId={orgId} />
+      )}
+
+      {/* PRICING VIEW */}
+      {activeView === 'pricing' && (
+        <PricingSuggestionsPanel orgId={orgId} />
       )}
 
       {/* LIST VIEW — Filters and cards below only when in list mode */}

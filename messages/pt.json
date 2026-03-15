@@ -13,6 +13,7 @@
     "team": "Equipe",
     "reports": "Relatorios",
     "datalake": "Data Lake",
+    "network": "Rede Neural",
     "systemHealth": "Saúde do Sistema",
     "config": "Configuração",
     "plans": "Planos",
@@ -161,7 +162,8 @@
       "channels": "Canais",
       "language": "Idioma",
       "security": "Seguranca",
-      "branding": "Marca"
+      "branding": "Marca",
+      "pricing": "Pricing"
     }
   },
   "prompt": {
@@ -321,7 +323,8 @@
       "list": "Lista",
       "scoring": "Scoring",
       "predictions": "Predicoes",
-      "queue": "Fila"
+      "queue": "Fila",
+      "pricing": "Pricing"
     },
     "types": {
       "HOT_LEAD": "Lead Quente",
@@ -933,5 +936,78 @@
     "expiresToday": "Expira hoje",
     "expired": "Teste expirado",
     "upgrade": "Ativar plano"
+  },
+  "pricing": {
+    "title": "Pricing Dinamico",
+    "rules": "Regras de Preco",
+    "suggestions": "Sugestoes",
+    "maxDiscount": "Desconto Maximo",
+    "maxPremium": "Premium Maximo",
+    "demandWeight": "Peso Demanda",
+    "segmentWeight": "Peso Segmento",
+    "temporalWeight": "Peso Temporal",
+    "autoApply": "Aplicar Automaticamente",
+    "autoApplyDesc": "As sugestoes de preco sao aplicadas sem aprovacao manual",
+    "excluded": "Servicos Excluidos",
+    "excludedPlaceholder": "Nome do servico...",
+    "approve": "Aprovar",
+    "reject": "Rejeitar",
+    "rejectReason": "Motivo...",
+    "batchApprove": "Aprovar todas",
+    "basePriceLabel": "Preco Base",
+    "suggestedPriceLabel": "Preco Sugerido",
+    "confidence": "Confianca",
+    "insights": "Analise de Pricing",
+    "limits": "Limites de Preco",
+    "weights": "Pesos dos Fatores",
+    "weightsDesc": "Distribua a importancia entre demanda, segmento e temporalidade. Devem somar 100%.",
+    "priceOverrides": "Precos Minimos e Maximos",
+    "minPrices": "Precos minimos",
+    "maxPrices": "Precos maximos",
+    "rulesSaved": "Regras de pricing salvas",
+    "totalSuggestions": "Sugestoes totais",
+    "applied": "Aplicadas",
+    "rejected": "Rejeitadas",
+    "avgDiscount": "Desconto medio",
+    "revenueImpact": "Impacto na receita",
+    "mostAdjusted": "Servicos mais ajustados",
+    "noSuggestions": "Sem sugestoes de pricing ainda",
+    "statuses": {
+      "PENDING": "Pendente",
+      "APPLIED": "Aplicada",
+      "REJECTED": "Rejeitada"
+    }
+  },
+  "network": {
+    "title": "Rede Neural LATAM",
+    "subtitle": "Inteligencia coletiva da rede SofIA",
+    "benchmarks": "Sua Clinica vs O Mercado",
+    "trends": "Tendencias de Servicos",
+    "pricingBenchmark": "Precos do Mercado",
+    "conversionPatterns": "Padroes de Conversao",
+    "optimalHours": "Horarios Otimos",
+    "alerts": "Alertas do Mercado",
+    "narrative": "Resumo IA",
+    "stats": "Rede SofIA",
+    "publish": "Publicar Metricas",
+    "yourClinic": "Sua Clinica",
+    "marketAvg": "Media do Mercado",
+    "aboveAvg": "Acima da media",
+    "belowAvg": "Abaixo da media",
+    "totalClinics": "Clinicas Conectadas",
+    "totalCountries": "Paises",
+    "totalInteractions": "Interacoes Processadas",
+    "totalPatients": "Pacientes na Rede",
+    "low": "Baixa",
+    "high": "Alta",
+    "demands": "consultas",
+    "noData": "Sem dados da rede",
+    "noDataHint": "Publique suas metricas para participar da rede e receber benchmarks.",
+    "metrics": {
+      "conversionRate": "Taxa de Conversao",
+      "avgTicket": "Ticket Medio",
+      "satisfaction": "Satisfacao",
+      "responseTime": "Tempo de Resposta"
+    }
   }
 }

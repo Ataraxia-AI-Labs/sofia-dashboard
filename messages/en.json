@@ -13,6 +13,7 @@
     "team": "Team",
     "reports": "Reports",
     "datalake": "Data Lake",
+    "network": "Neural Network",
     "systemHealth": "System Health",
     "config": "Settings",
     "plans": "Plans",
@@ -161,7 +162,8 @@
       "channels": "Channels",
       "language": "Language",
       "security": "Security",
-      "branding": "Branding"
+      "branding": "Branding",
+      "pricing": "Pricing"
     }
   },
   "prompt": {
@@ -321,7 +323,8 @@
       "list": "List",
       "scoring": "Scoring",
       "predictions": "Predictions",
-      "queue": "Queue"
+      "queue": "Queue",
+      "pricing": "Pricing"
     },
     "types": {
       "HOT_LEAD": "Hot Lead",
@@ -933,5 +936,78 @@
     "expiresToday": "Expires today",
     "expired": "Trial expired",
     "upgrade": "Activate plan"
+  },
+  "pricing": {
+    "title": "Dynamic Pricing",
+    "rules": "Pricing Rules",
+    "suggestions": "Suggestions",
+    "maxDiscount": "Max Discount",
+    "maxPremium": "Max Premium",
+    "demandWeight": "Demand Weight",
+    "segmentWeight": "Segment Weight",
+    "temporalWeight": "Temporal Weight",
+    "autoApply": "Auto Apply",
+    "autoApplyDesc": "Price suggestions are applied without manual approval",
+    "excluded": "Excluded Services",
+    "excludedPlaceholder": "Service name...",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectReason": "Reason...",
+    "batchApprove": "Approve all",
+    "basePriceLabel": "Base Price",
+    "suggestedPriceLabel": "Suggested Price",
+    "confidence": "Confidence",
+    "insights": "Pricing Insights",
+    "limits": "Price Limits",
+    "weights": "Factor Weights",
+    "weightsDesc": "Distribute importance across demand, segment, and temporal factors. Must sum to 100%.",
+    "priceOverrides": "Min & Max Price Overrides",
+    "minPrices": "Minimum prices",
+    "maxPrices": "Maximum prices",
+    "rulesSaved": "Pricing rules saved",
+    "totalSuggestions": "Total suggestions",
+    "applied": "Applied",
+    "rejected": "Rejected",
+    "avgDiscount": "Avg discount",
+    "revenueImpact": "Revenue impact",
+    "mostAdjusted": "Most adjusted services",
+    "noSuggestions": "No pricing suggestions yet",
+    "statuses": {
+      "PENDING": "Pending",
+      "APPLIED": "Applied",
+      "REJECTED": "Rejected"
+    }
+  },
+  "network": {
+    "title": "LATAM Neural Network",
+    "subtitle": "Collective intelligence from the SofIA network",
+    "benchmarks": "Your Clinic vs The Market",
+    "trends": "Service Trends",
+    "pricingBenchmark": "Market Pricing",
+    "conversionPatterns": "Conversion Patterns",
+    "optimalHours": "Optimal Hours",
+    "alerts": "Market Alerts",
+    "narrative": "AI Summary",
+    "stats": "SofIA Network",
+    "publish": "Publish Metrics",
+    "yourClinic": "Your Clinic",
+    "marketAvg": "Market Average",
+    "aboveAvg": "Above avg",
+    "belowAvg": "Below avg",
+    "totalClinics": "Connected Clinics",
+    "totalCountries": "Countries",
+    "totalInteractions": "Processed Interactions",
+    "totalPatients": "Patients in Network",
+    "low": "Low",
+    "high": "High",
+    "demands": "inquiries",
+    "noData": "No network data",
+    "noDataHint": "Publish your metrics to join the network and receive benchmarks.",
+    "metrics": {
+      "conversionRate": "Conversion Rate",
+      "avgTicket": "Average Ticket",
+      "satisfaction": "Satisfaction",
+      "responseTime": "Response Time"
+    }
   }
 }

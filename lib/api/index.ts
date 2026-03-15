@@ -101,3 +101,9 @@ export { generateEmbeddings, runClustering, getSegments, getPatientSegment, getS
 
 // Conversion Predictions (P4-05)
 export { predictConversion, predictAll, getConversionInsights, getFollowUpQueue, getBestContactTime } from './conversions'
+
+// Dynamic Pricing (P4-03)
+export { getPricingRules, updatePricingRules, suggestPrice, suggestPriceBatch, getPriceSuggestions, applyPriceSuggestion, rejectPriceSuggestion, getPricingInsights } from './pricing'
+
+// Network Intelligence (P4-07)
+export { getNetworkBenchmarks, getServiceTrends, getPricingBenchmark, getConversionPatterns, getOptimalHours, getNetworkAlerts, getNetworkNarrative, getNetworkStats, publishMetrics } from './network'
