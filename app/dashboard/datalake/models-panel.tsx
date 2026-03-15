@@ -393,8 +393,7 @@ function EvalMetric({ label, value, good, highlight }: {
 function ComparisonColumn({ label, evaluation, t }: {
   label: string
   evaluation: ModelEvaluation
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  t: any
+  t: (key: string) => string
 }) {
   return (
     <div className="bg-void/50 rounded-lg p-4 border border-border">
