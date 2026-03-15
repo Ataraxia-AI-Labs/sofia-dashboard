@@ -45,7 +45,7 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
   if (session?.access_token) {
     headers.set('Authorization', `Bearer ${session.access_token}`)
   }
-  if (!headers.has('Content-Type') && options?.body) {
+  if (!headers.has('Content-Type') && options?.body && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json')
   }
 

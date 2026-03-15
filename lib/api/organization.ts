@@ -41,6 +41,45 @@ export async function updateOrganization(orgId: string, data: Record<string, unk
   if (!res.ok) throw new Error(`Update organization error: ${res.status}`)
 }
 
+// ============================================================
+// White-Label / Branding (P3-01, P3-02, P3-03)
+// ============================================================
+
+export async function uploadOrgLogo(orgId: string, file: File): Promise<{ logo_url: string }> {
+  const formData = new FormData()
+  formData.append('file', file)
+  const res = await authFetch(`${API_URL}/white-label/${orgId}/logo`, {
+    method: 'POST',
+    body: formData,
+    // Content-Type is NOT set — browser sets multipart boundary automatically
+  })
+  if (!res.ok) throw new Error(`Upload error: ${res.status}`)
+  return res.json()
+}
+
+export async function deleteOrgLogo(orgId: string): Promise<void> {
+  const res = await authFetch(`${API_URL}/white-label/${orgId}/logo`, { method: 'DELETE' })
+  if (!res.ok) throw new Error(`Delete error: ${res.status}`)
+}
+
+export async function validateCustomDomain(orgId: string, domain: string): Promise<{ verified: boolean; cname_target?: string; dns_target?: string }> {
+  const res = await authFetch(`${API_URL}/white-label/${orgId}/domain/validate`, {
+    method: 'POST',
+    body: JSON.stringify({ domain }),
+  })
+  if (!res.ok) throw new Error(`Domain validation error: ${res.status}`)
+  return res.json()
+}
+
+export async function updateBrandColors(orgId: string, colors: { primary?: string; secondary?: string; accent?: string }): Promise<unknown> {
+  const res = await authFetch(`${API_URL}/white-label/${orgId}/colors`, {
+    method: 'PUT',
+    body: JSON.stringify(colors),
+  })
+  if (!res.ok) throw new Error(`Colors update error: ${res.status}`)
+  return res.json()
+}
+
 export async function generateSystemPrompt(orgId: string): Promise<{
   generated_prompt: string
   clinic_data: { name: string; specialty: string; services_count: number; has_hours: boolean }

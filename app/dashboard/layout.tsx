@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization, fetchBranches } from '@/lib/api'
@@ -83,6 +83,7 @@ function Sidebar({
   backLabel,
   logoutLabel,
   closeMenuLabel,
+  logoUrl,
 }: {
   isOpen: boolean
   mobile?: boolean
@@ -97,6 +98,7 @@ function Sidebar({
   backLabel: string
   logoutLabel: string
   closeMenuLabel: string
+  logoUrl?: string
 }) {
   return (
     <>
@@ -104,11 +106,19 @@ function Sidebar({
       <div className={`px-4 py-5 flex items-center ${isOpen ? 'gap-2' : 'justify-center'} border-b border-border/50`}>
         {isOpen ? (
           <div className="animate-fade-in flex-1 min-w-0">
-            <SofiaLogo size="sm" variant="full" />
+            {logoUrl ? (
+              <img src={logoUrl} alt={orgName || 'Logo'} className="h-8 w-auto object-contain" />
+            ) : (
+              <SofiaLogo size="sm" variant="full" />
+            )}
             <div className="text-text-dim text-[10px] truncate mt-1 pl-[38px]">{orgName}</div>
           </div>
         ) : (
-          <SofiaLogo size="sm" variant="mark" />
+          logoUrl ? (
+            <img src={logoUrl} alt={orgName || 'Logo'} className="h-7 w-7 object-contain rounded" />
+          ) : (
+            <SofiaLogo size="sm" variant="mark" />
+          )
         )}
         {mobile && onClose && (
           <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto flex-shrink-0" aria-label={closeMenuLabel}>
@@ -494,6 +504,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setMobileMenuOpen(false)
   }
 
+  // White-label: dynamic logo + brand colors (must be before early return)
+  const whiteLabel = useMemo(() => (org?.config_settings as Record<string, unknown>)?.white_label as Record<string, unknown> | undefined, [org?.config_settings])
+  const logoUrl = (whiteLabel?.logo_url as string) || ''
+  const brandColors = useMemo(() => (whiteLabel?.brand_colors || {}) as Record<string, string>, [whiteLabel])
+
+  // Apply dynamic brand colors as CSS custom properties
+  useEffect(() => {
+    const root = document.documentElement
+    if (brandColors.primary) root.style.setProperty('--color-brand-primary', brandColors.primary)
+    if (brandColors.secondary) root.style.setProperty('--color-brand-secondary', brandColors.secondary)
+    if (brandColors.accent) root.style.setProperty('--color-brand-accent', brandColors.accent)
+    return () => {
+      root.style.removeProperty('--color-brand-primary')
+      root.style.removeProperty('--color-brand-secondary')
+      root.style.removeProperty('--color-brand-accent')
+    }
+  }, [brandColors])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -518,6 +546,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     backLabel: t('backToAdmin'),
     logoutLabel: t('logout'),
     closeMenuLabel: tLayout('closeMenu'),
+    logoUrl,
   }
 
   return (

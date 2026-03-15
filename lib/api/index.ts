@@ -32,7 +32,7 @@ export {
 export { fetchOpportunities, updateOpportunity } from './opportunities'
 
 // Organization
-export { fetchOrganization, fetchUserOrganization, updateOrganization, generateSystemPrompt } from './organization'
+export { fetchOrganization, fetchUserOrganization, updateOrganization, generateSystemPrompt, uploadOrgLogo, deleteOrgLogo, validateCustomDomain, updateBrandColors } from './organization'
 
 // Services catalog
 export { fetchServicesCatalog, createService, updateService, deleteService } from './services'
