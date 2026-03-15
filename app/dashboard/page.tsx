@@ -6,6 +6,7 @@ import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumb
 import type { FullAnalytics, VoiceMetrics } from '@/types'
 import { MetricCard, SectionTitle, StatusPill, PerfItem, RevenueItem, BotCard, EmptyState } from '@/components/ui'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import {
   MessageSquare, Users, CalendarCheck, DollarSign, Cpu, Target,
   TrendingUp, Clock, Zap, AlertTriangle,
@@ -29,19 +30,14 @@ const OPP_COLORS: Record<string, string> = {
   HIGH_VALUE: '#34D399',
 }
 
-const OPP_LABELS: Record<string, string> = {
-  HOT_LEAD: 'Lead Caliente',
-  UPSELL: 'Upsell',
-  REACTIVATION: 'Reactivación',
-  REFERRAL: 'Referido',
-  CHURN_RISK: 'Riesgo Abandono',
-  PRICE_SENSITIVE: 'Sensible a Precio',
-  MULTI_PROCEDURE: 'Multi-procedimiento',
-  HIGH_VALUE: 'Alto Valor',
-}
+// OPP_LABELS removed — now uses useTranslations('opportunities.types')
 
 export default function DashboardOverview() {
   const { orgId, branchId } = useOrg()
+  const t = useTranslations('dashboard')
+  const tOpp = useTranslations('opportunities.types')
+  const tOppSection = useTranslations('opportunities')
+  const tCommon = useTranslations('common')
   const [data, setData] = useState<FullAnalytics | null>(null)
   const [voice, setVoice] = useState<VoiceMetrics | null>(null)
   const [loading, setLoading] = useState(true)
@@ -59,7 +55,7 @@ export default function DashboardOverview() {
     if (retryCount > 0) retryingRef.current = true
 
     setLoading(true)
-    if (retryCount > 0) setError('Conectando con el servidor...')
+    if (retryCount > 0) setError(t('connecting'))
 
     // Voice metrics go directly to Supabase — always load independently
     fetchVoiceMetrics(orgId, days, branchId)
@@ -74,9 +70,9 @@ export default function DashboardOverview() {
       setError('')
       retryingRef.current = false
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Error desconocido'
+      const msg = e instanceof Error ? e.message : tCommon('errorUnknown')
       if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502') || msg.includes('autenticación'))) {
-        setError('Conectando con el servidor... (reintentando)')
+        setError(t('retrying'))
         // Clear any existing retry timer before scheduling a new one
         if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
         retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), 10000)
@@ -123,11 +119,11 @@ export default function DashboardOverview() {
       <div className="glass-card p-8 border-status-danger/30">
         <div className="flex items-center gap-3 text-status-danger mb-3">
           <AlertTriangle size={20} />
-          <span className="font-semibold">Error cargando métricas</span>
+          <span className="font-semibold">{t('loadError')}</span>
         </div>
         <p className="text-text-muted text-sm">{error}</p>
         <button onClick={() => loadData()} className="mt-4 px-4 py-2 rounded-lg bg-brand-purple/10 text-brand-purple text-sm hover:bg-brand-purple/20 transition-colors">
-          Reintentar
+          {tCommon('retry')}
         </button>
       </div>
     )
@@ -155,12 +151,11 @@ export default function DashboardOverview() {
           {/* Card */}
           <div className="glass-card p-8 text-center gradient-border">
             <h2 className="text-2xl font-bold text-text-primary mb-2">
-              Tu clínica está lista.{' '}
-              <span className="gradient-text">Activa SofIA.</span>
+              {t('clinicReady')}{' '}
+              <span className="gradient-text">{t('activateSofia')}</span>
             </h2>
             <p className="text-text-muted text-sm leading-relaxed mb-6">
-              Conecta tu WhatsApp para que SofIA empiece a atender pacientes
-              automáticamente — responde 24/7, agenda citas y aumenta tus ventas.
+              {t('connectWhatsAppDesc')}
             </p>
 
             {/* Primary CTA */}
@@ -169,21 +164,21 @@ export default function DashboardOverview() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-sm font-semibold hover:shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all duration-200"
             >
               <MessageSquare size={16} />
-              Conectar WhatsApp
+              {t('connectWhatsApp')}
               <ArrowRight size={14} />
             </a>
 
             {/* Secondary copy */}
             <p className="text-text-dim text-xs mt-4">
-              SofIA responde 24/7, agenda citas y aumenta tus ventas.
+              {t('sofiaResponds247')}
             </p>
 
             {/* Trust indicators */}
             <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 gap-4">
               {[
-                { value: '< 5 min', label: 'para activar' },
-                { value: '24/7', label: 'disponibilidad' },
-                { value: '80%', label: 'menos carga operativa' },
+                { value: '< 5 min', label: t('toActivate') },
+                { value: '24/7', label: t('availability') },
+                { value: '80%', label: t('lessWorkload') },
               ].map((item) => (
                 <div key={item.label} className="text-center">
                   <div className="text-lg font-bold font-display gradient-text">{item.value}</div>
@@ -195,12 +190,12 @@ export default function DashboardOverview() {
 
           {/* Quick start hint */}
           <p className="text-center text-text-dim text-xs mt-4">
-            ¿Ya conectaste WhatsApp?{' '}
+            {t('alreadyConnected')}{' '}
             <button
               onClick={() => loadData()}
               className="text-brand-purple hover:underline font-medium"
             >
-              Actualizar métricas
+              {t('refreshMetrics')}
             </button>
           </p>
         </div>
@@ -221,16 +216,16 @@ export default function DashboardOverview() {
   })).slice(0, 8)
 
   const oppData = Object.entries(o?.por_tipo || {}).map(([k, v]) => ({
-    name: OPP_LABELS[k] || k,
+    name: tOpp.has(k) ? tOpp(k) : k,
     value: v,
     color: OPP_COLORS[k] || '#8B5CF6',
   }))
 
   const funnelData = [
-    { name: 'Mensajes', value: c?.funnel?.mensajes || 0, color: '#8B5CF6' },
-    { name: 'Pacientes', value: c?.funnel?.pacientes || 0, color: '#A78BFA' },
-    { name: 'Citas', value: c?.funnel?.citas || 0, color: '#F5C842' },
-    { name: 'Completadas', value: c?.funnel?.completadas || 0, color: '#06D6A0' },
+    { name: t('messages'), value: c?.funnel?.mensajes || 0, color: '#8B5CF6' },
+    { name: t('patients'), value: c?.funnel?.pacientes || 0, color: '#A78BFA' },
+    { name: t('appointments'), value: c?.funnel?.citas || 0, color: '#F5C842' },
+    { name: t('completedAppointments'), value: c?.funnel?.completadas || 0, color: '#06D6A0' },
   ]
 
   return (
@@ -238,15 +233,15 @@ export default function DashboardOverview() {
       {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Overview</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">{t('overview')}</h2>
           {lastUpdate && (
             <p className="text-text-dim text-xs mt-0.5">
-              Actualizado {lastUpdate.toLocaleTimeString('es-CO')}
+              {t('updated', { time: lastUpdate.toLocaleTimeString() })}
             </p>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => loadData()} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={() => loadData()} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
           {[7, 30, 90].map((d) => (
@@ -271,23 +266,23 @@ export default function DashboardOverview() {
           icon={<MessageSquare size={18} />}
           iconColor="from-brand-purple to-brand-purple-dark"
           value={formatNumber(c?.total_mensajes_inbound || 0)}
-          label="Mensajes recibidos"
-          sub={`${formatNumber(c?.pacientes_nuevos || 0)} pacientes nuevos`}
+          label={t('messagesReceived')}
+          sub={t('newPatients', { count: formatNumber(c?.pacientes_nuevos || 0) })}
           delay={0}
         />
         <MetricCard
           icon={<Users size={18} />}
           iconColor="from-brand-cyan to-brand-cyan-light"
           value={formatNumber(c?.pacientes_unicos || 0)}
-          label="Pacientes únicos"
+          label={t('uniquePatients')}
           delay={1}
         />
         <MetricCard
           icon={<CalendarCheck size={18} />}
           iconColor="from-brand-purple to-brand-cyan"
           value={formatNumber(c?.total_citas || 0)}
-          label="Citas agendadas"
-          sub={`${formatPercent(c?.tasa_conversion_pct || 0)} conversión`}
+          label={t('scheduledAppointments')}
+          sub={`${formatPercent(c?.tasa_conversion_pct || 0)} ${t('conversion')}`}
           subColor="text-brand-purple"
           delay={2}
         />
@@ -295,15 +290,15 @@ export default function DashboardOverview() {
           icon={<DollarSign size={18} />}
           iconColor="from-brand-gold to-amber-500"
           value={formatCOP(r?.revenue_total || 0)}
-          label="Revenue"
-          sub={`Pipeline: ${formatCOP(r?.revenue_pipeline || 0)}`}
+          label={t('revenue')}
+          sub={`${t('pipeline')}: ${formatCOP(r?.revenue_pipeline || 0)}`}
           delay={3}
         />
         <MetricCard
           icon={<Cpu size={18} />}
           iconColor="from-status-success to-emerald-400"
           value={formatUSD(p?.total_costo_usd || 0)}
-          label="Costo IA total"
+          label={t('totalAICost')}
           sub={`~${formatUSD(p?.costo_promedio_por_interaccion_usd || 0)}/msg`}
           delay={4}
         />
@@ -313,7 +308,7 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Funnel */}
         <div className="glass-card-accent p-6">
-          <SectionTitle icon={<TrendingUp size={16} />} title="Funnel de Conversión" />
+          <SectionTitle icon={<TrendingUp size={16} />} title={t('conversionFunnel')} />
           <div className="flex items-end justify-between gap-4 mt-6 px-2">
             {funnelData.map((step, i) => {
               const maxVal = funnelData[0].value || 1
@@ -344,24 +339,24 @@ export default function DashboardOverview() {
           </div>
           {/* Status pills */}
           <div className="flex gap-3 mt-6 justify-center flex-wrap">
-            <StatusPill label="Asistencia" value={formatPercent(c?.tasa_asistencia_pct || 0)} color="success" />
-            <StatusPill label="Cancelación" value={formatPercent(c?.tasa_cancelacion_pct || 0)} color="danger" />
-            <StatusPill label="No-Show" value={formatPercent(c?.tasa_no_show_pct || 0)} color="warning" />
+            <StatusPill label={t('attendance')} value={formatPercent(c?.tasa_asistencia_pct || 0)} color="success" />
+            <StatusPill label={t('cancellation')} value={formatPercent(c?.tasa_cancelacion_pct || 0)} color="danger" />
+            <StatusPill label={t('noShow')} value={formatPercent(c?.tasa_no_show_pct || 0)} color="warning" />
           </div>
         </div>
 
         {/* Revenue */}
         <div className="glass-card-accent p-6">
-          <SectionTitle icon={<DollarSign size={16} />} title="Revenue" />
+          <SectionTitle icon={<DollarSign size={16} />} title={t('revenue')} />
           <div className="grid grid-cols-2 gap-6 mt-6">
-            <RevenueItem label="Revenue verificado" value={formatCOP(r?.revenue_total || 0)} color="text-status-success" />
-            <RevenueItem label="Pendiente" value={formatCOP(r?.revenue_pendiente || 0)} color="text-status-warning" />
-            <RevenueItem label="Pipeline (citas)" value={formatCOP(r?.revenue_pipeline || 0)} color="text-status-info" />
-            <RevenueItem label="Proyección mensual" value={formatCOP(r?.proyeccion_mensual || 0)} color="text-brand-purple" />
+            <RevenueItem label={t('revenueVerified')} value={formatCOP(r?.revenue_total || 0)} color="text-status-success" />
+            <RevenueItem label={t('pending')} value={formatCOP(r?.revenue_pendiente || 0)} color="text-status-warning" />
+            <RevenueItem label={t('pipelineAppointments')} value={formatCOP(r?.revenue_pipeline || 0)} color="text-status-info" />
+            <RevenueItem label={t('monthlyProjection')} value={formatCOP(r?.proyeccion_mensual || 0)} color="text-brand-purple" />
           </div>
           <div className="mt-6 pt-4 border-t border-border flex gap-6 text-sm text-text-muted">
-            <span>Ticket promedio: <span className="text-text-primary font-semibold">{formatCOP(r?.ticket_promedio || 0)}</span></span>
-            <span>Transacciones: <span className="text-text-primary font-semibold">{formatNumber(r?.total_transacciones || 0)}</span></span>
+            <span>{t('averageTicket')}: <span className="text-text-primary font-semibold">{formatCOP(r?.ticket_promedio || 0)}</span></span>
+            <span>{t('transactions')}: <span className="text-text-primary font-semibold">{formatNumber(r?.total_transacciones || 0)}</span></span>
           </div>
         </div>
       </div>
@@ -378,7 +373,7 @@ export default function DashboardOverview() {
               </div>
               <div>
                 <div className="text-2xl font-bold font-mono text-text-primary">{formatNumber(voice.total_calls)}</div>
-                <div className="text-xs text-text-muted">Llamadas de voz</div>
+                <div className="text-xs text-text-muted">{t('voiceCalls')}</div>
               </div>
             </div>
 
@@ -393,16 +388,16 @@ export default function DashboardOverview() {
                     ? `${Math.floor(voice.avg_duration_seconds / 60)}:${String(voice.avg_duration_seconds % 60).padStart(2, '0')}`
                     : '—'}
                 </div>
-                <div className="text-xs text-text-muted">Duración promedio</div>
+                <div className="text-xs text-text-muted">{t('avgDuration')}</div>
               </div>
             </div>
 
             {/* Voice vs WhatsApp appointments */}
             <div className="md:col-span-2">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-text-muted font-semibold uppercase tracking-wider">Citas agendadas por canal</span>
+                <span className="text-xs text-text-muted font-semibold uppercase tracking-wider">{t('appointmentsByChannel')}</span>
                 <span className="text-[10px] text-text-dim">
-                  {formatNumber(voice.appointments_by_voice + voice.appointments_by_whatsapp)} total
+                  {formatNumber(voice.appointments_by_voice + voice.appointments_by_whatsapp)} {t('total')}
                 </span>
               </div>
               <div className="space-y-2.5">
@@ -410,7 +405,7 @@ export default function DashboardOverview() {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
                     <PhoneCall size={12} className="text-brand-purple" />
-                    <span className="text-xs text-text-muted">Voz</span>
+                    <span className="text-xs text-text-muted">{t('voice')}</span>
                   </div>
                   <div className="flex-1 h-5 bg-surface-3 rounded-full overflow-hidden">
                     <div
@@ -446,7 +441,7 @@ export default function DashboardOverview() {
               {/* Voice % pill */}
               <div className="mt-3 flex gap-2">
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-purple/10 text-brand-purple font-semibold">
-                  {voice.voice_pct}% interacciones por voz
+                  {t('voiceInteractions', { pct: voice.voice_pct })}
                 </span>
               </div>
             </div>
@@ -458,19 +453,19 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Intents chart */}
         <div className="glass-card p-6">
-          <SectionTitle icon={<MessageSquare size={16} />} title="Intents" />
+          <SectionTitle icon={<MessageSquare size={16} />} title={t('intents')} />
           {intentData.length > 0 ? (
             <div className="mt-4 h-56">
               <LazyIntentsChart data={intentData} />
             </div>
           ) : (
-            <EmptyState title="Sin datos aún" />
+            <EmptyState title={t('noDataYet')} />
           )}
         </div>
 
         {/* Opportunities */}
         <div className="glass-card p-6">
-          <SectionTitle icon={<Target size={16} />} title="Oportunidades" />
+          <SectionTitle icon={<Target size={16} />} title={tOppSection('title')} />
           {(o?.total || 0) > 0 ? (
             <div className="mt-4">
               <div className="text-3xl font-bold font-display gradient-text mb-4">{o?.total}</div>
@@ -486,25 +481,25 @@ export default function DashboardOverview() {
                 ))}
               </div>
               <div className="mt-4 pt-3 border-t border-border text-xs text-text-muted">
-                Valor estimado: <span className="text-brand-purple font-semibold">{formatCOP(o?.valor_total_estimado || 0)}</span>
+                {t('estimatedValue')}: <span className="text-brand-purple font-semibold">{formatCOP(o?.valor_total_estimado || 0)}</span>
               </div>
             </div>
           ) : (
-            <EmptyState title="Sin datos aún" />
+            <EmptyState title={t('noDataYet')} />
           )}
         </div>
 
         {/* Performance */}
         <div className="glass-card p-6">
-          <SectionTitle icon={<Cpu size={16} />} title="Performance IA" />
+          <SectionTitle icon={<Cpu size={16} />} title={t('performanceAI')} />
           <div className="mt-4 space-y-4">
-            <PerfItem label="Interacciones" value={formatNumber(p?.total_interacciones || 0)} />
-            <PerfItem label="Tokens totales" value={formatNumber(p?.total_tokens || 0)} />
-            <PerfItem label="Tiempo respuesta avg" value={`${formatNumber(p?.response_time_promedio_ms || 0)}ms`} />
-            <PerfItem label="Costo total" value={formatUSD(p?.total_costo_usd || 0)} accent />
-            <PerfItem label="Proyección mensual" value={formatUSD(p?.proyeccion_costo_mensual_usd || 0)} accent />
+            <PerfItem label={t('interactions')} value={formatNumber(p?.total_interacciones || 0)} />
+            <PerfItem label={t('totalTokens')} value={formatNumber(p?.total_tokens || 0)} />
+            <PerfItem label={t('avgResponseTime')} value={`${formatNumber(p?.response_time_promedio_ms || 0)}ms`} />
+            <PerfItem label={t('totalCost')} value={formatUSD(p?.total_costo_usd || 0)} accent />
+            <PerfItem label={t('monthlyProjection')} value={formatUSD(p?.proyeccion_costo_mensual_usd || 0)} accent />
             <div className="pt-3 border-t border-border">
-              <div className="text-xs text-text-dim mb-2">Herramientas más usadas</div>
+              <div className="text-xs text-text-dim mb-2">{t('mostUsedTools')}</div>
               {Object.entries(p?.herramientas_usadas || {}).slice(0, 4).map(([tool, count]) => (
                 <div key={tool} className="flex justify-between text-xs py-1">
                   <span className="text-text-muted font-mono">{tool}</span>
@@ -518,13 +513,13 @@ export default function DashboardOverview() {
 
       {/* ===== SUB-BOTS ===== */}
       <div>
-        <SectionTitle icon={<Bot size={16} />} title="Sub-Bots Automáticos" className="mb-4" />
+        <SectionTitle icon={<Bot size={16} />} title={t('subBots')} className="mb-4" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <BotCard
             emoji="⏰"
             name="Reminder Bot"
             value={b?.reminder_bot?.mensajes_enviados || 0}
-            label="recordatorios enviados"
+            label={t('remindersSent')}
             desc={b?.reminder_bot?.descripcion}
             gradient="from-brand-purple to-brand-purple-dark"
             formatNumber={formatNumber}
@@ -533,8 +528,8 @@ export default function DashboardOverview() {
             emoji="🎯"
             name="Hunter Bot"
             value={b?.hunter_bot?.followups_enviados || 0}
-            label="follow-ups enviados"
-            extra={`${b?.hunter_bot?.conversiones_post_followup || 0} conversiones`}
+            label={t('followupsSent')}
+            extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`}
             desc={b?.hunter_bot?.descripcion}
             gradient="from-brand-gold to-amber-600"
             formatNumber={formatNumber}
@@ -543,7 +538,7 @@ export default function DashboardOverview() {
             emoji="💊"
             name="Nurse Bot"
             value={b?.nurse_bot?.recordatorios_enviados || 0}
-            label="recordatorios de medicamento"
+            label={t('medicationReminders')}
             desc={b?.nurse_bot?.descripcion}
             gradient="from-brand-cyan to-emerald-500"
             formatNumber={formatNumber}
@@ -553,7 +548,7 @@ export default function DashboardOverview() {
 
       {/* Footer */}
       <div className="text-center py-4 text-text-dim text-xs">
-        Ataraxia IA Labs © 2026 — Cada dato es una decisión. Cada decisión es dinero.
+        {t('footer')}
       </div>
     </div>
   )

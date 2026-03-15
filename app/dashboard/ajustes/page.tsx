@@ -7,23 +7,34 @@ import { Tabs } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab, BrandingTab } from './tabs'
 import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
+import { useTranslations } from 'next-intl'
 import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Lock, Palette } from 'lucide-react'
 
-const TAB_DEFS = [
-  { id: 'prompt', label: 'System Prompt', icon: MessageSquare },
-  { id: 'services', label: 'Catalogo', icon: ShoppingBag },
-  { id: 'hours', label: 'Horarios', icon: Clock },
-  { id: 'notifications', label: 'Notificaciones', icon: Bell },
-  { id: 'templates', label: 'Plantillas WA', icon: Phone },
-  { id: 'bots', label: 'Bot Monitor', icon: Activity },
-  { id: 'channels', label: 'Canales', icon: Wifi },
-  { id: 'security', label: 'Seguridad', icon: Lock },
-  { id: 'branding', label: 'Marca', icon: Palette },
-]
+const TAB_ICONS: Record<string, typeof MessageSquare> = {
+  prompt: MessageSquare,
+  services: ShoppingBag,
+  hours: Clock,
+  notifications: Bell,
+  templates: Phone,
+  bots: Activity,
+  channels: Wifi,
+  security: Lock,
+  branding: Palette,
+}
+
+const TAB_IDS = ['prompt', 'services', 'hours', 'notifications', 'templates', 'bots', 'channels', 'security', 'branding']
 
 export default function AjustesPage() {
   const { orgId, role } = useOrg()
   const toast = useToast()
+  const t = useTranslations('settings')
+  const tCommon = useTranslations('common')
+
+  const TAB_DEFS = TAB_IDS.map(id => ({
+    id,
+    label: t.has(`tabs.${id}`) ? t(`tabs.${id}`) : id,
+    icon: TAB_ICONS[id],
+  }))
   const isReadOnly = role === 'STAFF'
   const [activeTab, setActiveTab] = useState('prompt')
   const [org, setOrg] = useState<Organization | null>(null)
@@ -66,9 +77,9 @@ export default function AjustesPage() {
     setSaving(true)
     try {
       await updateOrganization(orgId, { system_prompt: systemPrompt })
-      toast.success('System prompt guardado')
+      toast.success(t('promptSaved'))
     } catch (e) {
-      toast.error('Error: ' + (e instanceof Error ? e.message : 'desconocido'))
+      toast.error(t('errorPrefix') + (e instanceof Error ? e.message : tCommon('errorUnknown')))
     }
     setSaving(false)
   }
@@ -91,16 +102,16 @@ export default function AjustesPage() {
       {isReadOnly && (
         <div className="px-4 py-3 rounded-xl bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold flex items-center gap-2">
           <Shield size={14} />
-          Solo lectura — Tu rol ({role}) no permite modificar la configuracion. Contacta al administrador.
+          {t('readOnly', { role })}
         </div>
       )}
 
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Ajustes</h2>
-          <p className="text-text-dim text-xs mt-0.5">{org?.name || 'Configuracion de la clinica'}</p>
+          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-xs mt-0.5">{org?.name || t('subtitle')}</p>
         </div>
-        <button onClick={loadData} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+        <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
           <RefreshCw size={14} />
         </button>
       </div>

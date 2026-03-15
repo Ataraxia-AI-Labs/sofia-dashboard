@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/toast'
 import * as Sentry from '@sentry/nextjs'
 import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, fetchPatientMedia, createPatient, updatePatient, createStaffNote, createTreatment, exportPatientsCSV, sendWhatsAppMessage, formatNumber, timeAgo } from '@/lib/api'
 import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
+import { useTranslations } from 'next-intl'
 import {
   Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
   X, RefreshCw, Download, UserPlus
@@ -13,13 +14,14 @@ import {
 import { NewPatientForm } from './panels/new-patient-form'
 import { PatientDetailPanel } from './panels/patient-detail-panel'
 
-const CHANNELS: Record<string, { label: string; color: string }> = {
-  WHATSAPP: { label: 'WhatsApp', color: 'text-status-success' },
-  INSTAGRAM: { label: 'Instagram', color: 'text-brand-purple' },
-  MESSENGER: { label: 'Messenger', color: 'text-status-info' },
-  WEB: { label: 'Web', color: 'text-status-warning' },
-  VOICE_CALL: { label: 'Llamada', color: 'text-brand-cyan' },
-  PRESENCIAL: { label: 'Presencial', color: 'text-brand-gold' },
+const CHANNEL_COLORS: Record<string, string> = {
+  WHATSAPP: 'text-status-success',
+  INSTAGRAM: 'text-brand-purple',
+  MESSENGER: 'text-status-info',
+  WEB: 'text-status-warning',
+  VOICE_CALL: 'text-brand-cyan',
+  PRESENCIAL: 'text-brand-gold',
+  CALL: 'text-brand-cyan',
 }
 
 const PAGE_SIZE = 20
@@ -27,6 +29,8 @@ const PAGE_SIZE = 20
 export default function PacientesPage() {
   const { orgId, branchId } = useOrg()
   const toast = useToast()
+  const t = useTranslations('patients')
+  const tCommon = useTranslations('common')
   const [patients, setPatients] = useState<Patient[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -92,7 +96,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error cargando pacientes')
+      toast.error(t('loadError'))
     }
     setLoading(false)
   }, [orgId, page, searchDebounced, sortBy, sortDir, branchId])
@@ -128,7 +132,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error cargando detalle del paciente')
+      toast.error(t('detailError'))
     }
     setDetailLoading(false)
   }
@@ -143,7 +147,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error creando paciente')
+      toast.error(t('createError'))
     }
   }
 
@@ -157,7 +161,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error guardando cambios del paciente')
+      toast.error(t('saveError'))
     }
   }
 
@@ -172,7 +176,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error guardando nota')
+      toast.error(t('noteError'))
     }
     setSavingNote(false)
   }
@@ -187,7 +191,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error enviando mensaje de WhatsApp')
+      toast.error(t('whatsappError'))
     }
     setSendingWa(false)
   }
@@ -203,7 +207,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error creando tratamiento')
+      toast.error(t('treatmentError'))
     }
   }
 
@@ -214,7 +218,7 @@ export default function PacientesPage() {
     } catch (err) {
       Sentry.captureException(err)
       Sentry.captureException(err)
-      toast.error('Error exportando CSV')
+      toast.error(t('exportError'))
     }
   }
 
@@ -241,17 +245,17 @@ export default function PacientesPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Pacientes</h2>
-          <p className="text-text-dim text-xs mt-0.5">{formatNumber(total)} registrados</p>
+          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-xs mt-0.5">{t('registered', { count: formatNumber(total) })}</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
-            <Download size={13} /> Exportar CSV
+            <Download size={13} /> {t('exportCSV')}
           </button>
           <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
-            <UserPlus size={13} /> Nuevo Paciente
+            <UserPlus size={13} /> {t('newPatient')}
           </button>
-          <button onClick={loadPatients} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadPatients} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -265,7 +269,7 @@ export default function PacientesPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre o telefono..."
+            placeholder={t('searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
           />
           {search && (
@@ -293,12 +297,12 @@ export default function PacientesPage() {
             <thead>
               <tr className="border-b border-border">
                 {[
-                  { field: 'full_name', label: 'Paciente' },
-                  { field: 'phone', label: 'Telefono' },
-                  { field: 'acquisition_channel', label: 'Canal' },
-                  { field: 'service_interest', label: 'Interes' },
-                  { field: 'city', label: 'Ciudad' },
-                  { field: 'created_at', label: 'Registro' },
+                  { field: 'full_name', label: t('patient') },
+                  { field: 'phone', label: t('phone') },
+                  { field: 'acquisition_channel', label: t('channel') },
+                  { field: 'service_interest', label: t('interest') },
+                  { field: 'city', label: t('city') },
+                  { field: 'created_at', label: t('registration') },
                 ].map((col) => (
                   <th
                     key={col.field}
@@ -327,7 +331,7 @@ export default function PacientesPage() {
               ) : patients.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-12 text-text-dim text-sm">
-                    {search ? 'No se encontraron pacientes con ese criterio' : 'Aun no hay pacientes registrados'}
+                    {search ? t('noResultsSearch') : t('noPatients')}
                   </td>
                 </tr>
               ) : (
@@ -343,7 +347,7 @@ export default function PacientesPage() {
                           {p.full_name?.[0]?.toUpperCase() || '?'}
                         </div>
                         <span className="text-sm font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
-                          {p.full_name || 'Sin nombre'}
+                          {p.full_name || t('noName')}
                         </span>
                       </div>
                     </td>
@@ -351,8 +355,8 @@ export default function PacientesPage() {
                       <span className="text-sm text-text-secondary font-mono">{p.phone}</span>
                     </td>
                     <td className="px-5 py-3.5">
-                      <span className={`text-xs font-semibold ${CHANNELS[p.acquisition_channel]?.color || 'text-text-muted'}`}>
-                        {CHANNELS[p.acquisition_channel]?.label || p.acquisition_channel}
+                      <span className={`text-xs font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
+                        {t.has(`channels.${p.acquisition_channel}`) ? t(`channels.${p.acquisition_channel}`) : p.acquisition_channel}
                       </span>
                     </td>
                     <td className="px-5 py-3.5">
@@ -377,7 +381,7 @@ export default function PacientesPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-5 py-3 border-t border-border">
             <span className="text-xs text-text-dim">
-              {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} de {total}
+              {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} {t('ofTotal')} {total}
             </span>
             <div className="flex gap-1.5">
               <button

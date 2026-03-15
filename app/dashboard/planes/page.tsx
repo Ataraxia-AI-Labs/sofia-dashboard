@@ -7,6 +7,7 @@ import { CheckoutModal } from '@/components/checkout-modal'
 import { Check, X, Gem, Crown, Zap, Clock, Rocket, Building2 } from 'lucide-react'
 import type { Subscription, UsageData, WompiConfig } from '@/types'
 import { formatCOP } from '@/lib/api'
+import { useTranslations } from 'next-intl'
 
 /* ------------------------------------------------------------------ */
 /*  Plan configuration                                                 */
@@ -31,87 +32,82 @@ function monthlyEquivalent(annual: number): string {
 interface PlanDef {
   id: PlanId
   name: string
-  description: string
   icon: typeof Zap
   color: string
   popular?: boolean
-  features: { name: string; included: boolean }[]
+  features: { key: string; included: boolean }[]
 }
 
 const PLANS: PlanDef[] = [
   {
     id: 'STARTER',
     name: 'Starter',
-    description: 'Para clinicas que inician con IA',
     icon: Zap,
     color: 'brand-cyan',
     features: [
-      { name: 'WhatsApp AI (SofIA)', included: true },
-      { name: 'Agenda inteligente', included: true },
-      { name: 'Dashboard basico', included: true },
-      { name: 'Hasta 300 conversaciones/mes', included: true },
-      { name: 'Bots automaticos (2)', included: true },
-      { name: '1 sede', included: true },
-      { name: 'Voice AI', included: false },
-      { name: 'Links de pago', included: false },
-      { name: 'Pipeline CRM', included: false },
-      { name: 'Outbound calls', included: false },
+      { key: 'whatsappAI', included: true },
+      { key: 'smartSchedule', included: true },
+      { key: 'basicDashboard', included: true },
+      { key: 'conversations300', included: true },
+      { key: 'autoBots2', included: true },
+      { key: 'oneLocation', included: true },
+      { key: 'voiceAI', included: false },
+      { key: 'paymentLinks', included: false },
+      { key: 'pipelineCRM', included: false },
+      { key: 'outboundCalls', included: false },
     ],
   },
   {
     id: 'PRO',
     name: 'Pro',
-    description: 'Maximiza revenue con voz + bots',
     icon: Crown,
     color: 'brand-purple',
     popular: true,
     features: [
-      { name: 'Todo en Starter, mas:', included: true },
-      { name: 'Voice AI (100 llamadas/mes)', included: true },
-      { name: 'Conversaciones ilimitadas', included: true },
-      { name: 'Todos los bots (5)', included: true },
-      { name: 'Links de pago (Wompi)', included: true },
-      { name: 'Pipeline CRM basico', included: true },
-      { name: 'Hasta 3 sedes', included: true },
-      { name: 'Outbound calls', included: false },
-      { name: 'Revenue engine', included: false },
-      { name: 'Data Lake & export', included: false },
+      { key: 'allInStarter', included: true },
+      { key: 'voiceAI100', included: true },
+      { key: 'unlimitedConversations', included: true },
+      { key: 'allBots5', included: true },
+      { key: 'paymentLinksWompi', included: true },
+      { key: 'basicPipelineCRM', included: true },
+      { key: 'upTo3Locations', included: true },
+      { key: 'outboundCalls', included: false },
+      { key: 'revenueEngine', included: false },
+      { key: 'dataLakeExport', included: false },
     ],
   },
   {
     id: 'BUSINESS',
     name: 'Business',
-    description: 'Operacion completa multicanal',
     icon: Rocket,
     color: 'status-success',
     features: [
-      { name: 'Todo en Pro, mas:', included: true },
-      { name: 'Outbound calls ilimitados', included: true },
-      { name: 'Voice AI ilimitada', included: true },
-      { name: 'Todos los bots (7)', included: true },
-      { name: 'Revenue engine completo', included: true },
-      { name: 'Data Lake & export', included: true },
-      { name: 'Hasta 10 sedes', included: true },
-      { name: 'Soporte prioritario', included: true },
-      { name: 'API access', included: false },
-      { name: 'Fine-tuning IA', included: false },
+      { key: 'allInPro', included: true },
+      { key: 'unlimitedOutbound', included: true },
+      { key: 'unlimitedVoiceAI', included: true },
+      { key: 'allBots7', included: true },
+      { key: 'fullRevenueEngine', included: true },
+      { key: 'dataLakeExport', included: true },
+      { key: 'upTo10Locations', included: true },
+      { key: 'prioritySupport', included: true },
+      { key: 'apiAccess', included: false },
+      { key: 'fineTuningAI', included: false },
     ],
   },
   {
     id: 'ENTERPRISE',
     name: 'Enterprise',
-    description: 'Para grupos y operaciones a escala',
     icon: Building2,
     color: 'status-warning',
     features: [
-      { name: 'Todo en Business, mas:', included: true },
-      { name: 'Sedes ilimitadas', included: true },
-      { name: 'API & integraciones custom', included: true },
-      { name: 'Fine-tuning IA propietario', included: true },
-      { name: 'A/B testing avanzado', included: true },
-      { name: 'Account manager dedicado', included: true },
-      { name: 'SLA garantizado 99.9%', included: true },
-      { name: 'Onboarding asistido', included: true },
+      { key: 'allInBusiness', included: true },
+      { key: 'unlimitedLocations', included: true },
+      { key: 'customAPIIntegrations', included: true },
+      { key: 'proprietaryFineTuning', included: true },
+      { key: 'advancedABTesting', included: true },
+      { key: 'dedicatedAccountManager', included: true },
+      { key: 'guaranteedSLA', included: true },
+      { key: 'assistedOnboarding', included: true },
     ],
   },
 ]
@@ -122,6 +118,7 @@ const PLANS: PlanDef[] = [
 
 export default function PlanesPage() {
   const { org, orgId, user } = useOrg()
+  const t = useTranslations('plans')
 
   const [cycle, setCycle] = useState<BillingCycle>('MONTHLY')
   const [subscription, setSubscription] = useState<Subscription | null>(null)
@@ -160,13 +157,13 @@ export default function PlanesPage() {
 
   /* Price helpers */
   function getPriceDisplay(planId: PlanId) {
-    if (planId === 'ENTERPRISE') return { main: 'Contactar', sub: '' }
+    if (planId === 'ENTERPRISE') return { main: t('contact'), sub: '' }
     const key = `${planId}_${cycle}`
     const price = PRICES[key]
     if (cycle === 'ANNUAL') {
-      return { main: formatCOP(price) + '/ano', sub: monthlyEquivalent(price) + '/mes' }
+      return { main: formatCOP(price) + t('perYear'), sub: monthlyEquivalent(price) + t('perMonth') }
     }
-    return { main: formatCOP(price) + '/mes', sub: '' }
+    return { main: formatCOP(price) + t('perMonth'), sub: '' }
   }
 
   /* CTA logic */
@@ -179,10 +176,10 @@ export default function PlanesPage() {
   }
 
   function getCtaLabel(planId: PlanId): string {
-    if (isActive && subscription?.plan === planId) return 'Plan actual'
-    if (isActive) return 'Cambiar plan'
-    if (planId === 'ENTERPRISE') return 'Contactar ventas'
-    return 'Activar plan'
+    if (isActive && subscription?.plan === planId) return t('currentPlanLabel')
+    if (isActive) return t('changePlan')
+    if (planId === 'ENTERPRISE') return t('contactSales')
+    return t('activate')
   }
 
   function isCtaDisabled(planId: PlanId): boolean {
@@ -191,7 +188,7 @@ export default function PlanesPage() {
 
   /* Next billing date formatted */
   const nextBilling = subscription?.next_billing_date
-    ? new Date(subscription.next_billing_date).toLocaleDateString('es-CO', {
+    ? new Date(subscription.next_billing_date).toLocaleDateString(undefined, {
         day: 'numeric', month: 'short', year: 'numeric',
       })
     : null
@@ -200,8 +197,8 @@ export default function PlanesPage() {
     <div className="max-w-[1200px] mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold font-display text-text-primary">Planes</h2>
-        <p className="text-text-dim text-xs mt-0.5">Elige el plan que mejor se adapte a tu clinica</p>
+        <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
+        <p className="text-text-dim text-xs mt-0.5">{t('subtitle')}</p>
       </div>
 
       {/* Current plan card */}
@@ -213,25 +210,25 @@ export default function PlanesPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-text-primary">
-                Plan actual: {currentPlan}
+                {t('currentPlan')}: {currentPlan}
               </h3>
               {currentPlan === 'TRIAL' && trialDaysLeft !== null && (
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <Clock size={11} className={trialDaysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'} />
                   <span className={`text-[10px] font-semibold ${trialDaysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'}`}>
                     {trialDaysLeft === 0
-                      ? 'Tu prueba expira hoy -- activa un plan para no perder acceso'
-                      : `${trialDaysLeft} dias restantes de prueba`}
+                      ? t('trialExpiresToday')
+                      : t('trialDaysLeft', { days: trialDaysLeft })}
                   </span>
                 </div>
               )}
               {isActive && nextBilling && (
                 <p className="text-[10px] text-text-dim mt-0.5">
-                  Proxima facturacion: {nextBilling}
+                  {t('nextBilling', { date: nextBilling })}
                 </p>
               )}
               {currentPlan !== 'TRIAL' && !isActive && (
-                <p className="text-[10px] text-text-dim mt-0.5">Tu plan esta activo</p>
+                <p className="text-[10px] text-text-dim mt-0.5">{t('planActive')}</p>
               )}
             </div>
           </div>
@@ -241,7 +238,7 @@ export default function PlanesPage() {
         {currentPlan === 'STARTER' && usage && (
           <div className="mt-4 pt-4 border-t border-border">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] text-text-muted font-medium">Mensajes utilizados</span>
+              <span className="text-[10px] text-text-muted font-medium">{t('messagesUsed')}</span>
               <span className="text-[10px] text-text-secondary font-semibold">
                 {usage.message_count} / {usage.message_limit ?? 300}
               </span>
@@ -254,7 +251,7 @@ export default function PlanesPage() {
             </div>
             {usage.percent >= 80 && (
               <p className="text-[10px] text-status-warning mt-1">
-                Estas cerca del limite. Considera actualizar a Pro para mensajes ilimitados.
+                {t('nearLimit')}
               </p>
             )}
           </div>
@@ -271,7 +268,7 @@ export default function PlanesPage() {
               : 'bg-surface-3 text-text-muted hover:text-text-secondary'
           }`}
         >
-          Mensual
+          {t('monthly')}
         </button>
         <button
           onClick={() => setCycle('ANNUAL')}
@@ -281,9 +278,9 @@ export default function PlanesPage() {
               : 'bg-surface-3 text-text-muted hover:text-text-secondary'
           }`}
         >
-          Anual
+          {t('annual')}
           <span className="absolute -top-2.5 -right-2 px-1.5 py-0.5 rounded-full bg-status-success text-white text-[8px] font-bold whitespace-nowrap">
-            Ahorra 2 meses
+            {t('save2months')}
           </span>
         </button>
       </div>
@@ -313,7 +310,7 @@ export default function PlanesPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand-purple text-white text-[9px] font-bold uppercase tracking-wider">
-                    Recomendado
+                    {t('recommended')}
                   </div>
                 )}
 
@@ -322,25 +319,25 @@ export default function PlanesPage() {
                     <Icon size={24} className={`text-${plan.color}`} />
                   </div>
                   <h3 className="text-lg font-bold text-text-primary">{plan.name}</h3>
-                  <p className="text-[10px] text-text-muted mt-0.5">{plan.description}</p>
+                  <p className="text-[10px] text-text-muted mt-0.5">{t(`descriptions.${plan.id}`)}</p>
                   <div className="mt-2">
                     <span className="text-2xl font-bold text-text-primary">{price.main}</span>
                   </div>
                   {price.sub && (
-                    <p className="text-[10px] text-text-muted mt-0.5">equiv. {price.sub}</p>
+                    <p className="text-[10px] text-text-muted mt-0.5">{t('equiv')} {price.sub}</p>
                   )}
                 </div>
 
                 <div className="space-y-2 mb-5">
                   {plan.features.map((feat) => (
-                    <div key={feat.name} className="flex items-center gap-2">
+                    <div key={feat.key} className="flex items-center gap-2">
                       {feat.included ? (
                         <Check size={14} className="text-status-success flex-shrink-0" />
                       ) : (
                         <X size={14} className="text-text-dim flex-shrink-0" />
                       )}
                       <span className={`text-xs ${feat.included ? 'text-text-secondary' : 'text-text-dim'}`}>
-                        {feat.name}
+                        {t(`features.${feat.key}`)}
                       </span>
                     </div>
                   ))}
@@ -368,10 +365,10 @@ export default function PlanesPage() {
       {/* Contact CTA */}
       <div className="glass-card p-5 text-center">
         <p className="text-text-muted text-xs">
-          Necesitas un plan personalizado o tienes preguntas?
+          {t('customPlanQuestion')}
         </p>
         <p className="text-text-dim text-[10px] mt-1">
-          Escribenos a <span className="text-brand-purple font-semibold">gestion@ataraxiaialabs.ai</span> y te ayudamos.
+          {t('customPlanHelp', { email: 'gestion@ataraxiaialabs.ai' })}
         </p>
       </div>
 

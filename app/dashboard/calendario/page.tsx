@@ -8,29 +8,32 @@ import {
   rescheduleAppointment, assignStaff, fetchStaffList, timeAgo,
 } from '@/lib/api'
 import type { Appointment, Patient, ServiceCatalog, PatientMLFeatures, StaffMember } from '@/types'
+import { useTranslations } from 'next-intl'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
   User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus, TrendingDown,
   UserCheck, Repeat, ArrowRightLeft,
 } from 'lucide-react'
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof CheckCircle }> = {
-  CONFIRMED: { label: 'Confirmada', color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20', icon: CheckCircle },
-  COMPLETED: { label: 'Completada', color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', icon: CheckCircle },
-  CANCELLED: { label: 'Cancelada', color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20', icon: XCircle },
-  NO_SHOW: { label: 'No asistio', color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', icon: AlertTriangle },
-  REQUESTED: { label: 'Solicitada', color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20', icon: HelpCircle },
-  RESCHEDULED: { label: 'Reagendada', color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20', icon: CalIcon },
-  SCHEDULED: { label: 'Programada', color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20', icon: CalIcon },
+const STATUS_STYLE: Record<string, { color: string; bg: string; icon: typeof CheckCircle }> = {
+  CONFIRMED: { color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20', icon: CheckCircle },
+  COMPLETED: { color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', icon: CheckCircle },
+  CANCELLED: { color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20', icon: XCircle },
+  NO_SHOW: { color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', icon: AlertTriangle },
+  REQUESTED: { color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20', icon: HelpCircle },
+  RESCHEDULED: { color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20', icon: CalIcon },
+  SCHEDULED: { color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20', icon: CalIcon },
 }
 
-const DAYS_ES = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
-const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+const STATUS_KEYS = ['CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'REQUESTED', 'RESCHEDULED', 'SCHEDULED']
+const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
 type ViewMode = 'week' | 'month'
 
 export default function CalendarioPage() {
   const { orgId, branchId } = useOrg()
+  const t = useTranslations('calendar')
+  const tCommon = useTranslations('common')
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -156,7 +159,7 @@ export default function CalendarioPage() {
       const newStart = `${rescheduleData.date}T${rescheduleData.time}:00`
       await rescheduleAppointment(selectedAppt.id, {
         new_start_time: newStart,
-        reason: rescheduleData.reason || 'Reagendado desde dashboard',
+        reason: rescheduleData.reason || t('rescheduledFromDashboard'),
       })
       setShowReschedule(false)
       setSelectedAppt(null)
@@ -237,16 +240,16 @@ export default function CalendarioPage() {
   }, [fromDate, viewMode, currentDate])
 
   const headerLabel = viewMode === 'week'
-    ? `${fromDate.getDate()} – ${toDate.getDate()} ${MONTHS_ES[fromDate.getMonth()]} ${fromDate.getFullYear()}`
-    : `${MONTHS_ES[currentDate.getMonth()]} ${currentDate.getFullYear()}`
+    ? `${fromDate.getDate()} – ${toDate.getDate()} ${t(`months.${fromDate.getMonth()}`)} ${fromDate.getFullYear()}`
+    : `${t(`months.${currentDate.getMonth()}`)} ${currentDate.getFullYear()}`
 
   return (
     <div className="max-w-[1400px] space-y-5">
       {/* HEADER */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Calendario</h2>
-          <p className="text-text-dim text-xs mt-0.5">{appointments.length} citas en este periodo</p>
+          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-xs mt-0.5">{t('appointmentsInPeriod', { count: appointments.length })}</p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -257,7 +260,7 @@ export default function CalendarioPage() {
               onChange={(e) => setStaffFilter(e.target.value)}
               className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs outline-none"
             >
-              <option value="">Todos los profesionales</option>
+              <option value="">{t('allStaff')}</option>
               {staffList.map((s) => (
                 <option key={s.id} value={s.id}>{s.display_name || s.role}</option>
               ))}
@@ -270,9 +273,9 @@ export default function CalendarioPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs outline-none"
           >
-            <option value="">Todos los estados</option>
-            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-              <option key={key} value={key}>{cfg.label}</option>
+            <option value="">{t('allStatuses')}</option>
+            {STATUS_KEYS.map((key) => (
+              <option key={key} value={key}>{t(`statuses.${key}`)}</option>
             ))}
           </select>
 
@@ -287,15 +290,15 @@ export default function CalendarioPage() {
                   : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
               }`}
             >
-              {mode === 'week' ? 'Semana' : 'Mes'}
+              {mode === 'week' ? t('week') : t('month')}
             </button>
           ))}
 
-          <button onClick={loadAppointments} aria-label="Actualizar" className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadAppointments} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
           <button onClick={openNewAppt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
-            <Plus size={13} /> Nueva Cita
+            <Plus size={13} /> {t('newAppointment')}
           </button>
         </div>
       </div>
@@ -310,7 +313,7 @@ export default function CalendarioPage() {
             <ChevronRight size={16} />
           </button>
           <button onClick={goToday} className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
-            Hoy
+            {t('today')}
           </button>
         </div>
         <h3 className="text-base font-semibold text-text-primary">{headerLabel}</h3>
@@ -319,43 +322,43 @@ export default function CalendarioPage() {
       {/* NEW APPOINTMENT FORM */}
       {showNewAppt && (
         <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-sm font-semibold text-text-primary">Nueva Cita Manual</h4>
+          <h4 className="text-sm font-semibold text-text-primary">{t('newManualAppointment')}</h4>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
             <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Paciente *</label>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('patientRequired')}</label>
               <select value={newAppt.patient_id} onChange={(e) => setNewAppt({...newAppt, patient_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
-                <option value="">Seleccionar...</option>
+                <option value="">{t('select')}</option>
                 {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} — {p.phone}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Servicio *</label>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('serviceRequired')}</label>
               <select value={newAppt.service_name} onChange={(e) => setNewAppt({...newAppt, service_name: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
-                <option value="">Seleccionar...</option>
+                <option value="">{t('select')}</option>
                 {services.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
               </select>
             </div>
             {staffList.length > 0 && (
               <div>
-                <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Profesional</label>
+                <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('staff')}</label>
                 <select value={newAppt.staff_id} onChange={(e) => setNewAppt({...newAppt, staff_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
-                  <option value="">Sin asignar</option>
+                  <option value="">{t('unassigned')}</option>
                   {staffList.map((s) => <option key={s.id} value={s.id}>{s.display_name || s.role}</option>)}
                 </select>
               </div>
             )}
             <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Fecha *</label>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('dateRequired')}</label>
               <input type="date" value={newAppt.date} onChange={(e) => setNewAppt({...newAppt, date: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">Hora *</label>
+              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('timeRequired')}</label>
               <input type="time" value={newAppt.time} onChange={(e) => setNewAppt({...newAppt, time: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
             </div>
           </div>
           <div className="flex gap-2 justify-end">
-            <button onClick={() => setShowNewAppt(false)} className="px-3 py-1.5 rounded-lg bg-surface-3 text-text-muted text-xs font-semibold">Cancelar</button>
-            <button onClick={handleCreateAppt} disabled={!newAppt.patient_id || !newAppt.date || !newAppt.service_name} className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold disabled:opacity-50">Crear Cita</button>
+            <button onClick={() => setShowNewAppt(false)} className="px-3 py-1.5 rounded-lg bg-surface-3 text-text-muted text-xs font-semibold">{tCommon('cancel')}</button>
+            <button onClick={handleCreateAppt} disabled={!newAppt.patient_id || !newAppt.date || !newAppt.service_name} className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold disabled:opacity-50">{t('createAppointment')}</button>
           </div>
         </div>
       )}
@@ -364,9 +367,9 @@ export default function CalendarioPage() {
       <div className="glass-card overflow-hidden">
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-border">
-          {DAYS_ES.map((d) => (
+          {DAY_KEYS.map((d) => (
             <div key={d} className="text-center text-[11px] font-semibold text-text-muted uppercase tracking-wider py-2.5 border-r border-border last:border-r-0">
-              {d}
+              {t(`days.${d}`)}
             </div>
           ))}
         </div>
@@ -391,9 +394,9 @@ export default function CalendarioPage() {
 
                 <div className="space-y-0.5">
                   {dayAppts.slice(0, viewMode === 'week' ? 20 : 3).map((appt) => {
-                    const cfg = STATUS_CONFIG[appt.status] || STATUS_CONFIG.REQUESTED
+                    const cfg = STATUS_STYLE[appt.status] || STATUS_STYLE.REQUESTED
                     const time = new Date(appt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })
-                    const patientName = appt.patients?.full_name || 'Sin nombre'
+                    const patientName = appt.patients?.full_name || t('noName')
                     const staffName = getStaffName(appt.staff_id)
                     return (
                       <button
@@ -412,7 +415,7 @@ export default function CalendarioPage() {
                     )
                   })}
                   {dayAppts.length > (viewMode === 'week' ? 20 : 3) && (
-                    <div className="text-[9px] text-text-dim px-1">+{dayAppts.length - (viewMode === 'week' ? 20 : 3)} mas</div>
+                    <div className="text-[9px] text-text-dim px-1">{t('more', { count: dayAppts.length - (viewMode === 'week' ? 20 : 3) })}</div>
                   )}
                 </div>
               </div>
@@ -423,10 +426,10 @@ export default function CalendarioPage() {
 
       {/* Status legend */}
       <div className="flex gap-3 flex-wrap justify-center">
-        {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+        {STATUS_KEYS.map((key) => (
           <div key={key} className="flex items-center gap-1.5 text-xs text-text-muted">
-            <div className={`w-2 h-2 rounded-full ${cfg.color.replace('text-', 'bg-')}`} />
-            {cfg.label}
+            <div className={`w-2 h-2 rounded-full ${STATUS_STYLE[key].color.replace('text-', 'bg-')}`} />
+            {t(`statuses.${key}`)}
           </div>
         ))}
       </div>
@@ -437,7 +440,7 @@ export default function CalendarioPage() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => { setSelectedAppt(null); setShowReschedule(false) }} />
           <div className="relative glass-card-elevated w-full max-w-md p-6 space-y-4 animate-fade-up max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-text-primary">Detalle de Cita</h3>
+              <h3 className="text-base font-semibold text-text-primary">{t('appointmentDetail')}</h3>
               <button onClick={() => { setSelectedAppt(null); setShowReschedule(false) }} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
@@ -445,20 +448,20 @@ export default function CalendarioPage() {
 
             {/* Status + No-show badge */}
             {(() => {
-              const cfg = STATUS_CONFIG[selectedAppt.status] || STATUS_CONFIG.REQUESTED
+              const cfg = STATUS_STYLE[selectedAppt.status] || STATUS_STYLE.REQUESTED
               const StatusIcon = cfg.icon
               return (
                 <div className="flex items-center gap-2 flex-wrap">
                   <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${cfg.bg}`}>
                     <StatusIcon size={12} className={cfg.color} />
-                    <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+                    <span className={`text-xs font-semibold ${cfg.color}`}>{t(`statuses.${selectedAppt.status}`)}</span>
                   </div>
                   {selectedMLFeatures?.no_show_probability != null && selectedAppt.status !== 'COMPLETED' && selectedAppt.status !== 'CANCELLED' && (
                     <NoShowBadge probability={selectedMLFeatures.no_show_probability} />
                   )}
                   {selectedAppt.series_id && (
                     <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full border bg-brand-cyan/10 border-brand-cyan/20 text-brand-cyan text-[10px] font-semibold">
-                      <Repeat size={10} /> Serie
+                      <Repeat size={10} /> {t('series')}
                     </div>
                   )}
                 </div>
@@ -466,29 +469,29 @@ export default function CalendarioPage() {
             })()}
 
             <div className="space-y-3">
-              <ApptRow icon={<User size={14} />} label="Paciente" value={selectedAppt.patients?.full_name || 'Sin nombre'} />
-              <ApptRow icon={<CalIcon size={14} />} label="Fecha" value={new Date(selectedAppt.start_time).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} />
-              <ApptRow icon={<Clock size={14} />} label="Hora" value={`${new Date(selectedAppt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}${selectedAppt.end_time ? ` — ${new Date(selectedAppt.end_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''}`} />
-              <ApptRow icon={<Eye size={14} />} label="Servicio" value={selectedAppt.service_name || '—'} />
+              <ApptRow icon={<User size={14} />} label={t('patientRequired').replace(' *', '')} value={selectedAppt.patients?.full_name || t('noName')} />
+              <ApptRow icon={<CalIcon size={14} />} label={tCommon('date')} value={new Date(selectedAppt.start_time).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} />
+              <ApptRow icon={<Clock size={14} />} label={t('timeRequired').replace(' *', '')} value={`${new Date(selectedAppt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}${selectedAppt.end_time ? ` — ${new Date(selectedAppt.end_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''}`} />
+              <ApptRow icon={<Eye size={14} />} label={t('service')} value={selectedAppt.service_name || '—'} />
 
               {/* Staff assignment */}
               <div className="flex items-start gap-3">
                 <span className="text-text-dim mt-0.5"><UserCheck size={14} /></span>
                 <div className="flex-1">
-                  <div className="text-[10px] text-text-dim uppercase">Profesional</div>
+                  <div className="text-[10px] text-text-dim uppercase">{t('staff')}</div>
                   {staffList.length > 0 ? (
                     <select
                       value={selectedAppt.staff_id || ''}
                       onChange={(e) => handleAssignStaff(selectedAppt.id, e.target.value || null)}
                       className="mt-0.5 px-2 py-1 rounded-lg bg-void border border-border text-text-primary text-sm outline-none w-full"
                     >
-                      <option value="">Sin asignar</option>
+                      <option value="">{t('unassigned')}</option>
                       {staffList.map((s) => (
                         <option key={s.id} value={s.id}>{s.display_name || s.role}</option>
                       ))}
                     </select>
                   ) : (
-                    <div className="text-sm text-text-primary">{getStaffName(selectedAppt.staff_id) || 'Sin asignar'}</div>
+                    <div className="text-sm text-text-primary">{getStaffName(selectedAppt.staff_id) || t('unassigned')}</div>
                   )}
                 </div>
               </div>
@@ -498,7 +501,7 @@ export default function CalendarioPage() {
                 <div className="flex items-start gap-3">
                   <span className="text-text-dim mt-0.5"><ArrowRightLeft size={14} /></span>
                   <div>
-                    <div className="text-[10px] text-text-dim uppercase">Hora anterior</div>
+                    <div className="text-[10px] text-text-dim uppercase">{t('previousTime')}</div>
                     <div className="text-sm text-text-muted line-through">
                       {new Date(selectedAppt.previous_start_time).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}
                     </div>
@@ -508,22 +511,22 @@ export default function CalendarioPage() {
             </div>
 
             <div className="pt-2 border-t border-border text-xs text-text-dim">
-              Creada {timeAgo(selectedAppt.created_at)}
+              {t('created', { time: timeAgo(selectedAppt.created_at) })}
             </div>
 
             {/* RESCHEDULE FORM */}
             {showReschedule && (
               <div className="p-3 rounded-lg bg-brand-gold/5 border border-brand-gold/20 space-y-2">
-                <h4 className="text-xs font-semibold text-brand-gold">Reagendar Cita</h4>
+                <h4 className="text-xs font-semibold text-brand-gold">{t('rescheduleTitle')}</h4>
                 <div className="grid grid-cols-2 gap-2">
                   <input type="date" value={rescheduleData.date} onChange={(e) => setRescheduleData({...rescheduleData, date: e.target.value})} className="px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
                   <input type="time" value={rescheduleData.time} onChange={(e) => setRescheduleData({...rescheduleData, time: e.target.value})} className="px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
                 </div>
-                <input type="text" placeholder="Razon (opcional)" value={rescheduleData.reason} onChange={(e) => setRescheduleData({...rescheduleData, reason: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
+                <input type="text" placeholder={t('reasonOptional')} value={rescheduleData.reason} onChange={(e) => setRescheduleData({...rescheduleData, reason: e.target.value})} className="w-full px-2 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
                 <div className="flex gap-2 justify-end">
-                  <button onClick={() => setShowReschedule(false)} className="px-2 py-1 rounded-lg bg-surface-3 text-text-muted text-xs">Cancelar</button>
+                  <button onClick={() => setShowReschedule(false)} className="px-2 py-1 rounded-lg bg-surface-3 text-text-muted text-xs">{tCommon('cancel')}</button>
                   <button onClick={handleReschedule} disabled={!rescheduleData.date || rescheduleLoading} className="px-3 py-1 rounded-lg bg-brand-gold/15 text-brand-gold text-xs font-semibold disabled:opacity-50">
-                    {rescheduleLoading ? 'Reagendando...' : 'Confirmar'}
+                    {rescheduleLoading ? t('rescheduling') : tCommon('confirm')}
                   </button>
                 </div>
               </div>
@@ -536,25 +539,25 @@ export default function CalendarioPage() {
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'COMPLETED'); setSelectedAppt(null); loadAppointments() }}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs font-semibold hover:bg-status-success/20 transition-colors"
                 >
-                  <CheckCircle size={12} /> Completada
+                  <CheckCircle size={12} /> {t('completed')}
                 </button>
                 <button
                   onClick={() => { setShowReschedule(!showReschedule); setRescheduleData({ date: '', time: '09:00', reason: '' }) }}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-xs font-semibold hover:bg-brand-gold/20 transition-colors"
                 >
-                  <CalIcon size={12} /> Reagendar
+                  <CalIcon size={12} /> {t('reschedule')}
                 </button>
                 <button
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'NO_SHOW'); setSelectedAppt(null); loadAppointments() }}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-status-warning text-xs font-semibold hover:bg-status-warning/20 transition-colors"
                 >
-                  <AlertTriangle size={12} /> No Asistio
+                  <AlertTriangle size={12} /> {t('noShowAction')}
                 </button>
                 <button
-                  onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'CANCELLED', 'Cancelado desde dashboard'); setSelectedAppt(null); loadAppointments() }}
+                  onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'CANCELLED', t('cancelledFromDashboard')); setSelectedAppt(null); loadAppointments() }}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:bg-status-danger/20 transition-colors"
                 >
-                  <XCircle size={12} /> Cancelar
+                  <XCircle size={12} /> {t('cancelAction')}
                 </button>
               </div>
             )}
@@ -570,6 +573,7 @@ export default function CalendarioPage() {
 // ============================================================
 
 function NoShowBadge({ probability }: { probability: number }) {
+  const t = useTranslations('calendar')
   const pct = Math.round(probability * 100)
   const color = probability > 0.6
     ? 'text-status-danger bg-status-danger/10 border-status-danger/20'
@@ -577,15 +581,15 @@ function NoShowBadge({ probability }: { probability: number }) {
       ? 'text-status-warning bg-status-warning/10 border-status-warning/20'
       : 'text-status-success bg-status-success/10 border-status-success/20'
   const label = probability > 0.6
-    ? 'Alto riesgo'
+    ? t('highRisk')
     : probability > 0.3
-      ? 'Riesgo medio'
-      : 'Bajo riesgo'
+      ? t('mediumRisk')
+      : t('lowRisk')
 
   return (
     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[10px] font-semibold ${color}`}>
       <TrendingDown size={10} />
-      No-show: {label} ({pct}%)
+      {t('noShowRisk')}: {label} ({pct}%)
     </div>
   )
 }

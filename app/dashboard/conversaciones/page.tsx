@@ -9,6 +9,7 @@ import type { Patient } from '@/types'
 import { ChatInput } from '@/components/chat-input'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useTranslations } from 'next-intl'
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
@@ -20,12 +21,12 @@ import {
 // CONSTANTS & CONFIG
 // ============================================================
 
-const PLATFORM_CONFIG: Record<string, { label: string; icon: typeof MessageCircle; color: string; bg: string }> = {
-  WHATSAPP:   { label: 'WhatsApp',  icon: MessageCircle, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
-  INSTAGRAM:  { label: 'Instagram', icon: Instagram,     color: 'text-brand-purple',   bg: 'bg-brand-purple/10 border-brand-purple/20' },
-  VOICE_CALL: { label: 'Llamada',   icon: PhoneCall,     color: 'text-brand-cyan',     bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
-  MESSENGER:  { label: 'Messenger', icon: MessageCircle, color: 'text-status-info',    bg: 'bg-status-info/10 border-status-info/20' },
-  WEB:        { label: 'Web',       icon: Hash,          color: 'text-status-warning',  bg: 'bg-status-warning/10 border-status-warning/20' },
+const PLATFORM_STYLE: Record<string, { icon: typeof MessageCircle; color: string; bg: string }> = {
+  WHATSAPP:   { icon: MessageCircle, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
+  INSTAGRAM:  { icon: Instagram,     color: 'text-brand-purple',   bg: 'bg-brand-purple/10 border-brand-purple/20' },
+  VOICE_CALL: { icon: PhoneCall,     color: 'text-brand-cyan',     bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
+  MESSENGER:  { icon: MessageCircle, color: 'text-status-info',    bg: 'bg-status-info/10 border-status-info/20' },
+  WEB:        { icon: Hash,          color: 'text-status-warning',  bg: 'bg-status-warning/10 border-status-warning/20' },
 }
 
 const SENTIMENT_COLORS: Record<string, string> = {
@@ -100,6 +101,8 @@ function groupByPatient(interactions: InteractionLog[], patientsMap: Map<string,
 
 export default function ConversacionesPage() {
   const { orgId, branchId } = useOrg()
+  const t = useTranslations('conversations')
+  const tCommon = useTranslations('common')
 
   // Data state
   const [interactions, setInteractions] = useState<InteractionLog[]>([])
@@ -142,7 +145,7 @@ export default function ConversacionesPage() {
         setInteractions(interactionsData.value)
       } else {
         setInteractions([])
-        setError('No se pudieron cargar las conversaciones. El endpoint puede no estar disponible.')
+        setError(t('loadError'))
       }
 
       if (patientsData.status === 'fulfilled') {
@@ -150,7 +153,7 @@ export default function ConversacionesPage() {
         setPatients(Array.isArray(result) ? result : (result.patients || []))
       }
     } catch {
-      setError('Error al cargar los datos.')
+      setError(t('loadDataError'))
     }
     setLoading(false)
   }, [orgId, branchId, platformFilter, dateFrom, dateTo])
@@ -223,9 +226,9 @@ export default function ConversacionesPage() {
       {/* HEADER */}
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">Conversaciones</h2>
+          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
           <p className="text-text-dim text-xs mt-0.5">
-            {uniquePatients} conversaciones{totalMessages > 0 && <> &middot; {totalMessages} mensajes</>}
+            {t('conversationCount', { count: uniquePatients })}{totalMessages > 0 && <> &middot; {t('messageCount', { count: totalMessages })}</>}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -236,13 +239,13 @@ export default function ConversacionesPage() {
                 ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
                 : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
             }`}
-            aria-label="Filtros"
+            aria-label={tCommon('filter')}
           >
             <Filter size={14} />
           </button>
           <button
             onClick={loadData}
-            aria-label="Actualizar"
+            aria-label={tCommon('refresh')}
             className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
@@ -256,7 +259,7 @@ export default function ConversacionesPage() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Platform filter */}
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Canal:</span>
+              <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">{t('channel')}:</span>
               <div className="flex gap-1">
                 <button
                   onClick={() => setPlatformFilter('')}
@@ -266,9 +269,9 @@ export default function ConversacionesPage() {
                       : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
                   }`}
                 >
-                  Todos
+                  {tCommon('all')}
                 </button>
-                {Object.entries(PLATFORM_CONFIG).map(([key, cfg]) => {
+                {Object.entries(PLATFORM_STYLE).map(([key, cfg]) => {
                   const Icon = cfg.icon
                   return (
                     <button
@@ -281,7 +284,7 @@ export default function ConversacionesPage() {
                       }`}
                     >
                       <Icon size={11} />
-                      <span className="hidden sm:inline">{cfg.label}</span>
+                      <span className="hidden sm:inline">{t(`platforms.${key}`)}</span>
                     </button>
                   )
                 })}
@@ -290,14 +293,14 @@ export default function ConversacionesPage() {
 
             {/* Date range */}
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Desde:</span>
+              <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">{t('since')}:</span>
               <input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
                 className="bg-surface-3 border border-border rounded-lg px-2 py-1 text-[11px] text-text-muted focus:outline-none focus:border-brand-purple/40"
               />
-              <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Hasta:</span>
+              <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">{t('until')}:</span>
               <input
                 type="date"
                 value={dateTo}
@@ -313,7 +316,7 @@ export default function ConversacionesPage() {
                 className="text-[10px] text-status-danger/70 hover:text-status-danger flex items-center gap-1 transition-colors"
               >
                 <X size={10} />
-                Limpiar
+                {t('clearFilters')}
               </button>
             )}
           </div>
@@ -336,7 +339,7 @@ export default function ConversacionesPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar por nombre o telefono..."
+                placeholder={t('searchByNameOrPhone')}
                 className="w-full pl-9 pr-3 py-2 bg-surface-3 border border-border rounded-xl text-xs text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
               />
               {search && (
@@ -369,17 +372,17 @@ export default function ConversacionesPage() {
             ) : error && filteredThreads.length === 0 ? (
               <EmptyState
                 icon={<MessageSquare size={32} className="text-text-dim" />}
-                title="Sin datos disponibles"
+                title={t('noDataAvailable')}
                 description={error}
               />
             ) : filteredThreads.length === 0 ? (
               <EmptyState
                 icon={<MessageSquare size={32} className="text-text-dim" />}
-                title={search ? 'Sin resultados' : 'Sin conversaciones'}
+                title={search ? t('noResults') : t('noConversations')}
                 description={
                   search
-                    ? `No se encontraron conversaciones para "${search}"`
-                    : 'Cuando SofIA reciba mensajes, apareceran aqui.'
+                    ? t('noResultsFor', { query: search })
+                    : t('whenSofiaReceives')
                 }
               />
             ) : (
@@ -414,9 +417,9 @@ export default function ConversacionesPage() {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-purple/10 to-brand-cyan/10 border border-brand-purple/10 flex items-center justify-center mx-auto mb-4">
                   <MessageSquare size={28} className="text-brand-purple/40" />
                 </div>
-                <p className="text-text-muted text-sm font-medium">Selecciona una conversacion</p>
+                <p className="text-text-muted text-sm font-medium">{t('selectConversation')}</p>
                 <p className="text-text-dim text-xs mt-1">
-                  Elige un hilo del panel izquierdo para ver los mensajes
+                  {t('selectThreadHint')}
                 </p>
               </div>
             </div>
@@ -440,7 +443,8 @@ function ThreadCard({
   isSelected: boolean
   onSelect: () => void
 }) {
-  const platformCfg = PLATFORM_CONFIG[thread.channel] || PLATFORM_CONFIG.WHATSAPP
+  const t = useTranslations('conversations')
+  const platformCfg = PLATFORM_STYLE[thread.channel] || PLATFORM_STYLE.WHATSAPP
   const PlatformIcon = platformCfg.icon
   const sentimentColor = SENTIMENT_COLORS[thread.sentimentLabel] || SENTIMENT_COLORS.NEUTRAL
   const displayName = thread.patientName || thread.patientPhone
@@ -449,7 +453,7 @@ function ThreadCard({
   const preview =
     thread.lastMessage.length > 65
       ? thread.lastMessage.slice(0, 65) + '...'
-      : thread.lastMessage || 'Sin mensajes'
+      : thread.lastMessage || t('noMessages')
 
   let timeLabel: string
   try {
@@ -482,7 +486,7 @@ function ThreadCard({
           {/* Sentiment dot */}
           <div
             className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-surface-2 ${sentimentColor}`}
-            title={`Sentimiento: ${thread.sentimentLabel.toLowerCase()}`}
+            title={`${t('sentimentLabel')}: ${thread.sentimentLabel.toLowerCase()}`}
           />
         </div>
 
@@ -506,7 +510,7 @@ function ThreadCard({
             {/* Platform badge */}
             <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold border ${platformCfg.bg} ${platformCfg.color}`}>
               <PlatformIcon size={9} />
-              {platformCfg.label}
+              {t(`platforms.${thread.channel}`)}
             </span>
             {/* Message count */}
             <span className="text-[9px] text-text-dim font-mono">
@@ -531,8 +535,9 @@ function ConversationDetail({
   onBack: () => void
 }) {
   const { orgId, role } = useOrg()
+  const t = useTranslations('conversations')
   const scrollRef = useRef<HTMLDivElement>(null)
-  const platformCfg = PLATFORM_CONFIG[thread.channel] || PLATFORM_CONFIG.WHATSAPP
+  const platformCfg = PLATFORM_STYLE[thread.channel] || PLATFORM_STYLE.WHATSAPP
   const PlatformIcon = platformCfg.icon
 
   // Takeover state
@@ -615,7 +620,7 @@ function ConversationDetail({
         <button
           onClick={onBack}
           className="lg:hidden w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
-          aria-label="Volver"
+          aria-label="Back"
         >
           <ArrowLeft size={14} />
         </button>
@@ -629,14 +634,14 @@ function ConversationDetail({
             <span className="text-sm font-semibold text-text-primary truncate">{displayName}</span>
             <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold border ${platformCfg.bg} ${platformCfg.color}`}>
               <PlatformIcon size={9} />
-              {platformCfg.label}
+              {t(`platforms.${thread.channel}`)}
             </span>
           </div>
           <div className="flex items-center gap-2 text-[10px] text-text-dim">
             <Phone size={9} />
             <span>{thread.patientPhone}</span>
             <span>&middot;</span>
-            <span>{thread.messageCount} mensajes</span>
+            <span>{t('messageCount', { count: thread.messageCount })}</span>
           </div>
         </div>
 
@@ -644,7 +649,7 @@ function ConversationDetail({
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-surface-3 border border-border">
           <div className={`w-2 h-2 rounded-full ${SENTIMENT_COLORS[thread.sentimentLabel] || 'bg-status-warning'}`} />
           <span className="text-[10px] text-text-muted font-medium capitalize">
-            {thread.sentimentLabel === 'POSITIVE' ? 'Positivo' : thread.sentimentLabel === 'NEGATIVE' ? 'Negativo' : 'Neutral'}
+            {thread.sentimentLabel === 'POSITIVE' ? t('sentiment.positive') : thread.sentimentLabel === 'NEGATIVE' ? t('sentiment.negative') : t('sentiment.neutral')}
           </span>
         </div>
 
@@ -664,7 +669,7 @@ function ConversationDetail({
             ) : (
               <Shield size={10} />
             )}
-            {isTakeover ? 'Devolver a SofIA' : 'Tomar control'}
+            {isTakeover ? t('returnToSofia') : t('takeControl')}
           </button>
         )}
       </div>
@@ -699,7 +704,7 @@ function ConversationDetail({
 
         {thread.messages.length === 0 && (
           <div className="flex-1 flex items-center justify-center py-12">
-            <p className="text-text-dim text-xs">Sin mensajes en esta conversacion.</p>
+            <p className="text-text-dim text-xs">{t('noMessages')}</p>
           </div>
         )}
       </div>
@@ -710,14 +715,14 @@ function ConversationDetail({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-[10px] text-status-warning">
               <Shield size={10} />
-              <span className="font-semibold">Modo doctor — Los mensajes se envian directamente al paciente</span>
+              <span className="font-semibold">{t('doctorMode')}</span>
             </div>
-            <ChatInput onSend={handleSendMessage} placeholder="Escribe como doctor..." />
+            <ChatInput onSend={handleSendMessage} placeholder={t('writeAsDoctor')} />
           </div>
         ) : (
           <div className="flex items-center gap-2 text-[10px] text-text-dim">
             <Bot size={12} className="text-brand-purple/50" />
-            <span>Las respuestas de SofIA se generan automaticamente via IA.</span>
+            <span>{t('aiAutoResponses')}</span>
           </div>
         )}
       </div>
@@ -734,6 +739,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
   orgId: string
   onAnnotationChange?: (id: string, annotation: InteractionLog['annotation']) => void
 }) {
+  const t = useTranslations('conversations')
   const isOutbound = message.direction === 'OUTBOUND'
   const sentimentLabel = getSentimentLabel(message.sentiment_score, message.sentiment_label)
   const [annotating, setAnnotating] = useState(false)
@@ -789,7 +795,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             <User size={11} className="text-text-dim" />
           )}
           <span className={`text-[10px] font-semibold ${isOutbound ? 'text-brand-purple' : 'text-text-dim'}`}>
-            {isOutbound ? 'SofIA' : 'Paciente'}
+            {isOutbound ? 'SofIA' : t('role.patient')}
           </span>
         </div>
 
@@ -797,7 +803,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
         <p className={`text-xs leading-relaxed whitespace-pre-wrap break-words ${
           isOutbound ? 'text-text-secondary' : 'text-text-primary'
         }`}>
-          {message.message_content || '(sin contenido)'}
+          {message.message_content || t('noContent')}
         </p>
 
         {/* Metadata row */}
@@ -848,7 +854,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
                     ? 'bg-status-success/15 text-status-success'
                     : 'text-text-dim hover:text-status-success hover:bg-status-success/10'
                 } disabled:opacity-40`}
-                title="Buena respuesta"
+                title={t('goodResponse')}
               >
                 <ThumbsUp size={10} className={currentRating === 'thumbs_up' ? 'fill-current' : ''} />
               </button>
@@ -860,7 +866,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
                     ? 'bg-status-danger/15 text-status-danger'
                     : 'text-text-dim hover:text-status-danger hover:bg-status-danger/10'
                 } disabled:opacity-40`}
-                title="Mala respuesta"
+                title={t('badResponse')}
               >
                 <ThumbsDown size={10} className={currentRating === 'thumbs_down' ? 'fill-current' : ''} />
               </button>

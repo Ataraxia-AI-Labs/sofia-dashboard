@@ -23,29 +23,30 @@ import {
   X,
   Loader2,
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('es-CO', {
+  return new Date(date).toLocaleDateString(undefined, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
   })
 }
 
-const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
-  ACTIVE: { label: 'Activa', cls: 'bg-status-success/15 text-status-success' },
-  PAST_DUE: { label: 'Pago pendiente', cls: 'bg-status-warning/15 text-status-warning' },
-  GRACE_PERIOD: { label: 'Periodo de gracia', cls: 'bg-status-danger/15 text-status-danger' },
-  CANCELLED: { label: 'Cancelada', cls: 'bg-text-dim/15 text-text-dim' },
-  EXPIRED: { label: 'Expirada', cls: 'bg-text-dim/15 text-text-dim' },
+const STATUS_STYLE: Record<string, string> = {
+  ACTIVE: 'bg-status-success/15 text-status-success',
+  PAST_DUE: 'bg-status-warning/15 text-status-warning',
+  GRACE_PERIOD: 'bg-status-danger/15 text-status-danger',
+  CANCELLED: 'bg-text-dim/15 text-text-dim',
+  EXPIRED: 'bg-text-dim/15 text-text-dim',
 }
 
-const INVOICE_BADGE: Record<string, { label: string; cls: string }> = {
-  PAID: { label: 'Pagada', cls: 'bg-status-success/15 text-status-success' },
-  PENDING: { label: 'Pendiente', cls: 'bg-status-warning/15 text-status-warning' },
-  FAILED: { label: 'Fallida', cls: 'bg-status-danger/15 text-status-danger' },
-  REFUNDED: { label: 'Reembolsada', cls: 'bg-status-info/15 text-status-info' },
-  VOID: { label: 'Anulada', cls: 'bg-text-dim/15 text-text-dim' },
+const INVOICE_STYLE: Record<string, string> = {
+  PAID: 'bg-status-success/15 text-status-success',
+  PENDING: 'bg-status-warning/15 text-status-warning',
+  FAILED: 'bg-status-danger/15 text-status-danger',
+  REFUNDED: 'bg-status-info/15 text-status-info',
+  VOID: 'bg-text-dim/15 text-text-dim',
 }
 
 /* ── Component ── */
@@ -53,6 +54,8 @@ const INVOICE_BADGE: Record<string, { label: string; cls: string }> = {
 export default function FacturacionPage() {
   const { orgId } = useOrg()
   const router = useRouter()
+  const t = useTranslations('billing')
+  const tCommon = useTranslations('common')
 
   const [sub, setSub] = useState<Subscription | null>(null)
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -96,7 +99,7 @@ export default function FacturacionPage() {
       setShowCardModal(false)
       load()
     } else {
-      setActionError(res.error || 'Error actualizando metodo de pago')
+      setActionError(res.error || t('updatePaymentError'))
     }
   }
 
@@ -108,7 +111,7 @@ export default function FacturacionPage() {
       setShowCancelModal(false)
       load()
     } else {
-      setActionError(res.error || 'Error cancelando suscripcion')
+      setActionError(res.error || t('cancelError'))
     }
     setCancelling(false)
   }
@@ -139,16 +142,16 @@ export default function FacturacionPage() {
             <CreditCard size={28} className="text-brand-purple" />
           </div>
           <h3 className="text-sm font-semibold text-text-primary mb-1">
-            No tienes una suscripcion activa
+            {t('noSubscription')}
           </h3>
           <p className="text-xs text-text-dim mb-5">
-            Elige un plan para desbloquear todas las funcionalidades de SofIA.
+            {t('noSubscriptionDesc')}
           </p>
           <button
             onClick={() => router.push('/dashboard/planes')}
             className="px-4 py-2 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors inline-flex items-center gap-1.5"
           >
-            Ver planes <ArrowRight size={14} />
+            {t('viewPlans')} <ArrowRight size={14} />
           </button>
         </div>
       </div>
@@ -157,11 +160,12 @@ export default function FacturacionPage() {
 
   /* ── Derived values ── */
 
-  const badge = STATUS_BADGE[sub.status] || STATUS_BADGE.ACTIVE
-  const billingLabel = sub.billing_cycle === 'ANNUAL' ? 'anual' : 'mensual'
+  const badgeCls = STATUS_STYLE[sub.status] || STATUS_STYLE.ACTIVE
+  const badgeLabel = t(`subStatuses.${sub.status}`)
+  const billingLabel = sub.billing_cycle === 'ANNUAL' ? t('annual') : t('monthly')
   const paymentLabel = sub.payment_method_brand && sub.payment_method_last_four
     ? `${sub.payment_method_brand} ****${sub.payment_method_last_four}`
-    : 'No registrado'
+    : t('notRegistered')
   const isStarter = sub.plan === 'STARTER'
   const usagePercent = usage?.percent ?? 0
   const usageWarning = usagePercent > 80
@@ -170,32 +174,32 @@ export default function FacturacionPage() {
     <div className="max-w-[900px] mx-auto space-y-6">
       {/* ── Section 1: Plan actual ── */}
       <div className="glass-card p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4">Plan actual</h3>
+        <h3 className="text-sm font-semibold text-text-primary mb-4">{t('currentPlan')}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div>
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Plan</p>
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{t('plan')}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-sm font-semibold text-text-primary">{sub.plan}</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${badge.cls}`}>
-                {badge.label}
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${badgeCls}`}>
+                {badgeLabel}
               </span>
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Precio</p>
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{t('price')}</p>
             <p className="text-sm font-semibold text-text-primary mt-1">
               {formatCOP(sub.amount_cop)} <span className="text-text-dim font-normal">/ {billingLabel}</span>
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Proximo cobro</p>
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{t('nextCharge')}</p>
             <p className="text-sm font-semibold text-text-primary mt-1 flex items-center gap-1.5">
               <CalendarDays size={13} className="text-text-dim" />
               {formatDate(sub.next_billing_date)}
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Metodo de pago</p>
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{t('paymentMethod')}</p>
             <p className="text-sm font-semibold text-text-primary mt-1 flex items-center gap-1.5">
               <CreditCard size={13} className="text-text-dim" />
               {paymentLabel}
@@ -206,7 +210,7 @@ export default function FacturacionPage() {
         {sub.cancel_at_period_end && (
           <div className="mt-4 px-3 py-2 rounded-xl bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning flex items-center gap-2">
             <AlertTriangle size={14} />
-            Se cancelara el {formatDate(sub.current_period_end)}
+            {t('cancelAt', { date: formatDate(sub.current_period_end) })}
           </div>
         )}
       </div>
@@ -214,12 +218,11 @@ export default function FacturacionPage() {
       {/* ── Section 2: Uso del mes (STARTER only) ── */}
       {isStarter && usage && (
         <div className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4">Uso del mes</h3>
+          <h3 className="text-sm font-semibold text-text-primary mb-4">{t('monthUsage')}</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs text-text-muted">
-                {usage.message_count.toLocaleString('es-CO')} de{' '}
-                {usage.message_limit?.toLocaleString('es-CO') ?? 'ilimitados'} mensajes usados
+                {t('messagesUsed', { used: usage.message_count.toLocaleString(), limit: usage.message_limit?.toLocaleString() ?? '∞' })}
               </span>
               <span className={`text-xs font-semibold ${usageWarning ? 'text-status-warning' : 'text-text-dim'}`}>
                 {usagePercent}%
@@ -236,7 +239,7 @@ export default function FacturacionPage() {
             {usageWarning && (
               <p className="text-[10px] text-status-warning flex items-center gap-1">
                 <AlertTriangle size={11} />
-                Estas cerca del limite. Considera actualizar tu plan.
+                {t('nearLimit')}
               </p>
             )}
           </div>
@@ -245,7 +248,7 @@ export default function FacturacionPage() {
 
       {/* ── Section 3: Actions ── */}
       <div className="glass-card p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4">Acciones</h3>
+        <h3 className="text-sm font-semibold text-text-primary mb-4">{t('actions')}</h3>
         {actionError && (
           <div className="mb-3 px-3 py-2 rounded-xl bg-status-danger/10 border border-status-danger/20 text-xs text-status-danger">
             {actionError}
@@ -256,20 +259,20 @@ export default function FacturacionPage() {
             onClick={() => router.push('/dashboard/planes')}
             className="px-4 py-2 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors"
           >
-            Cambiar plan
+            {t('changePlan')}
           </button>
           <button
             onClick={() => { setActionError(null); setShowCardModal(true) }}
             className="px-4 py-2 rounded-xl bg-surface-3 border border-border text-text-primary text-xs font-semibold hover:border-brand-purple/30 transition-colors"
           >
-            Actualizar tarjeta
+            {t('updateCard')}
           </button>
           {!sub.cancel_at_period_end && sub.status !== 'CANCELLED' && (
             <button
               onClick={() => { setActionError(null); setShowCancelModal(true) }}
               className="px-4 py-2 rounded-xl bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:bg-status-danger/20 transition-colors"
             >
-              Cancelar suscripcion
+              {t('cancelSubscription')}
             </button>
           )}
         </div>
@@ -279,15 +282,15 @@ export default function FacturacionPage() {
       <div className="glass-card p-5">
         <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
           <Receipt size={15} className="text-text-dim" />
-          Historial de facturas
+          {t('invoiceHistory')}
         </h3>
         {invoices.length === 0 ? (
-          <p className="text-xs text-text-dim py-4 text-center">No hay facturas registradas.</p>
+          <p className="text-xs text-text-dim py-4 text-center">{t('noInvoices')}</p>
         ) : (
           <div>
             {/* Header */}
             <div className="grid grid-cols-4 gap-3 pb-2 border-b border-border">
-              {['Fecha', 'Monto', 'Estado', 'Periodo'].map(h => (
+              {[t('invoiceDate'), t('invoiceAmount'), t('invoiceStatus'), t('invoicePeriod')].map(h => (
                 <span key={h} className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
                   {h}
                 </span>
@@ -295,14 +298,14 @@ export default function FacturacionPage() {
             </div>
             {/* Rows */}
             {invoices.map(inv => {
-              const invBadge = INVOICE_BADGE[inv.status] || INVOICE_BADGE.PENDING
+              const invCls = INVOICE_STYLE[inv.status] || INVOICE_STYLE.PENDING
               return (
                 <div key={inv.id} className="grid grid-cols-4 gap-3 py-2.5 border-b border-border last:border-0 items-center">
                   <span className="text-xs text-text-primary">{formatDate(inv.created_at)}</span>
                   <span className="text-xs font-semibold text-text-primary">{formatCOP(inv.amount_cop)}</span>
                   <span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${invBadge.cls}`}>
-                      {invBadge.label}
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${invCls}`}>
+                      {t(`invoiceStatuses.${inv.status}`)}
                     </span>
                   </span>
                   <span className="text-xs text-text-dim">
@@ -322,7 +325,7 @@ export default function FacturacionPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md animate-fade-in">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-text-primary">Actualizar tarjeta</h3>
+              <h3 className="text-sm font-semibold text-text-primary">{t('updateCard')}</h3>
               <button
                 onClick={() => setShowCardModal(false)}
                 className="w-7 h-7 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary transition-colors"
@@ -348,12 +351,10 @@ export default function FacturacionPage() {
               <div className="w-10 h-10 rounded-xl bg-status-danger/10 border border-status-danger/20 flex items-center justify-center">
                 <AlertTriangle size={20} className="text-status-danger" />
               </div>
-              <h3 className="text-sm font-semibold text-text-primary">Estas seguro?</h3>
+              <h3 className="text-sm font-semibold text-text-primary">{t('areYouSure')}</h3>
             </div>
             <p className="text-xs text-text-muted leading-relaxed mb-5">
-              Tu suscripcion permanecera activa hasta el final del periodo actual
-              ({formatDate(sub.current_period_end)}). Despues de esa fecha perderas acceso
-              a las funcionalidades del plan {sub.plan}.
+              {t('cancelDesc', { date: formatDate(sub.current_period_end), plan: sub.plan })}
             </p>
             {actionError && (
               <div className="mb-3 px-3 py-2 rounded-xl bg-status-danger/10 border border-status-danger/20 text-xs text-status-danger">
@@ -365,7 +366,7 @@ export default function FacturacionPage() {
                 onClick={() => setShowCancelModal(false)}
                 className="px-4 py-2 rounded-xl bg-surface-3 border border-border text-text-primary text-xs font-semibold hover:border-brand-purple/30 transition-colors"
               >
-                Volver
+                {tCommon('back')}
               </button>
               <button
                 onClick={handleCancel}
@@ -373,7 +374,7 @@ export default function FacturacionPage() {
                 className="px-4 py-2 rounded-xl bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:bg-status-danger/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
               >
                 {cancelling && <Loader2 size={13} className="animate-spin" />}
-                Confirmar cancelacion
+                {t('confirmCancel')}
               </button>
             </div>
           </div>
