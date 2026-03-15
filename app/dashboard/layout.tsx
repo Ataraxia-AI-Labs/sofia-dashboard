@@ -15,6 +15,8 @@ import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { SofiaLogo } from '@/components/sofia-logo'
+import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
+import { ServiceWorkerRegister } from '@/components/service-worker-register'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
 import { useTranslations } from 'next-intl'
@@ -675,6 +677,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </main>
         </div>
       </div>
+
+      {/* PWA */}
+      <ServiceWorkerRegister />
+      <PWAInstallPrompt />
     </div>
   )
 }
