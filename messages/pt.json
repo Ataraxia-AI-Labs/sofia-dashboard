@@ -317,6 +317,10 @@
     "pendingAction": "Pendentes de acao",
     "converted": "Convertidas",
     "estimatedValue": "Valor estimado total",
+    "views": {
+      "list": "Lista",
+      "scoring": "Lead Scoring"
+    },
     "types": {
       "HOT_LEAD": "Lead Quente",
       "UPSELL": "Upsell",
@@ -333,6 +337,67 @@
       "CONVERTED": "Convertida",
       "EXPIRED": "Expirada",
       "DISMISSED": "Descartada"
+    }
+  },
+  "leadScoring": {
+    "title": "Lead Scoring",
+    "scoreAll": "Pontuar todos",
+    "scoring": "Pontuando...",
+    "distribution": "Distribuicao",
+    "leadsScored": "leads pontuados",
+    "topLeads": "Top 10 Leads Quentes",
+    "noLeadsScored": "Sem leads pontuados",
+    "noLeadsScoredHint": "Clique em \"Pontuar todos\" para calcular o score de cada paciente.",
+    "avgScore": "Score medio",
+    "topConvertingFeatures": "Caracteristicas com maior conversao",
+    "unknownPatient": "Paciente desconhecido",
+    "classifications": {
+      "HOT": "Quente",
+      "WARM": "Morno",
+      "COLD": "Frio",
+      "DEAD": "Inativo"
+    },
+    "breakdown": {
+      "engagement": "Engajamento",
+      "intent": "Intencao",
+      "behavioral": "Comportamento",
+      "negativeSignals": "Sinais negativos"
+    },
+    "rescore": "Re-pontuar"
+  },
+  "models": {
+    "trainingReadiness": "Preparacao para Treinamento",
+    "readyForTraining": "Pronto para treinar",
+    "notEnoughData": "Coletando dados",
+    "samplesReady": "amostras prontas",
+    "minimum": "Minimo",
+    "readyDescription": "Voce tem dados de treinamento suficientes. Pode iniciar um fine-tune pela API.",
+    "notReadyDescription": "Precisa de mais {remaining} amostras para alcancar o minimo necessario.",
+    "registeredModels": "Modelos Registrados",
+    "noModels": "Nenhum modelo treinado ainda",
+    "noModelsHint": "GPT-4o e o cerebro temporario. Acumule dados para treinar a SofIA.",
+    "evaluate": "Avaliar",
+    "deploy": "Implantar",
+    "baseModel": "Modelo base",
+    "trainingSamples": "Amostras",
+    "trainingLoss": "Loss",
+    "createdAt": "Criado",
+    "evaluationResults": "Resultados da Avaliacao",
+    "similarity": "Similaridade",
+    "tokenSavings": "Economia tokens",
+    "responseTime": "Tempo resp.",
+    "toneConsistency": "Consistencia tom",
+    "overallScore": "Score geral",
+    "compareModels": "Comparar Modelos",
+    "modelA": "Modelo A",
+    "modelB": "Modelo B",
+    "selectModel": "Selecionar modelo...",
+    "compare": "Comparar",
+    "status": {
+      "TRAINING": "Treinando",
+      "COMPLETED": "Concluido",
+      "DEPLOYED": "Implantado",
+      "FAILED": "Falhou"
     }
   },
   "datalake": {

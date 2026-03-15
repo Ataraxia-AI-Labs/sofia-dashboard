@@ -660,3 +660,67 @@ export interface InteractionLog {
   // Joined from patients table (if backend returns it)
   patients?: { full_name: string; phone: string }
 }
+
+// ============================================================
+// FINE-TUNING MODELS (P4-01)
+// ============================================================
+
+export type ModelStatus = 'TRAINING' | 'COMPLETED' | 'DEPLOYED' | 'FAILED'
+
+export interface FineTuneModel {
+  id: string
+  organization_id: string
+  model_name: string
+  base_model: string
+  status: ModelStatus
+  training_samples: number
+  training_loss?: number | null
+  created_at: string
+  deployed_at?: string | null
+}
+
+export interface ModelEvaluation {
+  id: string
+  model_id: string
+  similarity_score: number
+  token_savings_pct: number
+  response_time_ms: number
+  tone_consistency: number
+  overall_score: number
+  created_at: string
+}
+
+export interface ModelComparison {
+  model_a: ModelEvaluation
+  model_b: ModelEvaluation
+}
+
+// ============================================================
+// LEAD SCORING (P4-02)
+// ============================================================
+
+export type LeadClassification = 'HOT' | 'WARM' | 'COLD' | 'DEAD'
+
+export interface LeadScore {
+  patient_id: string
+  score: number
+  classification: LeadClassification
+  engagement_pct: number
+  intent_pct: number
+  behavioral_pct: number
+  negative_signals: number
+  scored_at: string
+  patients?: { full_name: string; phone: string }
+}
+
+export interface LeadInsights {
+  total_scored: number
+  distribution: Record<LeadClassification, number>
+  top_converting_features: string[]
+  avg_score: number
+}
+
+export interface LeadScoreAllResult {
+  scored: number
+  message: string
+}

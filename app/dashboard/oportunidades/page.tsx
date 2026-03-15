@@ -8,8 +8,18 @@ import type { Opportunity } from '@/types'
 import {
   Target, DollarSign, TrendingUp, Clock, User, Phone,
   RefreshCw, Check, Zap, AlertTriangle,
-  Heart, ArrowUpRight, UserPlus, ShoppingBag, Flame, RotateCcw
+  Heart, ArrowUpRight, UserPlus, ShoppingBag, Flame, RotateCcw,
+  BarChart3
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { LeadScoreBadge } from '@/components/lead-score-badge'
+import { getLeadScores } from '@/lib/api/leads'
+import type { LeadScore } from '@/types'
+
+const LeadScoringPanel = dynamic(() => import('./lead-scoring-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
 
 export default function OportunidadesPage() {
   const { orgId, branchId } = useOrg()
@@ -35,15 +45,26 @@ export default function OportunidadesPage() {
     DISMISSED: { label: t('statuses.DISMISSED'), color: 'text-text-dim' },
   }
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
+  const [leadScores, setLeadScores] = useState<Record<string, LeadScore>>({})
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  const [activeView, setActiveView] = useState<'list' | 'scoring'>('list')
 
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await fetchOpportunities(orgId, statusFilter || undefined, branchId)
+      const [data, scores] = await Promise.all([
+        fetchOpportunities(orgId, statusFilter || undefined, branchId),
+        getLeadScores(orgId),
+      ])
       setOpportunities(data as unknown as Opportunity[])
+      // Index lead scores by patient_id for fast lookup
+      const scoreMap: Record<string, LeadScore> = {}
+      for (const s of scores) {
+        scoreMap[s.patient_id] = s
+      }
+      setLeadScores(scoreMap)
     } catch {
       // Opportunities load failed — UI will show empty state
     }
@@ -88,9 +109,30 @@ export default function OportunidadesPage() {
           <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
           <p className="text-text-dim text-xs mt-0.5">{t('subtitle')}</p>
         </div>
-        <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
+            <button
+              onClick={() => setActiveView('list')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              {t('views.list')}
+            </button>
+            <button
+              onClick={() => setActiveView('scoring')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'scoring' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <BarChart3 size={11} />
+              {t('views.scoring')}
+            </button>
+          </div>
+          <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
       </div>
 
       {/* SUMMARY CARDS */}
@@ -127,6 +169,14 @@ export default function OportunidadesPage() {
         />
       </div>
 
+      {/* SCORING VIEW */}
+      {activeView === 'scoring' && (
+        <LeadScoringPanel orgId={orgId} />
+      )}
+
+      {/* LIST VIEW — Filters and cards below only when in list mode */}
+      {activeView !== 'list' ? null : (
+      <>
       {/* FILTERS — Status */}
       <div className="space-y-2">
         <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Estado</p>
@@ -239,7 +289,7 @@ export default function OportunidadesPage() {
                         }`}>{statusCfg.label}</span>
                       </div>
 
-                      {/* Patient info */}
+                      {/* Patient info + Lead Score */}
                       {opp.patients && (
                         <div className="flex items-center gap-3 text-xs text-text-muted mb-2">
                           <span className="flex items-center gap-1">
@@ -250,6 +300,12 @@ export default function OportunidadesPage() {
                             <Phone size={11} />
                             {opp.patients?.phone}
                           </span>
+                          {opp.patient_id && leadScores[opp.patient_id] && (
+                            <LeadScoreBadge
+                              score={leadScores[opp.patient_id].score}
+                              classification={leadScores[opp.patient_id].classification}
+                            />
+                          )}
                         </div>
                       )}
 
@@ -320,6 +376,8 @@ export default function OportunidadesPage() {
           })
         )}
       </div>
+      </>
+      )}
     </div>
   )
 }

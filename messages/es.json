@@ -317,6 +317,10 @@
     "pendingAction": "Pendientes de accion",
     "converted": "Convertidas",
     "estimatedValue": "Valor estimado total",
+    "views": {
+      "list": "Lista",
+      "scoring": "Lead Scoring"
+    },
     "types": {
       "HOT_LEAD": "Lead Caliente",
       "UPSELL": "Upsell",
@@ -333,6 +337,67 @@
       "CONVERTED": "Convertida",
       "EXPIRED": "Expirada",
       "DISMISSED": "Descartada"
+    }
+  },
+  "leadScoring": {
+    "title": "Lead Scoring",
+    "scoreAll": "Puntuar todos",
+    "scoring": "Puntuando...",
+    "distribution": "Distribucion",
+    "leadsScored": "leads puntuados",
+    "topLeads": "Top 10 Leads Calientes",
+    "noLeadsScored": "Sin leads puntuados",
+    "noLeadsScoredHint": "Haz clic en \"Puntuar todos\" para calcular el score de cada paciente.",
+    "avgScore": "Score promedio",
+    "topConvertingFeatures": "Caracteristicas con mayor conversion",
+    "unknownPatient": "Paciente desconocido",
+    "classifications": {
+      "HOT": "Caliente",
+      "WARM": "Tibio",
+      "COLD": "Frio",
+      "DEAD": "Inactivo"
+    },
+    "breakdown": {
+      "engagement": "Engagement",
+      "intent": "Intencion",
+      "behavioral": "Comportamiento",
+      "negativeSignals": "Señales negativas"
+    },
+    "rescore": "Re-puntuar"
+  },
+  "models": {
+    "trainingReadiness": "Preparacion para Entrenamiento",
+    "readyForTraining": "Listo para entrenar",
+    "notEnoughData": "Acumulando datos",
+    "samplesReady": "samples listos",
+    "minimum": "Minimo",
+    "readyDescription": "Tienes suficientes datos de entrenamiento. Puedes iniciar un fine-tune desde la API.",
+    "notReadyDescription": "Necesitas {remaining} samples mas para alcanzar el minimo requerido.",
+    "registeredModels": "Modelos Registrados",
+    "noModels": "Aun no hay modelos entrenados",
+    "noModelsHint": "GPT-4o es el cerebro temporal. Acumula datos para entrenar a SofIA.",
+    "evaluate": "Evaluar",
+    "deploy": "Desplegar",
+    "baseModel": "Modelo base",
+    "trainingSamples": "Samples",
+    "trainingLoss": "Loss",
+    "createdAt": "Creado",
+    "evaluationResults": "Resultados de Evaluacion",
+    "similarity": "Similitud",
+    "tokenSavings": "Ahorro tokens",
+    "responseTime": "Tiempo resp.",
+    "toneConsistency": "Consistencia tono",
+    "overallScore": "Score general",
+    "compareModels": "Comparar Modelos",
+    "modelA": "Modelo A",
+    "modelB": "Modelo B",
+    "selectModel": "Seleccionar modelo...",
+    "compare": "Comparar",
+    "status": {
+      "TRAINING": "Entrenando",
+      "COMPLETED": "Completado",
+      "DEPLOYED": "Desplegado",
+      "FAILED": "Fallido"
     }
   },
   "datalake": {

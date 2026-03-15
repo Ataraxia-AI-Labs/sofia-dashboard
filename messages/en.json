@@ -317,6 +317,10 @@
     "pendingAction": "Pending action",
     "converted": "Converted",
     "estimatedValue": "Estimated total value",
+    "views": {
+      "list": "List",
+      "scoring": "Lead Scoring"
+    },
     "types": {
       "HOT_LEAD": "Hot Lead",
       "UPSELL": "Upsell",
@@ -333,6 +337,67 @@
       "CONVERTED": "Converted",
       "EXPIRED": "Expired",
       "DISMISSED": "Dismissed"
+    }
+  },
+  "leadScoring": {
+    "title": "Lead Scoring",
+    "scoreAll": "Score all",
+    "scoring": "Scoring...",
+    "distribution": "Distribution",
+    "leadsScored": "leads scored",
+    "topLeads": "Top 10 Hottest Leads",
+    "noLeadsScored": "No leads scored",
+    "noLeadsScoredHint": "Click \"Score all\" to calculate each patient's score.",
+    "avgScore": "Average score",
+    "topConvertingFeatures": "Top converting features",
+    "unknownPatient": "Unknown patient",
+    "classifications": {
+      "HOT": "Hot",
+      "WARM": "Warm",
+      "COLD": "Cold",
+      "DEAD": "Dead"
+    },
+    "breakdown": {
+      "engagement": "Engagement",
+      "intent": "Intent",
+      "behavioral": "Behavioral",
+      "negativeSignals": "Negative signals"
+    },
+    "rescore": "Re-score"
+  },
+  "models": {
+    "trainingReadiness": "Training Readiness",
+    "readyForTraining": "Ready to train",
+    "notEnoughData": "Collecting data",
+    "samplesReady": "samples ready",
+    "minimum": "Minimum",
+    "readyDescription": "You have enough training data. You can start a fine-tune from the API.",
+    "notReadyDescription": "You need {remaining} more samples to reach the minimum required.",
+    "registeredModels": "Registered Models",
+    "noModels": "No models trained yet",
+    "noModelsHint": "GPT-4o is the temporary brain. Accumulate data to train SofIA.",
+    "evaluate": "Evaluate",
+    "deploy": "Deploy",
+    "baseModel": "Base model",
+    "trainingSamples": "Samples",
+    "trainingLoss": "Loss",
+    "createdAt": "Created",
+    "evaluationResults": "Evaluation Results",
+    "similarity": "Similarity",
+    "tokenSavings": "Token savings",
+    "responseTime": "Response time",
+    "toneConsistency": "Tone consistency",
+    "overallScore": "Overall score",
+    "compareModels": "Compare Models",
+    "modelA": "Model A",
+    "modelB": "Model B",
+    "selectModel": "Select model...",
+    "compare": "Compare",
+    "status": {
+      "TRAINING": "Training",
+      "COMPLETED": "Completed",
+      "DEPLOYED": "Deployed",
+      "FAILED": "Failed"
     }
   },
   "datalake": {

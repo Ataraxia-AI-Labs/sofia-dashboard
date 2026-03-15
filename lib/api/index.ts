@@ -89,3 +89,9 @@ export type { AnnotationRecord, AnnotationStats as AnnotationStatsExtended, Anno
 // Prompt Optimizer (P4-08)
 export { triggerPromptAnalysis, getPromptSuggestions, updatePromptSuggestion } from './prompt-optimizer'
 export type { PromptSuggestion, SuggestionStatus, AnalysisResult } from './prompt-optimizer'
+
+// Fine-tuning Models (P4-01)
+export { getModels, deployModel, evaluateModel, getEvaluations, compareModels, getTrainingReadyCount as getModelTrainingReadyCount } from './models'
+
+// Lead Scoring (P4-02)
+export { scorePatient, scoreAllLeads, getLeadScores, getLeadInsights, getTopLeads } from './leads'

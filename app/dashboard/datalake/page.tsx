@@ -18,6 +18,11 @@ const PromptOptimizer = dynamic(() => import('./prompt-optimizer'), {
   loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
 })
 
+const ModelsPanel = dynamic(() => import('./models-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
+})
+
 const IngestionChart = dynamic(() => import('./IngestionChart'), {
   ssr: false,
   loading: () => <div className="h-48 bg-surface-3 rounded-lg animate-pulse" />,
@@ -353,32 +358,7 @@ export default function DataLakePage() {
 
       {/* TAB: MODELS */}
       {activeTab === 'models' && (
-        <div className="glass-card p-5">
-          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Modelos Entrenados</h3>
-          {stats?.ultimo_modelo ? (
-            <div className="space-y-3">
-              <div className="bg-void/50 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-text-primary">{stats.ultimo_modelo.model_name}</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-status-success/10 text-status-success border border-status-success/20">
-                    {stats.ultimo_modelo.status}
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-xs text-text-dim">
-                  <div>Base: <span className="text-text-muted">{stats.ultimo_modelo.base_model}</span></div>
-                  <div>Samples: <span className="text-text-muted">{stats.ultimo_modelo.training_samples}</span></div>
-                  <div>Loss: <span className="text-text-muted">{stats.ultimo_modelo.training_loss || 'N/A'}</span></div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Brain size={32} className="text-text-dim mx-auto mb-3" />
-              <p className="text-text-dim text-sm">Aún no hay modelos entrenados</p>
-              <p className="text-text-dim text-xs mt-1">GPT-4o es el cerebro temporal. Acumula datos para entrenar a SofIA.</p>
-            </div>
-          )}
-        </div>
+        <ModelsPanel orgId={orgId} trainingReady={trainingReady} />
       )}
 
       {/* TAB: OPTIMIZER */}
