@@ -9,7 +9,7 @@ import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, P
 import { useTranslations } from 'next-intl'
 import {
   Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  X, RefreshCw, Download, UserPlus, Layers, GitMerge, TrendingUp,
+  X, RefreshCw, Download, UserPlus, Layers, GitMerge, TrendingUp, Trophy,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { NewPatientForm } from './panels/new-patient-form'
@@ -26,6 +26,11 @@ const DuplicatesPanel = dynamic(() => import('./duplicates-panel'), {
 })
 
 const LTVPanel = dynamic(() => import('./ltv-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const GamificationPanel = dynamic(() => import('./gamification-panel'), {
   ssr: false,
   loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
@@ -73,7 +78,7 @@ export default function PacientesPage() {
   const [showTreatmentForm, setShowTreatmentForm] = useState(false)
   const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
-  const [activeView, setActiveView] = useState<'list' | 'segments' | 'duplicates' | 'ltv'>('list')
+  const [activeView, setActiveView] = useState<'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification'>('list')
 
   // Escape key closes panels
   useEffect(() => {
@@ -302,6 +307,15 @@ export default function PacientesPage() {
               <TrendingUp size={11} />
               {t('views.ltv')}
             </button>
+            <button
+              onClick={() => setActiveView('gamification')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'gamification' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Trophy size={11} />
+              {t('views.gamification')}
+            </button>
           </div>
           <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
             <Download size={13} /> {t('exportCSV')}
@@ -328,6 +342,11 @@ export default function PacientesPage() {
       {/* LTV VIEW */}
       {activeView === 'ltv' && (
         <LTVPanel orgId={orgId} />
+      )}
+
+      {/* GAMIFICATION VIEW */}
+      {activeView === 'gamification' && (
+        <GamificationPanel orgId={orgId} />
       )}
 
       {/* LIST VIEW — Search, table, detail below only when in list mode */}

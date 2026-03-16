@@ -1101,3 +1101,103 @@ export interface WaitingRoomStats {
   no_show_rate: number
   completed_today: number
 }
+
+// ============================================================
+// GAMIFICATION (P5-06)
+// ============================================================
+
+export type GamificationAction = 'VISIT_COMPLETED' | 'REFERRAL' | 'GOOGLE_REVIEW' | 'ON_TIME_PAYMENT' | 'PROFILE_COMPLETE' | 'SURVEY_RESPONSE' | 'FIRST_VISIT' | 'STREAK_BONUS' | 'BIRTHDAY_VISIT'
+export type GamificationTier = 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM'
+
+export interface PatientGamification {
+  patient_id: string
+  patient_name: string
+  total_points: number
+  tier: GamificationTier
+  streak_months: number
+  next_tier: GamificationTier | null
+  points_to_next_tier: number
+  recent_actions: Array<{ action: GamificationAction; points: number; created_at: string }>
+}
+
+export interface GamificationInsights {
+  total_points_awarded: number
+  avg_points_per_patient: number
+  most_common_action: string
+  engagement_rate: number
+  tier_distribution: Record<GamificationTier, number>
+}
+
+export interface LeaderboardEntry {
+  patient_id: string
+  patient_name: string
+  total_points: number
+  tier: GamificationTier
+  streak_months: number
+  rank: number
+}
+
+export interface Reward {
+  id: string
+  name: string
+  description: string
+  points_cost: number
+  is_active: boolean
+}
+
+export interface PointsHistoryEntry {
+  id: string
+  action: GamificationAction
+  points: number
+  description: string
+  created_at: string
+}
+
+// ============================================================
+// DOCTOR LEARNING (P5-13)
+// ============================================================
+
+export type CorrectionType = 'APPOINTMENT_CHANGE' | 'RESPONSE_EDIT' | 'PRICE_OVERRIDE' | 'TREATMENT_CORRECTION' | 'SCHEDULE_PREFERENCE' | 'REJECTION'
+
+export interface LearnedRule {
+  id: string
+  doctor_id: string
+  rule_type: string
+  rule_description: string
+  confidence: number
+  times_applied: number
+  times_correct: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface DoctorCorrection {
+  id: string
+  doctor_id: string
+  correction_type: CorrectionType
+  original_value: Record<string, unknown>
+  corrected_value: Record<string, unknown>
+  context: Record<string, unknown>
+  created_at: string
+}
+
+export interface LearningStats {
+  total_corrections: number
+  active_rules: number
+  avg_confidence: number
+  accuracy_rate: number
+  corrections_by_type: Record<CorrectionType, number>
+}
+
+export interface LearningProgress {
+  doctors: Array<{
+    doctor_id: string
+    doctor_name: string
+    corrections: number
+    rules: number
+    accuracy: number
+  }>
+  org_total_corrections: number
+  org_total_rules: number
+  org_avg_accuracy: number
+}

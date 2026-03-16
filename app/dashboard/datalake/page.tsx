@@ -28,6 +28,11 @@ const IngestionChart = dynamic(() => import('./IngestionChart'), {
   loading: () => <div className="h-48 bg-surface-3 rounded-lg animate-pulse" />,
 })
 
+const LearningPanel = dynamic(() => import('./learning-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
+})
+
 function formatNumber(n: number) {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
@@ -42,7 +47,7 @@ export default function DataLakePage() {
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
   const [exportResult, setExportResult] = useState<DataLakeExportResult | null>(null)
-  const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models' | 'optimizer'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'export' | 'models' | 'optimizer' | 'learning'>('overview')
   const t = useTranslations('datalake')
   const tCommon = useTranslations('common')
 
@@ -106,9 +111,9 @@ export default function DataLakePage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
-            {(['overview', 'export', 'models', 'optimizer'] as const).map(tab => (
+            {(['overview', 'export', 'models', 'optimizer', 'learning'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${activeTab === tab ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
-                {tab === 'overview' ? t('tabs.overview') : tab === 'export' ? t('tabs.export') : tab === 'models' ? t('tabs.models') : t('tabs.optimizer')}
+                {tab === 'overview' ? t('tabs.overview') : tab === 'export' ? t('tabs.export') : tab === 'models' ? t('tabs.models') : tab === 'optimizer' ? t('tabs.optimizer') : t('tabs.learning')}
               </button>
             ))}
           </div>
@@ -364,6 +369,11 @@ export default function DataLakePage() {
       {/* TAB: OPTIMIZER */}
       {activeTab === 'optimizer' && (
         <PromptOptimizer orgId={orgId} />
+      )}
+
+      {/* TAB: LEARNING */}
+      {activeTab === 'learning' && (
+        <LearningPanel orgId={orgId} />
       )}
     </div>
   )
