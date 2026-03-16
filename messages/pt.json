@@ -602,7 +602,9 @@
     "title": "Pacientes",
     "views": {
       "list": "Lista",
-      "segments": "Segmentos"
+      "segments": "Segmentos",
+      "duplicates": "Duplicados",
+      "ltv": "LTV"
     },
     "loadError": "Erro ao carregar pacientes",
     "detailError": "Erro ao carregar detalhe do paciente",
@@ -1008,6 +1010,62 @@
       "avgTicket": "Ticket Medio",
       "satisfaction": "Satisfacao",
       "responseTime": "Tempo de Resposta"
+    }
+  },
+  "duplicates": {
+    "subtitle": "Detecta e resolve registros duplicados de pacientes",
+    "scanNow": "Escanear agora",
+    "scanning": "Escaneando...",
+    "scanComplete": "{found} duplicados encontrados",
+    "scanError": "Erro ao escanear duplicados",
+    "noDuplicates": "Sem duplicados detectados",
+    "noDuplicatesHint": "Todos os registros de pacientes sao unicos. Execute um escaneamento para verificar.",
+    "merge": "Fundir",
+    "dismiss": "Descartar",
+    "dismissed": "Duplicado descartado",
+    "dismissError": "Erro ao descartar",
+    "mergeSuccess": "Pacientes fundidos com sucesso",
+    "mergeError": "Erro ao fundir pacientes",
+    "merging": "Fundindo...",
+    "mergeConfirmTitle": "Confirmar fusao",
+    "mergeConfirmDesc": "Selecione o registro principal. O outro sera consolidado.",
+    "selectPrimary": "Registro principal",
+    "primaryRecord": "Registro principal",
+    "willConsolidate": "Sera consolidado",
+    "consolidateHistory": "Historico de conversas",
+    "consolidateAppointments": "Consultas e tratamentos",
+    "consolidateNotes": "Notas da equipe",
+    "consolidatePayments": "Pagamentos e transacoes",
+    "confirmMerge": "Confirmar fusao",
+    "cancel": "Cancelar",
+    "stats": {
+      "detected": "Total detectados",
+      "pending": "Pendentes de revisao",
+      "merged": "Fundidos",
+      "dismissed": "Descartados"
+    }
+  },
+  "ltv": {
+    "subtitle": "Predicao de valor de vida do paciente (12 meses)",
+    "recalculate": "Recalcular tudo",
+    "recalculating": "Recalculando...",
+    "recalcComplete": "{count} predicoes atualizadas",
+    "recalcError": "Erro ao recalcular LTV",
+    "tierDistribution": "Distribuicao por Nivel",
+    "topPatients": "Top 10 Pacientes por LTV",
+    "noRankings": "Sem rankings de LTV",
+    "noRankingsHint": "Clique em \"Recalcular tudo\" para gerar predicoes.",
+    "atRisk": "Pacientes em Risco (LTV Decrescente)",
+    "declining": "Em queda",
+    "predicted12m": "Pred. 12 meses",
+    "cohortAnalysis": "Analise de Coorte",
+    "noData": "Sem dados de LTV",
+    "noDataHint": "Execute \"Recalcular tudo\" para gerar predicoes de valor de vida.",
+    "insights": {
+      "avgLTV": "LTV Medio",
+      "totalPredicted": "Receita Prevista Total",
+      "bestChannel": "Melhor Canal",
+      "totalPredictions": "Total Predicoes"
     }
   }
 }

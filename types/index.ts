@@ -930,3 +930,73 @@ export interface NetworkStats {
   total_interactions: number
   total_patients: number
 }
+
+// ============================================================
+// DUPLICATE DETECTION (P5-11)
+// ============================================================
+
+export interface DuplicateCandidate {
+  id: string
+  patient_a_id: string
+  patient_b_id: string
+  patient_a_name: string
+  patient_b_name: string
+  patient_a_phone: string
+  patient_b_phone: string
+  similarity_score: number
+  signals: {
+    name_similarity?: number
+    id_match?: boolean
+    phone_similarity?: number
+    behavioral_score?: number
+    temporal_proximity?: number
+  }
+  status: 'PENDING' | 'CONFIRMED' | 'MERGED' | 'DISMISSED'
+  created_at: string
+}
+
+export interface DuplicateStats {
+  total_detected: number
+  pending_review: number
+  merged: number
+  dismissed: number
+}
+
+// ============================================================
+// LIFETIME VALUE PREDICTION (P5-12)
+// ============================================================
+
+export type LTVTier = 'DIAMOND' | 'PLATINUM' | 'GOLD' | 'SILVER' | 'BRONZE'
+export type LTVTrend = 'RISING' | 'STABLE' | 'DECLINING'
+
+export interface LTVPrediction {
+  id: string
+  patient_id: string
+  patient_name: string
+  predicted_ltv_12m: number
+  ltv_tier: LTVTier
+  confidence: number
+  factors: {
+    historical_score: number
+    service_affinity: number
+    engagement_score: number
+    demographic_factor: number
+  }
+  trend: LTVTrend
+  predicted_at: string
+}
+
+export interface LTVInsights {
+  avg_ltv: number
+  total_predicted_revenue: number
+  tier_distribution: Record<string, number>
+  best_channel: string
+  best_channel_avg_ltv: number
+}
+
+export interface CohortData {
+  cohort_month: string
+  patient_count: number
+  avg_ltv: number
+  total_ltv: number
+}

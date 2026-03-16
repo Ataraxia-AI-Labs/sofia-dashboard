@@ -9,13 +9,23 @@ import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, P
 import { useTranslations } from 'next-intl'
 import {
   Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  X, RefreshCw, Download, UserPlus, Layers
+  X, RefreshCw, Download, UserPlus, Layers, GitMerge, TrendingUp,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { NewPatientForm } from './panels/new-patient-form'
 import { PatientDetailPanel } from './panels/patient-detail-panel'
 
 const SegmentationPanel = dynamic(() => import('./segmentation-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const DuplicatesPanel = dynamic(() => import('./duplicates-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const LTVPanel = dynamic(() => import('./ltv-panel'), {
   ssr: false,
   loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
@@ -63,7 +73,7 @@ export default function PacientesPage() {
   const [showTreatmentForm, setShowTreatmentForm] = useState(false)
   const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
-  const [activeView, setActiveView] = useState<'list' | 'segments'>('list')
+  const [activeView, setActiveView] = useState<'list' | 'segments' | 'duplicates' | 'ltv'>('list')
 
   // Escape key closes panels
   useEffect(() => {
@@ -274,6 +284,24 @@ export default function PacientesPage() {
               <Layers size={11} />
               {t('views.segments')}
             </button>
+            <button
+              onClick={() => setActiveView('duplicates')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'duplicates' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <GitMerge size={11} />
+              {t('views.duplicates')}
+            </button>
+            <button
+              onClick={() => setActiveView('ltv')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'ltv' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <TrendingUp size={11} />
+              {t('views.ltv')}
+            </button>
           </div>
           <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
             <Download size={13} /> {t('exportCSV')}
@@ -290,6 +318,16 @@ export default function PacientesPage() {
       {/* SEGMENTS VIEW */}
       {activeView === 'segments' && (
         <SegmentationPanel orgId={orgId} />
+      )}
+
+      {/* DUPLICATES VIEW */}
+      {activeView === 'duplicates' && (
+        <DuplicatesPanel orgId={orgId} />
+      )}
+
+      {/* LTV VIEW */}
+      {activeView === 'ltv' && (
+        <LTVPanel orgId={orgId} />
       )}
 
       {/* LIST VIEW — Search, table, detail below only when in list mode */}

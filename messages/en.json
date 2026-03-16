@@ -602,7 +602,9 @@
     "title": "Patients",
     "views": {
       "list": "List",
-      "segments": "Segments"
+      "segments": "Segments",
+      "duplicates": "Duplicates",
+      "ltv": "LTV"
     },
     "loadError": "Error loading patients",
     "detailError": "Error loading patient detail",
@@ -1008,6 +1010,62 @@
       "avgTicket": "Average Ticket",
       "satisfaction": "Satisfaction",
       "responseTime": "Response Time"
+    }
+  },
+  "duplicates": {
+    "subtitle": "Detect and resolve duplicate patient records",
+    "scanNow": "Scan Now",
+    "scanning": "Scanning...",
+    "scanComplete": "{found} duplicates found",
+    "scanError": "Error scanning for duplicates",
+    "noDuplicates": "No duplicates detected",
+    "noDuplicatesHint": "All patient records are unique. Run a scan to verify.",
+    "merge": "Merge",
+    "dismiss": "Dismiss",
+    "dismissed": "Duplicate dismissed",
+    "dismissError": "Error dismissing duplicate",
+    "mergeSuccess": "Patients merged successfully",
+    "mergeError": "Error merging patients",
+    "merging": "Merging...",
+    "mergeConfirmTitle": "Confirm Merge",
+    "mergeConfirmDesc": "Select the primary record. The other will be consolidated.",
+    "selectPrimary": "Primary record",
+    "primaryRecord": "Primary record",
+    "willConsolidate": "Will consolidate",
+    "consolidateHistory": "Conversation history",
+    "consolidateAppointments": "Appointments and treatments",
+    "consolidateNotes": "Staff notes",
+    "consolidatePayments": "Payments and transactions",
+    "confirmMerge": "Confirm merge",
+    "cancel": "Cancel",
+    "stats": {
+      "detected": "Total detected",
+      "pending": "Pending review",
+      "merged": "Merged",
+      "dismissed": "Dismissed"
+    }
+  },
+  "ltv": {
+    "subtitle": "Patient lifetime value prediction (12 months)",
+    "recalculate": "Recalculate All",
+    "recalculating": "Recalculating...",
+    "recalcComplete": "{count} predictions updated",
+    "recalcError": "Error recalculating LTV",
+    "tierDistribution": "Tier Distribution",
+    "topPatients": "Top 10 Patients by LTV",
+    "noRankings": "No LTV rankings",
+    "noRankingsHint": "Click \"Recalculate All\" to generate predictions.",
+    "atRisk": "At-Risk Patients (Declining LTV)",
+    "declining": "Declining",
+    "predicted12m": "Pred. 12 months",
+    "cohortAnalysis": "Cohort Analysis",
+    "noData": "No LTV data",
+    "noDataHint": "Run \"Recalculate All\" to generate lifetime value predictions.",
+    "insights": {
+      "avgLTV": "Average LTV",
+      "totalPredicted": "Total Predicted Revenue",
+      "bestChannel": "Best Channel",
+      "totalPredictions": "Total Predictions"
     }
   }
 }
