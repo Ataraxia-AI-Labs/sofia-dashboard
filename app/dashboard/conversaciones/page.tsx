@@ -11,12 +11,28 @@ import { AnnotationButton } from '@/components/annotation-button'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useTranslations } from 'next-intl'
+import dynamic from 'next/dynamic'
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock, Shield, Loader2
+  Hash, Clock, Shield, Loader2, Inbox, Layers, Mic
 } from 'lucide-react'
+
+const ChannelsPanel = dynamic(() => import('./channels-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const UnifiedInbox = dynamic(() => import('./unified-inbox'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const VoicePanel = dynamic(() => import('./voice-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
 
 // ============================================================
 // CONSTANTS & CONFIG
@@ -104,6 +120,9 @@ export default function ConversacionesPage() {
   const { orgId, branchId } = useOrg()
   const t = useTranslations('conversations')
   const tCommon = useTranslations('common')
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'conversations' | 'inbox' | 'channels' | 'voice'>('conversations')
 
   // Data state
   const [interactions, setInteractions] = useState<InteractionLog[]>([])
@@ -233,26 +252,92 @@ export default function ConversacionesPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
-              showFilters || platformFilter || dateFrom || dateTo
-                ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
-                : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
-            }`}
-            aria-label={tCommon('filter')}
-          >
-            <Filter size={14} />
-          </button>
-          <button
-            onClick={loadData}
-            aria-label={tCommon('refresh')}
-            className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
-          >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          </button>
+          {/* Tab selector */}
+          <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
+            <button
+              onClick={() => setActiveTab('conversations')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeTab === 'conversations' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <MessageSquare size={11} />
+              <span className="hidden sm:inline">{t('tabs.conversations')}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('inbox')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeTab === 'inbox' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Inbox size={11} />
+              <span className="hidden sm:inline">{t('tabs.inbox')}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('channels')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeTab === 'channels' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Layers size={11} />
+              <span className="hidden sm:inline">{t('tabs.channels')}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('voice')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeTab === 'voice' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Mic size={11} />
+              <span className="hidden sm:inline">{t('tabs.voice')}</span>
+            </button>
+          </div>
+
+          {activeTab === 'conversations' && (
+            <>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+                  showFilters || platformFilter || dateFrom || dateTo
+                    ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
+                    : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
+                }`}
+                aria-label={tCommon('filter')}
+              >
+                <Filter size={14} />
+              </button>
+              <button
+                onClick={loadData}
+                aria-label={tCommon('refresh')}
+                className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+              >
+                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              </button>
+            </>
+          )}
         </div>
       </div>
+
+      {/* INBOX TAB */}
+      {activeTab === 'inbox' && (
+        <UnifiedInbox orgId={orgId} />
+      )}
+
+      {/* CHANNELS TAB */}
+      {activeTab === 'channels' && (
+        <div className="flex-1 overflow-y-auto">
+          <ChannelsPanel orgId={orgId} />
+        </div>
+      )}
+
+      {/* VOICE TAB */}
+      {activeTab === 'voice' && (
+        <div className="flex-1 overflow-y-auto">
+          <VoicePanel orgId={orgId} />
+        </div>
+      )}
+
+      {/* CONVERSATIONS TAB — Original content */}
+      {activeTab === 'conversations' && <>
 
       {/* FILTERS BAR (collapsible) */}
       {showFilters && (
@@ -427,6 +512,8 @@ export default function ConversacionesPage() {
           )}
         </div>
       </div>
+
+      </>}
     </div>
   )
 }

@@ -1157,6 +1157,109 @@ export interface PointsHistoryEntry {
 // DOCTOR LEARNING (P5-13)
 // ============================================================
 
+// ============================================================
+// CHANNEL MANAGEMENT (P5-07)
+// ============================================================
+
+export type ChannelType = 'WHATSAPP' | 'INSTAGRAM' | 'WEBCHAT' | 'VOICE'
+
+export interface ChannelMetrics {
+  channel: ChannelType
+  message_count: number
+  unique_patients: number
+  conversations: number
+  avg_response_time_sec: number
+  conversion_rate: number
+  revenue: number
+  is_enabled: boolean
+  last_message_at: string | null
+}
+
+export interface ChannelComparison {
+  channels: ChannelMetrics[]
+  best_by_messages: ChannelType
+  best_by_conversion: ChannelType
+  best_by_revenue: ChannelType
+}
+
+export interface InboxConversation {
+  patient_id: string
+  patient_name: string
+  channel: ChannelType
+  last_message: string
+  last_message_at: string
+  unread: boolean
+  status: string
+}
+
+export interface ChannelConfig {
+  channel: ChannelType
+  is_enabled: boolean
+  tone_preference?: string
+}
+
+export interface ChannelInsight {
+  insight: string
+  generated_at: string
+}
+
+export interface ConversationMessage {
+  id: string
+  channel: ChannelType
+  direction: 'INBOUND' | 'OUTBOUND'
+  message_content: string
+  created_at: string
+  channel_switch?: string | null
+}
+
+// ============================================================
+// VOICE AI MULTIMODAL (P5-10)
+// ============================================================
+
+export type CallStatus = 'IN_PROGRESS' | 'COMPLETED' | 'TRANSFERRED' | 'MISSED' | 'FAILED'
+export type SentimentType = 'POSITIVE' | 'NEUTRAL' | 'FRUSTRATED' | 'CONFUSED' | 'ENTHUSIASTIC'
+
+export interface CallRecord {
+  id: string
+  patient_id: string
+  patient_name: string
+  direction: 'INBOUND' | 'OUTBOUND'
+  status: CallStatus
+  duration_seconds: number
+  sentiment_overall: SentimentType
+  summary: {
+    topics?: string[]
+    action_items?: string[]
+    follow_ups?: string[]
+    sentiment_overall?: string
+  }
+  started_at: string
+  ended_at: string | null
+}
+
+export interface TranscriptionSegment {
+  timestamp: string
+  speaker: 'SOFIA' | 'PATIENT'
+  text: string
+  sentiment: SentimentType
+}
+
+export interface CallEvent {
+  id: string
+  event_type: string
+  content: Record<string, unknown>
+  created_at: string
+}
+
+export interface VoiceAnalytics {
+  total_calls: number
+  avg_duration_seconds: number
+  sentiment_distribution: Record<SentimentType, number>
+  handoff_rate: number
+  appointments_booked: number
+  calls_trend: number
+}
+
 export type CorrectionType = 'APPOINTMENT_CHANGE' | 'RESPONSE_EDIT' | 'PRICE_OVERRIDE' | 'TREATMENT_CORRECTION' | 'SCHEDULE_PREFERENCE' | 'REJECTION'
 
 export interface LearnedRule {
