@@ -12,8 +12,14 @@ import { useTranslations } from 'next-intl'
 import {
   ChevronLeft, ChevronRight, Calendar as CalIcon, Clock,
   User, RefreshCw, Eye, X, CheckCircle, XCircle, AlertTriangle, HelpCircle, Plus, TrendingDown,
-  UserCheck, Repeat, ArrowRightLeft,
+  UserCheck, Repeat, ArrowRightLeft, Users,
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const WaitingRoomPanel = dynamic(() => import('./waiting-room-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
 
 const STATUS_STYLE: Record<string, { color: string; bg: string; icon: typeof CheckCircle }> = {
   CONFIRMED: { color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20', icon: CheckCircle },
@@ -29,11 +35,13 @@ const STATUS_KEYS = ['CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'REQUESTE
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
 type ViewMode = 'week' | 'month'
+type ActiveTab = 'calendar' | 'waitingRoom'
 
 export default function CalendarioPage() {
   const { orgId, branchId } = useOrg()
   const t = useTranslations('calendar')
   const tCommon = useTranslations('common')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('calendar')
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -253,6 +261,28 @@ export default function CalendarioPage() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Tab toggle */}
+          <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
+            <button
+              onClick={() => setActiveTab('calendar')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeTab === 'calendar' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <CalIcon size={11} />
+              {t('title')}
+            </button>
+            <button
+              onClick={() => setActiveTab('waitingRoom')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeTab === 'waitingRoom' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Users size={11} />
+              {t('waitingRoom')}
+            </button>
+          </div>
+
           {/* Staff filter */}
           {staffList.length > 0 && (
             <select
@@ -303,6 +333,14 @@ export default function CalendarioPage() {
         </div>
       </div>
 
+      {/* WAITING ROOM VIEW */}
+      {activeTab === 'waitingRoom' && (
+        <WaitingRoomPanel orgId={orgId} />
+      )}
+
+      {/* CALENDAR VIEW — only when on calendar tab */}
+      {activeTab !== 'calendar' ? null : (
+      <>
       {/* NAV */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -433,6 +471,8 @@ export default function CalendarioPage() {
           </div>
         ))}
       </div>
+      </>
+      )}
 
       {/* ========== APPOINTMENT DETAIL MODAL ========== */}
       {selectedAppt && (

@@ -13,6 +13,7 @@ export const ROUTE_PERMISSIONS: Record<string, OrgRole[]> = {
   '/dashboard/calendario': ['OWNER', 'ADMIN', 'STAFF'],
   '/dashboard/pipeline': ['OWNER', 'ADMIN'],
   '/dashboard/oportunidades': ['OWNER', 'ADMIN'],
+  '/dashboard/campanas': ['OWNER', 'ADMIN'],
   '/dashboard/pagos': ['OWNER', 'ADMIN'],
   '/dashboard/equipo': ['OWNER', 'ADMIN'],
   '/dashboard/datalake': ['OWNER', 'ADMIN'],

@@ -1000,3 +1000,104 @@ export interface CohortData {
   avg_ltv: number
   total_ltv: number
 }
+
+// ============================================================
+// OUTREACH — SofIA Proactiva (P5-01)
+// ============================================================
+
+export type OutreachTriggerType = 'TREATMENT_CYCLE' | 'LEAD_NURTURE' | 'BIRTHDAY' | 'PREVENTIVE' | 'REACTIVATION' | 'POST_TREATMENT' | 'SEASONAL'
+export type OutreachStatus = 'PENDING' | 'APPROVED' | 'SENT' | 'DELIVERED' | 'RESPONDED' | 'CONVERTED' | 'REJECTED'
+
+export interface OutreachMessage {
+  id: string
+  patient_id: string
+  patient_name: string
+  trigger_type: OutreachTriggerType
+  message: string
+  channel: string
+  status: OutreachStatus
+  scheduled_at: string | null
+  created_at: string
+}
+
+export interface OutreachStats {
+  pending: number
+  approved: number
+  sent: number
+  delivered: number
+  responded: number
+  converted: number
+  rejected: number
+  conversion_rate: number
+}
+
+// ============================================================
+// CAMPAIGNS — Marketing Campaigns (P5-09)
+// ============================================================
+
+export type CampaignStatus = 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'COMPLETED' | 'CANCELLED' | 'ANALYZED'
+
+export interface Campaign {
+  id: string
+  name: string
+  message_template: string
+  segment_criteria: Record<string, unknown>
+  status: CampaignStatus
+  scheduled_at: string | null
+  stats: {
+    sent?: number
+    delivered?: number
+    responded?: number
+    converted?: number
+    revenue?: number
+  }
+  created_at: string
+}
+
+export interface CampaignPreview {
+  matching_patients: number
+  sample_messages: Array<{ patient_name: string; message: string }>
+}
+
+export interface CampaignAnalytics {
+  total_campaigns: number
+  total_sent: number
+  avg_conversion_rate: number
+  total_revenue: number
+  best_performing: string
+}
+
+// ============================================================
+// WAITING ROOM — Sala de Espera Virtual (P5-04)
+// ============================================================
+
+export type WaitingStatus = 'WAITING' | 'CALLED' | 'IN_PROGRESS' | 'COMPLETED' | 'NO_SHOW' | 'RESCHEDULED'
+
+export interface WaitingRoomEntry {
+  id: string
+  patient_id: string
+  patient_name: string
+  appointment_id: string | null
+  check_in_at: string
+  status: WaitingStatus
+  queue_position: number
+  estimated_wait_minutes: number
+  wait_duration_minutes: number
+}
+
+export interface LatePatient {
+  patient_id: string
+  patient_name: string
+  appointment_id: string
+  appointment_time: string
+  minutes_late: number
+  escalation_level: number
+}
+
+export interface WaitingRoomStats {
+  currently_waiting: number
+  avg_wait_today: number
+  late_count: number
+  no_show_rate: number
+  completed_today: number
+}
