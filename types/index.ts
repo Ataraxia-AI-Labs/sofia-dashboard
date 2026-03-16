@@ -1304,3 +1304,115 @@ export interface LearningProgress {
   org_total_rules: number
   org_avg_accuracy: number
 }
+
+// ============================================================
+// COMPETITOR ANALYSIS (P5-02)
+// ============================================================
+
+export interface Competitor {
+  id: string
+  name: string
+  city: string
+  specialty: string
+  services_prices: Record<string, number>
+  website: string
+  notes: string
+  created_at: string
+}
+
+export interface PricingComparison {
+  service: string
+  your_price: number
+  competitor_avg: number
+  market_avg: number
+  difference_pct: number
+  position: 'CHEAPER' | 'SIMILAR' | 'EXPENSIVE'
+}
+
+export interface MarketPosition {
+  competitive_services: number
+  total_services: number
+  expensive_services: string[]
+  cheap_services: string[]
+  competitive_services_list: string[]
+  overall_score: number
+}
+
+export interface CompetitiveInsights {
+  strengths: string[]
+  weaknesses: string[]
+  opportunities: string[]
+  threats: string[]
+  summary: string
+}
+
+export interface MarketBenchmark {
+  metric: string
+  your_value: number
+  market_avg: number
+  difference_pct: number
+  is_better: boolean
+}
+
+export interface PriceChange {
+  competitor_name: string
+  service: string
+  old_price: number
+  new_price: number
+  change_pct: number
+  detected_at: string
+}
+
+export interface CompetitorReport {
+  market_position: MarketPosition
+  pricing_comparison: PricingComparison[]
+  insights: CompetitiveInsights
+  benchmarks: MarketBenchmark[]
+  generated_at: string
+}
+
+// ============================================================
+// PATIENT PORTAL (P5-08)
+// ============================================================
+
+export interface PortalData {
+  patient_info: {
+    name: string
+    phone: string
+    email: string
+  }
+  clinic_name: string
+  upcoming_appointments: Array<{
+    id: string
+    date: string
+    time: string
+    doctor: string
+    service: string
+    status: string
+  }>
+  appointment_history: Array<{
+    date: string
+    service: string
+    doctor: string
+  }>
+  payments: Array<{
+    id: string
+    date: string
+    amount: number
+    status: 'PAID' | 'PENDING'
+    description: string
+  }>
+  gamification: {
+    total_points: number
+    tier: string
+    streak_months: number
+    points_to_next_tier: number
+    next_tier: string | null
+    recent_actions: Array<{ action: string; points: number; date: string }>
+  }
+  referral: {
+    code: string
+    referrals_made: number
+    discounts_earned: number
+  }
+}

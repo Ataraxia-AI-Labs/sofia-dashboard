@@ -9,7 +9,7 @@ import {
   Target, DollarSign, TrendingUp, Clock, User, Phone,
   RefreshCw, Check, Zap, AlertTriangle,
   Heart, ArrowUpRight, UserPlus, ShoppingBag, Flame, RotateCcw,
-  BarChart3, DollarSign as DollarSignIcon, Radar
+  BarChart3, DollarSign as DollarSignIcon, Radar, Swords
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { LeadScoreBadge } from '@/components/lead-score-badge'
@@ -27,6 +27,11 @@ const PricingSuggestionsPanel = dynamic(() => import('./pricing-suggestions-pane
 })
 
 const LeadScoringPanel = dynamic(() => import('./lead-scoring-panel'), {
+  ssr: false,
+  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+})
+
+const CompetitorsPanel = dynamic(() => import('./competitors-panel'), {
   ssr: false,
   loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
@@ -69,7 +74,7 @@ export default function OportunidadesPage() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
-  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue' | 'pricing' | 'outreach'>('list')
+  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue' | 'pricing' | 'outreach' | 'competitors'>('list')
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -184,6 +189,15 @@ export default function OportunidadesPage() {
               <Radar size={11} />
               {t('views.outreach')}
             </button>
+            <button
+              onClick={() => setActiveView('competitors')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                activeView === 'competitors' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              }`}
+            >
+              <Swords size={11} />
+              {t('views.competitors')}
+            </button>
           </div>
           <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
@@ -248,6 +262,11 @@ export default function OportunidadesPage() {
       {/* OUTREACH VIEW */}
       {activeView === 'outreach' && (
         <OutreachPanel orgId={orgId} />
+      )}
+
+      {/* COMPETITORS VIEW */}
+      {activeView === 'competitors' && (
+        <CompetitorsPanel orgId={orgId} />
       )}
 
       {/* LIST VIEW — Filters and cards below only when in list mode */}

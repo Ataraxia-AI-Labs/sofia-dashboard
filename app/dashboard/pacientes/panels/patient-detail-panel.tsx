@@ -1,6 +1,8 @@
 'use client'
 
 import { X, Edit3, Send, Pill } from 'lucide-react'
+import { useOrg } from '@/lib/org-context'
+import { PortalLinkGenerator } from '@/components/portal-link-generator'
 import type { PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
 import { PatientInfoTab } from './patient-info-tab'
 import { PatientMLTab } from './patient-ml-tab'
@@ -49,6 +51,7 @@ interface PatientDetailPanelProps {
 
 export function PatientDetailPanel(props: PatientDetailPanelProps) {
   const { patient, onClose, detailLoading, detailTab, onTabChange } = props
+  const { orgId } = useOrg()
 
   const tabs = [
     { id: 'info' as const, label: 'Info' },
@@ -91,6 +94,7 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
           <button onClick={props.onToggleTreatment} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${props.showTreatmentForm ? 'bg-status-info/15 text-status-info' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
             <Pill size={11} className="inline mr-1" />Tratamiento
           </button>
+          <PortalLinkGenerator orgId={orgId} patientId={patient.id} patientName={patient.full_name} compact />
         </div>
 
         {/* Tab navigation */}
