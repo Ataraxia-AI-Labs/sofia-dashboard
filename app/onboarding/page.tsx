@@ -171,13 +171,20 @@ export default function OnboardingPage() {
         payload.turnstile_token = turnstileToken
       }
 
-      const res = await fetch(`${API_URL}/onboarding/create-clinic`, {
+      const res = await fetch(`${API_URL}/onboarding/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
 
-      const data = await res.json()
+      let data: any
+      try {
+        data = await res.json()
+      } catch {
+        setError('Error de conexion con el servidor. Intenta de nuevo.')
+        setLoading(false)
+        return
+      }
 
       if (!res.ok) {
         const msg = data.detail || data.mensaje || 'Error creando clinica'
