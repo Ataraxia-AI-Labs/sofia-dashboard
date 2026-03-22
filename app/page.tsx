@@ -374,9 +374,16 @@ export default function LandingPage() {
 
   if (!authChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse-soft">
-          <SofiaLogo size="md" variant="mark" />
+      <div className="min-h-screen flex items-center justify-center bg-void">
+        <div className="flex flex-col items-center gap-5">
+          <div className="animate-logo-breathe">
+            <SofiaLogo size="md" variant="mark" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '0ms' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '150ms' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '300ms' }} />
+          </div>
         </div>
       </div>
     )

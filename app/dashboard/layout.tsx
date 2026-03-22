@@ -528,12 +528,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-pulse-soft">
+      <div className="min-h-screen flex items-center justify-center bg-void">
+        <div className="flex flex-col items-center gap-5">
+          <div className="animate-logo-breathe">
             <SofiaLogo size="md" variant="mark" />
           </div>
-          <p className="text-text-muted text-sm">{tLayout('loadingDashboard')}</p>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '0ms' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '150ms' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '300ms' }} />
+          </div>
+          <p className="text-text-muted text-xs font-mono tracking-widest uppercase">{tLayout('loadingDashboard')}</p>
         </div>
       </div>
     )
