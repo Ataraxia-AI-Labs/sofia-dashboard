@@ -92,7 +92,7 @@
     @apply flex items-center gap-3 px-3 py-2 rounded-md text-text-muted text-xs font-mono tracking-wide transition-all duration-150 hover:bg-surface-2 hover:text-text-primary;
   }
   .sidebar-link.active {
-    @apply bg-brand-purple/8 text-brand-purple border-l-2 border-brand-purple rounded-l-none;
+    @apply bg-brand-purple/10 text-brand-purple border-l-2 border-brand-purple rounded-l-none;
   }
 
   /* ---- Stats ---- */
@@ -104,11 +104,11 @@
   .badge {
     @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium tracking-wide uppercase;
   }
-  .badge-success { @apply bg-status-success/8 text-status-success border border-status-success/15; }
-  .badge-warning { @apply bg-status-warning/8 text-status-warning border border-status-warning/15; }
-  .badge-danger  { @apply bg-status-danger/8 text-status-danger border border-status-danger/15; }
-  .badge-info    { @apply bg-status-info/8 text-status-info border border-status-info/15; }
-  .badge-purple  { @apply bg-brand-purple/8 text-brand-purple border border-brand-purple/15; }
+  .badge-success { @apply bg-status-success/10 text-status-success border border-status-success/15; }
+  .badge-warning { @apply bg-status-warning/10 text-status-warning border border-status-warning/15; }
+  .badge-danger  { @apply bg-status-danger/10 text-status-danger border border-status-danger/15; }
+  .badge-info    { @apply bg-status-info/10 text-status-info border border-status-info/15; }
+  .badge-purple  { @apply bg-brand-purple/10 text-brand-purple border border-brand-purple/15; }
 
   /* ---- Metric glow (hover only) ---- */
   .metric-glow {

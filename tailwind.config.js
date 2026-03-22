@@ -20,12 +20,12 @@ module.exports = {
         },
         white: 'var(--color-white)',
         brand: {
-          purple: '#8B5CF6',
-          'purple-light': '#A78BFA',
-          'purple-dark': '#6D28D9',
-          cyan: '#06D6A0',
-          'cyan-light': '#34D399',
-          gold: '#F5C842',
+          purple: 'rgb(139 92 246 / <alpha-value>)',
+          'purple-light': 'rgb(167 139 250 / <alpha-value>)',
+          'purple-dark': 'rgb(109 40 217 / <alpha-value>)',
+          cyan: 'rgb(6 214 160 / <alpha-value>)',
+          'cyan-light': 'rgb(52 211 153 / <alpha-value>)',
+          gold: 'rgb(245 200 66 / <alpha-value>)',
         },
         text: {
           primary: 'var(--color-text-primary)',
@@ -34,10 +34,10 @@ module.exports = {
           dim: 'var(--color-text-dim)',
         },
         status: {
-          success: '#06D6A0',
-          warning: '#F5C842',
-          danger: '#EF4444',
-          info: '#3B82F6',
+          success: 'rgb(6 214 160 / <alpha-value>)',
+          warning: 'rgb(245 200 66 / <alpha-value>)',
+          danger: 'rgb(239 68 68 / <alpha-value>)',
+          info: 'rgb(59 130 246 / <alpha-value>)',
         },
       },
       fontFamily: {
