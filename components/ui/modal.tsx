@@ -69,14 +69,14 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={title || 'Modal'}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       <div ref={panelRef} className={clsx(
-        'relative w-full bg-surface border border-border rounded-2xl shadow-2xl shadow-black/40 animate-fade-up overflow-hidden',
+        'relative w-full bg-surface border border-border rounded-lg animate-fade-up overflow-hidden',
         sizeStyles[size],
       )}>
         {(title || showClose) && (
           <div className="flex items-start justify-between px-6 pt-5 pb-0">
             <div>
-              {title && <h3 className="text-sm font-semibold text-text-primary">{title}</h3>}
-              {description && <p className="text-xs text-text-dim mt-0.5">{description}</p>}
+              {title && <h3 className="text-xs font-mono font-semibold text-text-primary">{title}</h3>}
+              {description && <p className="text-[10px] font-mono text-text-dim mt-0.5">{description}</p>}
             </div>
             {showClose && (
               <button

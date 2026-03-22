@@ -18,32 +18,32 @@ import type { LeadScore } from '@/types'
 
 const OutreachPanel = dynamic(() => import('./outreach-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const PricingSuggestionsPanel = dynamic(() => import('./pricing-suggestions-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const LeadScoringPanel = dynamic(() => import('./lead-scoring-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const CompetitorsPanel = dynamic(() => import('./competitors-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const ConversionPanel = dynamic(() => import('./conversion-panel').then(m => ({ default: m.default })), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const FollowUpQueuePanel = dynamic(() => import('./conversion-panel').then(m => ({ default: m.FollowUpQueue })), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 export default function OportunidadesPage() {
@@ -127,18 +127,18 @@ export default function OportunidadesPage() {
   }
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">{t('subtitle')}</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveView('list')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${
                 activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -146,7 +146,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('scoring')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'scoring' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -155,7 +155,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('predictions')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'predictions' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -164,7 +164,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('queue')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'queue' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -173,7 +173,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('pricing')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'pricing' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -182,7 +182,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('outreach')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'outreach' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -191,7 +191,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('competitors')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'competitors' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -206,7 +206,7 @@ export default function OportunidadesPage() {
       </div>
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <SummaryCard
           icon={<Target size={18} />}
           gradient="from-brand-purple to-brand-purple-dark"
@@ -278,7 +278,7 @@ export default function OportunidadesPage() {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setStatusFilter('')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
               !statusFilter
                 ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                 : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -290,7 +290,7 @@ export default function OportunidadesPage() {
             <button
               key={key}
               onClick={() => setStatusFilter(key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
                 statusFilter === key
                   ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                   : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -308,7 +308,7 @@ export default function OportunidadesPage() {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setTypeFilter('')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
               !typeFilter
                 ? 'bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/25'
                 : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -323,7 +323,7 @@ export default function OportunidadesPage() {
               <button
                 key={key}
                 onClick={() => setTypeFilter(typeFilter === key ? '' : key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all flex items-center gap-1.5 ${
                   typeFilter === key
                     ? `${cfg.bg} ${cfg.color} border`
                     : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -345,15 +345,15 @@ export default function OportunidadesPage() {
       <div className="space-y-3">
         {loading && filtered.length === 0 ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="glass-card p-5 animate-pulse">
+            <div key={i} className="glass-card p-4 animate-pulse">
               <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
               <div className="h-4 bg-surface-3 rounded w-72" />
             </div>
           ))
         ) : filtered.length === 0 ? (
-          <div className="glass-card p-12 text-center">
-            <Target size={32} className="mx-auto text-text-dim mb-3" />
-            <p className="text-text-muted text-sm">
+          <div className="glass-card p-8 text-center">
+            <Target size={28} className="mx-auto text-text-dim mb-3" />
+            <p className="text-text-muted text-[10px] font-mono">
               {statusFilter || typeFilter
                 ? `No hay oportunidades con ${statusFilter ? `estado "${STATUS_OPTIONS[statusFilter]?.label}"` : ''}${statusFilter && typeFilter ? ' y ' : ''}${typeFilter ? `tipo "${OPP_CONFIG[typeFilter]?.label}"` : ''}`
                 : 'No hay oportunidades detectadas aún'}
@@ -366,17 +366,17 @@ export default function OportunidadesPage() {
             const statusCfg = STATUS_OPTIONS[opp.status] || STATUS_OPTIONS.DETECTED
 
             return (
-              <div key={opp.id} className="glass-card p-5 hover:border-border-2 transition-colors">
+              <div key={opp.id} className="glass-card p-4 hover:border-border-2 transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   {/* Left */}
                   <div className="flex items-start gap-3.5 flex-1 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
+                    <div className={`w-9 h-9 rounded-md border flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
                       <Icon size={18} className={cfg.color} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-sm font-semibold ${cfg.color}`}>{cfg.label}</span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                        <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
+                        <span className={`text-[9px] font-mono font-semibold px-2 py-0.5 rounded-md border ${
                           opp.status === 'DETECTED' ? 'bg-brand-purple/10 border-brand-purple/20 text-brand-purple'
                           : opp.status === 'CONVERTED' ? 'bg-status-success/10 border-status-success/20 text-status-success'
                           : opp.status === 'ACTED_ON' ? 'bg-status-info/10 border-status-info/20 text-status-info'
@@ -386,7 +386,7 @@ export default function OportunidadesPage() {
 
                       {/* Patient info + Lead Score */}
                       {opp.patients && (
-                        <div className="flex items-center gap-3 text-xs text-text-muted mb-2">
+                        <div className="flex items-center gap-3 text-[10px] font-mono text-text-muted mb-2">
                           <span className="flex items-center gap-1">
                             <User size={11} />
                             {opp.patients?.full_name || 'Sin nombre'}
@@ -406,10 +406,10 @@ export default function OportunidadesPage() {
 
                       {/* Notes */}
                       {opp.notes && (
-                        <p className="text-xs text-text-muted leading-relaxed line-clamp-2">{opp.notes}</p>
+                        <p className="text-[10px] font-mono text-text-muted leading-relaxed line-clamp-2">{opp.notes}</p>
                       )}
 
-                      <div className="flex items-center gap-4 mt-2 text-[11px] text-text-dim">
+                      <div className="flex items-center gap-3 mt-2 text-[9px] font-mono text-text-dim">
                         <span className="flex items-center gap-1">
                           <Clock size={10} />
                           {timeAgo(opp.created_at)}
@@ -421,8 +421,8 @@ export default function OportunidadesPage() {
                   {/* Right - Value + Actions */}
                   <div className="flex flex-col items-end gap-2 flex-shrink-0">
                     <div className="text-right">
-                      <div className="text-[10px] text-text-dim">Valor estimado</div>
-                      <div className="text-lg font-bold font-mono gradient-text">{formatCOP(opp.estimated_value)}</div>
+                      <div className="text-[9px] font-mono text-text-dim">Valor estimado</div>
+                      <div className="text-sm font-bold font-mono text-text-primary">{formatCOP(opp.estimated_value)}</div>
                     </div>
 
                     {/* Action buttons */}
@@ -430,19 +430,19 @@ export default function OportunidadesPage() {
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => updateStatus(opp.id, 'ACTED_ON')}
-                          className="px-2.5 py-1 rounded-lg bg-status-info/10 border border-status-info/20 text-status-info text-[10px] font-semibold hover:bg-status-info/20 transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-status-info/10 border border-status-info/20 text-status-info text-[9px] font-mono font-semibold hover:bg-status-info/20 transition-colors"
                         >
                           En acción
                         </button>
                         <button
                           onClick={() => updateStatus(opp.id, 'CONVERTED')}
-                          className="px-2.5 py-1 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-[10px] font-semibold hover:bg-status-success/20 transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[9px] font-mono font-semibold hover:bg-status-success/20 transition-colors"
                         >
                           Convertida
                         </button>
                         <button
                           onClick={() => updateStatus(opp.id, 'DISMISSED')}
-                          className="px-2.5 py-1 rounded-lg bg-surface-3 border border-border text-text-dim text-[10px] font-semibold hover:text-text-muted transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-surface-3 border border-border text-text-dim text-[9px] font-mono font-semibold hover:text-text-muted transition-colors"
                         >
                           Descartar
                         </button>
@@ -452,13 +452,13 @@ export default function OportunidadesPage() {
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => updateStatus(opp.id, 'CONVERTED')}
-                          className="px-2.5 py-1 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-[10px] font-semibold hover:bg-status-success/20 transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[9px] font-mono font-semibold hover:bg-status-success/20 transition-colors"
                         >
                           Convertida ✓
                         </button>
                         <button
                           onClick={() => updateStatus(opp.id, 'EXPIRED')}
-                          className="px-2.5 py-1 rounded-lg bg-surface-3 border border-border text-text-dim text-[10px] font-semibold hover:text-text-muted transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-surface-3 border border-border text-text-dim text-[9px] font-mono font-semibold hover:text-text-muted transition-colors"
                         >
                           Expirada
                         </button>
@@ -480,11 +480,11 @@ export default function OportunidadesPage() {
 function SummaryCard({ icon, gradient, value, label }: { icon: React.ReactNode; gradient: string; value: string; label: string }) {
   return (
     <div className="glass-card p-4">
-      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2.5 shadow-lg`}>
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>
-      <div className="text-xl font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[11px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
+      <div className="text-[9px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

@@ -69,7 +69,7 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
     <div className="space-y-5">
       {/* Insights Cards */}
       {insights && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <InsightCard
             icon={<BarChart3 size={16} />}
             label={t('totalSuggestions')}
@@ -105,8 +105,8 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
 
       {/* Most Adjusted Services */}
       {insights && insights.most_adjusted_services.length > 0 && (
-        <div className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-3">{t('mostAdjusted')}</h3>
+        <div className="glass-card p-4">
+          <h3 className="text-sm font-semibold font-mono text-text-primary mb-3">{t('mostAdjusted')}</h3>
           <div className="flex flex-wrap gap-2">
             {insights.most_adjusted_services.map((s, i) => (
               <span key={i} className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-muted">
@@ -157,14 +157,14 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
       {loading && suggestions.length === 0 ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="glass-card p-5 animate-pulse">
+            <div key={i} className="glass-card p-4 animate-pulse">
               <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
               <div className="h-4 bg-surface-3 rounded w-72" />
             </div>
           ))}
         </div>
       ) : suggestions.length === 0 ? (
-        <div className="glass-card p-12 text-center">
+        <div className="glass-card p-8 text-center">
           <DollarSign size={32} className="mx-auto text-text-dim mb-3" />
           <p className="text-text-muted text-sm">{t('noSuggestions')}</p>
         </div>
@@ -174,7 +174,7 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
             const change = pctChange(s.base_price, s.suggested_price)
             const isDiscount = change < 0
             return (
-              <div key={s.id} className="glass-card p-5 hover:border-border-2 transition-colors">
+              <div key={s.id} className="glass-card p-4 hover:border-border-2 transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
@@ -264,11 +264,11 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
 function InsightCard({ icon, label, value, gradient }: { icon: React.ReactNode; label: string; value: string; gradient: string }) {
   return (
     <div className="glass-card p-4">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 shadow-lg`}>
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>
       <div className="text-lg font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[11px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-[11px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

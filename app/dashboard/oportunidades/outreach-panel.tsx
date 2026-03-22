@@ -127,7 +127,7 @@ export default function OutreachPanel({ orgId }: OutreachPanelProps) {
           <button
             onClick={handleScan}
             disabled={scanning}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 shadow-lg"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50"
           >
             {scanning ? <Loader2 size={14} className="animate-spin" /> : <Radar size={14} />}
             {scanning ? t('scanning') : t('scanOpportunities')}
@@ -187,13 +187,13 @@ export default function OutreachPanel({ orgId }: OutreachPanelProps) {
       <div className="space-y-3">
         {loading && messages.length === 0 ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="glass-card p-5 animate-pulse">
+            <div key={i} className="glass-card p-4 animate-pulse">
               <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
               <div className="h-4 bg-surface-3 rounded w-72" />
             </div>
           ))
         ) : messages.length === 0 ? (
-          <div className="glass-card p-12 text-center">
+          <div className="glass-card p-8 text-center">
             <Radar size={32} className="mx-auto text-text-dim mb-3" />
             <p className="text-text-muted text-sm">{t('noOutreach')}</p>
             <p className="text-text-dim text-xs mt-1">{t('noOutreachHint')}</p>
@@ -209,7 +209,7 @@ export default function OutreachPanel({ orgId }: OutreachPanelProps) {
               : 'text-text-muted'
 
             return (
-              <div key={msg.id} className="glass-card p-5 hover:border-border-2 transition-colors">
+              <div key={msg.id} className="glass-card p-4 hover:border-border-2 transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3.5 flex-1 min-w-0">
                     <OutreachTriggerBadge triggerType={msg.trigger_type} compact />
@@ -289,7 +289,7 @@ function StatPill({ icon, value, label, color }: { icon: React.ReactNode; value:
       <span className={color}>{icon}</span>
       <div>
         <div className={`text-lg font-bold font-mono ${color}`}>{value}</div>
-        <div className="text-[9px] text-text-dim uppercase tracking-wider">{label}</div>
+        <div className="text-[9px] font-mono text-text-dim uppercase tracking-wider">{label}</div>
       </div>
     </div>
   )

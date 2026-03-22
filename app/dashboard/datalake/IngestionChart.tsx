@@ -15,7 +15,7 @@ export default function IngestionChart({ data }: { data: { date: string; count: 
         <CartesianGrid strokeDasharray="3 3" stroke="#1C1C2A" />
         <XAxis
           dataKey="date"
-          tick={{ fill: '#4E4A5E', fontSize: 10 }}
+          tick={{ fill: '#4E4A5E', fontSize: 10, fontFamily: 'monospace' }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(d: string) => {
@@ -25,13 +25,13 @@ export default function IngestionChart({ data }: { data: { date: string; count: 
           interval={Math.max(Math.floor(data.length / 7) - 1, 0)}
         />
         <YAxis
-          tick={{ fill: '#4E4A5E', fontSize: 10 }}
+          tick={{ fill: '#4E4A5E', fontSize: 10, fontFamily: 'monospace' }}
           axisLine={false}
           tickLine={false}
           allowDecimals={false}
         />
         <Tooltip
-          contentStyle={{ background: '#101018', border: '1px solid #1C1C2A', borderRadius: '12px', fontSize: '12px' }}
+          contentStyle={{ background: '#101018', border: '1px solid #1C1C2A', borderRadius: '8px', fontSize: '12px', fontFamily: 'monospace' }}
           labelStyle={{ color: '#F0EEF5' }}
           labelFormatter={(d: string) => {
             const date = new Date(d + 'T12:00:00')

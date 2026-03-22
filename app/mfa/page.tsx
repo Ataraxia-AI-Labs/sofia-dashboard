@@ -49,30 +49,26 @@ function MFAForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-background">
-      {/* Background orbs */}
-      <div className="fixed top-1/4 -left-40 w-96 h-96 bg-brand-purple/8 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-1/4 right-0 w-96 h-96 bg-brand-cyan/6 rounded-full blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen flex items-center justify-center px-5 bg-void">
       <div className="relative w-full max-w-sm">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <SofiaLogo size="md" variant="full" />
         </div>
 
         {/* Card */}
-        <div className="glass-card p-8">
-          <div className="flex flex-col items-center text-center mb-7">
-            <div className="w-12 h-12 rounded-2xl bg-brand-purple/10 flex items-center justify-center mb-4">
-              <ShieldCheck size={24} className="text-brand-purple" />
+        <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5">
+          <div className="flex flex-col items-center text-center mb-5">
+            <div className="w-10 h-10 rounded-lg bg-brand-purple/10 flex items-center justify-center mb-3">
+              <ShieldCheck size={20} className="text-brand-purple" />
             </div>
-            <h1 className="text-xl font-semibold text-text-primary">Verificacion de dos pasos</h1>
-            <p className="text-text-muted text-sm mt-2 leading-relaxed">
+            <h1 className="text-xl font-semibold text-text-primary font-mono">Verificacion de dos pasos</h1>
+            <p className="text-text-muted text-xs font-mono mt-1.5 leading-relaxed">
               Abre tu app autenticadora e ingresa el codigo de 6 digitos.
             </p>
           </div>
 
-          <form onSubmit={handleVerify} className="space-y-5">
+          <form onSubmit={handleVerify} className="space-y-4">
             <div className="flex justify-center">
               <input
                 type="text"
@@ -83,15 +79,15 @@ function MFAForm() {
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 disabled={loading}
-                className="w-48 text-center text-3xl font-mono tracking-[0.5em] px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary placeholder:text-text-dim outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all disabled:opacity-50"
+                className="w-48 text-center text-3xl font-mono tracking-[0.5em] px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all disabled:opacity-50"
                 autoComplete="one-time-code"
                 autoFocus
               />
             </div>
 
             {error && (
-              <div className="px-4 py-3 rounded-xl bg-status-danger/10 border border-status-danger/20 text-status-danger text-sm flex items-center gap-2">
-                <AlertTriangle size={14} className="flex-shrink-0" />
+              <div className="px-3 py-2.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-mono flex items-center gap-2">
+                <AlertTriangle size={12} className="flex-shrink-0" />
                 {error}
               </div>
             )}
@@ -99,22 +95,22 @@ function MFAForm() {
             <button
               type="submit"
               disabled={code.length !== 6 || loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-brand-purple/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={14} className="animate-spin" />
               ) : (
                 <>
                   Verificar
-                  <ArrowRight size={16} />
+                  <ArrowRight size={14} />
                 </>
               )}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-text-dim text-xs mt-6">
-          ¿Problemas? Contacta soporte en{' '}
+        <p className="text-center text-text-dim text-[10px] font-mono mt-5">
+          Problemas? Contacta soporte en{' '}
           <a href="mailto:soporte@ataraxiaialabs.ai" className="text-brand-purple hover:underline">
             soporte@ataraxiaialabs.ai
           </a>

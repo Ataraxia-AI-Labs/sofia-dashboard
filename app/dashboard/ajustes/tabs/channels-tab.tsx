@@ -110,10 +110,10 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
 
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 animate-sentient-breathe">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="glass-card p-5 animate-pulse">
-            <div className="h-5 bg-surface-3 rounded w-40" />
+          <div key={i} className="glass-card p-4">
+            <div className="h-5 bg-surface-3 rounded-md w-40" />
           </div>
         ))}
       </div>
@@ -148,27 +148,27 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
         const connected = channelStatus?.connected || false
 
         return (
-          <div key={ch.key} className="glass-card p-5">
-            <div className="flex items-center justify-between mb-3">
+          <div key={ch.key} className="glass-card p-4">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${connected ? 'bg-status-success/10' : 'bg-surface-3'}`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${connected ? 'bg-status-success/10' : 'bg-surface-3'}`}>
                   <Icon size={20} className={connected ? ch.color : 'text-text-dim'} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-text-primary">{ch.label}</h3>
+                  <h3 className="text-xs font-mono font-semibold text-text-primary">{ch.label}</h3>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     {connected ? (
                       <>
                         <CheckCircle size={11} className="text-status-success" />
-                        <span className="text-[10px] text-status-success font-medium">Conectado</span>
+                        <span className="text-[10px] font-mono text-status-success font-medium">Conectado</span>
                         {channelStatus?.phone_id && (
-                          <span className="text-[10px] text-text-dim ml-1">ID: {channelStatus.phone_id}</span>
+                          <span className="text-[10px] font-mono text-text-dim ml-1">ID: {channelStatus.phone_id}</span>
                         )}
                       </>
                     ) : (
                       <>
                         <XCircle size={11} className="text-text-dim" />
-                        <span className="text-[10px] text-text-dim font-medium">
+                        <span className="text-[10px] font-mono text-text-dim font-medium">
                           {ch.configurable ? 'No conectado' : 'Proximamente'}
                         </span>
                       </>
@@ -185,7 +185,7 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
                 <button
                   onClick={handleEmbeddedSignup}
                   disabled={embeddedConnecting || (!fbSdkLoaded && !!FB_CONFIG_ID)}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/15 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {embeddedConnecting ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -194,14 +194,14 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
                   )}
                   Conectar WhatsApp con un clic
                 </button>
-                <p className="text-[10px] text-text-dim text-center">
+                <p className="text-[10px] font-mono text-text-dim text-center">
                   Vincula tu cuenta de WhatsApp Business directamente desde Meta
                 </p>
 
                 {/* Manual form toggle */}
                 <button
                   onClick={() => setShowManualForm(prev => !prev)}
-                  className="flex items-center gap-1 text-[10px] text-text-dim hover:text-text-secondary transition-colors mx-auto"
+                  className="flex items-center gap-1 text-[10px] font-mono text-text-dim hover:text-text-secondary transition-colors mx-auto"
                 >
                   {showManualForm ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
                   Configuracion manual
@@ -211,29 +211,29 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
                 {showManualForm && (
                   <div className="space-y-3 pt-2">
                     <div>
-                      <label className="text-[10px] text-text-dim font-semibold uppercase tracking-wider block mb-1">Phone Number ID</label>
+                      <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Phone Number ID</label>
                       <input
                         type="text"
                         value={phoneId}
                         onChange={(e) => setPhoneId(e.target.value)}
                         placeholder="Ej: 123456789012345"
-                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-lg text-xs text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (360dialog / Meta)</label>
+                      <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (360dialog / Meta)</label>
                       <input
                         type="password"
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
                         placeholder="Tu API key"
-                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-lg text-xs text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
                       />
                     </div>
                     <button
                       onClick={handleConnect}
                       disabled={connecting || !phoneId.trim()}
-                      className="px-4 py-2 rounded-lg bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="px-3 py-2 rounded-md bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                       {connecting ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
                       Conectar WhatsApp

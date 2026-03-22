@@ -27,7 +27,7 @@ const IssuesErrorsChart = dynamic(() => import('./PipelineCharts').then(m => m.I
 })
 
 function ChartSkeleton() {
-  return <div className="h-[240px] bg-surface-3 rounded-lg animate-pulse" />
+  return <div className="h-[240px] bg-surface-3 rounded-md animate-pulse" />
 }
 
 // ── Aggregate latest week data across repos ──
@@ -139,26 +139,26 @@ export default function PipelinePage() {
   const mergeTrend = latest && prev ? latest.prs_merged - prev.prs_merged : null
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Pipeline Command Center</h2>
-          <p className="text-text-dim text-xs mt-0.5">
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">Pipeline Command Center</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">
             Autonomous Engineering Pipeline — Metricas en tiempo real
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold border transition-colors ${
               autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-dim'
             }`}
           >
             <Zap size={10} />
             Auto {autoRefresh ? 'ON' : 'OFF'}
           </button>
-          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadData} className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -166,25 +166,23 @@ export default function PipelinePage() {
 
       {/* Error State */}
       {error && (
-        <div className="glass-card p-4 border-status-danger/30 bg-status-danger/5">
-          <div className="flex items-center gap-2 text-status-danger text-sm">
+        <div className="glass-card p-3 border-status-danger/30 bg-status-danger/5">
+          <div className="flex items-center gap-2 text-status-danger text-xs font-mono">
             <AlertTriangle size={14} />
             <span>{error}</span>
           </div>
-          <p className="text-text-dim text-xs mt-1">
+          <p className="text-text-dim text-[10px] font-mono mt-1">
             Asegurate de ejecutar la policy RLS para super admins en pipeline_metrics.
           </p>
         </div>
       )}
 
       {/* AUTONOMY SCORE — Hero Card with Circular Progress */}
-      <div className="glass-card p-6 relative overflow-hidden">
-        <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-gradient-to-br from-brand-purple/10 to-brand-cyan/10 blur-2xl" />
-        <div className="absolute -left-4 -bottom-4 w-24 h-24 rounded-full bg-gradient-to-br from-brand-cyan/5 to-brand-purple/5 blur-xl" />
-        <div className="relative flex flex-col sm:flex-row items-center gap-6">
+      <div className="glass-card p-4 relative overflow-hidden">
+        <div className="relative flex flex-col sm:flex-row items-center gap-4">
           {/* Circular Autonomy Score */}
-          <div className="relative w-32 h-32 flex-shrink-0">
-            <svg className="w-32 h-32 -rotate-90" viewBox="0 0 128 128">
+          <div className="relative w-28 h-28 flex-shrink-0">
+            <svg className="w-28 h-28 -rotate-90" viewBox="0 0 128 128">
               <circle cx="64" cy="64" r="56" fill="none" stroke="currentColor" strokeWidth="8" className="text-surface-3" />
               <circle
                 cx="64" cy="64" r="56" fill="none"
@@ -202,10 +200,10 @@ export default function PipelinePage() {
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold font-mono gradient-text">
+              <span className="text-2xl font-bold font-mono text-brand-purple">
                 {autonomy != null ? autonomy : '\u2014'}
               </span>
-              <span className="text-[9px] text-text-dim font-semibold uppercase tracking-wider">
+              <span className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider">
                 {autonomy != null ? '%' : ''}
               </span>
             </div>
@@ -213,13 +211,13 @@ export default function PipelinePage() {
 
           {/* Score Details */}
           <div className="flex-1 text-center sm:text-left">
-            <div className="text-text-dim text-xs font-semibold uppercase tracking-wider mb-1">Autonomy Score</div>
-            <div className="text-text-muted text-xs mb-4">
+            <div className="text-text-dim text-[10px] font-mono font-semibold uppercase tracking-wider mb-1">Autonomy Score</div>
+            <div className="text-text-muted text-[10px] font-mono mb-3">
               PRs mergeados autonomamente sin intervencion humana
             </div>
 
             {/* Mini Stats Row */}
-            <div className="flex items-center gap-6 justify-center sm:justify-start">
+            <div className="flex items-center gap-5 justify-center sm:justify-start">
               <MiniStat
                 label="PRs Creados"
                 value={latest?.prs_created?.toString() ?? '\u2014'}
@@ -246,7 +244,7 @@ export default function PipelinePage() {
           </div>
         </div>
         {latest && (
-          <div className="mt-4 pt-3 border-t border-border/50 text-text-dim text-[10px] flex items-center gap-2">
+          <div className="mt-3 pt-2 border-t border-border/50 text-text-dim text-[9px] font-mono flex items-center gap-2">
             <Timer size={10} />
             Semana del {latest.week} · {latest.repos} repositorios analizados
             {prev && <span className="ml-auto">vs semana anterior</span>}
@@ -258,46 +256,40 @@ export default function PipelinePage() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <KPICard
           icon={<GitPullRequest size={16} />}
-          gradient="from-brand-purple to-brand-purple-dark"
           label="PRs Creados"
           value={latest?.prs_created?.toString() ?? '\u2014'}
         />
         <KPICard
           icon={<GitMerge size={16} />}
-          gradient="from-status-success to-emerald-600"
           label="PRs Mergeados"
           value={latest?.prs_merged?.toString() ?? '\u2014'}
         />
         <KPICard
           icon={<CheckCircle2 size={16} />}
-          gradient="from-brand-cyan to-emerald-600"
           label="CI Pass Rate"
           value={latest?.ci_pass_rate != null ? `${latest.ci_pass_rate}%` : '\u2014'}
           accent={latest?.ci_pass_rate != null ? (latest.ci_pass_rate >= 90 ? 'success' : latest.ci_pass_rate >= 70 ? 'warning' : 'danger') : undefined}
         />
         <KPICard
           icon={<Clock size={16} />}
-          gradient="from-status-info to-blue-600"
           label="Avg Merge Time"
           value={latest?.avg_merge_time != null ? `${latest.avg_merge_time}h` : '\u2014'}
         />
         <KPICard
           icon={<Bug size={16} />}
-          gradient="from-status-danger to-red-600"
           label="Sentry Errors"
           value={latest?.sentry_errors?.toString() ?? '\u2014'}
           accent={latest ? (latest.sentry_errors === 0 ? 'success' : 'danger') : undefined}
         />
         <KPICard
           icon={<Code2 size={16} />}
-          gradient="from-brand-gold to-amber-500"
           label="Lines Changed"
           value={latest ? `+${latest.lines_added.toLocaleString()}` : '\u2014'}
         />
       </div>
 
       {/* CHARTS ROW 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <ChartCard title="PR Throughput" icon={<GitPullRequest size={14} />} color="text-brand-purple">
           {metrics.length > 0 ? <PRThroughputChart data={metrics} /> : <EmptyChart loading={loading} />}
         </ChartCard>
@@ -307,7 +299,7 @@ export default function PipelinePage() {
       </div>
 
       {/* CHARTS ROW 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <ChartCard title="CodeRabbit Reviews" icon={<Bot size={14} />} color="text-brand-gold">
           {metrics.length > 0 ? <CodeRabbitChart data={metrics} /> : <EmptyChart loading={loading} />}
         </ChartCard>
@@ -323,42 +315,42 @@ export default function PipelinePage() {
 
       {/* PER-REPO BREAKDOWN TABLE */}
       <div className="glass-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Shield size={14} className="text-brand-purple" />
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+            <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">
               Detalle por Repositorio
             </h3>
           </div>
           {latest && (
-            <span className="text-[10px] text-text-dim">Semana del {latest.week}</span>
+            <span className="text-[9px] font-mono text-text-dim">Semana del {latest.week}</span>
           )}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Repo</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">PRs</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Merged</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">CI Rate</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">CR Approved</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">CR Changes</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Avg Merge</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Sentry</th>
-                <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Lines +/-</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Repo</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">PRs</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Merged</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">CI Rate</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">CR Approved</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">CR Changes</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Avg Merge</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Sentry</th>
+                <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Lines +/-</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 Array.from({ length: 2 }).map((_, i) => (
                   <tr key={i} className="border-b border-border/50">
-                    <td colSpan={9} className="px-4 py-4"><div className="h-4 bg-surface-3 rounded animate-pulse" /></td>
+                    <td colSpan={9} className="px-4 py-3"><div className="h-3 bg-surface-3 rounded animate-pulse" /></td>
                   </tr>
                 ))
               ) : latestWeekRows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-text-dim text-xs">
+                  <td colSpan={9} className="px-4 py-8 text-center text-text-dim text-xs font-mono">
                     Sin datos de pipeline. El workflow corre cada domingo a medianoche UTC.
                   </td>
                 </tr>
@@ -367,18 +359,18 @@ export default function PipelinePage() {
                   const repoShort = r.repo.split('/').pop() || r.repo
                   return (
                     <tr key={r.id} className="border-b border-border/50 hover:bg-surface-3/50 transition-colors">
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 flex items-center justify-center text-brand-purple text-[9px] font-bold">
+                          <div className="w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[9px] font-mono font-bold">
                             {repoShort[0]?.toUpperCase()}
                           </div>
-                          <span className="text-sm font-semibold text-text-primary">{repoShort}</span>
+                          <span className="text-xs font-mono font-semibold text-text-primary">{repoShort}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right text-sm font-mono text-text-muted">{r.prs_created}</td>
-                      <td className="px-4 py-3 text-right text-sm font-mono text-status-success">{r.prs_merged}</td>
-                      <td className="px-4 py-3 text-right">
-                        <span className={`text-sm font-mono font-semibold ${
+                      <td className="px-4 py-2.5 text-right text-xs font-mono text-text-muted">{r.prs_created}</td>
+                      <td className="px-4 py-2.5 text-right text-xs font-mono text-status-success">{r.prs_merged}</td>
+                      <td className="px-4 py-2.5 text-right">
+                        <span className={`text-xs font-mono font-semibold ${
                           r.ci_pass_rate != null
                             ? r.ci_pass_rate >= 90 ? 'text-status-success' : r.ci_pass_rate >= 70 ? 'text-status-warning' : 'text-status-danger'
                             : 'text-text-dim'
@@ -386,17 +378,17 @@ export default function PipelinePage() {
                           {r.ci_pass_rate != null ? `${r.ci_pass_rate}%` : '\u2014'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right text-sm font-mono text-status-success">{r.coderabbit_approved}</td>
-                      <td className="px-4 py-3 text-right text-sm font-mono text-status-warning">{r.coderabbit_changes_requested}</td>
-                      <td className="px-4 py-3 text-right text-sm font-mono text-text-muted">
+                      <td className="px-4 py-2.5 text-right text-xs font-mono text-status-success">{r.coderabbit_approved}</td>
+                      <td className="px-4 py-2.5 text-right text-xs font-mono text-status-warning">{r.coderabbit_changes_requested}</td>
+                      <td className="px-4 py-2.5 text-right text-xs font-mono text-text-muted">
                         {r.avg_time_to_merge_hours != null ? `${r.avg_time_to_merge_hours}h` : '\u2014'}
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <span className={`text-sm font-mono font-semibold ${r.sentry_errors > 0 ? 'text-status-danger' : 'text-status-success'}`}>
+                      <td className="px-4 py-2.5 text-right">
+                        <span className={`text-xs font-mono font-semibold ${r.sentry_errors > 0 ? 'text-status-danger' : 'text-status-success'}`}>
                           {r.sentry_errors}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right text-xs font-mono">
+                      <td className="px-4 py-2.5 text-right text-xs font-mono">
                         <span className="text-status-success">+{r.lines_added.toLocaleString()}</span>
                         <span className="text-text-dim mx-1">/</span>
                         <span className="text-status-danger">-{r.lines_removed.toLocaleString()}</span>
@@ -411,32 +403,32 @@ export default function PipelinePage() {
       </div>
 
       {/* PIPELINE FLOW DIAGRAM */}
-      <div className="glass-card p-5">
-        <div className="flex items-center gap-2.5 mb-4">
+      <div className="glass-card p-4">
+        <div className="flex items-center gap-2.5 mb-3">
           <TrendingUp size={14} className="text-brand-purple" />
-          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Pipeline Autonomo — Flow</h3>
+          <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Pipeline Autonomo — Flow</h3>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           {[
-            { label: 'Issue', icon: <CircleDot size={18} />, desc: 'Sentry / Mining / Manual' },
-            { label: 'Auto-Assign', icon: <Bot size={18} />, desc: 'Label → Copilot' },
-            { label: 'Copilot PR', icon: <GitPullRequest size={18} />, desc: 'Draft → Code' },
-            { label: 'Auto-Ready', icon: <Play size={18} />, desc: '2min → Ready' },
-            { label: 'CI/CD', icon: <Zap size={18} />, desc: 'Lint + Tests' },
-            { label: 'CodeRabbit', icon: <Sparkles size={18} />, desc: 'AI Review' },
-            { label: 'Auto-Merge', icon: <GitMerge size={18} />, desc: 'Squash Merge' },
-            { label: 'Deploy', icon: <ArrowUpRight size={18} />, desc: 'Render/Vercel' },
+            { label: 'Issue', icon: <CircleDot size={16} />, desc: 'Sentry / Mining / Manual' },
+            { label: 'Auto-Assign', icon: <Bot size={16} />, desc: 'Label → Copilot' },
+            { label: 'Copilot PR', icon: <GitPullRequest size={16} />, desc: 'Draft → Code' },
+            { label: 'Auto-Ready', icon: <Play size={16} />, desc: '2min → Ready' },
+            { label: 'CI/CD', icon: <Zap size={16} />, desc: 'Lint + Tests' },
+            { label: 'CodeRabbit', icon: <Sparkles size={16} />, desc: 'AI Review' },
+            { label: 'Auto-Merge', icon: <GitMerge size={16} />, desc: 'Squash Merge' },
+            { label: 'Deploy', icon: <ArrowUpRight size={16} />, desc: 'Render/Vercel' },
           ].map((step, i) => (
             <div key={step.label} className="flex items-center gap-2 flex-shrink-0">
-              <div className="group px-3 py-3 rounded-xl bg-surface-2 border border-border hover:border-brand-purple/30 text-center min-w-[90px] transition-all cursor-default">
+              <div className="group px-3 py-2.5 rounded-lg bg-surface-2 border border-border hover:border-brand-purple/30 text-center min-w-[85px] transition-all cursor-default">
                 <div className="text-brand-purple group-hover:text-brand-cyan transition-colors flex justify-center mb-1">
                   {step.icon}
                 </div>
-                <div className="text-[10px] font-semibold text-text-primary">{step.label}</div>
-                <div className="text-[8px] text-text-dim mt-0.5">{step.desc}</div>
+                <div className="text-[9px] font-mono font-semibold text-text-primary">{step.label}</div>
+                <div className="text-[8px] font-mono text-text-dim mt-0.5">{step.desc}</div>
               </div>
               {i < 7 && (
-                <div className="text-brand-purple/40 text-sm font-mono">&rarr;</div>
+                <div className="text-brand-purple/40 text-xs font-mono">&rarr;</div>
               )}
             </div>
           ))}
@@ -454,34 +446,33 @@ function MiniStat({ label, value, trend, color }: {
   return (
     <div className="text-center">
       <div className="flex items-center justify-center gap-1">
-        <span className={`text-xl font-bold font-mono ${color}`}>{value}</span>
+        <span className={`text-lg font-bold font-mono ${color}`}>{value}</span>
         {trend != null && trend !== 0 && (
-          <span className={`text-[9px] flex items-center ${trend > 0 ? 'text-status-success' : 'text-status-danger'}`}>
+          <span className={`text-[9px] font-mono flex items-center ${trend > 0 ? 'text-status-success' : 'text-status-danger'}`}>
             {trend > 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
             {Math.abs(trend)}
           </span>
         )}
       </div>
-      <div className="text-[9px] text-text-dim mt-0.5">{label}</div>
+      <div className="text-[9px] font-mono text-text-dim mt-0.5">{label}</div>
     </div>
   )
 }
 
-function KPICard({ icon, gradient, label, value, accent }: {
+function KPICard({ icon, label, value, accent }: {
   icon: React.ReactNode
-  gradient: string
   label: string
   value: string
   accent?: 'success' | 'warning' | 'danger'
 }) {
   const accentColor = accent === 'success' ? 'text-status-success' : accent === 'warning' ? 'text-status-warning' : accent === 'danger' ? 'text-status-danger' : 'text-text-primary'
   return (
-    <div className="glass-card p-3.5 group hover:border-brand-purple/20 transition-all">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 group-hover:scale-110 transition-transform`}>
+    <div className="glass-card p-3 group hover:border-brand-purple/20 transition-all">
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2 group-hover:scale-110 transition-transform">
         {icon}
       </div>
-      <div className={`text-lg font-bold font-mono ${accentColor}`}>{value}</div>
-      <div className="text-[10px] text-text-muted mt-0.5">{label}</div>
+      <div className={`text-sm font-bold font-mono ${accentColor}`}>{value}</div>
+      <div className="text-[9px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }
@@ -493,10 +484,10 @@ function ChartCard({ title, icon, color, children }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="glass-card p-5">
-      <div className="flex items-center gap-2.5 mb-4">
+    <div className="glass-card p-4">
+      <div className="flex items-center gap-2.5 mb-3">
         <span className={color}>{icon}</span>
-        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">{title}</h3>
+        <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">{title}</h3>
       </div>
       {children}
     </div>
@@ -505,7 +496,7 @@ function ChartCard({ title, icon, color, children }: {
 
 function EmptyChart({ loading }: { loading: boolean }) {
   return (
-    <div className="h-[240px] flex items-center justify-center text-text-dim text-xs">
+    <div className="h-[240px] flex items-center justify-center text-text-dim text-xs font-mono">
       {loading ? 'Cargando datos...' : 'Sin datos de pipeline. El workflow corre cada domingo.'}
     </div>
   )

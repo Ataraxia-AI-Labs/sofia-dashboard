@@ -79,7 +79,7 @@ export function OutreachTriggerBadge({ triggerType, compact = false, className =
   if (compact) {
     return (
       <div
-        className={`w-7 h-7 rounded-lg ${cfg.bg} border ${cfg.border} flex items-center justify-center ${className}`}
+        className={`w-7 h-7 rounded-md ${cfg.bg} border ${cfg.border} flex items-center justify-center ${className}`}
         title={cfg.label}
       >
         <Icon size={14} className={cfg.color} />
@@ -88,9 +88,9 @@ export function OutreachTriggerBadge({ triggerType, compact = false, className =
   }
 
   return (
-    <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border} ${className}`}>
-      <Icon size={12} className={cfg.color} />
-      <span className={`text-[10px] font-semibold ${cfg.color}`}>{cfg.label}</span>
+    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}>
+      <Icon size={10} className={cfg.color} />
+      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

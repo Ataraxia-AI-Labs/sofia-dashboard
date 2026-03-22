@@ -64,11 +64,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center animate-pulse-soft">
-            <Shield className="text-white" size={24} />
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center animate-pulse-soft">
+            <Shield className="text-brand-purple" size={24} />
           </div>
-          <p className="text-text-muted text-sm">Verificando acceso admin...</p>
+          <p className="text-text-muted text-xs font-mono">Verificando acceso admin...</p>
         </div>
       </div>
     )
@@ -77,13 +77,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass-card p-8 text-center max-w-md">
+        <div className="glass-card p-5 text-center max-w-md">
           <Shield size={40} className="mx-auto text-status-danger mb-4" />
-          <h2 className="text-lg font-semibold text-text-primary mb-2">Acceso Denegado</h2>
-          <p className="text-text-muted text-sm mb-6">No tienes permisos de Super Admin.</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary mb-2">Acceso Denegado</h2>
+          <p className="text-text-muted text-xs font-mono mb-4">No tienes permisos de Super Admin.</p>
           <button
             onClick={() => router.replace('/login')}
-            className="px-6 py-2.5 rounded-xl bg-brand-purple/15 text-brand-purple font-semibold text-sm hover:bg-brand-purple/25 transition-colors"
+            className="px-5 py-2 rounded-lg bg-brand-purple/15 text-brand-purple font-semibold text-xs font-mono hover:bg-brand-purple/25 transition-colors"
           >
             Ir al Login
           </button>
@@ -97,20 +97,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Desktop Sidebar */}
       <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-surface border-r border-border hidden lg:flex flex-col transition-all duration-300 relative flex-shrink-0`}>
         {/* Logo */}
-        <div className={`px-5 py-6 flex items-center ${sidebarOpen ? 'gap-3' : 'justify-center'}`}>
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-status-danger to-brand-purple flex items-center justify-center flex-shrink-0">
-            <Shield size={16} className="text-white" />
+        <div className={`px-4 py-5 flex items-center ${sidebarOpen ? 'gap-3' : 'justify-center'}`}>
+          <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
+            <Shield size={16} className="text-brand-purple" />
           </div>
           {sidebarOpen && (
             <div className="animate-fade-in overflow-hidden flex-1 min-w-0">
-              <div className="text-text-primary font-semibold text-sm leading-tight">Super Admin</div>
-              <div className="text-text-dim text-[10px] truncate">Ataraxia IA Labs</div>
+              <div className="text-text-primary font-semibold text-xs font-mono leading-tight">Super Admin</div>
+              <div className="text-text-dim text-[9px] font-mono truncate">Ataraxia IA Labs</div>
             </div>
           )}
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
           {ADMIN_NAV.map((item) => {
             const isActive = pathname === item.href
             const Icon = item.icon
@@ -123,21 +123,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 aria-label={item.label}
               >
                 <Icon size={18} className="flex-shrink-0" />
-                {sidebarOpen && <span className="animate-fade-in truncate">{item.label}</span>}
+                {sidebarOpen && <span className="animate-fade-in truncate font-mono text-xs">{item.label}</span>}
               </button>
             )
           })}
         </nav>
 
         {/* Logout */}
-        <div className="px-3 py-4 border-t border-border">
+        <div className="px-3 py-3 border-t border-border">
           <button
             onClick={handleLogout}
             className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!sidebarOpen ? 'justify-center' : ''}`}
-            aria-label="Cerrar sesión"
+            aria-label="Cerrar sesion"
           >
             <LogOut size={18} className="flex-shrink-0" />
-            {sidebarOpen && <span className="animate-fade-in">Cerrar sesion</span>}
+            {sidebarOpen && <span className="animate-fade-in font-mono text-xs">Cerrar sesion</span>}
           </button>
         </div>
 
@@ -156,25 +156,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
           <aside className="relative w-72 h-full bg-surface border-r border-border flex flex-col animate-slide-in">
-            <div className="px-5 py-6 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-status-danger to-brand-purple flex items-center justify-center">
-                <Shield size={16} className="text-white" />
+            <div className="px-4 py-5 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+                <Shield size={16} className="text-brand-purple" />
               </div>
               <div className="flex-1">
-                <div className="text-text-primary font-semibold text-sm">Super Admin</div>
-                <div className="text-text-dim text-[10px]">Ataraxia IA Labs</div>
+                <div className="text-text-primary font-semibold text-xs font-mono">Super Admin</div>
+                <div className="text-text-dim text-[9px] font-mono">Ataraxia IA Labs</div>
               </div>
-              <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary">
+              <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary">
                 <X size={16} />
               </button>
             </div>
-            <nav className="flex-1 px-3 py-4 space-y-1">
+            <nav className="flex-1 px-3 py-3 space-y-1">
               {ADMIN_NAV.map((item) => {
                 const Icon = item.icon
                 return (
                   <button key={item.href} onClick={() => navigateTo(item.href)} className={`sidebar-link w-full ${pathname === item.href ? 'active' : ''} cursor-pointer`}>
                     <Icon size={18} className="flex-shrink-0" />
-                    <span>{item.label}</span>
+                    <span className="font-mono text-xs">{item.label}</span>
                   </button>
                 )
               })}
@@ -185,31 +185,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 lg:h-16 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 lg:px-6 sticky top-0 z-20">
+        <header className="h-14 lg:h-14 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 lg:px-5 sticky top-0 z-20">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileMenuOpen(true)} className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors" aria-label="Abrir menú de navegación">
+            <button onClick={() => setMobileMenuOpen(true)} className="w-9 h-9 rounded-md bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors" aria-label="Abrir menu de navegacion">
               <Menu size={18} />
             </button>
             <div>
-              <h1 className="text-text-primary font-semibold text-sm">
+              <h1 className="text-text-primary font-mono font-bold text-xs uppercase tracking-wide">
                 {ADMIN_NAV.find(i => i.href === pathname)?.label || 'Admin'}
               </h1>
-              <p className="text-text-dim text-xs hidden sm:block">Panel de Administracion</p>
+              <p className="text-text-dim text-[9px] font-mono hidden sm:block">Panel de Administracion</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <LivePulse />
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-danger/5 border border-status-danger/10">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-status-danger/5 border border-status-danger/10">
               <Shield size={12} className="text-status-danger" />
-              <span className="text-status-danger text-xs font-medium">Super Admin</span>
+              <span className="text-status-danger text-[10px] font-mono font-medium">Super Admin</span>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-status-danger/20 to-brand-purple/20 border border-status-danger/20 flex items-center justify-center text-status-danger font-semibold text-xs">
+            <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple font-semibold text-xs font-mono">
               {user?.email?.[0]?.toUpperCase() || 'A'}
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">
+        <main className="flex-1 p-4 lg:p-5 overflow-auto">
           <ErrorBoundary>
             {children}
           </ErrorBoundary>
@@ -241,7 +241,7 @@ function LivePulse() {
   const label = status === 'ok' ? 'Online' : status === 'warn' ? 'Degraded' : status === 'error' ? 'Offline' : '...'
 
   return (
-    <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border text-[10px] font-medium text-text-muted">
+    <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-2 border border-border text-[10px] font-mono font-medium text-text-muted">
       <div className="relative">
         <div className={`w-2 h-2 rounded-full ${dotColor}`} />
         {status === 'ok' && <div className="absolute inset-0 w-2 h-2 rounded-full bg-status-success animate-ping opacity-40" />}

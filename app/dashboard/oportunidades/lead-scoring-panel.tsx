@@ -77,9 +77,9 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
   return (
     <div className="space-y-4">
       {/* Header + Score All */}
-      <div className="glass-card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+      <div className="glass-card p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2">
             <Target size={14} className="text-brand-purple" />
             {t('title')}
           </h3>
@@ -95,7 +95,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
             <button
               onClick={handleScoreAll}
               disabled={scoringAll}
-              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white text-xs font-semibold flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold flex items-center gap-1.5 disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
             >
               {scoringAll ? (
                 <><Loader2 size={12} className="animate-spin" /> {t('scoring')}</>
@@ -107,7 +107,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
         </div>
 
         {scoringResult && (
-          <div className="mb-4 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs">
+          <div className="mb-3 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs">
             {scoringResult}
           </div>
         )}
@@ -122,7 +122,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('distribution')}</span>
+              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('distribution')}</span>
               <span className="text-[10px] text-text-dim font-mono">{totalScored} {t('leadsScored')}</span>
             </div>
             {(['HOT', 'WARM', 'COLD', 'DEAD'] as LeadClassification[]).map(cls => {
@@ -186,7 +186,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
         {/* Average Score */}
         {insights && insights.avg_score > 0 && (
           <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-            <span className="text-[10px] text-text-dim uppercase font-semibold">{t('avgScore')}</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('avgScore')}</span>
             <span className={`text-sm font-bold font-mono ${
               insights.avg_score >= 75 ? 'text-orange-400' :
               insights.avg_score >= 50 ? 'text-amber-400' :
@@ -200,8 +200,8 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
       </div>
 
       {/* Top 10 Hottest Leads */}
-      <div className="glass-card p-5">
-        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2 mb-4">
+      <div className="glass-card p-4">
+        <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
           <Flame size={14} className="text-orange-400" />
           {t('topLeads')}
         </h3>

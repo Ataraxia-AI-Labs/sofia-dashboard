@@ -16,11 +16,11 @@ import type { PortalData } from '@/types'
 // TIER CONFIG — Patient-facing gamification tiers
 // ============================================================
 
-const TIER_CONFIG: Record<string, { gradient: string; text: string; bg: string; border: string; icon: string }> = {
-  PLATINUM: { gradient: 'from-slate-200 via-white to-slate-300', text: 'text-slate-700', bg: 'bg-slate-100', border: 'border-slate-300', icon: '\u2B50' },
-  GOLD: { gradient: 'from-amber-200 via-yellow-100 to-amber-300', text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-300', icon: '\uD83C\uDFC6' },
-  SILVER: { gradient: 'from-gray-200 via-gray-100 to-gray-300', text: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-300', icon: '\uD83E\uDD48' },
-  BRONZE: { gradient: 'from-orange-200 via-orange-100 to-orange-300', text: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-300', icon: '\uD83E\uDD49' },
+const TIER_CONFIG: Record<string, { bg: string; text: string; border: string; icon: string }> = {
+  PLATINUM: { bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300', icon: '\u2B50' },
+  GOLD: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-300', icon: '\uD83C\uDFC6' },
+  SILVER: { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-300', icon: '\uD83E\uDD48' },
+  BRONZE: { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-300', icon: '\uD83E\uDD49' },
 }
 
 function getTierCfg(tier: string) {
@@ -122,10 +122,10 @@ export default function PatientPortalPage({ params }: { params: { token: string 
   // LOADING STATE
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          <p className="text-gray-500 text-sm">Cargando tu portal...</p>
+      <div className="min-h-screen bg-void flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-brand-purple" />
+          <p className="text-text-dim text-[10px] font-mono">Cargando tu portal...</p>
         </div>
       </div>
     )
@@ -134,16 +134,16 @@ export default function PatientPortalPage({ params }: { params: { token: string 
   // ERROR STATE
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
+      <div className="min-h-screen bg-void flex items-center justify-center p-4">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-400" />
+          <div className="w-14 h-14 rounded-lg bg-status-danger/10 border border-status-danger/20 flex items-center justify-center mx-auto mb-3">
+            <AlertCircle className="w-6 h-6 text-status-danger" />
           </div>
-          <h2 className="text-lg font-bold text-gray-800 mb-2">Enlace no disponible</h2>
-          <p className="text-gray-500 text-sm mb-4">{error || 'Este enlace no es valido o ha expirado.'}</p>
+          <h2 className="text-lg font-bold text-text-primary font-mono mb-1">Enlace no disponible</h2>
+          <p className="text-text-muted text-xs font-mono mb-3">{error || 'Este enlace no es valido o ha expirado.'}</p>
           <button
             onClick={loadData}
-            className="px-6 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors"
+            className="px-5 py-2 rounded-lg bg-brand-purple text-white text-xs font-mono font-medium hover:bg-brand-purple-dark transition-colors"
           >
             Reintentar
           </button>
@@ -159,39 +159,39 @@ export default function PatientPortalPage({ params }: { params: { token: string 
   const paidPayments = data.payments.filter(p => p.status === 'PAID')
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-gray-50">
-      <div className="max-w-lg mx-auto px-4 py-6 pb-24">
+    <div className="min-h-screen bg-void">
+      <div className="max-w-lg mx-auto px-4 py-5 pb-20">
 
         {/* ======== WELCOME HEADER ======== */}
-        <div className="text-center mb-6">
-          <p className="text-xs text-blue-400 font-medium uppercase tracking-wider mb-1">{data.clinic_name}</p>
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+        <div className="text-center mb-5">
+          <p className="text-[10px] text-brand-purple font-mono font-medium uppercase tracking-wider mb-0.5">{data.clinic_name}</p>
+          <h1 className="text-2xl font-bold text-text-primary font-mono mb-2">
             Hola, {data.patient_info.name.split(' ')[0]}
           </h1>
 
           {/* Tier Badge */}
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r ${tierCfg.gradient} border ${tierCfg.border} shadow-sm`}>
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${tierCfg.bg} border ${tierCfg.border}`}>
             <span className="text-lg">{tierCfg.icon}</span>
-            <span className={`text-sm font-bold ${tierCfg.text}`}>{data.gamification.tier}</span>
-            <span className="text-xs text-gray-500 font-medium">{data.gamification.total_points.toLocaleString()} pts</span>
+            <span className={`text-xs font-mono font-bold ${tierCfg.text}`}>{data.gamification.tier}</span>
+            <span className="text-[10px] font-mono text-text-dim font-medium">{data.gamification.total_points.toLocaleString()} pts</span>
           </div>
 
           {/* Progress to next tier */}
           {data.gamification.next_tier && data.gamification.points_to_next_tier > 0 && (
-            <div className="mt-3 max-w-xs mx-auto">
-              <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
+            <div className="mt-2 max-w-xs mx-auto">
+              <div className="flex items-center justify-between text-[10px] font-mono text-text-dim mb-0.5">
                 <span>{data.gamification.tier}</span>
                 <span>{data.gamification.next_tier}</span>
               </div>
-              <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-1.5 rounded-full bg-surface-3 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700"
+                  className="h-full rounded-full bg-brand-purple transition-all duration-700"
                   style={{
                     width: `${Math.max(5, Math.min(95, (data.gamification.total_points / (data.gamification.total_points + data.gamification.points_to_next_tier)) * 100))}%`,
                   }}
                 />
               </div>
-              <p className="text-[10px] text-gray-400 mt-1 text-center">
+              <p className="text-[10px] font-mono text-text-dim mt-0.5 text-center">
                 {data.gamification.points_to_next_tier} pts para {data.gamification.next_tier}
               </p>
             </div>
@@ -200,27 +200,27 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* ======== NEXT APPOINTMENT (HERO) ======== */}
         {nextAppointment && (
-          <div className="mb-4 p-5 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/20">
-            <p className="text-[10px] uppercase tracking-wider text-blue-100 font-medium mb-2">Proxima cita</p>
-            <p className="text-lg font-bold capitalize mb-0.5">{formatDate(nextAppointment.date)}</p>
-            <div className="flex items-center gap-3 text-sm text-blue-100">
-              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{nextAppointment.time}</span>
-              <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" />{nextAppointment.doctor}</span>
+          <div className="mb-3 p-4 rounded-lg bg-brand-purple text-white">
+            <p className="text-[10px] uppercase tracking-wider text-white/60 font-mono font-medium mb-1.5">Proxima cita</p>
+            <p className="text-lg font-bold font-mono capitalize mb-0.5">{formatDate(nextAppointment.date)}</p>
+            <div className="flex items-center gap-3 text-xs font-mono text-white/70">
+              <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{nextAppointment.time}</span>
+              <span className="flex items-center gap-1"><User className="w-3 h-3" />{nextAppointment.doctor}</span>
             </div>
-            <p className="text-sm font-medium mt-2">{nextAppointment.service}</p>
-            <div className="flex gap-2 mt-3">
+            <p className="text-xs font-mono font-medium mt-1.5">{nextAppointment.service}</p>
+            <div className="flex gap-2 mt-2.5">
               {confirmCancel === nextAppointment.id ? (
                 <>
                   <button
                     onClick={() => handleCancel(nextAppointment.id)}
                     disabled={cancellingId === nextAppointment.id}
-                    className="flex-1 py-2 rounded-xl bg-red-500/20 text-white text-xs font-medium backdrop-blur-sm disabled:opacity-50"
+                    className="flex-1 py-1.5 rounded-lg bg-status-danger/20 text-white text-[10px] font-mono font-medium disabled:opacity-50"
                   >
                     {cancellingId === nextAppointment.id ? 'Cancelando...' : 'Si, cancelar'}
                   </button>
                   <button
                     onClick={() => setConfirmCancel(null)}
-                    className="flex-1 py-2 rounded-xl bg-white/10 text-white text-xs font-medium backdrop-blur-sm"
+                    className="flex-1 py-1.5 rounded-lg bg-white/10 text-white text-[10px] font-mono font-medium"
                   >
                     No, mantener
                   </button>
@@ -229,13 +229,13 @@ export default function PatientPortalPage({ params }: { params: { token: string 
                 <>
                   <button
                     onClick={() => setConfirmCancel(nextAppointment.id)}
-                    className="flex-1 py-2 rounded-xl bg-white/10 text-white text-xs font-medium backdrop-blur-sm hover:bg-white/20 transition-colors"
+                    className="flex-1 py-1.5 rounded-lg bg-white/10 text-white text-[10px] font-mono font-medium hover:bg-white/20 transition-colors"
                   >
                     Cancelar cita
                   </button>
                   <button
                     onClick={() => setRescheduleId(rescheduleId === nextAppointment.id ? null : nextAppointment.id)}
-                    className="flex-1 py-2 rounded-xl bg-white/20 text-white text-xs font-medium backdrop-blur-sm hover:bg-white/30 transition-colors"
+                    className="flex-1 py-1.5 rounded-lg bg-white/20 text-white text-[10px] font-mono font-medium hover:bg-white/30 transition-colors"
                   >
                     Reagendar
                   </button>
@@ -244,18 +244,18 @@ export default function PatientPortalPage({ params }: { params: { token: string 
             </div>
             {/* Reschedule date picker */}
             {rescheduleId === nextAppointment.id && (
-              <div className="mt-3 flex gap-2">
+              <div className="mt-2.5 flex gap-2">
                 <input
                   type="date"
                   value={rescheduleDate}
                   onChange={e => setRescheduleDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="flex-1 px-3 py-2 rounded-xl bg-white/10 text-white text-xs border border-white/20 placeholder:text-blue-200 focus:outline-none"
+                  className="flex-1 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[10px] font-mono border border-white/20 placeholder:text-white/40 focus:outline-none"
                 />
                 <button
                   onClick={() => handleReschedule(nextAppointment.id)}
                   disabled={!rescheduleDate}
-                  className="px-4 py-2 rounded-xl bg-white text-blue-600 text-xs font-semibold disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg bg-white text-brand-purple text-[10px] font-mono font-semibold disabled:opacity-50"
                 >
                   Enviar
                 </button>
@@ -266,35 +266,35 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* Other upcoming appointments */}
         {otherAppointments.length > 0 && (
-          <div className="mb-4 space-y-2">
+          <div className="mb-3 space-y-1.5">
             {otherAppointments.map(apt => (
-              <div key={apt.id} className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
+              <div key={apt.id} className="p-3 rounded-lg bg-surface border border-border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-800 capitalize">{formatDate(apt.date)}</p>
-                    <p className="text-xs text-gray-500">{apt.time} - {apt.service} con {apt.doctor}</p>
+                    <p className="text-xs font-mono font-medium text-text-primary capitalize">{formatDate(apt.date)}</p>
+                    <p className="text-[10px] font-mono text-text-muted">{apt.time} - {apt.service} con {apt.doctor}</p>
                   </div>
                   <div className="flex gap-1">
                     <button
                       onClick={() => setConfirmCancel(confirmCancel === apt.id ? null : apt.id)}
-                      className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      className="p-1.5 rounded-md text-text-dim hover:text-status-danger hover:bg-status-danger/10 transition-colors"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
                 {confirmCancel === apt.id && (
-                  <div className="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+                  <div className="flex gap-2 mt-1.5 pt-1.5 border-t border-border">
                     <button
                       onClick={() => handleCancel(apt.id)}
                       disabled={cancellingId === apt.id}
-                      className="flex-1 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-medium disabled:opacity-50"
+                      className="flex-1 py-1 rounded-md bg-status-danger/10 text-status-danger text-[10px] font-mono font-medium disabled:opacity-50"
                     >
                       {cancellingId === apt.id ? 'Cancelando...' : 'Confirmar cancelacion'}
                     </button>
                     <button
                       onClick={() => setConfirmCancel(null)}
-                      className="flex-1 py-1.5 rounded-lg bg-gray-50 text-gray-500 text-xs font-medium"
+                      className="flex-1 py-1 rounded-md bg-surface-2 text-text-muted text-[10px] font-mono font-medium"
                     >
                       Mantener
                     </button>
@@ -307,48 +307,48 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* No upcoming appointments */}
         {data.upcoming_appointments.length === 0 && (
-          <div className="mb-4 p-6 rounded-2xl bg-white border border-gray-100 text-center shadow-sm">
-            <Calendar className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm font-medium text-gray-600">Sin citas pendientes</p>
-            <p className="text-xs text-gray-400 mt-1">Contacta a la clinica para agendar tu proxima visita</p>
+          <div className="mb-3 p-5 rounded-lg bg-surface border border-border text-center">
+            <Calendar className="w-6 h-6 text-text-dim mx-auto mb-1.5" />
+            <p className="text-xs font-mono font-medium text-text-muted">Sin citas pendientes</p>
+            <p className="text-[10px] font-mono text-text-dim mt-0.5">Contacta a la clinica para agendar tu proxima visita</p>
           </div>
         )}
 
         {/* ======== GAMIFICATION ======== */}
-        <div className="mb-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm">
-          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-3">
-            <Trophy className="w-4 h-4 text-amber-500" />
+        <div className="mb-3 p-4 rounded-lg bg-surface border border-border">
+          <h2 className="text-xs font-mono font-bold text-text-primary flex items-center gap-2 mb-2.5">
+            <Trophy className="w-3.5 h-3.5 text-brand-gold" />
             Mis puntos y logros
           </h2>
 
           {/* Points & streak */}
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="text-center p-3 rounded-xl bg-blue-50">
-              <Star className="w-4 h-4 text-blue-500 mx-auto mb-1" />
-              <p className="text-lg font-bold text-gray-800">{data.gamification.total_points.toLocaleString()}</p>
-              <p className="text-[10px] text-gray-500">Puntos</p>
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            <div className="text-center p-2.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15">
+              <Star className="w-3.5 h-3.5 text-brand-purple mx-auto mb-0.5" />
+              <p className="text-lg font-bold font-mono text-text-primary">{data.gamification.total_points.toLocaleString()}</p>
+              <p className="text-[10px] font-mono text-text-dim">Puntos</p>
             </div>
-            <div className="text-center p-3 rounded-xl bg-amber-50">
-              <Award className="w-4 h-4 text-amber-500 mx-auto mb-1" />
-              <p className="text-lg font-bold text-gray-800">{data.gamification.tier}</p>
-              <p className="text-[10px] text-gray-500">Nivel</p>
+            <div className="text-center p-2.5 rounded-lg bg-brand-gold/8 border border-brand-gold/15">
+              <Award className="w-3.5 h-3.5 text-brand-gold mx-auto mb-0.5" />
+              <p className="text-lg font-bold font-mono text-text-primary">{data.gamification.tier}</p>
+              <p className="text-[10px] font-mono text-text-dim">Nivel</p>
             </div>
-            <div className="text-center p-3 rounded-xl bg-orange-50">
-              <Flame className="w-4 h-4 text-orange-500 mx-auto mb-1" />
-              <p className="text-lg font-bold text-gray-800">{data.gamification.streak_months}</p>
-              <p className="text-[10px] text-gray-500">Meses racha</p>
+            <div className="text-center p-2.5 rounded-lg bg-status-warning/8 border border-status-warning/15">
+              <Flame className="w-3.5 h-3.5 text-status-warning mx-auto mb-0.5" />
+              <p className="text-lg font-bold font-mono text-text-primary">{data.gamification.streak_months}</p>
+              <p className="text-[10px] font-mono text-text-dim">Meses racha</p>
             </div>
           </div>
 
           {/* Recent activity */}
           {data.gamification.recent_actions.length > 0 && (
             <div>
-              <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Actividad reciente</p>
-              <div className="space-y-1.5">
+              <p className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider mb-1.5">Actividad reciente</p>
+              <div className="space-y-1">
                 {data.gamification.recent_actions.slice(0, 6).map((a, i) => (
-                  <div key={i} className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-gray-50">
-                    <span className="text-xs text-gray-600">{a.action.replace(/_/g, ' ').toLowerCase()}</span>
-                    <span className="text-xs font-bold text-green-600">+{a.points}</span>
+                  <div key={i} className="flex items-center justify-between py-1 px-2.5 rounded-md bg-surface-2">
+                    <span className="text-[10px] font-mono text-text-muted">{a.action.replace(/_/g, ' ').toLowerCase()}</span>
+                    <span className="text-[10px] font-mono font-bold text-status-success">+{a.points}</span>
                   </div>
                 ))}
               </div>
@@ -358,19 +358,19 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* ======== PENDING PAYMENTS ======== */}
         {pendingPayments.length > 0 && (
-          <div className="mb-4 p-5 rounded-2xl bg-amber-50 border border-amber-200 shadow-sm">
-            <h2 className="text-sm font-bold text-amber-800 flex items-center gap-2 mb-3">
-              <CreditCard className="w-4 h-4" />
+          <div className="mb-3 p-4 rounded-lg bg-status-warning/8 border border-status-warning/20">
+            <h2 className="text-xs font-mono font-bold text-status-warning flex items-center gap-2 mb-2.5">
+              <CreditCard className="w-3.5 h-3.5" />
               Pagos pendientes
             </h2>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {pendingPayments.map(p => (
-                <div key={p.id} className="flex items-center justify-between py-2 px-3 rounded-xl bg-white border border-amber-100">
+                <div key={p.id} className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-surface border border-border">
                   <div>
-                    <p className="text-xs font-medium text-gray-800">{p.description}</p>
-                    <p className="text-[10px] text-gray-500">{formatShortDate(p.date)}</p>
+                    <p className="text-[10px] font-mono font-medium text-text-primary">{p.description}</p>
+                    <p className="text-[10px] font-mono text-text-dim">{formatShortDate(p.date)}</p>
                   </div>
-                  <span className="text-sm font-bold text-amber-700">{formatCOP(p.amount)}</span>
+                  <span className="text-xs font-mono font-bold text-status-warning">{formatCOP(p.amount)}</span>
                 </div>
               ))}
             </div>
@@ -379,21 +379,21 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* ======== PAYMENT HISTORY ======== */}
         {paidPayments.length > 0 && (
-          <div className="mb-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm">
-            <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2 mb-3">
-              <CreditCard className="w-4 h-4 text-gray-500" />
+          <div className="mb-3 p-4 rounded-lg bg-surface border border-border">
+            <h2 className="text-xs font-mono font-bold text-text-primary flex items-center gap-2 mb-2.5">
+              <CreditCard className="w-3.5 h-3.5 text-text-dim" />
               Historial de pagos
             </h2>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {paidPayments.slice(0, 5).map(p => (
-                <div key={p.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50">
+                <div key={p.id} className="flex items-center justify-between py-1.5 px-2.5 rounded-md bg-surface-2">
                   <div>
-                    <p className="text-xs text-gray-700">{p.description}</p>
-                    <p className="text-[10px] text-gray-400">{formatShortDate(p.date)}</p>
+                    <p className="text-[10px] font-mono text-text-muted">{p.description}</p>
+                    <p className="text-[10px] font-mono text-text-dim">{formatShortDate(p.date)}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-semibold text-gray-700">{formatCOP(p.amount)}</span>
-                    <p className="text-[10px] text-green-500 font-medium">Pagado</p>
+                    <span className="text-[10px] font-mono font-semibold text-text-primary">{formatCOP(p.amount)}</span>
+                    <p className="text-[10px] font-mono font-medium text-status-success">Pagado</p>
                   </div>
                 </div>
               ))}
@@ -403,25 +403,25 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* ======== APPOINTMENT HISTORY ======== */}
         {data.appointment_history.length > 0 && (
-          <div className="mb-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm">
+          <div className="mb-3 p-4 rounded-lg bg-surface border border-border">
             <button
               onClick={() => setShowHistory(!showHistory)}
               className="w-full flex items-center justify-between"
             >
-              <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                <History className="w-4 h-4 text-gray-500" />
+              <h2 className="text-xs font-mono font-bold text-text-primary flex items-center gap-2">
+                <History className="w-3.5 h-3.5 text-text-dim" />
                 Historial de visitas
               </h2>
-              {showHistory ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+              {showHistory ? <ChevronUp className="w-3.5 h-3.5 text-text-dim" /> : <ChevronDown className="w-3.5 h-3.5 text-text-dim" />}
             </button>
             {showHistory && (
-              <div className="mt-3 space-y-2">
+              <div className="mt-2.5 space-y-1.5">
                 {data.appointment_history.map((h, i) => (
-                  <div key={i} className="flex items-center gap-3 py-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-300 flex-shrink-0" />
+                  <div key={i} className="flex items-center gap-2.5 py-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-brand-purple flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium text-gray-700">{h.service}</p>
-                      <p className="text-[10px] text-gray-400">{formatShortDate(h.date)} - Dr. {h.doctor}</p>
+                      <p className="text-[10px] font-mono font-medium text-text-primary">{h.service}</p>
+                      <p className="text-[10px] font-mono text-text-dim">{formatShortDate(h.date)} - Dr. {h.doctor}</p>
                     </div>
                   </div>
                 ))}
@@ -431,65 +431,65 @@ export default function PatientPortalPage({ params }: { params: { token: string 
         )}
 
         {/* ======== REFERRAL ======== */}
-        <div className="mb-4 p-5 rounded-2xl bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-100 shadow-sm">
-          <h2 className="text-sm font-bold text-purple-800 flex items-center gap-2 mb-2">
-            <Gift className="w-4 h-4" />
+        <div className="mb-3 p-4 rounded-lg bg-brand-purple/8 border border-brand-purple/15">
+          <h2 className="text-xs font-mono font-bold text-brand-purple flex items-center gap-2 mb-1.5">
+            <Gift className="w-3.5 h-3.5" />
             Refiere un amigo
           </h2>
-          <p className="text-xs text-purple-600 mb-3">
+          <p className="text-[10px] font-mono text-text-muted mb-2.5">
             Comparte tu codigo y ambos reciben descuento en su proxima visita.
           </p>
 
           {/* Referral code */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex-1 px-4 py-2.5 rounded-xl bg-white border border-purple-200 text-center">
-              <span className="text-sm font-mono font-bold text-purple-700 tracking-wider">{data.referral.code}</span>
+          <div className="flex items-center gap-1.5 mb-2.5">
+            <div className="flex-1 px-3 py-2 rounded-lg bg-surface border border-border text-center">
+              <span className="text-xs font-mono font-bold text-brand-purple tracking-wider">{data.referral.code}</span>
             </div>
             <button
               onClick={copyCode}
-              className="w-10 h-10 rounded-xl bg-white border border-purple-200 flex items-center justify-center text-purple-500 hover:bg-purple-50 transition-colors"
+              className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center text-text-dim hover:text-brand-purple hover:border-brand-purple/30 transition-colors"
             >
-              {copiedCode ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+              {copiedCode ? <Check className="w-3.5 h-3.5 text-status-success" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
             <button
               onClick={shareWhatsApp}
-              className="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center text-white hover:bg-green-600 transition-colors shadow-sm"
+              className="w-8 h-8 rounded-lg bg-status-success flex items-center justify-center text-white hover:opacity-90 transition-opacity"
             >
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Referral stats */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="text-center p-2 rounded-lg bg-white/70">
-              <p className="text-lg font-bold text-purple-700">{data.referral.referrals_made}</p>
-              <p className="text-[10px] text-purple-500">Referidos</p>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="text-center p-1.5 rounded-md bg-surface/70 border border-border">
+              <p className="text-lg font-bold font-mono text-brand-purple">{data.referral.referrals_made}</p>
+              <p className="text-[10px] font-mono text-text-dim">Referidos</p>
             </div>
-            <div className="text-center p-2 rounded-lg bg-white/70">
-              <p className="text-lg font-bold text-purple-700">{data.referral.discounts_earned}</p>
-              <p className="text-[10px] text-purple-500">Descuentos ganados</p>
+            <div className="text-center p-1.5 rounded-md bg-surface/70 border border-border">
+              <p className="text-lg font-bold font-mono text-brand-purple">{data.referral.discounts_earned}</p>
+              <p className="text-[10px] font-mono text-text-dim">Descuentos ganados</p>
             </div>
           </div>
         </div>
 
         {/* ======== FOOTER ======== */}
-        <div className="text-center pt-4 pb-8 space-y-3">
+        <div className="text-center pt-3 pb-6 space-y-2.5">
           {/* WhatsApp contact */}
           {data.patient_info.phone && (
             <a
               href={`https://wa.me/${data.patient_info.phone.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-500 text-white text-sm font-medium hover:bg-green-600 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-status-success text-white text-xs font-mono font-medium hover:opacity-90 transition-opacity"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-3.5 h-3.5" />
               Contactar clinica por WhatsApp
             </a>
           )}
 
-          <p className="text-[10px] text-gray-300">
+          <p className="text-[10px] font-mono text-text-dim">
             Powered by{' '}
-            <a href="https://ataraxiaialabs.ai" className="text-blue-300 hover:underline" target="_blank" rel="noopener noreferrer">
+            <a href="https://ataraxiaialabs.ai" className="text-brand-purple hover:underline" target="_blank" rel="noopener noreferrer">
               SofIA
             </a>
             {' '}| Ataraxia IA Labs

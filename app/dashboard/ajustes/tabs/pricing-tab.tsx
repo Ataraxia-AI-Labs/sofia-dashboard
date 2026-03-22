@@ -105,11 +105,11 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 animate-sentient-breathe">
         {[1, 2, 3].map(i => (
-          <div key={i} className="glass-card p-6 animate-pulse">
-            <div className="h-5 bg-surface-3 rounded w-40 mb-4" />
-            <div className="h-12 bg-surface-3 rounded" />
+          <div key={i} className="glass-card p-5">
+            <div className="h-5 bg-surface-3 rounded-md w-40 mb-3" />
+            <div className="h-12 bg-surface-3 rounded-md" />
           </div>
         ))}
       </div>
@@ -117,17 +117,17 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Auto Apply Toggle */}
-      <div className="glass-card p-5">
+      <div className="glass-card p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
               <Sliders size={16} className="text-brand-purple" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-text-primary">{t('autoApply')}</h3>
-              <p className="text-[11px] text-text-dim">{t('autoApplyDesc')}</p>
+              <h3 className="text-xs font-mono font-semibold text-text-primary">{t('autoApply')}</h3>
+              <p className="text-[10px] font-mono text-text-dim">{t('autoApplyDesc')}</p>
             </div>
           </div>
           <button
@@ -137,7 +137,7 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
               rules.auto_apply ? 'bg-brand-purple' : 'bg-surface-3'
             } ${isReadOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
-            <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+            <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${
               rules.auto_apply ? 'translate-x-[22px]' : 'translate-x-0.5'
             }`} />
           </button>
@@ -145,17 +145,17 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
       </div>
 
       {/* Discount/Premium Sliders */}
-      <div className="glass-card p-5 space-y-5">
-        <h3 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+      <div className="glass-card p-4 space-y-4">
+        <h3 className="text-xs font-mono font-semibold text-text-primary flex items-center gap-2">
           <DollarSign size={14} className="text-brand-purple" />
           {t('limits')}
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
-            <div className="flex justify-between text-xs mb-1.5">
+            <div className="flex justify-between text-[10px] font-mono mb-1">
               <span className="text-text-muted">{t('maxDiscount')}</span>
-              <span className="font-mono text-brand-purple font-semibold">{rules.max_discount_pct}%</span>
+              <span className="text-brand-purple font-semibold">{rules.max_discount_pct}%</span>
             </div>
             <input
               type="range"
@@ -170,9 +170,9 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs mb-1.5">
+            <div className="flex justify-between text-[10px] font-mono mb-1">
               <span className="text-text-muted">{t('maxPremium')}</span>
-              <span className="font-mono text-status-success font-semibold">{rules.max_premium_pct}%</span>
+              <span className="text-status-success font-semibold">{rules.max_premium_pct}%</span>
             </div>
             <input
               type="range"
@@ -189,15 +189,15 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
       </div>
 
       {/* Weight Sliders */}
-      <div className="glass-card p-5 space-y-5">
-        <h3 className="text-sm font-semibold text-text-primary">{t('weights')}</h3>
-        <p className="text-[11px] text-text-dim">{t('weightsDesc')}</p>
+      <div className="glass-card p-4 space-y-4">
+        <h3 className="text-xs font-mono font-semibold text-text-primary">{t('weights')}</h3>
+        <p className="text-[10px] font-mono text-text-dim">{t('weightsDesc')}</p>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
-            <div className="flex justify-between text-xs mb-1.5">
+            <div className="flex justify-between text-[10px] font-mono mb-1">
               <span className="text-text-muted">{t('demandWeight')}</span>
-              <span className="font-mono font-semibold">{(rules.demand_weight * 100).toFixed(0)}%</span>
+              <span className="font-semibold">{(rules.demand_weight * 100).toFixed(0)}%</span>
             </div>
             <input
               type="range"
@@ -212,9 +212,9 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs mb-1.5">
+            <div className="flex justify-between text-[10px] font-mono mb-1">
               <span className="text-text-muted">{t('segmentWeight')}</span>
-              <span className="font-mono font-semibold">{(rules.segment_weight * 100).toFixed(0)}%</span>
+              <span className="font-semibold">{(rules.segment_weight * 100).toFixed(0)}%</span>
             </div>
             <input
               type="range"
@@ -229,9 +229,9 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs mb-1.5">
+            <div className="flex justify-between text-[10px] font-mono mb-1">
               <span className="text-text-muted">{t('temporalWeight')}</span>
-              <span className="font-mono font-semibold">{(rules.temporal_weight * 100).toFixed(0)}%</span>
+              <span className="font-semibold">{(rules.temporal_weight * 100).toFixed(0)}%</span>
             </div>
             <input
               type="range"
@@ -246,7 +246,7 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
           </div>
 
           {/* Visual weight bar */}
-          <div className="flex h-2 rounded-full overflow-hidden">
+          <div className="flex h-2 rounded-md overflow-hidden">
             <div className="bg-brand-purple" style={{ width: `${rules.demand_weight * 100}%` }} />
             <div className="bg-brand-cyan" style={{ width: `${rules.segment_weight * 100}%` }} />
             <div className="bg-brand-gold" style={{ width: `${rules.temporal_weight * 100}%` }} />
@@ -255,11 +255,11 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
       </div>
 
       {/* Excluded Services */}
-      <div className="glass-card p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-text-primary">{t('excluded')}</h3>
+      <div className="glass-card p-4 space-y-3">
+        <h3 className="text-xs font-mono font-semibold text-text-primary">{t('excluded')}</h3>
         <div className="flex flex-wrap gap-2">
           {rules.excluded_services.map((svc, i) => (
-            <span key={i} className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-2 border border-border text-xs text-text-muted">
+            <span key={i} className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-muted">
               {svc}
               {!isReadOnly && (
                 <button onClick={() => removeExcluded(i)} className="text-text-dim hover:text-status-danger transition-colors">
@@ -276,9 +276,9 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
               onChange={e => setNewExcluded(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addExcluded()}
               placeholder={t('excludedPlaceholder')}
-              className="flex-1 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-primary placeholder:text-text-dim"
+              className="flex-1 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-primary placeholder:text-text-dim"
             />
-            <button onClick={addExcluded} className="px-3 py-1.5 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs font-semibold">
+            <button onClick={addExcluded} className="px-3 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono font-semibold">
               <Plus size={12} />
             </button>
           </div>
@@ -286,17 +286,17 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
       </div>
 
       {/* Min/Max Price Overrides */}
-      <div className="glass-card p-5 space-y-4">
-        <h3 className="text-sm font-semibold text-text-primary">{t('priceOverrides')}</h3>
+      <div className="glass-card p-4 space-y-3">
+        <h3 className="text-xs font-mono font-semibold text-text-primary">{t('priceOverrides')}</h3>
 
         {/* Min prices */}
         <div className="space-y-2">
-          <p className="text-[11px] text-text-dim font-semibold uppercase tracking-wider">{t('minPrices')}</p>
+          <p className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider">{t('minPrices')}</p>
           {Object.entries(rules.min_prices).map(([svc, price]) => (
-            <div key={svc} className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-surface-2 border border-border">
+            <div key={svc} className="flex items-center justify-between text-[10px] font-mono px-3 py-2 rounded-md bg-surface-2 border border-border">
               <span className="text-text-muted">{svc}</span>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-text-primary">${price.toLocaleString()}</span>
+                <span className="text-text-primary">${price.toLocaleString()}</span>
                 {!isReadOnly && (
                   <button onClick={() => setRules(r => {
                     const newMin = { ...r.min_prices }
@@ -309,21 +309,21 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
           ))}
           {!isReadOnly && (
             <div className="flex gap-2">
-              <input value={newMinService} onChange={e => setNewMinService(e.target.value)} placeholder={tCommon('name')} className="flex-1 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-primary placeholder:text-text-dim" />
-              <input value={newMinPrice} onChange={e => setNewMinPrice(e.target.value)} type="number" placeholder="$" className="w-24 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-primary placeholder:text-text-dim" />
-              <button onClick={addMinPrice} className="px-3 py-1.5 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs"><Plus size={12} /></button>
+              <input value={newMinService} onChange={e => setNewMinService(e.target.value)} placeholder={tCommon('name')} className="flex-1 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-primary placeholder:text-text-dim" />
+              <input value={newMinPrice} onChange={e => setNewMinPrice(e.target.value)} type="number" placeholder="$" className="w-24 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-primary placeholder:text-text-dim" />
+              <button onClick={addMinPrice} className="px-3 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono"><Plus size={12} /></button>
             </div>
           )}
         </div>
 
         {/* Max prices */}
         <div className="space-y-2">
-          <p className="text-[11px] text-text-dim font-semibold uppercase tracking-wider">{t('maxPrices')}</p>
+          <p className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider">{t('maxPrices')}</p>
           {Object.entries(rules.max_prices).map(([svc, price]) => (
-            <div key={svc} className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-surface-2 border border-border">
+            <div key={svc} className="flex items-center justify-between text-[10px] font-mono px-3 py-2 rounded-md bg-surface-2 border border-border">
               <span className="text-text-muted">{svc}</span>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-text-primary">${price.toLocaleString()}</span>
+                <span className="text-text-primary">${price.toLocaleString()}</span>
                 {!isReadOnly && (
                   <button onClick={() => setRules(r => {
                     const newMax = { ...r.max_prices }
@@ -336,9 +336,9 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
           ))}
           {!isReadOnly && (
             <div className="flex gap-2">
-              <input value={newMaxService} onChange={e => setNewMaxService(e.target.value)} placeholder={tCommon('name')} className="flex-1 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-primary placeholder:text-text-dim" />
-              <input value={newMaxPrice} onChange={e => setNewMaxPrice(e.target.value)} type="number" placeholder="$" className="w-24 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-primary placeholder:text-text-dim" />
-              <button onClick={addMaxPrice} className="px-3 py-1.5 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs"><Plus size={12} /></button>
+              <input value={newMaxService} onChange={e => setNewMaxService(e.target.value)} placeholder={tCommon('name')} className="flex-1 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-primary placeholder:text-text-dim" />
+              <input value={newMaxPrice} onChange={e => setNewMaxPrice(e.target.value)} type="number" placeholder="$" className="w-24 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-primary placeholder:text-text-dim" />
+              <button onClick={addMaxPrice} className="px-3 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono"><Plus size={12} /></button>
             </div>
           )}
         </div>
@@ -349,7 +349,7 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50"
         >
           <Save size={14} />
           {saving ? tCommon('loading') : tCommon('save')}

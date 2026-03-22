@@ -110,7 +110,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       />
 
       {/* Panel */}
-      <div className="relative w-full max-w-lg bg-surface border border-border rounded-2xl shadow-2xl shadow-black/40 animate-fade-up overflow-hidden">
+      <div className="relative w-full max-w-lg bg-surface border border-border rounded-lg animate-fade-up overflow-hidden">
         {/* Search input */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
           <Search size={16} className="text-text-dim flex-shrink-0" aria-hidden="true" />
@@ -119,7 +119,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Buscar páginas..."
-            className="flex-1 bg-transparent text-text-primary text-sm placeholder:text-text-dim outline-none"
+            className="flex-1 bg-transparent text-text-primary text-xs font-mono placeholder:text-text-dim outline-none"
             autoComplete="off"
             aria-label="Buscar páginas"
           />
@@ -140,7 +140,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         {/* Results list */}
         <ul className="max-h-80 overflow-y-auto py-2" role="listbox" aria-label="Resultados">
           {filtered.length === 0 ? (
-            <li className="px-4 py-8 text-center text-text-dim text-xs">
+            <li className="px-4 py-8 text-center text-text-dim text-[10px] font-mono">
               Sin resultados para &quot;{query}&quot;
             </li>
           ) : (
@@ -167,8 +167,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                       <Icon size={14} aria-hidden="true" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium">{item.label}</div>
-                      <div className="text-[10px] text-text-dim">{item.description}</div>
+                      <div className="text-[10px] font-mono font-medium">{item.label}</div>
+                      <div className="text-[9px] font-mono text-text-dim">{item.description}</div>
                     </div>
                     {item.shortcut && (
                       <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-2 border border-border text-text-dim text-[10px] font-mono flex-shrink-0">

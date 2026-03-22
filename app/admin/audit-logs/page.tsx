@@ -39,7 +39,7 @@ function SkeletonRow() {
   return (
     <tr className="border-b border-border/50">
       {[1, 2, 3, 4, 5, 6].map(i => (
-        <td key={i} className="px-4 py-3">
+        <td key={i} className="px-4 py-2.5">
           <div className="h-3 bg-surface-3 rounded animate-pulse" style={{ width: `${60 + (i * 13) % 40}%` }} />
         </td>
       ))}
@@ -114,18 +114,18 @@ function AuditLogsInner() {
   }, [])
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">Audit Log</h2>
-          <p className="text-text-dim text-xs mt-0.5">
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">Audit Log</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">
             Registro de todas las acciones realizadas en el sistema
           </p>
         </div>
         <button
           onClick={loadData}
-          className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+          className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
           title="Refresh"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
@@ -133,10 +133,10 @@ function AuditLogsInner() {
       </div>
 
       {/* Filters */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="glass-card p-3">
+        <div className="flex items-center gap-2 mb-2">
           <Filter size={13} className="text-brand-purple" />
-          <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Filtros</span>
+          <span className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">Filtros</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
           {/* Search */}
@@ -144,11 +144,11 @@ function AuditLogsInner() {
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
             <input
               type="text"
-              placeholder="Buscar usuario o recurso…"
+              placeholder="Buscar usuario o recurso..."
               defaultValue={search}
               onKeyDown={e => { if (e.key === 'Enter') setParam('search', (e.target as HTMLInputElement).value) }}
               onBlur={e => setParam('search', e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-surface-2 border border-border rounded-lg text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors"
+              className="w-full pl-8 pr-3 py-2 text-xs font-mono bg-surface-2 border border-border rounded-md text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors"
             />
           </div>
 
@@ -158,7 +158,7 @@ function AuditLogsInner() {
             <select
               value={action}
               onChange={e => setParam('action', e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-surface-2 border border-border rounded-lg text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors appearance-none"
+              className="w-full pl-8 pr-3 py-2 text-xs font-mono bg-surface-2 border border-border rounded-md text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors appearance-none"
             >
               <option value="">Todas las acciones</option>
               <option value="create">Create</option>
@@ -173,7 +173,7 @@ function AuditLogsInner() {
             <select
               value={orgId}
               onChange={e => setParam('org_id', e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-surface-2 border border-border rounded-lg text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors appearance-none"
+              className="w-full pl-8 pr-3 py-2 text-xs font-mono bg-surface-2 border border-border rounded-md text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors appearance-none"
             >
               <option value="">Todas las orgs</option>
               {orgs.map(o => (
@@ -189,7 +189,7 @@ function AuditLogsInner() {
               type="date"
               value={dateFrom}
               onChange={e => setParam('date_from', e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-surface-2 border border-border rounded-lg text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors"
+              className="w-full pl-8 pr-3 py-2 text-xs font-mono bg-surface-2 border border-border rounded-md text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors"
             />
           </div>
 
@@ -200,7 +200,7 @@ function AuditLogsInner() {
               type="date"
               value={dateTo}
               onChange={e => setParam('date_to', e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-surface-2 border border-border rounded-lg text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors"
+              className="w-full pl-8 pr-3 py-2 text-xs font-mono bg-surface-2 border border-border rounded-md text-text-primary focus:outline-none focus:border-brand-purple/50 transition-colors"
             />
           </div>
         </div>
@@ -208,16 +208,16 @@ function AuditLogsInner() {
 
       {/* Table */}
       <div className="glass-card overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-border flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Shield size={14} className="text-brand-purple" />
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">
-              Eventos de Auditoría
+            <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">
+              Eventos de Auditoria
             </h3>
           </div>
           {!loading && (
-            <span className="text-[10px] text-text-dim">
-              {total.toLocaleString()} eventos · página {page} de {totalPages}
+            <span className="text-[9px] font-mono text-text-dim">
+              {total.toLocaleString()} eventos · pagina {page} de {totalPages}
             </span>
           )}
         </div>
@@ -226,12 +226,12 @@ function AuditLogsInner() {
           <table className="w-full min-w-[800px]">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider whitespace-nowrap">Timestamp</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Usuario</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Acción</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Recurso</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Org</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Detalles</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider whitespace-nowrap">Timestamp</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Usuario</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Accion</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Recurso</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Org</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Detalles</th>
               </tr>
             </thead>
             <tbody>
@@ -239,8 +239,8 @@ function AuditLogsInner() {
                 Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
               ) : logs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-text-dim text-sm">
-                    No se encontraron eventos de auditoría
+                  <td colSpan={6} className="px-4 py-12 text-center text-text-dim text-xs font-mono">
+                    No se encontraron eventos de auditoria
                   </td>
                 </tr>
               ) : (
@@ -252,7 +252,7 @@ function AuditLogsInner() {
                       onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
                     >
                       {/* Timestamp */}
-                      <td className="px-4 py-3 text-xs text-text-muted whitespace-nowrap font-mono">
+                      <td className="px-4 py-2.5 text-xs text-text-muted whitespace-nowrap font-mono">
                         {new Date(log.created_at).toLocaleString('es-CO', {
                           year: 'numeric', month: '2-digit', day: '2-digit',
                           hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -261,28 +261,28 @@ function AuditLogsInner() {
                       </td>
 
                       {/* User */}
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-2.5">
                         <div className="flex items-center gap-1.5">
                           <User size={11} className="text-text-dim flex-shrink-0" />
-                          <span className="text-xs text-text-primary truncate max-w-[160px]" title={log.user_email ?? log.user_id ?? '—'}>
-                            {log.user_email ?? log.user_id ?? '—'}
+                          <span className="text-xs font-mono text-text-primary truncate max-w-[160px]" title={log.user_email ?? log.user_id ?? '\u2014'}>
+                            {log.user_email ?? log.user_id ?? '\u2014'}
                           </span>
                         </div>
                       </td>
 
                       {/* Action */}
-                      <td className="px-4 py-3">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border uppercase ${actionColor(log.action)}`}>
+                      <td className="px-4 py-2.5">
+                        <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border uppercase ${actionColor(log.action)}`}>
                           {log.action}
                         </span>
                       </td>
 
                       {/* Resource */}
-                      <td className="px-4 py-3">
-                        <div className="text-xs text-text-primary">
+                      <td className="px-4 py-2.5">
+                        <div className="text-xs font-mono text-text-primary">
                           <span className="font-medium">{log.resource_type}</span>
                           {log.resource_id && (
-                            <span className="text-text-dim font-mono ml-1 text-[10px]">
+                            <span className="text-text-dim ml-1 text-[10px]">
                               #{log.resource_id.slice(0, 8)}
                             </span>
                           )}
@@ -290,20 +290,20 @@ function AuditLogsInner() {
                       </td>
 
                       {/* Org */}
-                      <td className="px-4 py-3 text-xs text-text-muted truncate max-w-[140px]">
-                        {log.org_name ?? log.organization_id?.slice(0, 8) ?? '—'}
+                      <td className="px-4 py-2.5 text-xs font-mono text-text-muted truncate max-w-[140px]">
+                        {log.org_name ?? log.organization_id?.slice(0, 8) ?? '\u2014'}
                       </td>
 
                       {/* Details toggle */}
-                      <td className="px-4 py-3 text-[10px] text-brand-cyan hover:underline">
-                        {log.details ? (expandedId === log.id ? 'Ocultar ▲' : 'Ver ▼') : '—'}
+                      <td className="px-4 py-2.5 text-[10px] font-mono text-brand-cyan hover:underline">
+                        {log.details ? (expandedId === log.id ? 'Ocultar' : 'Ver') : '\u2014'}
                       </td>
                     </tr>
 
                     {/* Expanded details row */}
                     {expandedId === log.id && log.details && (
                       <tr key={`${log.id}-details`} className="border-b border-border/50 bg-surface-3/30">
-                        <td colSpan={6} className="px-6 py-3">
+                        <td colSpan={6} className="px-5 py-3">
                           <pre className="text-[10px] font-mono text-text-muted whitespace-pre-wrap break-all max-h-48 overflow-y-auto">
                             {JSON.stringify(log.details, null, 2)}
                           </pre>
@@ -319,15 +319,15 @@ function AuditLogsInner() {
 
         {/* Pagination */}
         {!loading && totalPages > 1 && (
-          <div className="px-5 py-3.5 border-t border-border flex items-center justify-between">
-            <span className="text-[10px] text-text-dim">
+          <div className="px-4 py-3 border-t border-border flex items-center justify-between">
+            <span className="text-[9px] font-mono text-text-dim">
               Mostrando {((page - 1) * LIMIT) + 1}–{Math.min(page * LIMIT, total)} de {total.toLocaleString()}
             </span>
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setPage(page - 1)}
                 disabled={page <= 1}
-                className="w-7 h-7 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft size={13} />
               </button>
@@ -348,7 +348,7 @@ function AuditLogsInner() {
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`w-7 h-7 rounded-lg text-[10px] font-semibold border transition-colors ${
+                    className={`w-7 h-7 rounded-md text-[10px] font-mono font-semibold border transition-colors ${
                       p === page
                         ? 'bg-brand-purple/20 border-brand-purple/30 text-brand-purple'
                         : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
@@ -362,7 +362,7 @@ function AuditLogsInner() {
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={page >= totalPages}
-                className="w-7 h-7 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight size={13} />
               </button>
@@ -379,9 +379,9 @@ function AuditLogsInner() {
 export default function AuditLogsPage() {
   return (
     <Suspense fallback={
-      <div className="max-w-[1400px] space-y-5">
-        <div className="h-8 w-48 bg-surface-3 rounded animate-pulse" />
-        <div className="glass-card p-4 h-20 animate-pulse" />
+      <div className="max-w-[1200px] space-y-4">
+        <div className="h-6 w-48 bg-surface-3 rounded animate-pulse" />
+        <div className="glass-card p-3 h-20 animate-pulse" />
         <div className="glass-card h-96 animate-pulse" />
       </div>
     }>

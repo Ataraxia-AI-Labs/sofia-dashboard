@@ -30,7 +30,7 @@ export function NetworkAlertBadge({ severity, label }: NetworkAlertBadgeProps) {
   const Icon = cfg.icon
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${cfg.bg} ${cfg.text}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${cfg.bg} ${cfg.text}`}>
       <Icon size={10} />
       {label || severity}
     </span>

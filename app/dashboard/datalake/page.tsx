@@ -15,12 +15,12 @@ import { AnnotationStatsCard } from '@/components/annotation-stats-card'
 
 const PromptOptimizer = dynamic(() => import('./prompt-optimizer'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
 })
 
 const ModelsPanel = dynamic(() => import('./models-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
 })
 
 const IngestionChart = dynamic(() => import('./IngestionChart'), {
@@ -30,7 +30,7 @@ const IngestionChart = dynamic(() => import('./IngestionChart'), {
 
 const LearningPanel = dynamic(() => import('./learning-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-32 bg-surface-3 rounded-lg" /></div>,
 })
 
 function formatNumber(n: number) {
@@ -97,22 +97,22 @@ export default function DataLakePage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-4 max-w-[1200px]">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center">
-            <Database size={20} className="text-white" />
+          <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+            <Database size={18} className="text-brand-purple" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
-            <p className="text-xs text-text-dim">Fine-tuning & Training Pipeline</p>
+            <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+            <p className="text-[9px] font-mono text-text-dim">Fine-tuning & Training Pipeline</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             {(['overview', 'export', 'models', 'optimizer', 'learning'] as const).map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${activeTab === tab ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${activeTab === tab ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
                 {tab === 'overview' ? t('tabs.overview') : tab === 'export' ? t('tabs.export') : tab === 'models' ? t('tabs.models') : tab === 'optimizer' ? t('tabs.optimizer') : t('tabs.learning')}
               </button>
             ))}
@@ -124,73 +124,73 @@ export default function DataLakePage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
               <HardDrive size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Raw Data</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Raw Data</span>
           </div>
-          <div className="text-xl font-bold text-brand-purple font-mono">{formatNumber(stats?.raw_data_total || 0)}</div>
+          <div className="text-sm font-bold text-brand-purple font-mono">{formatNumber(stats?.raw_data_total || 0)}</div>
           <div className="text-[10px] text-text-dim mt-1">Interacciones totales</div>
         </div>
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-status-success/10 flex items-center justify-center">
-              <Brain size={16} className="text-status-success" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Brain size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Training Data</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Training Data</span>
           </div>
-          <div className="text-xl font-bold text-status-success font-mono">{formatNumber(stats?.training_data_total || 0)}</div>
+          <div className="text-sm font-bold text-status-success font-mono">{formatNumber(stats?.training_data_total || 0)}</div>
           <div className="text-[10px] text-text-dim mt-1">Quality ≥ 0.7</div>
         </div>
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
-              <Sparkles size={16} className="text-brand-cyan" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Sparkles size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Training Ready</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Training Ready</span>
           </div>
-          <div className="text-xl font-bold text-brand-cyan font-mono">{formatNumber(trainingReady)}</div>
+          <div className="text-sm font-bold text-brand-cyan font-mono">{formatNumber(trainingReady)}</div>
           <div className="text-[10px] text-text-dim mt-1">is_training_ready = true</div>
         </div>
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-status-warning/10 flex items-center justify-center">
-              <Target size={16} className="text-status-warning" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Target size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Quality Score</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Quality Score</span>
           </div>
-          <div className="text-xl font-bold text-status-warning font-mono">{((stats?.quality_promedio || 0) * 100).toFixed(0)}%</div>
+          <div className="text-sm font-bold text-status-warning font-mono">{((stats?.quality_promedio || 0) * 100).toFixed(0)}%</div>
           <div className="text-[10px] text-text-dim mt-1">Promedio</div>
         </div>
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-status-info/10 flex items-center justify-center">
-              <Layers size={16} className="text-status-info" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Layers size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Modelos</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Modelos</span>
           </div>
-          <div className="text-xl font-bold text-status-info font-mono">{stats?.modelos_entrenados || 0}</div>
+          <div className="text-sm font-bold text-status-info font-mono">{stats?.modelos_entrenados || 0}</div>
           <div className="text-[10px] text-text-dim mt-1">Entrenados</div>
         </div>
       </div>
 
       {/* Fine-tuning Readiness */}
-      <div className="glass-card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Estado de Fine-tuning</h3>
+      <div className="glass-card p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Estado de Fine-tuning</h3>
           {stats?.listo_para_finetuning ? (
-            <span className="flex items-center gap-1 text-xs font-semibold text-status-success">
+            <span className="flex items-center gap-1 text-[10px] font-mono font-semibold text-status-success">
               <CheckCircle size={14} /> Listo para entrenar
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-xs font-semibold text-status-warning">
+            <span className="flex items-center gap-1 text-[10px] font-mono font-semibold text-status-warning">
               <Clock size={14} /> Acumulando datos
             </span>
           )}
@@ -206,8 +206,8 @@ export default function DataLakePage() {
             <div
               className={`h-full rounded-full transition-all ${
                 (stats?.training_data_total || 0) >= 50
-                  ? 'bg-gradient-to-r from-status-success to-status-info'
-                  : 'bg-gradient-to-r from-brand-purple to-brand-cyan'
+                  ? 'bg-status-success'
+                  : 'bg-brand-purple'
               }`}
               style={{ width: `${Math.min(100, ((stats?.training_data_total || 0) / 50) * 100)}%` }}
             />
@@ -215,7 +215,7 @@ export default function DataLakePage() {
         </div>
 
         {/* Milestones */}
-        <div className="grid grid-cols-4 gap-3 mt-4">
+        <div className="grid grid-cols-4 gap-3 mt-3">
           {[
             { target: 50, label: 'Fine-tune básico', desc: 'gpt-4o-mini' },
             { target: 500, label: 'SofIA v1', desc: 'Tono colombiano' },
@@ -225,23 +225,23 @@ export default function DataLakePage() {
             const current = stats?.training_data_total || 0
             const done = current >= milestone.target
             return (
-              <div key={milestone.target} className={`text-center p-3 rounded-lg border ${done ? 'border-status-success/30 bg-status-success/5' : 'border-border bg-void/30'}`}>
-                <div className={`text-lg font-bold font-mono ${done ? 'text-status-success' : 'text-text-dim'}`}>{formatNumber(milestone.target)}</div>
-                <div className={`text-[10px] font-semibold ${done ? 'text-status-success' : 'text-text-muted'}`}>{milestone.label}</div>
+              <div key={milestone.target} className={`text-center p-2.5 rounded-md border ${done ? 'border-status-success/30 bg-status-success/5' : 'border-border bg-void/30'}`}>
+                <div className={`text-sm font-bold font-mono ${done ? 'text-status-success' : 'text-text-dim'}`}>{formatNumber(milestone.target)}</div>
+                <div className={`text-[10px] font-mono font-semibold ${done ? 'text-status-success' : 'text-text-muted'}`}>{milestone.label}</div>
                 <div className="text-[9px] text-text-dim">{milestone.desc}</div>
               </div>
             )
           })}
         </div>
 
-        <p className="text-xs text-text-muted mt-4 italic">{stats?.recomendacion || ''}</p>
+        <p className="text-[10px] font-mono text-text-muted mt-3 italic">{stats?.recomendacion || ''}</p>
       </div>
 
       {/* TAB: OVERVIEW — Daily ingestion chart */}
       {activeTab === 'overview' && dailyData.length > 0 && (
-        <div className="glass-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+        <div className="glass-card p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
               <BarChart3 size={14} className="text-brand-purple" />
               Ingesta por Día (últimos 30 días)
             </h3>
@@ -257,11 +257,11 @@ export default function DataLakePage() {
 
       {/* TAB: OVERVIEW — Intent distribution + Pipeline + Annotations */}
       {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Intent distribution */}
           {stats?.por_intent && (
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Distribución por Intent</h3>
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Distribución por Intent</h3>
               <div className="space-y-3">
                 {Object.entries(stats.por_intent).sort(([, a], [, b]) => (b as number) - (a as number)).map(([intent, count]) => {
                   const max = Math.max(...Object.values(stats.por_intent) as number[])
@@ -273,7 +273,7 @@ export default function DataLakePage() {
                         <span className="text-text-primary font-semibold font-mono">{count}</span>
                       </div>
                       <div className="h-2 bg-void rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan rounded-full" style={{ width: `${pct}%` }} />
+                        <div className="h-full bg-brand-purple rounded-full" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   )
@@ -284,8 +284,8 @@ export default function DataLakePage() {
 
           {/* Data pipeline status */}
           {stats?.por_intent && (
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Pipeline Status</h3>
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Pipeline Status</h3>
               <div className="space-y-4">
                 <PipelineStep icon={<HardDrive size={16} />} label="Interacciones capturadas" value={`${formatNumber(stats.raw_data_total)} total`} status="active" />
                 <PipelineStep icon={<Target size={16} />} label="Quality filtering" value={`${formatNumber(stats.training_data_total)} aprobadas`} status="active" />
@@ -304,16 +304,16 @@ export default function DataLakePage() {
       {/* TAB: EXPORT */}
       {activeTab === 'export' && (
         <div className="space-y-4">
-          <div className="glass-card p-5">
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Exportar Training Data</h3>
-            <p className="text-sm text-text-muted mb-4">
+          <div className="glass-card p-4">
+            <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Exportar Training Data</h3>
+            <p className="text-[10px] font-mono text-text-muted mb-3">
               Exporta conversaciones de alta calidad en formato JSONL compatible con OpenAI Fine-tuning API.
               Los intents se balancean automáticamente para evitar sesgo.
             </p>
             <button
               onClick={handleExport}
               disabled={exporting || (stats?.training_data_total || 0) < 10}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 rounded-md bg-brand-purple text-white font-mono font-semibold text-[10px] flex items-center gap-2 disabled:opacity-50"
             >
               {exporting ? (
                 <><RefreshCw size={14} className="animate-spin" /> Exportando...</>
@@ -324,7 +324,7 @@ export default function DataLakePage() {
           </div>
 
           {exportResult && (
-            <div className="glass-card p-5">
+            <div className="glass-card p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Resultado del Export</h3>
                 <button onClick={handleDownload} className="px-3 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs font-semibold flex items-center gap-1">
@@ -332,22 +332,22 @@ export default function DataLakePage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="bg-void/50 rounded-lg p-3 text-center">
-                  <div className="text-lg font-bold text-brand-purple font-mono">{exportResult.stats?.total || 0}</div>
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                <div className="bg-void/50 rounded-md p-2.5 text-center">
+                  <div className="text-sm font-bold text-brand-purple font-mono">{exportResult.stats?.total || 0}</div>
                   <div className="text-[10px] text-text-dim">Samples</div>
                 </div>
-                <div className="bg-void/50 rounded-lg p-3 text-center">
-                  <div className="text-lg font-bold text-status-info font-mono">{formatNumber(exportResult.stats?.tokens_estimados || 0)}</div>
+                <div className="bg-void/50 rounded-md p-2.5 text-center">
+                  <div className="text-sm font-bold text-status-info font-mono">{formatNumber(exportResult.stats?.tokens_estimados || 0)}</div>
                   <div className="text-[10px] text-text-dim">Tokens est.</div>
                 </div>
-                <div className="bg-void/50 rounded-lg p-3 text-center">
-                  <div className="text-lg font-bold text-status-success font-mono">${exportResult.costo_estimado_usd || 0}</div>
+                <div className="bg-void/50 rounded-md p-2.5 text-center">
+                  <div className="text-sm font-bold text-status-success font-mono">${exportResult.costo_estimado_usd || 0}</div>
                   <div className="text-[10px] text-text-dim">Costo fine-tune</div>
                 </div>
               </div>
 
-              <p className="text-xs text-text-muted italic">{exportResult.recomendacion}</p>
+              <p className="text-[10px] font-mono text-text-muted italic">{exportResult.recomendacion}</p>
 
               {/* Preview */}
               <div className="mt-4">
@@ -382,12 +382,12 @@ export default function DataLakePage() {
 function PipelineStep({ icon, label, value, status }: { icon: React.ReactNode; label: string; value: string; status: 'active' | 'waiting' }) {
   return (
     <div className="flex items-center gap-3">
-      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${status === 'active' ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>
+      <div className={`w-8 h-8 rounded-md flex items-center justify-center ${status === 'active' ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple' : 'bg-surface-3 text-text-dim'}`}>
         {icon}
       </div>
       <div className="flex-1">
-        <div className="text-xs text-text-muted">{label}</div>
-        <div className={`text-sm font-semibold ${status === 'active' ? 'text-text-primary' : 'text-text-dim'}`}>{value}</div>
+        <div className="text-[10px] font-mono text-text-muted">{label}</div>
+        <div className={`text-xs font-mono font-semibold ${status === 'active' ? 'text-text-primary' : 'text-text-dim'}`}>{value}</div>
       </div>
       <div className={`w-2 h-2 rounded-full ${status === 'active' ? 'bg-status-success' : 'bg-surface-3'}`} />
     </div>

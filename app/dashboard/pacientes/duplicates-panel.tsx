@@ -108,25 +108,25 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard
           icon={<Search size={16} />}
-          gradient="from-brand-purple to-brand-purple-dark"
+          color="text-brand-purple"
           value={stats?.total_detected ?? 0}
           label={t('stats.detected')}
         />
         <StatCard
           icon={<AlertTriangle size={16} />}
-          gradient="from-status-warning to-amber-600"
+          color="text-status-warning"
           value={stats?.pending_review ?? 0}
           label={t('stats.pending')}
         />
         <StatCard
           icon={<GitMerge size={16} />}
-          gradient="from-status-success to-emerald-600"
+          color="text-status-success"
           value={stats?.merged ?? 0}
           label={t('stats.merged')}
         />
         <StatCard
           icon={<XCircle size={16} />}
-          gradient="from-text-dim to-gray-600"
+          color="text-text-dim"
           value={stats?.dismissed ?? 0}
           label={t('stats.dismissed')}
         />
@@ -134,11 +134,11 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
 
       {/* SCAN BUTTON */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-text-dim">{t('subtitle')}</p>
+        <p className="text-xs text-text-dim font-mono">{t('subtitle')}</p>
         <button
           onClick={handleScan}
           disabled={scanning}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-mono font-semibold hover:bg-brand-purple/15 transition-all disabled:opacity-50"
         >
           <RefreshCw size={13} className={scanning ? 'animate-spin' : ''} />
           {scanning ? t('scanning') : t('scanNow')}
@@ -149,7 +149,7 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-card p-5 animate-pulse">
+            <div key={i} className="glass-card p-4 animate-pulse">
               <div className="flex gap-4">
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-surface-3 rounded w-32" />
@@ -165,29 +165,29 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
           ))}
         </div>
       ) : duplicates.length === 0 ? (
-        <div className="glass-card p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-status-success/10 border border-status-success/20 flex items-center justify-center mx-auto mb-4">
+        <div className="glass-card p-8 text-center">
+          <div className="w-16 h-16 rounded-lg bg-status-success/10 border border-status-success/20 flex items-center justify-center mx-auto mb-4">
             <ShieldCheck size={28} className="text-status-success" />
           </div>
-          <h3 className="text-sm font-semibold text-text-primary mb-1">{t('noDuplicates')}</h3>
-          <p className="text-xs text-text-dim max-w-xs mx-auto">{t('noDuplicatesHint')}</p>
+          <h3 className="text-sm font-mono font-semibold text-text-primary mb-1">{t('noDuplicates')}</h3>
+          <p className="text-xs font-mono text-text-dim max-w-xs mx-auto">{t('noDuplicatesHint')}</p>
         </div>
       ) : (
         <div className="space-y-3">
           {duplicates.map((dup) => (
             <div
               key={dup.id}
-              className="glass-card p-5 hover:border-border-2 transition-all group"
+              className="glass-card p-4 hover:border-border-2 transition-all group"
             >
               <div className="flex items-center gap-4">
                 {/* Patient A */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold flex-shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-mono font-bold flex-shrink-0">
                       {dup.patient_a_name?.[0]?.toUpperCase() || '?'}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-text-primary truncate">
+                      <p className="text-sm font-mono font-semibold text-text-primary truncate">
                         {dup.patient_a_name}
                       </p>
                       <p className="text-[11px] text-text-dim font-mono">{dup.patient_a_phone}</p>
@@ -206,12 +206,12 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5 justify-end">
                     <div className="min-w-0 text-right">
-                      <p className="text-sm font-semibold text-text-primary truncate">
+                      <p className="text-sm font-mono font-semibold text-text-primary truncate">
                         {dup.patient_b_name}
                       </p>
                       <p className="text-[11px] text-text-dim font-mono">{dup.patient_b_phone}</p>
                     </div>
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-status-warning/20 to-amber-500/20 border border-status-warning/15 flex items-center justify-center text-status-warning text-xs font-bold flex-shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-status-warning/8 border border-status-warning/15 flex items-center justify-center text-status-warning text-xs font-mono font-bold flex-shrink-0">
                       {dup.patient_b_name?.[0]?.toUpperCase() || '?'}
                     </div>
                   </div>
@@ -268,26 +268,26 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
       {/* MERGE CONFIRMATION MODAL */}
       {mergeConfirm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="glass-card p-6 max-w-md w-full space-y-4 border-brand-purple/20">
+          <div className="glass-card p-4 max-w-md w-full space-y-4 border-brand-purple/20">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-status-success/10 border border-status-success/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-status-success/10 border border-status-success/20 flex items-center justify-center">
                 <GitMerge size={18} className="text-status-success" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-text-primary">{t('mergeConfirmTitle')}</h3>
-                <p className="text-[11px] text-text-dim">{t('mergeConfirmDesc')}</p>
+                <h3 className="text-sm font-mono font-bold text-text-primary">{t('mergeConfirmTitle')}</h3>
+                <p className="text-[11px] font-mono text-text-dim">{t('mergeConfirmDesc')}</p>
               </div>
             </div>
 
             {/* Select primary patient */}
             <div className="space-y-2">
-              <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">
+              <p className="text-[10px] text-text-dim font-mono font-semibold uppercase tracking-wider">
                 {t('selectPrimary')}
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedPrimary('a')}
-                  className={`flex-1 p-3 rounded-xl border text-left transition-all ${
+                  className={`flex-1 p-3 rounded-lg border text-left transition-all ${
                     selectedPrimary === 'a'
                       ? 'border-brand-purple/40 bg-brand-purple/5 ring-1 ring-brand-purple/20'
                       : 'border-border hover:border-border-2'
@@ -298,7 +298,7 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
                       {mergeConfirm.patient_a_name?.[0]?.toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-text-primary truncate">{mergeConfirm.patient_a_name}</p>
+                      <p className="text-xs font-mono font-semibold text-text-primary truncate">{mergeConfirm.patient_a_name}</p>
                       <p className="text-[10px] text-text-dim font-mono">{mergeConfirm.patient_a_phone}</p>
                     </div>
                   </div>
@@ -311,7 +311,7 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
                 </button>
                 <button
                   onClick={() => setSelectedPrimary('b')}
-                  className={`flex-1 p-3 rounded-xl border text-left transition-all ${
+                  className={`flex-1 p-3 rounded-lg border text-left transition-all ${
                     selectedPrimary === 'b'
                       ? 'border-brand-purple/40 bg-brand-purple/5 ring-1 ring-brand-purple/20'
                       : 'border-border hover:border-border-2'
@@ -322,7 +322,7 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
                       {mergeConfirm.patient_b_name?.[0]?.toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-text-primary truncate">{mergeConfirm.patient_b_name}</p>
+                      <p className="text-xs font-mono font-semibold text-text-primary truncate">{mergeConfirm.patient_b_name}</p>
                       <p className="text-[10px] text-text-dim font-mono">{mergeConfirm.patient_b_phone}</p>
                     </div>
                   </div>
@@ -338,10 +338,10 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
 
             {/* What gets merged */}
             <div className="bg-surface-2 rounded-lg p-3 border border-border">
-              <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider mb-2">
+              <p className="text-[10px] text-text-dim font-mono font-semibold uppercase tracking-wider mb-2">
                 {t('willConsolidate')}
               </p>
-              <ul className="space-y-1 text-xs text-text-muted">
+              <ul className="space-y-1 text-xs font-mono text-text-muted">
                 <li className="flex items-center gap-1.5"><CheckCircle2 size={10} className="text-status-success" /> {t('consolidateHistory')}</li>
                 <li className="flex items-center gap-1.5"><CheckCircle2 size={10} className="text-status-success" /> {t('consolidateAppointments')}</li>
                 <li className="flex items-center gap-1.5"><CheckCircle2 size={10} className="text-status-success" /> {t('consolidateNotes')}</li>
@@ -353,14 +353,14 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
             <div className="flex gap-2 pt-1">
               <button
                 onClick={() => setMergeConfirm(null)}
-                className="flex-1 px-4 py-2 rounded-xl bg-surface-3 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors"
+                className="flex-1 px-4 py-2 rounded-lg bg-surface-3 border border-border text-text-muted text-xs font-mono font-semibold hover:text-text-primary transition-colors"
               >
                 {t('cancel')}
               </button>
               <button
                 onClick={() => handleMerge(mergeConfirm)}
                 disabled={processingId === mergeConfirm.id}
-                className="flex-1 px-4 py-2 rounded-xl bg-status-success/15 border border-status-success/25 text-status-success text-xs font-semibold hover:bg-status-success/25 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 rounded-lg bg-status-success/15 border border-status-success/25 text-status-success text-xs font-mono font-semibold hover:bg-status-success/25 transition-colors disabled:opacity-50"
               >
                 {processingId === mergeConfirm.id ? t('merging') : t('confirmMerge')}
               </button>
@@ -372,19 +372,19 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
   )
 }
 
-function StatCard({ icon, gradient, value, label }: {
+function StatCard({ icon, color, value, label }: {
   icon: React.ReactNode
-  gradient: string
+  color: string
   value: number
   label: string
 }) {
   return (
-    <div className="glass-card p-3.5">
-      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 shadow-md`}>
+    <div className="glass-card p-3">
+      <div className={`w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${color} mb-2`}>
         {icon}
       </div>
       <div className="text-lg font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[10px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-[10px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

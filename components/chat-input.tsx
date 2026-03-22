@@ -34,12 +34,12 @@ export function ChatInput({ onSend, disabled = false, placeholder = 'Escribe un 
         onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
         placeholder={placeholder}
         disabled={disabled}
-        className="flex-1 px-4 py-2.5 bg-surface-3 border border-border rounded-xl text-xs text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors disabled:opacity-50"
+        className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-lg text-xs font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors disabled:opacity-50"
       />
       <button
         onClick={handleSubmit}
         disabled={disabled || !text.trim()}
-        className="w-9 h-9 rounded-xl bg-brand-purple text-white flex items-center justify-center hover:bg-brand-purple-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+        className="w-9 h-9 rounded-lg bg-brand-purple text-white flex items-center justify-center hover:bg-brand-purple-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
         aria-label="Enviar mensaje"
       >
         <Send size={14} />

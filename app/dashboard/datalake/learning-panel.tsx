@@ -136,7 +136,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="glass-card p-6 animate-pulse">
+          <div key={i} className="glass-card p-4 animate-pulse">
             <div className="h-28 bg-surface-3 rounded-lg" />
           </div>
         ))}
@@ -149,12 +149,12 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-purple/20">
-            <Brain size={20} className="text-white" />
+          <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+            <Brain size={20} className="text-brand-purple" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-text-primary">{t('title')}</h3>
-            <p className="text-xs text-text-dim">{t('subtitle')}</p>
+            <h3 className="text-lg font-semibold font-mono text-text-primary">{t('title')}</h3>
+            <p className="text-xs font-mono text-text-dim">{t('subtitle')}</p>
           </div>
         </div>
         <button
@@ -168,13 +168,13 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
       {/* Overview KPIs */}
       {progress && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="glass-card p-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
                 <Brain size={16} className="text-brand-purple" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('totalCorrections')}</span>
+              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('totalCorrections')}</span>
             </div>
             <div className="text-xl font-bold text-brand-purple font-mono">
               {progress.org_total_corrections.toLocaleString()}
@@ -186,7 +186,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
               <div className="w-8 h-8 rounded-lg bg-status-success/10 flex items-center justify-center">
                 <Sparkles size={16} className="text-status-success" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('activeRules')}</span>
+              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('activeRules')}</span>
             </div>
             <div className="text-xl font-bold text-status-success font-mono">
               {progress.org_total_rules}
@@ -206,7 +206,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
               <div className="w-8 h-8 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
                 <Brain size={16} className="text-brand-cyan" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('doctors')}</span>
+              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('doctors')}</span>
             </div>
             <div className="text-xl font-bold text-brand-cyan font-mono">
               {progress.doctors.length}
@@ -217,9 +217,9 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
       {/* Doctor selector */}
       {progress && progress.doctors.length > 0 && (
-        <div className="glass-card p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+        <div className="glass-card p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <label className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider">
               {t('selectDoctor')}
             </label>
             <div className="relative flex-1 max-w-xs">
@@ -259,32 +259,32 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
           {/* Doctor stats */}
           {doctorStats && !loadingDoctor && (
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-3 gap-3 mb-3">
               <div className="bg-surface-3/50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-brand-purple font-mono">{doctorStats.total_corrections}</div>
-                <div className="text-[10px] text-text-dim">{t('correctionsLabel')}</div>
+                <div className="text-[10px] font-mono text-text-dim">{t('correctionsLabel')}</div>
               </div>
               <div className="bg-surface-3/50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-status-success font-mono">{doctorStats.active_rules}</div>
-                <div className="text-[10px] text-text-dim">{t('rulesLabel')}</div>
+                <div className="text-[10px] font-mono text-text-dim">{t('rulesLabel')}</div>
               </div>
               <div className="bg-surface-3/50 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold text-brand-cyan font-mono">{(doctorStats.accuracy_rate * 100).toFixed(1)}%</div>
-                <div className="text-[10px] text-text-dim">{t('accuracy')}</div>
+                <div className="text-[10px] font-mono text-text-dim">{t('accuracy')}</div>
               </div>
             </div>
           )}
 
           {/* AI Suggested Rule */}
           {suggestedRule && (
-            <div className="bg-brand-purple/5 border border-brand-purple/20 rounded-xl p-4 mb-4">
+            <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-md p-4 mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={14} className="text-brand-purple" />
                 <span className="text-xs font-semibold text-brand-purple">{t('aiSuggestion')}</span>
               </div>
               <p className="text-sm text-text-primary mb-2">{suggestedRule.rule_description}</p>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] text-text-dim">{t('type')}: {suggestedRule.rule_type}</span>
+                <span className="text-[10px] font-mono text-text-dim">{t('type')}: {suggestedRule.rule_type}</span>
                 <ConfidenceBar value={suggestedRule.confidence * 100} className="w-24" />
               </div>
             </div>
@@ -299,8 +299,8 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
           {/* Learned Rules */}
           {!loadingDoctor && doctorRules.length > 0 && (
-            <div className="mb-5">
-              <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
+            <div className="mb-3">
+              <h4 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider mb-3">
                 {t('learnedRules')} ({doctorRules.length})
               </h4>
               <div className="space-y-2">
@@ -320,7 +320,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-3 border border-border text-[10px] font-semibold text-text-muted">
                             {rule.rule_type.replace(/_/g, ' ')}
                           </span>
-                          <span className="text-[10px] text-text-dim">
+                          <span className="text-[10px] font-mono text-text-dim">
                             {rule.times_applied} {t('applied')} / {rule.times_correct} {t('correct')}
                           </span>
                         </div>
@@ -347,7 +347,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
           )}
 
           {!loadingDoctor && doctorRules.length === 0 && selectedDoctorId && (
-            <div className="text-center py-6 mb-4">
+            <div className="text-center py-6 mb-3">
               <Brain size={28} className="text-text-dim mx-auto mb-2 opacity-30" />
               <p className="text-sm text-text-dim">{t('noRules')}</p>
               <p className="text-xs text-text-dim mt-1">{t('noRulesHint')}</p>
@@ -358,8 +358,8 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
       {/* Correction History */}
       {!loadingDoctor && corrections.length > 0 && (
-        <div className="glass-card p-5">
-          <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">
+        <div className="glass-card p-4">
+          <h4 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider mb-3">
             {t('correctionHistory')} ({corrections.length})
           </h4>
 
@@ -415,7 +415,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
       {/* Empty state */}
       {!progress?.doctors?.length && !loading && (
-        <div className="glass-card p-12 text-center">
+        <div className="glass-card p-8 text-center">
           <Brain size={48} className="text-text-dim mx-auto mb-3 opacity-20" />
           <h4 className="text-sm font-semibold text-text-muted mb-1">{t('noData')}</h4>
           <p className="text-xs text-text-dim max-w-sm mx-auto">{t('noDataHint')}</p>

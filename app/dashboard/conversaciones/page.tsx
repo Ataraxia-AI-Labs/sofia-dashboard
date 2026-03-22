@@ -21,17 +21,17 @@ import {
 
 const ChannelsPanel = dynamic(() => import('./channels-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const UnifiedInbox = dynamic(() => import('./unified-inbox'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const VoicePanel = dynamic(() => import('./voice-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 // ============================================================
@@ -244,10 +244,10 @@ export default function ConversacionesPage() {
   return (
     <div className="h-[calc(100vh-5rem)] lg:h-[calc(100vh-5.5rem)] flex flex-col">
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">
             {t('conversationCount', { count: uniquePatients })}{totalMessages > 0 && <> &middot; {t('messageCount', { count: totalMessages })}</>}
           </p>
         </div>
@@ -256,7 +256,7 @@ export default function ConversacionesPage() {
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveTab('conversations')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'conversations' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -265,7 +265,7 @@ export default function ConversacionesPage() {
             </button>
             <button
               onClick={() => setActiveTab('inbox')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'inbox' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -274,7 +274,7 @@ export default function ConversacionesPage() {
             </button>
             <button
               onClick={() => setActiveTab('channels')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'channels' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -283,7 +283,7 @@ export default function ConversacionesPage() {
             </button>
             <button
               onClick={() => setActiveTab('voice')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'voice' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -426,7 +426,7 @@ export default function ConversacionesPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t('searchByNameOrPhone')}
-                className="w-full pl-9 pr-3 py-2 bg-surface-3 border border-border rounded-xl text-xs text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
+                className="w-full pl-9 pr-3 py-2 bg-surface-3 border border-border rounded-md font-mono text-[10px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
               />
               {search && (
                 <button
@@ -444,7 +444,7 @@ export default function ConversacionesPage() {
             {loading && filteredThreads.length === 0 ? (
               <div className="p-3 space-y-2">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="p-3 rounded-xl animate-pulse">
+                  <div key={i} className="p-3 rounded-lg animate-pulse">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-surface-3" />
                       <div className="flex-1 space-y-2">
@@ -500,11 +500,11 @@ export default function ConversacionesPage() {
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center px-6">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-purple/10 to-brand-cyan/10 border border-brand-purple/10 flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center mx-auto mb-3">
                   <MessageSquare size={28} className="text-brand-purple/40" />
                 </div>
-                <p className="text-text-muted text-sm font-medium">{t('selectConversation')}</p>
-                <p className="text-text-dim text-xs mt-1">
+                <p className="text-text-muted text-[10px] font-mono font-medium">{t('selectConversation')}</p>
+                <p className="text-text-dim text-[9px] font-mono mt-1">
                   {t('selectThreadHint')}
                 </p>
               </div>
@@ -553,7 +553,7 @@ function ThreadCard({
   return (
     <button
       onClick={onSelect}
-      className={`w-full text-left px-3 py-3 rounded-xl transition-all duration-150 group ${
+      className={`w-full text-left px-3 py-3 rounded-lg transition-all duration-150 group ${
         isSelected
           ? 'bg-brand-purple/10 border border-brand-purple/20'
           : 'hover:bg-surface-3 border border-transparent'
@@ -565,8 +565,8 @@ function ThreadCard({
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${
               isSelected
-                ? 'bg-gradient-to-br from-brand-purple to-brand-purple-dark text-white'
-                : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'
+                ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple'
+                : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/8 group-hover:text-brand-purple'
             } transition-colors`}
           >
             {displayName[0]?.toUpperCase() || '?'}
@@ -581,7 +581,7 @@ function ThreadCard({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-0.5">
-            <span className={`text-xs font-semibold truncate ${
+            <span className={`text-[10px] font-mono font-semibold truncate ${
               isSelected ? 'text-brand-purple-light' : 'text-text-primary'
             }`}>
               {displayName}
@@ -589,7 +589,7 @@ function ThreadCard({
             <span className="text-[10px] text-text-dim flex-shrink-0">{timeLabel}</span>
           </div>
 
-          <p className="text-[11px] text-text-muted leading-relaxed line-clamp-2 mb-1.5">
+          <p className="text-[10px] font-mono text-text-muted leading-relaxed line-clamp-2 mb-1.5">
             {preview}
           </p>
 
@@ -713,13 +713,13 @@ function ConversationDetail({
           <ArrowLeft size={14} />
         </button>
 
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+        <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-mono font-bold flex-shrink-0">
           {displayName[0]?.toUpperCase() || '?'}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-text-primary truncate">{displayName}</span>
+            <span className="text-xs font-mono font-semibold text-text-primary truncate">{displayName}</span>
             <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold border ${platformCfg.bg} ${platformCfg.color}`}>
               <PlatformIcon size={9} />
               {t(`platforms.${thread.channel}`)}
@@ -736,7 +736,7 @@ function ConversationDetail({
         {/* Sentiment indicator */}
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-surface-3 border border-border">
           <div className={`w-2 h-2 rounded-full ${SENTIMENT_COLORS[thread.sentimentLabel] || 'bg-status-warning'}`} />
-          <span className="text-[10px] text-text-muted font-medium capitalize">
+          <span className="text-[9px] font-mono text-text-muted font-medium capitalize">
             {thread.sentimentLabel === 'POSITIVE' ? t('sentiment.positive') : thread.sentimentLabel === 'NEGATIVE' ? t('sentiment.negative') : t('sentiment.neutral')}
           </span>
         </div>
@@ -863,8 +863,8 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
       <div
         className={`max-w-[85%] sm:max-w-[75%] lg:max-w-[70%] ${
           isOutbound
-            ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-2xl rounded-br-md'
-            : 'bg-surface-3 border border-border rounded-2xl rounded-bl-md'
+            ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-lg rounded-br-md'
+            : 'bg-surface-3 border border-border rounded-lg rounded-bl-md'
         } px-3.5 py-2.5 transition-colors`}
       >
         {/* Sender label */}
@@ -975,8 +975,8 @@ function EmptyState({
     <div className="flex-1 flex items-center justify-center py-16 px-6">
       <div className="text-center">
         <div className="mb-3 flex justify-center">{icon}</div>
-        <p className="text-text-muted text-sm font-medium">{title}</p>
-        <p className="text-text-dim text-xs mt-1 max-w-xs mx-auto">{description}</p>
+        <p className="text-text-muted text-[10px] font-mono font-medium">{title}</p>
+        <p className="text-text-dim text-[9px] font-mono mt-1 max-w-xs mx-auto">{description}</p>
       </div>
     </div>
   )

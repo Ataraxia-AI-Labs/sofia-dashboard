@@ -27,9 +27,9 @@ const playfairDisplay = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'SofIA by Ataraxia IA Labs — Tu clinica opera sola',
-  description: 'SofIA atiende pacientes 24/7 por WhatsApp, agenda citas, cobra anticipos y detecta oportunidades — automaticamente. Prueba gratis 7 dias.',
-  keywords: 'IA clinicas, chatbot dental, WhatsApp dental, asistente IA clinica, automatizacion clinicas, SofIA, Ataraxia',
+  title: 'SofIA — Nucleus | Ataraxia IA Labs',
+  description: 'SofIA opera tu clinica 24/7. WhatsApp, voz, citas, cobros, oportunidades — todo autonomo. Tu clinica nunca duerme.',
+  keywords: 'IA clinicas, chatbot dental, WhatsApp dental, asistente IA clinica, automatizacion clinicas, SofIA, Ataraxia, Nucleus',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -43,16 +43,16 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'SofIA — Tu clinica opera sola. Siempre.',
-    description: 'Asistente IA que atiende pacientes 24/7 por WhatsApp. Agenda citas, cobra anticipos y detecta oportunidades automaticamente.',
-    siteName: 'SofIA by Ataraxia IA Labs',
+    title: 'SofIA — Tu clinica nunca duerme.',
+    description: 'SofIA opera tu clinica 24/7. WhatsApp, voz, citas, cobros, oportunidades — todo autonomo.',
+    siteName: 'SofIA / Ataraxia IA Labs',
     type: 'website',
     url: 'https://ataraxiaialabs.ai',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SofIA — Tu clinica opera sola. Siempre.',
-    description: 'IA autonoma para tu clinica. 24/7, sin humanos. Prueba gratis 7 dias.',
+    title: 'SofIA — Tu clinica nunca duerme.',
+    description: 'IA autonoma para tu clinica. 24/7, sin humanos.',
   },
 }
 

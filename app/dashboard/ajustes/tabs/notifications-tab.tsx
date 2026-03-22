@@ -37,11 +37,11 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
   }
 
   return (
-    <div className="glass-card p-6 space-y-5">
+    <div className="glass-card p-5 space-y-4">
       {/* Notification Phone */}
       <div>
-        <h3 className="text-sm font-semibold text-text-primary mb-1">Numero de Notificaciones</h3>
-        <p className="text-xs text-text-dim mb-3">
+        <h3 className="text-xs font-mono font-semibold text-text-primary mb-1">Numero de Notificaciones</h3>
+        <p className="text-[10px] font-mono text-text-dim mb-2">
           WhatsApp donde SofIA envia alertas de emergencia, crisis emocional, y solicitudes de escalamiento a humano.
         </p>
         <div className="flex gap-2">
@@ -50,7 +50,7 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
             value={notifPhone}
             onChange={(e) => setNotifPhone(e.target.value)}
             placeholder="573001234567"
-            className="flex-1 px-4 py-2.5 rounded-xl bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40"
+            className="flex-1 px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40"
           />
           <Button
             variant="secondary"
@@ -65,11 +65,11 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
       </div>
 
       {/* Vacation Mode */}
-      <div className="border-t border-border pt-4">
-        <div className="flex items-center justify-between mb-3">
+      <div className="border-t border-border pt-3">
+        <div className="flex items-center justify-between mb-2">
           <div>
-            <h4 className="text-sm font-semibold text-text-primary">Modo Vacaciones</h4>
-            <p className="text-xs text-text-dim mt-0.5">
+            <h4 className="text-xs font-mono font-semibold text-text-primary">Modo Vacaciones</h4>
+            <p className="text-[10px] font-mono text-text-dim mt-0.5">
               Cuando esta activo, SofIA sigue respondiendo pero informa que la clinica esta en descanso.
             </p>
           </div>
@@ -85,17 +85,17 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
         </div>
         {vacationMode && (
           <div className="space-y-3">
-            <div className="px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold">
+            <div className="px-3 py-2 rounded-md bg-status-warning/10 border border-status-warning/20 text-[10px] font-mono text-status-warning font-semibold">
               VACACIONES ACTIVO — SofIA NO esta procesando mensajes. Los pacientes reciben un mensaje de que la clinica esta en descanso.
             </div>
             <div className="flex items-center gap-3">
               <CalendarDays size={14} className="text-status-warning flex-shrink-0" />
-              <label className="text-xs text-text-muted font-semibold whitespace-nowrap">Fecha de retorno:</label>
+              <label className="text-[10px] font-mono text-text-muted font-semibold whitespace-nowrap">Fecha de retorno:</label>
               <input
                 type="date"
                 value={vacationReturnDate}
                 onChange={(e) => setVacationReturnDate(e.target.value)}
-                className="px-3 py-1.5 rounded-lg bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40"
+                className="px-3 py-1.5 rounded-md bg-void border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40"
               />
               <Button
                 variant="secondary"
@@ -106,7 +106,7 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
               />
             </div>
             {vacationReturnDate && (
-              <p className="text-[11px] text-text-dim ml-7">
+              <p className="text-[10px] font-mono text-text-dim ml-7">
                 SofIA informara a los pacientes que la clinica regresa el {new Date(vacationReturnDate + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}.
               </p>
             )}
@@ -115,13 +115,13 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
       </div>
 
       {/* Birthday Bot */}
-      <div className="border-t border-border pt-4">
-        <div className="flex items-center justify-between mb-3">
+      <div className="border-t border-border pt-3">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Cake size={16} className="text-brand-purple" />
             <div>
-              <h4 className="text-sm font-semibold text-text-primary">Birthday Bot</h4>
-              <p className="text-xs text-text-dim mt-0.5">
+              <h4 className="text-xs font-mono font-semibold text-text-primary">Birthday Bot</h4>
+              <p className="text-[10px] font-mono text-text-dim mt-0.5">
                 Envia un mensaje automatico de felicitacion a pacientes en su cumpleanos.
               </p>
             </div>
@@ -139,16 +139,16 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
         {birthdayEnabled && (
           <div className="space-y-3 ml-0.5">
             <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase tracking-wider mb-1">Plantilla del mensaje</label>
+              <label className="block text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider mb-1">Plantilla del mensaje</label>
               <textarea
                 value={birthdayTemplate}
                 onChange={(e) => setBirthdayTemplate(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 resize-y"
+                className="w-full px-3 py-2 rounded-md bg-void border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 resize-y"
                 placeholder="Feliz cumpleanos {nombre}! De parte de {clinica}..."
               />
-              <p className="text-[10px] text-text-dim mt-1">
-                Variables disponibles: <code className="text-brand-purple">{'{nombre}'}</code> = nombre del paciente, <code className="text-brand-purple">{'{clinica}'}</code> = nombre de la clinica
+              <p className="text-[10px] font-mono text-text-dim mt-1">
+                Variables disponibles: <code className="text-brand-purple font-mono">{'{nombre}'}</code> = nombre del paciente, <code className="text-brand-purple font-mono">{'{clinica}'}</code> = nombre de la clinica
               </p>
             </div>
             <div className="flex justify-end">
@@ -168,9 +168,9 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
       </div>
 
       {/* Auto-notification list */}
-      <div className="border-t border-border pt-4">
-        <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">SofIA notifica automaticamente cuando:</h4>
-        <div className="space-y-2">
+      <div className="border-t border-border pt-3">
+        <h4 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-2">SofIA notifica automaticamente cuando:</h4>
+        <div className="space-y-1.5">
           {[
             { emoji: '🚨', label: 'Crisis emocional', desc: 'Paciente menciona suicidio o autolesion — Linea 106 + alerta al doctor' },
             { emoji: '⚠️', label: 'Emergencia medica', desc: 'Paciente reporta dolor extremo, sangrado, etc. — 123 + alerta al doctor' },
@@ -178,11 +178,11 @@ export function NotificationsTab({ orgId, org, isReadOnly, onMessage }: Notifica
             { emoji: '📅', label: 'Cita nueva agendada', desc: 'SofIA confirma una cita — se registra en el calendario' },
             { emoji: '❌', label: 'Cita cancelada', desc: 'Paciente cancela — se actualiza el estado' },
           ].map(item => (
-            <div key={item.label} className="flex items-start gap-3 px-3 py-2 rounded-lg bg-surface-3/50">
+            <div key={item.label} className="flex items-start gap-3 px-3 py-2 rounded-md bg-surface-3/50">
               <span className="text-base">{item.emoji}</span>
               <div>
-                <span className="text-xs font-semibold text-text-primary">{item.label}</span>
-                <p className="text-[11px] text-text-dim">{item.desc}</p>
+                <span className="text-[10px] font-mono font-semibold text-text-primary">{item.label}</span>
+                <p className="text-[10px] font-mono text-text-dim">{item.desc}</p>
               </div>
             </div>
           ))}

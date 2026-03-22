@@ -71,9 +71,9 @@ export function CampaignStatusBadge({ status, className = '' }: CampaignStatusBa
   const Icon = cfg.icon
 
   return (
-    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${cfg.bg} border ${cfg.border} ${className}`}>
-      <Icon size={12} className={`${cfg.color} ${cfg.animate || ''}`} />
-      <span className={`text-[10px] font-semibold ${cfg.color}`}>{cfg.label}</span>
+    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}>
+      <Icon size={10} className={`${cfg.color} ${cfg.animate || ''}`} />
+      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

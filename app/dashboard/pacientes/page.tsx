@@ -17,22 +17,22 @@ import { PatientDetailPanel } from './panels/patient-detail-panel'
 
 const SegmentationPanel = dynamic(() => import('./segmentation-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const DuplicatesPanel = dynamic(() => import('./duplicates-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const LTVPanel = dynamic(() => import('./ltv-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const GamificationPanel = dynamic(() => import('./gamification-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const CHANNEL_COLORS: Record<string, string> = {
@@ -263,18 +263,18 @@ export default function PacientesPage() {
   }
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">{t('registered', { count: formatNumber(total) })}</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('registered', { count: formatNumber(total) })}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveView('list')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${
                 activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -282,7 +282,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('segments')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'segments' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -291,7 +291,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('duplicates')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'duplicates' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -300,7 +300,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('ltv')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'ltv' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -309,7 +309,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('gamification')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'gamification' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -317,10 +317,10 @@ export default function PacientesPage() {
               {t('views.gamification')}
             </button>
           </div>
-          <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
+          <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[10px] font-mono font-semibold hover:text-text-primary transition-colors">
             <Download size={13} /> {t('exportCSV')}
           </button>
-          <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
+          <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/25 transition-colors">
             <UserPlus size={13} /> {t('newPatient')}
           </button>
           <button onClick={loadPatients} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
@@ -361,7 +361,7 @@ export default function PacientesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
+            className="w-full pl-10 pr-4 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-[10px] font-mono placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
           />
           {search && (
             <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary">
@@ -398,7 +398,7 @@ export default function PacientesPage() {
                   <th
                     key={col.field}
                     onClick={() => toggleSort(col.field)}
-                    className="text-left text-[11px] font-semibold text-text-muted uppercase tracking-wider px-5 py-3.5 cursor-pointer hover:text-text-primary transition-colors select-none"
+                    className="text-left text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-text-primary transition-colors select-none"
                   >
                     <div className="flex items-center gap-1">
                       {col.label}
@@ -413,7 +413,7 @@ export default function PacientesPage() {
                 Array.from({ length: 8 }).map((_, i) => (
                   <tr key={i} className="border-b border-border/50">
                     {Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="px-5 py-3.5">
+                      <td key={j} className="px-4 py-3">
                         <div className="h-4 bg-surface-3 rounded animate-pulse w-24" />
                       </td>
                     ))}
@@ -421,7 +421,7 @@ export default function PacientesPage() {
                 ))
               ) : patients.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-text-dim text-sm">
+                  <td colSpan={6} className="text-center py-10 text-text-dim text-[10px] font-mono">
                     {search ? t('noResultsSearch') : t('noPatients')}
                   </td>
                 </tr>
@@ -432,34 +432,34 @@ export default function PacientesPage() {
                     onClick={() => openDetail(p)}
                     className="border-b border-border/50 hover:bg-surface-3/50 cursor-pointer transition-colors group"
                   >
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold flex-shrink-0">
+                        <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-mono font-bold flex-shrink-0">
                           {p.full_name?.[0]?.toUpperCase() || '?'}
                         </div>
-                        <span className="text-sm font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
+                        <span className="text-xs font-mono font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
                           {p.full_name || t('noName')}
                         </span>
                       </div>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className="text-sm text-text-secondary font-mono">{p.phone}</span>
+                    <td className="px-4 py-3">
+                      <span className="text-[10px] text-text-secondary font-mono">{p.phone}</span>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className={`text-xs font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
+                    <td className="px-4 py-3">
+                      <span className={`text-[10px] font-mono font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
                         {t.has(`channels.${p.acquisition_channel}`) ? t(`channels.${p.acquisition_channel}`) : p.acquisition_channel}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className="text-sm text-text-muted truncate max-w-[140px] block">
+                    <td className="px-4 py-3">
+                      <span className="text-[10px] font-mono text-text-muted truncate max-w-[140px] block">
                         {p.service_interest || '\u2014'}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className="text-sm text-text-muted">{p.city || '\u2014'}</span>
+                    <td className="px-4 py-3">
+                      <span className="text-[10px] font-mono text-text-muted">{p.city || '\u2014'}</span>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className="text-xs text-text-dim">{timeAgo(p.created_at)}</span>
+                    <td className="px-4 py-3">
+                      <span className="text-[9px] font-mono text-text-dim">{timeAgo(p.created_at)}</span>
                     </td>
                   </tr>
                 ))
@@ -470,8 +470,8 @@ export default function PacientesPage() {
 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-border">
-            <span className="text-xs text-text-dim">
+          <div className="flex items-center justify-between px-4 py-2.5 border-t border-border">
+            <span className="text-[9px] font-mono text-text-dim">
               {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} {t('ofTotal')} {total}
             </span>
             <div className="flex gap-1.5">
@@ -479,7 +479,7 @@ export default function PacientesPage() {
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
                 aria-label="Página anterior"
-                className="w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="w-7 h-7 rounded-md bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft size={14} />
               </button>
@@ -490,7 +490,7 @@ export default function PacientesPage() {
                   <button
                     key={pageNum}
                     onClick={() => setPage(pageNum)}
-                    className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
+                    className={`w-7 h-7 rounded-md text-[10px] font-mono font-semibold transition-colors ${
                       pageNum === page
                         ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                         : 'bg-surface-3 border border-border text-text-muted hover:text-text-primary'
@@ -504,7 +504,7 @@ export default function PacientesPage() {
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
                 aria-label="Página siguiente"
-                className="w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="w-7 h-7 rounded-md bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight size={14} />
               </button>

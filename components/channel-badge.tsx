@@ -33,7 +33,7 @@ const CHANNEL_CONFIG: Record<ChannelType, {
     icon: Instagram,
     label: 'Instagram',
     color: 'text-fuchsia-400',
-    bg: 'bg-gradient-to-r from-fuchsia-500/10 to-purple-500/10',
+    bg: 'bg-fuchsia-500/10',
     border: 'border-fuchsia-500/25',
   },
   WEBCHAT: {
@@ -69,7 +69,7 @@ export function ChannelBadge({ channel, compact = false, className = '' }: Chann
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
     >
       <Icon size={9} />
       {cfg.label}

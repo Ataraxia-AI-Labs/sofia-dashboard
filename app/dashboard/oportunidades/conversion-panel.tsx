@@ -87,8 +87,8 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
   return (
     <div className="space-y-4">
       {/* Header + Predict All */}
-      <div className="glass-card p-5">
-        <div className="flex items-center justify-between mb-4">
+      <div className="glass-card p-4">
+        <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
             <TrendingUp size={14} className="text-brand-purple" />
             {t('title')}
@@ -105,7 +105,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
             <button
               onClick={handlePredictAll}
               disabled={predictingAll}
-              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white text-xs font-semibold flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold flex items-center gap-1.5 disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
             >
               {predictingAll ? (
                 <><Loader2 size={12} className="animate-spin" /> {t('predicting')}</>
@@ -117,7 +117,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
         </div>
 
         {predictResult && (
-          <div className="mb-4 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs">
+          <div className="mb-3 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs">
             {predictResult}
           </div>
         )}
@@ -126,21 +126,21 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
         {loading && !insights ? (
           <div className="grid grid-cols-3 gap-3 animate-pulse">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 bg-surface-3 rounded-xl" />
+              <div key={i} className="h-20 bg-surface-3 rounded-lg" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-            <div className="bg-void/50 rounded-xl p-3 border border-border">
-              <div className="text-[9px] text-text-dim uppercase">{t('avgConversionRate')}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+            <div className="bg-void/50 rounded-lg p-3 border border-border">
+              <div className="text-[9px] font-mono text-text-dim uppercase">{t('avgConversionRate')}</div>
               <div className={`text-xl font-bold font-mono ${
                 avgRate >= 0.7 ? 'text-status-success' : avgRate >= 0.4 ? 'text-status-warning' : 'text-status-danger'
               }`}>
                 {Math.round(avgRate * 100)}%
               </div>
             </div>
-            <div className="bg-void/50 rounded-xl p-3 border border-border">
-              <div className="text-[9px] text-text-dim uppercase">{t('quincenaEffect')}</div>
+            <div className="bg-void/50 rounded-lg p-3 border border-border">
+              <div className="text-[9px] font-mono text-text-dim uppercase">{t('quincenaEffect')}</div>
               <div className="flex items-center gap-1">
                 <span className={`text-xl font-bold font-mono ${
                   quincenaBoost > 0 ? 'text-status-success' : 'text-text-muted'
@@ -151,12 +151,12 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
               </div>
               <div className="text-[8px] text-text-dim mt-0.5">{t('quincenaHint')}</div>
             </div>
-            <div className="bg-void/50 rounded-xl p-3 border border-border">
-              <div className="text-[9px] text-text-dim uppercase">{t('totalPredicted')}</div>
+            <div className="bg-void/50 rounded-lg p-3 border border-border">
+              <div className="text-[9px] font-mono text-text-dim uppercase">{t('totalPredicted')}</div>
               <div className="text-xl font-bold font-mono text-text-primary">{totalPredicted}</div>
             </div>
-            <div className="bg-void/50 rounded-xl p-3 border border-border">
-              <div className="text-[9px] text-text-dim uppercase">{t('queueSize')}</div>
+            <div className="bg-void/50 rounded-lg p-3 border border-border">
+              <div className="text-[9px] font-mono text-text-dim uppercase">{t('queueSize')}</div>
               <div className="text-xl font-bold font-mono text-brand-purple">{queue.length}</div>
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
           <div>
             <div className="flex items-center gap-1.5 mb-3">
               <BarChart3 size={12} className="text-brand-cyan" />
-              <span className="text-[10px] font-semibold text-text-muted uppercase">{t('heatmapTitle')}</span>
+              <span className="text-[10px] font-mono font-semibold text-text-muted uppercase">{t('heatmapTitle')}</span>
             </div>
             <div className="overflow-x-auto">
               <div className="min-w-[500px]">
@@ -199,7 +199,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
                 ))}
                 {/* Legend */}
                 <div className="flex items-center justify-end gap-2 mt-2">
-                  <span className="text-[8px] text-text-dim">{t('low')}</span>
+                  <span className="text-[8px] font-mono text-text-dim">{t('low')}</span>
                   <div className="flex gap-0.5">
                     <div className="w-4 h-3 rounded-sm bg-status-danger/20" />
                     <div className="w-4 h-3 rounded-sm bg-status-warning/30" />
@@ -207,7 +207,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
                     <div className="w-4 h-3 rounded-sm bg-status-success/50" />
                     <div className="w-4 h-3 rounded-sm bg-status-success/80" />
                   </div>
-                  <span className="text-[8px] text-text-dim">{t('high')}</span>
+                  <span className="text-[8px] font-mono text-text-dim">{t('high')}</span>
                 </div>
               </div>
             </div>
@@ -219,7 +219,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
           <div className="mt-4 pt-3 border-t border-border">
             <div className="flex items-center gap-1.5 mb-2">
               <Target size={11} className="text-status-success" />
-              <span className="text-[10px] font-semibold text-text-muted uppercase">{t('topFactors')}</span>
+              <span className="text-[10px] font-mono font-semibold text-text-muted uppercase">{t('topFactors')}</span>
             </div>
             <div className="space-y-1.5">
               {topFactors.slice(0, 6).map((factor, i) => (
@@ -274,9 +274,9 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
   useEffect(() => { loadQueue() }, [loadQueue])
 
   return (
-    <div className="glass-card p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+    <div className="glass-card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2">
           <Phone size={14} className="text-brand-cyan" />
           {t('followUpQueue')}
         </h3>

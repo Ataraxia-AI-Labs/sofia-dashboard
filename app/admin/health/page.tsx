@@ -27,7 +27,7 @@ const CB_ICONS: Record<string, LucideIcon> = {
 const CB_STATUS: Record<string, { color: string; bg: string; label: string; icon: LucideIcon }> = {
   CLOSED: { color: 'text-status-success', bg: 'bg-status-success/10', label: 'Operativo', icon: CheckCircle },
   HALF_OPEN: { color: 'text-status-warning', bg: 'bg-status-warning/10', label: 'Recuperando', icon: AlertTriangle },
-  OPEN: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: 'Caído', icon: XCircle },
+  OPEN: { color: 'text-status-danger', bg: 'bg-status-danger/10', label: 'Caido', icon: XCircle },
 }
 
 const BOT_STATUS_COLORS: Record<string, string> = {
@@ -93,7 +93,7 @@ export default function AdminHealthPage() {
   const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
     HEALTHY: { color: 'text-status-success', bg: 'bg-status-success', label: 'Todo operativo' },
     DEGRADED: { color: 'text-status-warning', bg: 'bg-status-warning', label: 'Degradado' },
-    CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger', label: 'Crítico' },
+    CRITICAL: { color: 'text-status-danger', bg: 'bg-status-danger', label: 'Critico' },
   }
 
   const statusCfg = STATUS_CONFIG[overallStatus] || STATUS_CONFIG.CRITICAL
@@ -107,45 +107,45 @@ export default function AdminHealthPage() {
   }
 
   return (
-    <div className="max-w-[1200px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">System Health</h2>
-          <p className="text-text-dim text-xs mt-0.5">Monitoreo en tiempo real de la infraestructura</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">System Health</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">Monitoreo en tiempo real de la infraestructura</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold border transition-colors ${
               autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-dim'
             }`}
           >
             <Zap size={10} />
             Auto-refresh {autoRefresh ? 'ON' : 'OFF'}
           </button>
-          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadData} className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
       {/* OVERALL STATUS */}
-      <div className={`glass-card p-5 flex items-center justify-between ${statusCfg.color}`}>
-        <div className="flex items-center gap-4">
+      <div className={`glass-card p-4 flex items-center justify-between ${statusCfg.color}`}>
+        <div className="flex items-center gap-3">
           <div className={`w-3 h-3 rounded-full ${statusCfg.bg} animate-pulse-soft`} />
           <div>
-            <div className="text-lg font-bold">{statusCfg.label}</div>
-            <div className="text-text-dim text-xs mt-0.5">
+            <div className="text-sm font-bold font-mono">{statusCfg.label}</div>
+            <div className="text-text-dim text-[10px] font-mono mt-0.5">
               {health?.uptime_seconds ? `Uptime: ${Math.floor(health.uptime_seconds / 3600)}h ${Math.floor((health.uptime_seconds % 3600) / 60)}m` : (health?.uptime_human || '')}
               {health?.version ? ` · ${health.version}` : ''}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="text-right">
-            <div className="text-xs text-text-dim">Errores 24h</div>
-            <div className={`text-xl font-bold font-mono ${errorCount24h > 0 ? 'text-status-danger' : 'text-status-success'}`}>{errorCount24h}</div>
+            <div className="text-[10px] font-mono text-text-dim">Errores 24h</div>
+            <div className={`text-lg font-bold font-mono ${errorCount24h > 0 ? 'text-status-danger' : 'text-status-success'}`}>{errorCount24h}</div>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function AdminHealthPage() {
           name="Supabase (DB)"
           icon={Database}
           status={supabaseStatus === 'ok' ? 'ok' : supabaseStatus === 'error' ? 'error' : 'checking'}
-          detail={supabaseStatus === 'ok' ? 'PostgreSQL + RLS operativo' : supabaseStatus === 'error' ? 'Error de conexión' : 'Verificando...'}
+          detail={supabaseStatus === 'ok' ? 'PostgreSQL + RLS operativo' : supabaseStatus === 'error' ? 'Error de conexion' : 'Verificando...'}
         />
 
         {/* Circuit Breakers */}
@@ -186,35 +186,35 @@ export default function AdminHealthPage() {
 
       {/* BOT EXECUTION — Last runs */}
       <div className="glass-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Bot size={14} className="text-brand-purple" />
-            <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Última Ejecución por Bot</h3>
+            <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Ultima Ejecucion por Bot</h3>
           </div>
-          <span className="text-[10px] text-text-dim">{botLogs.length} logs totales</span>
+          <span className="text-[9px] font-mono text-text-dim">{botLogs.length} logs totales</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-5 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Bot</th>
-                <th className="text-left px-5 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
-                <th className="text-left px-5 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Última Ejecución</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Bot</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Estado</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Ultima Ejecucion</th>
               </tr>
             </thead>
             <tbody>
               {lastBotExecution.size === 0 ? (
-                <tr><td colSpan={3} className="px-5 py-8 text-center text-text-dim text-xs">Sin logs de bots</td></tr>
+                <tr><td colSpan={3} className="px-4 py-8 text-center text-text-dim text-xs font-mono">Sin logs de bots</td></tr>
               ) : (
                 Array.from(lastBotExecution.entries()).map(([botType, log]) => (
                   <tr key={botType} className="border-b border-border/50 hover:bg-surface-3/50">
-                    <td className="px-5 py-3 text-sm font-medium text-text-primary">{botType}</td>
-                    <td className="px-5 py-3">
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
+                    <td className="px-4 py-2.5 text-xs font-mono font-medium text-text-primary">{botType}</td>
+                    <td className="px-4 py-2.5">
+                      <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
                         {log.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-xs text-text-muted">{timeAgo(log.executed_at)}</td>
+                    <td className="px-4 py-2.5 text-xs font-mono text-text-muted">{timeAgo(log.executed_at)}</td>
                   </tr>
                 ))
               )}
@@ -225,31 +225,31 @@ export default function AdminHealthPage() {
 
       {/* RECENT BOT LOGS */}
       <div className="glass-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border flex items-center gap-2.5">
+        <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
           <Clock size={14} className="text-brand-cyan" />
-          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Logs Recientes de Bots</h3>
+          <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Logs Recientes de Bots</h3>
         </div>
         <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
           <table className="w-full">
             <thead className="sticky top-0 bg-surface">
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Bot</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Error</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Bot</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Estado</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Error</th>
               </tr>
             </thead>
             <tbody>
               {botLogs.map(log => (
                 <tr key={log.id} className="border-b border-border/50 hover:bg-surface-3/50">
-                  <td className="px-4 py-2 text-xs text-text-muted whitespace-nowrap">{timeAgo(log.executed_at)}</td>
-                  <td className="px-4 py-2 text-xs text-text-primary">{log.bot_name}</td>
+                  <td className="px-4 py-2 text-xs font-mono text-text-muted whitespace-nowrap">{timeAgo(log.executed_at)}</td>
+                  <td className="px-4 py-2 text-xs font-mono text-text-primary">{log.bot_name}</td>
                   <td className="px-4 py-2">
-                    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
+                    <span className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded-full border ${BOT_STATUS_COLORS[log.status] || 'text-text-dim bg-surface-3 border-border'}`}>
                       {log.status}
                     </span>
                   </td>
-                  <td className="px-4 py-2 text-[10px] font-mono text-text-dim">{log.error_message || '—'}</td>
+                  <td className="px-4 py-2 text-[10px] font-mono text-text-dim">{log.error_message || '\u2014'}</td>
                 </tr>
               ))}
             </tbody>
@@ -275,18 +275,18 @@ function ServiceCard({ name, icon: Icon, status, detail }: {
   const cfg = statusMap[status]
 
   return (
-    <div className="glass-card p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2.5">
+    <div className="glass-card p-3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
           <Icon size={16} className="text-brand-purple" />
-          <span className="text-sm font-semibold text-text-primary">{name}</span>
+          <span className="text-xs font-mono font-semibold text-text-primary">{name}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className={`w-2 h-2 rounded-full ${cfg.dot}`} />
-          <span className={`text-[10px] font-semibold ${cfg.text}`}>{cfg.label}</span>
+          <span className={`text-[9px] font-mono font-semibold ${cfg.text}`}>{cfg.label}</span>
         </div>
       </div>
-      <p className="text-[11px] text-text-dim">{detail}</p>
+      <p className="text-[10px] font-mono text-text-dim">{detail}</p>
     </div>
   )
 }

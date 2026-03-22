@@ -59,7 +59,7 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
       >
         <Bell size={16} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-status-danger text-white text-[9px] font-bold flex items-center justify-center animate-fade-in">
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-status-danger text-white text-[9px] font-mono font-bold flex items-center justify-center animate-fade-in">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -68,10 +68,10 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-2 z-40 w-80 bg-surface border border-border rounded-2xl shadow-2xl shadow-black/30 animate-fade-in overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 z-40 w-80 bg-surface border border-border rounded-lg animate-fade-in overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h3 className="text-sm font-semibold text-text-primary">Notificaciones</h3>
+              <h3 className="text-xs font-mono font-semibold text-text-primary">Notificaciones</h3>
               <button onClick={() => setOpen(false)} className="text-text-dim hover:text-text-muted transition-colors">
                 <X size={14} />
               </button>
@@ -94,7 +94,7 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
               ) : notifications.length === 0 ? (
                 <div className="p-8 text-center">
                   <Bell size={20} className="mx-auto text-text-dim mb-2" />
-                  <p className="text-text-dim text-xs">Sin notificaciones recientes</p>
+                  <p className="text-text-dim text-[10px] font-mono">Sin notificaciones recientes</p>
                 </div>
               ) : (
                 notifications.map(n => (
@@ -107,9 +107,9 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
                         {ICON_MAP[n.type] || <Bell size={14} className="text-text-dim" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-text-primary">{n.title}</p>
-                        <p className="text-[11px] text-text-dim mt-0.5 line-clamp-2">{n.description}</p>
-                        <p className="text-[10px] text-text-dim mt-1">{timeAgo(n.created_at)}</p>
+                        <p className="text-[10px] font-mono font-semibold text-text-primary">{n.title}</p>
+                        <p className="text-[10px] font-mono text-text-dim mt-0.5 line-clamp-2">{n.description}</p>
+                        <p className="text-[9px] font-mono text-text-dim mt-1">{timeAgo(n.created_at)}</p>
                       </div>
                       {!n.read && (
                         <div className="w-2 h-2 rounded-full bg-brand-purple flex-shrink-0 mt-1" />

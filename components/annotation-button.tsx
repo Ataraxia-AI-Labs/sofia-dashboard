@@ -153,12 +153,12 @@ export function AnnotationButton({
             onChange={(e) => setNotes(e.target.value)}
             placeholder={t('notesPlaceholder')}
             rows={2}
-            className="w-full min-w-[200px] bg-surface-3 border border-border rounded-lg px-2.5 py-1.5 text-[11px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 resize-none transition-colors"
+            className="w-full min-w-[200px] bg-surface-3 border border-border rounded-md px-2.5 py-1.5 text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 resize-none transition-colors"
           />
           <div className="flex items-center justify-end gap-1.5 mt-1">
             <button
               onClick={() => { setShowNotesInput(false) }}
-              className="px-2 py-1 rounded-md text-[10px] font-semibold text-text-muted hover:text-text-primary transition-colors"
+              className="px-2 py-1 rounded-md text-[10px] font-mono font-semibold text-text-muted hover:text-text-primary transition-colors"
             >
               <X size={10} className="inline mr-0.5" />
               {t('cancel')}
@@ -166,7 +166,7 @@ export function AnnotationButton({
             <button
               onClick={handleSaveNotes}
               disabled={saving}
-              className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20 border border-brand-purple/20 transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20 border border-brand-purple/20 transition-colors disabled:opacity-50"
             >
               {t('saveNotes')}
             </button>

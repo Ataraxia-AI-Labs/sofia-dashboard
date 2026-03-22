@@ -98,7 +98,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="glass-card p-6 animate-pulse">
+          <div key={i} className="glass-card p-4 animate-pulse">
             <div className="h-32 bg-surface-3 rounded-lg" />
           </div>
         ))}
@@ -111,12 +111,12 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-            <Trophy size={20} className="text-white" />
+          <div className="w-10 h-10 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-amber-400">
+            <Trophy size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-text-primary">{t('title')}</h3>
-            <p className="text-xs text-text-dim">{t('subtitle')}</p>
+            <h3 className="text-lg font-mono font-semibold text-text-primary">{t('title')}</h3>
+            <p className="text-xs font-mono text-text-dim">{t('subtitle')}</p>
           </div>
         </div>
         <button
@@ -130,49 +130,49 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
 
       {/* Insights KPIs */}
       {insights && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="glass-card p-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="glass-card p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
                 <Star size={16} className="text-amber-400" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('totalPoints')}</span>
+              <span className="text-[10px] text-text-dim uppercase font-mono font-semibold">{t('totalPoints')}</span>
             </div>
             <div className="text-xl font-bold text-amber-400 font-mono">
               {insights.total_points_awarded.toLocaleString()}
             </div>
           </div>
 
-          <div className="glass-card p-4">
+          <div className="glass-card p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
                 <Users size={16} className="text-brand-purple" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('avgPerPatient')}</span>
+              <span className="text-[10px] text-text-dim uppercase font-mono font-semibold">{t('avgPerPatient')}</span>
             </div>
             <div className="text-xl font-bold text-brand-purple font-mono">
               {Math.round(insights.avg_points_per_patient).toLocaleString()}
             </div>
           </div>
 
-          <div className="glass-card p-4">
+          <div className="glass-card p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-status-success/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
                 <Zap size={16} className="text-status-success" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('topAction')}</span>
+              <span className="text-[10px] text-text-dim uppercase font-mono font-semibold">{t('topAction')}</span>
             </div>
-            <div className="text-sm font-semibold text-status-success truncate">
+            <div className="text-sm font-mono font-semibold text-status-success truncate">
               {insights.most_common_action.replace(/_/g, ' ')}
             </div>
           </div>
 
-          <div className="glass-card p-4">
+          <div className="glass-card p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
                 <TrendingUp size={16} className="text-brand-cyan" />
               </div>
-              <span className="text-[10px] text-text-dim uppercase font-semibold">{t('engagementRate')}</span>
+              <span className="text-[10px] text-text-dim uppercase font-mono font-semibold">{t('engagementRate')}</span>
             </div>
             <div className="text-xl font-bold text-brand-cyan font-mono">
               {(insights.engagement_rate * 100).toFixed(1)}%
@@ -183,13 +183,13 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
 
       {/* Tier Distribution Bar */}
       {totalPatients > 0 && (
-        <div className="glass-card p-5">
-          <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">
+        <div className="glass-card p-4">
+          <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider mb-4">
             {t('tierDistribution')}
           </h4>
 
           {/* Stacked bar */}
-          <div className="h-6 rounded-full overflow-hidden flex bg-void">
+          <div className="h-6 rounded-md overflow-hidden flex bg-void">
             {TIER_ORDER.map(tier => {
               const count = tierDist[tier] || 0
               const pct = totalPatients > 0 ? (count / totalPatients) * 100 : 0
@@ -202,7 +202,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                   title={`${tier}: ${count} (${pct.toFixed(1)}%)`}
                 >
                   {pct > 8 && (
-                    <span className="text-[9px] font-bold text-white/90">{count}</span>
+                    <span className="text-[9px] font-mono font-bold text-white/90">{count}</span>
                   )}
                 </div>
               )
@@ -226,10 +226,10 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Leaderboard */}
-        <div className="glass-card p-5">
-          <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
+        <div className="glass-card p-4">
+          <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
             <Trophy size={14} className="text-amber-400" />
             {t('leaderboard')}
           </h4>
@@ -237,8 +237,8 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
           {leaderboard.length === 0 ? (
             <div className="text-center py-8">
               <Trophy size={32} className="text-text-dim mx-auto mb-2 opacity-30" />
-              <p className="text-sm text-text-dim">{t('noLeaderboard')}</p>
-              <p className="text-xs text-text-dim mt-1">{t('noLeaderboardHint')}</p>
+              <p className="text-sm font-mono text-text-dim">{t('noLeaderboard')}</p>
+              <p className="text-xs font-mono text-text-dim mt-1">{t('noLeaderboardHint')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -260,7 +260,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
 
                   {/* Patient info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-text-primary truncate">
+                    <p className="text-sm font-mono font-semibold text-text-primary truncate">
                       {entry.patient_name}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
@@ -287,15 +287,15 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
         </div>
 
         {/* Rewards Catalog */}
-        <div className="glass-card p-5">
+        <div className="glass-card p-4">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
               <Gift size={14} className="text-brand-purple" />
               {t('rewardsCatalog')}
             </h4>
             <button
               onClick={() => setShowCreateReward(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-brand-purple/15 text-brand-purple text-[11px] font-semibold hover:bg-brand-purple/25 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[11px] font-mono font-semibold hover:bg-brand-purple/15 transition-colors"
             >
               <Plus size={12} /> {t('createReward')}
             </button>
@@ -303,9 +303,9 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
 
           {/* Create reward modal */}
           {showCreateReward && (
-            <div className="bg-surface-3/80 rounded-xl p-4 border border-border mb-4">
+            <div className="bg-surface-3/80 rounded-lg p-4 border border-border mb-4">
               <div className="flex items-center justify-between mb-3">
-                <h5 className="text-xs font-semibold text-text-primary">{t('newReward')}</h5>
+                <h5 className="text-xs font-mono font-semibold text-text-primary">{t('newReward')}</h5>
                 <button onClick={() => setShowCreateReward(false)} className="text-text-dim hover:text-text-primary">
                   <X size={14} />
                 </button>
@@ -336,7 +336,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                 <button
                   onClick={handleCreateReward}
                   disabled={creatingReward || !newReward.name || newReward.points_cost <= 0}
-                  className="w-full py-2 rounded-lg bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white text-sm font-semibold disabled:opacity-50 transition-opacity"
+                  className="w-full py-2 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-sm font-mono font-semibold disabled:opacity-50 transition-opacity"
                 >
                   {creatingReward ? t('creating') : t('createReward')}
                 </button>
@@ -347,8 +347,8 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
           {rewards.length === 0 ? (
             <div className="text-center py-8">
               <Gift size={32} className="text-text-dim mx-auto mb-2 opacity-30" />
-              <p className="text-sm text-text-dim">{t('noRewards')}</p>
-              <p className="text-xs text-text-dim mt-1">{t('noRewardsHint')}</p>
+              <p className="text-sm font-mono text-text-dim">{t('noRewards')}</p>
+              <p className="text-xs font-mono text-text-dim mt-1">{t('noRewardsHint')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -361,9 +361,9 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                     <Gift size={16} className="text-brand-purple" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-text-primary truncate">{reward.name}</p>
+                    <p className="text-sm font-mono font-semibold text-text-primary truncate">{reward.name}</p>
                     {reward.description && (
-                      <p className="text-[10px] text-text-dim truncate">{reward.description}</p>
+                      <p className="text-[10px] font-mono text-text-dim truncate">{reward.description}</p>
                     )}
                   </div>
                   <div className="text-right flex-shrink-0">

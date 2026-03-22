@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e11]:
+    - generic [ref=e12]: Clínica
+    - generic [ref=e13]: Cuenta
+    - generic [ref=e14]: WhatsApp
+    - generic [ref=e15]: Confirmar
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - heading "Tu clínica" [level=2] [ref=e18]
+      - paragraph [ref=e19]: Información básica de tu negocio
+    - generic [ref=e20]:
+      - generic [ref=e21]: Nombre de la clínica *
+      - textbox "Nombre de la clínica *" [ref=e22]:
+        - /placeholder: "Ej: Sonrisa Perfect"
+    - generic [ref=e23]:
+      - generic [ref=e24]: Especialidad *
+      - generic [ref=e25]:
+        - button "🦷✨Estética + Odontología" [ref=e26] [cursor=pointer]
+        - button "🦷Odontología" [ref=e27] [cursor=pointer]
+        - button "✨Medicina Estética" [ref=e28] [cursor=pointer]
+        - button "🧴Dermatología" [ref=e29] [cursor=pointer]
+        - button "🏥Cirugía Plástica" [ref=e30] [cursor=pointer]
+        - button "⚕️Medicina General" [ref=e31] [cursor=pointer]
+    - generic [ref=e32]:
+      - generic [ref=e33]: Ciudad
+      - combobox "Ciudad" [ref=e34]:
+        - option "Seleccionar..." [selected]
+        - option "Bogotá"
+        - option "Medellín"
+        - option "Cali"
+        - option "Barranquilla"
+        - option "Cartagena"
+        - option "Bucaramanga"
+        - option "Pereira"
+        - option "Manizales"
+        - option "Santa Marta"
+        - option "Ibagué"
+        - option "Cúcuta"
+        - option "Villavicencio"
+        - option "Pasto"
+        - option "Montería"
+        - option "Neiva"
+        - option "Otra"
+  - button "Siguiente" [disabled] [ref=e36]:
+    - text: Siguiente
+    - img [ref=e37]
+```

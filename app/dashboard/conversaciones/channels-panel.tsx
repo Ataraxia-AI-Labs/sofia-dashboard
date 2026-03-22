@@ -80,7 +80,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="glass-card p-5 animate-pulse">
               <div className="h-5 bg-surface-3 rounded w-24 mb-3" />
@@ -110,9 +110,9 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const maxResponseTime = Math.max(1, ...metrics.map(m => m.avg_response_time_sec))
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* CHANNEL OVERVIEW CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {CHANNEL_ORDER.map(channel => {
           const m = metricsMap[channel]
           const cfg = configMap[channel]
@@ -123,7 +123,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           return (
             <div
               key={channel}
-              className={`glass-card p-5 relative overflow-hidden transition-all ${
+              className={`glass-card p-4 relative overflow-hidden transition-all ${
                 !isEnabled ? 'opacity-60' : ''
               }`}
             >
@@ -149,18 +149,18 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
 
               {/* Channel icon + name */}
               <div className="flex items-center gap-2.5 mb-3">
-                <div className={`w-9 h-9 rounded-xl ${channelCfg.bg} border ${channelCfg.border} flex items-center justify-center`}>
+                <div className={`w-9 h-9 rounded-lg ${channelCfg.bg} border ${channelCfg.border} flex items-center justify-center`}>
                   <Icon size={18} className={channelCfg.color} />
                 </div>
                 <div>
-                  <span className={`text-sm font-semibold ${channelCfg.color}`}>{channelCfg.label}</span>
+                  <span className={`text-sm font-semibold font-mono ${channelCfg.color}`}>{channelCfg.label}</span>
                 </div>
               </div>
 
               {/* Metrics */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-text-dim flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-text-dim flex items-center gap-1">
                     <MessageCircle size={9} /> {t('messages')}
                   </span>
                   <span className="text-xs font-bold font-mono text-text-primary">
@@ -168,7 +168,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-text-dim flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-text-dim flex items-center gap-1">
                     <Users size={9} /> {t('patients')}
                   </span>
                   <span className="text-xs font-bold font-mono text-text-primary">
@@ -176,7 +176,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-text-dim flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-text-dim flex items-center gap-1">
                     <TrendingUp size={9} /> {t('conversion')}
                   </span>
                   <span className="text-xs font-bold font-mono text-brand-purple">
@@ -188,7 +188,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
               {/* Last message time */}
               {m?.last_message_at && (
                 <div className="mt-3 pt-2 border-t border-border">
-                  <span className="text-[9px] text-text-dim flex items-center gap-1">
+                  <span className="text-[9px] font-mono text-text-dim flex items-center gap-1">
                     <Clock size={8} /> {t('lastMessage')}: {timeAgo(m.last_message_at)}
                   </span>
                 </div>
@@ -200,13 +200,13 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
 
       {/* CHANNEL COMPARISON */}
       {comparison && comparison.channels.length > 0 && (
-        <div className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+        <div className="glass-card p-4">
+          <h3 className="text-sm font-semibold font-mono text-text-primary mb-3 flex items-center gap-2">
             <Trophy size={14} className="text-brand-gold" />
             {t('comparison')}
           </h3>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {/* Messages comparison */}
             <ComparisonRow
               label={t('messages')}
@@ -252,16 +252,16 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
       )}
 
       {/* AI INSIGHTS */}
-      <div className="glass-card p-5 border-brand-purple/15">
+      <div className="glass-card p-4 border-brand-purple/15">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+          <h3 className="text-sm font-semibold font-mono text-text-primary flex items-center gap-2">
             <Sparkles size={14} className="text-brand-purple" />
             {t('aiInsights')}
           </h3>
           <button
             onClick={handleRefreshInsights}
             disabled={insightsLoading}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[10px] font-semibold hover:bg-brand-purple/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/20 transition-colors disabled:opacity-50"
           >
             {insightsLoading ? (
               <Loader2 size={10} className="animate-spin" />
@@ -286,8 +286,8 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
       </div>
 
       {/* CHANNEL CONFIG */}
-      <div className="glass-card p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+      <div className="glass-card p-4">
+        <h3 className="text-sm font-semibold font-mono text-text-primary mb-3 flex items-center gap-2">
           <Settings2 size={14} className="text-text-muted" />
           {t('configuration')}
         </h3>
@@ -300,14 +300,14 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
             return (
               <div
                 key={channel}
-                className="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-2 border border-border"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-2 border border-border"
               >
                 <div className="flex items-center gap-2.5">
                   <ChannelBadge channel={channel} compact />
-                  <span className="text-xs font-semibold text-text-primary">{channelCfg.label}</span>
+                  <span className="text-xs font-semibold font-mono text-text-primary">{channelCfg.label}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-[10px] font-semibold ${isEnabled ? 'text-emerald-400' : 'text-text-dim'}`}>
+                  <span className={`text-[10px] font-semibold font-mono ${isEnabled ? 'text-emerald-400' : 'text-text-dim'}`}>
                     {isEnabled ? tCommon('enabled') : tCommon('disabled')}
                   </span>
                   <button
@@ -358,7 +358,7 @@ function ComparisonRow({
     <div>
       <div className="flex items-center gap-1.5 mb-2">
         <span className="text-text-dim">{icon}</span>
-        <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{label}</span>
+        <span className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">{label}</span>
       </div>
       <div className="space-y-1.5">
         {metrics.map(m => {
@@ -372,9 +372,9 @@ function ComparisonRow({
               <div className="w-16 flex-shrink-0">
                 <ChannelBadge channel={m.channel} compact />
               </div>
-              <div className="flex-1 h-5 bg-surface-3 rounded-full overflow-hidden relative">
+              <div className="flex-1 h-5 bg-surface-3 rounded-md overflow-hidden relative">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${
+                  className={`h-full rounded-md transition-all duration-500 ${
                     isWinner
                       ? 'bg-gradient-to-r from-brand-purple to-brand-cyan'
                       : ''

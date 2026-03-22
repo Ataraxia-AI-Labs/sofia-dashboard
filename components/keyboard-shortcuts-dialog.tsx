@@ -41,16 +41,16 @@ export function KeyboardShortcutsDialog({ open, onClose }: KeyboardShortcutsDial
       <div className="space-y-5">
         {SHORTCUT_GROUPS.map(group => (
           <div key={group.title}>
-            <h4 className="text-[10px] font-semibold uppercase tracking-widest text-text-dim mb-2">
+            <h4 className="text-[9px] font-mono font-semibold uppercase tracking-[0.15em] text-text-dim mb-1.5">
               {group.title}
             </h4>
             <div className="space-y-0.5">
               {group.shortcuts.map(s => (
                 <div
                   key={s.description}
-                  className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-surface-2 transition-colors"
+                  className="flex items-center justify-between py-1 px-2 rounded-md hover:bg-surface-2 transition-colors"
                 >
-                  <span className="text-xs text-text-muted">{s.description}</span>
+                  <span className="text-[10px] font-mono text-text-muted">{s.description}</span>
                   <div className="flex items-center gap-0.5">
                     {s.keys.map((k, i) => (
                       <span key={i} className="flex items-center gap-0.5">

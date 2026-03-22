@@ -35,7 +35,7 @@ describe('MetricCard', () => {
   it('applies animation delay based on delay prop', () => {
     const { container } = render(<MetricCard {...defaultProps} delay={3} />)
     const card = container.firstChild as HTMLElement
-    expect(card.style.animationDelay).toBe('240ms')
+    expect(card.style.animationDelay).toBe('180ms')
   })
 
   it('defaults delay to 0', () => {

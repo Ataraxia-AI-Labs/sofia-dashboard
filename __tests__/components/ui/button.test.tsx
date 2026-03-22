@@ -36,7 +36,7 @@ describe('Button', () => {
   it('applies variant styles', () => {
     const { rerender } = render(<Button variant="primary">Primary</Button>)
     let btn = screen.getByRole('button')
-    expect(btn.className).toContain('from-brand-purple')
+    expect(btn.className).toContain('bg-brand-purple')
 
     rerender(<Button variant="danger">Danger</Button>)
     btn = screen.getByRole('button')

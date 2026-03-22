@@ -66,10 +66,10 @@ function AnimatedStat({ value, suffix, label, delay = 0 }: {
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-4xl lg:text-5xl font-bold font-mono gradient-text tabular-nums">
+      <div className="text-3xl lg:text-4xl font-bold font-mono text-brand-purple tabular-nums">
         {count}{suffix}
       </div>
-      <div className="text-text-muted text-sm mt-2 leading-snug">{label}</div>
+      <div className="text-text-muted text-xs font-mono mt-1.5 leading-snug">{label}</div>
     </div>
   )
 }
@@ -95,7 +95,7 @@ function StickyTrialBanner() {
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse flex-shrink-0" />
-            <p className="text-text-muted text-sm truncate">
+            <p className="text-text-muted text-xs font-mono truncate">
               <span className="text-text-primary font-semibold">7 dias gratis.</span>{' '}
               Sin tarjeta. Sin compromiso.
             </p>
@@ -103,7 +103,7 @@ function StickyTrialBanner() {
           <div className="flex items-center gap-3 flex-shrink-0">
             <Link
               href="/onboarding"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm flex items-center gap-2 hover:shadow-lg hover:shadow-brand-purple/30 transition-all"
+              className="px-5 py-2 rounded-md bg-brand-purple text-white font-semibold text-sm font-mono flex items-center gap-2 hover:bg-brand-purple-dark transition-colors"
             >
               Empezar gratis <ArrowRight size={14} />
             </Link>
@@ -126,12 +126,12 @@ function FeatureCard({ icon, title, description, highlight }: {
   icon: React.ReactNode; title: string; description: string; highlight?: boolean
 }) {
   return (
-    <div className={`glass-card p-6 hover:border-brand-purple/30 transition-all duration-300 group cursor-default ${highlight ? 'border-brand-purple/20 bg-brand-purple/5' : ''}`}>
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 ${highlight ? 'bg-brand-purple/20 text-brand-purple' : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'}`}>
+    <div className={`bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5 hover:border-brand-purple/30 transition-all duration-300 group cursor-default ${highlight ? 'border-brand-purple/25' : ''}`}>
+      <div className={`w-10 h-10 rounded-md flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-105 ${highlight ? 'bg-brand-purple/20 text-brand-purple' : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'}`}>
         {icon}
       </div>
-      <h3 className="font-semibold text-text-primary mb-2 text-base">{title}</h3>
-      <p className="text-text-muted text-sm leading-relaxed">{description}</p>
+      <h3 className="font-semibold font-mono text-text-primary mb-1.5 text-sm">{title}</h3>
+      <p className="text-text-muted text-xs font-mono leading-relaxed">{description}</p>
     </div>
   )
 }
@@ -141,20 +141,20 @@ function TestimonialCard({ quote, name, role, clinic, stars = 5 }: {
   quote: string; name: string; role: string; clinic: string; stars?: number
 }) {
   return (
-    <div className="glass-card p-6 flex flex-col gap-4">
+    <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5 flex flex-col gap-3">
       <div className="flex gap-1">
         {Array.from({ length: stars }).map((_, i) => (
-          <Star key={i} size={14} className="fill-brand-gold text-brand-gold" />
+          <Star key={i} size={12} className="fill-brand-gold text-brand-gold" />
         ))}
       </div>
-      <p className="text-text-secondary text-sm leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
+      <p className="text-text-secondary text-xs font-mono leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
       <div className="flex items-center gap-3 pt-2 border-t border-border">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple/30 to-brand-cyan/20 flex items-center justify-center text-brand-purple font-bold text-sm flex-shrink-0">
+        <div className="w-8 h-8 rounded-md bg-brand-purple/15 flex items-center justify-center text-brand-purple font-bold text-xs font-mono flex-shrink-0">
           {name[0]}
         </div>
         <div>
-          <div className="text-text-primary text-sm font-semibold">{name}</div>
-          <div className="text-text-dim text-xs">{role} &bull; {clinic}</div>
+          <div className="text-text-primary text-xs font-semibold font-mono">{name}</div>
+          <div className="text-text-dim text-[11px] font-mono">{role} &bull; {clinic}</div>
         </div>
       </div>
     </div>
@@ -179,21 +179,21 @@ function ROICalculator() {
       : `$${(n / 1000).toFixed(0)}K`
 
   return (
-    <div className="glass-card-elevated p-8 max-w-2xl mx-auto">
-      <div className="text-center mb-8">
+    <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-6 max-w-2xl mx-auto">
+      <div className="text-center mb-6">
         <span className="badge badge-purple mb-3">Calculadora de ROI</span>
-        <h3 className="text-2xl font-bold text-text-primary mb-2">
+        <h3 className="text-xl font-bold font-mono text-text-primary mb-1.5">
           Cuanto pierde tu clinica hoy
         </h3>
-        <p className="text-text-muted text-sm">
+        <p className="text-text-muted text-xs font-mono">
           Ajusta los datos de tu clinica y ve el impacto real
         </p>
       </div>
 
-      <div className="space-y-6 mb-8">
+      <div className="space-y-5 mb-6">
         <div>
           <div className="flex justify-between mb-2">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wider">
+            <label className="text-[11px] font-medium font-mono text-text-muted uppercase tracking-wider">
               Pacientes / mes
             </label>
             <span className="text-brand-purple font-bold font-mono text-sm">{patients}</span>
@@ -207,7 +207,7 @@ function ROICalculator() {
 
         <div>
           <div className="flex justify-between mb-2">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wider">
+            <label className="text-[11px] font-medium font-mono text-text-muted uppercase tracking-wider">
               Tasa de no-show
             </label>
             <span className="text-brand-purple font-bold font-mono text-sm">{noshow}%</span>
@@ -221,7 +221,7 @@ function ROICalculator() {
 
         <div>
           <div className="flex justify-between mb-2">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wider">
+            <label className="text-[11px] font-medium font-mono text-text-muted uppercase tracking-wider">
               Ticket promedio (COP)
             </label>
             <span className="text-brand-purple font-bold font-mono text-sm">{fmt(ticket)}</span>
@@ -234,36 +234,36 @@ function ROICalculator() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-surface-3 rounded-xl p-4 text-center">
-          <div className="text-lg font-bold font-mono gradient-text">{fmt(recoveredRevenue)}</div>
-          <div className="text-[11px] text-text-dim mt-1">Citas recuperadas</div>
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="bg-surface-3 rounded-md p-3 text-center">
+          <div className="text-base font-bold font-mono text-brand-purple">{fmt(recoveredRevenue)}</div>
+          <div className="text-[10px] font-mono text-text-dim mt-1">Citas recuperadas</div>
         </div>
-        <div className="bg-surface-3 rounded-xl p-4 text-center">
-          <div className="text-lg font-bold font-mono gradient-text">{fmt(adminCostSaved)}</div>
-          <div className="text-[11px] text-text-dim mt-1">Horas admin liberadas</div>
+        <div className="bg-surface-3 rounded-md p-3 text-center">
+          <div className="text-base font-bold font-mono text-brand-purple">{fmt(adminCostSaved)}</div>
+          <div className="text-[10px] font-mono text-text-dim mt-1">Horas admin liberadas</div>
         </div>
-        <div className="bg-surface-3 rounded-xl p-4 text-center border border-brand-purple/30">
-          <div className="text-lg font-bold font-mono text-brand-purple">{fmt(totalROI)}</div>
-          <div className="text-[11px] text-text-dim mt-1">ROI total / mes</div>
+        <div className="bg-surface-3 rounded-md p-3 text-center border border-brand-purple/30">
+          <div className="text-base font-bold font-mono text-brand-purple">{fmt(totalROI)}</div>
+          <div className="text-[10px] font-mono text-text-dim mt-1">ROI total / mes</div>
         </div>
       </div>
 
-      <div className="bg-brand-purple/5 border border-brand-purple/20 rounded-xl p-4 text-center mb-6">
-        <p className="text-sm text-text-muted">
+      <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-md p-3 text-center mb-5">
+        <p className="text-xs font-mono text-text-muted">
           SofIA te devuelve{' '}
-          <span className="text-brand-purple font-bold text-lg">{roiMultiple > 0 ? `${roiMultiple}x` : '2x+'}</span>
+          <span className="text-brand-purple font-bold text-base">{roiMultiple > 0 ? `${roiMultiple}x` : '2x+'}</span>
           {' '}tu inversion cada mes.
           <br />
-          <span className="text-text-dim text-xs">*Proyeccion basada en promedios del sector en Latinoamerica</span>
+          <span className="text-text-dim text-[10px]">*Proyeccion basada en promedios del sector en Latinoamerica</span>
         </p>
       </div>
 
       <Link
         href="/onboarding"
-        className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-bold text-base flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-brand-purple/25 transition-all"
+        className="w-full py-3 rounded-md bg-brand-purple text-white font-bold text-sm font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors"
       >
-        Quiero este ROI — Prueba 7 dias gratis <ArrowRight size={18} />
+        Quiero este ROI — Prueba 7 dias gratis <ArrowRight size={16} />
       </Link>
     </div>
   )
@@ -296,10 +296,10 @@ function WhatsAppDemo() {
   return (
     <div ref={ref} className="max-w-sm mx-auto">
       {/* Phone frame */}
-      <div className="bg-[#111B21] rounded-3xl border border-border overflow-hidden shadow-2xl shadow-black/40">
+      <div className="bg-[#111B21] rounded-lg border border-border overflow-hidden">
         {/* Status bar */}
         <div className="bg-[#1F2C34] px-4 py-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-brand-purple flex items-center justify-center text-white text-xs font-bold font-mono flex-shrink-0">
             CS
           </div>
           <div>
@@ -349,7 +349,7 @@ function WhatsAppDemo() {
           </div>
         </div>
       </div>
-      <p className="text-center text-text-dim text-xs mt-4">
+      <p className="text-center text-text-dim text-[11px] font-mono mt-3">
         Conversacion real — SofIA responde en menos de 3 segundos
       </p>
     </div>
@@ -404,7 +404,7 @@ export default function LandingPage() {
             <SofiaLogo size="sm" variant="full" />
 
             {/* Desktop nav links */}
-            <div className="hidden md:flex items-center gap-8 text-sm text-text-muted">
+            <div className="hidden md:flex items-center gap-6 text-xs font-mono text-text-muted">
               <a href="#features" className="hover:text-text-primary transition-colors">Funciones</a>
               <a href="#demo" className="hover:text-text-primary transition-colors">Demo</a>
               <a href="#testimonials" className="hover:text-text-primary transition-colors">Testimonios</a>
@@ -414,13 +414,13 @@ export default function LandingPage() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="hidden sm:block text-sm text-text-muted hover:text-text-primary transition-colors px-4 py-2 rounded-lg hover:bg-surface-2"
+                className="hidden sm:block text-xs font-mono text-text-muted hover:text-text-primary transition-colors px-3 py-1.5 rounded-md hover:bg-surface-2"
               >
                 Iniciar sesion
               </Link>
               <Link
                 href="/onboarding"
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm flex items-center gap-1.5 hover:shadow-lg hover:shadow-brand-purple/25 transition-all"
+                className="px-4 py-2 rounded-md bg-brand-purple text-white font-semibold text-xs font-mono flex items-center gap-1.5 hover:bg-brand-purple-dark transition-colors"
               >
                 Prueba Gratis <ArrowRight size={14} />
               </Link>
@@ -443,12 +443,12 @@ export default function LandingPage() {
                   key={href}
                   href={href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2.5 text-sm text-text-muted hover:text-text-primary transition-colors"
+                  className="block py-2 text-xs font-mono text-text-muted hover:text-text-primary transition-colors"
                 >
                   {['Funciones', 'Demo en vivo', 'Testimonios', 'Precios'][i]}
                 </a>
               ))}
-              <Link href="/login" className="block py-2.5 text-sm text-text-muted">
+              <Link href="/login" className="block py-2 text-xs font-mono text-text-muted">
                 Iniciar sesion
               </Link>
             </div>
@@ -456,7 +456,7 @@ export default function LandingPage() {
         </nav>
 
         {/* ── HERO ───────────────────────────────────────────────────────── */}
-        <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
+        <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 overflow-hidden">
           {/* Background glows */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-brand-purple/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute top-32 right-0 w-72 h-72 bg-brand-cyan/5 rounded-full blur-[80px] pointer-events-none" />
@@ -466,35 +466,35 @@ export default function LandingPage() {
             <div className="max-w-4xl mx-auto text-center">
 
               {/* Urgency badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-purple/10 border border-brand-purple/30 text-brand-purple text-sm font-medium mb-8 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-mono font-medium mb-6 animate-fade-in">
                 <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse" />
                 Mas de 40 clinicas en lista de espera — cupos limitados para Colombia
               </div>
 
               {/* Main headline */}
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-tight mb-6 animate-fade-up">
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-6xl font-bold text-text-primary leading-tight mb-5 animate-fade-up">
                 Tu clinica llena.{' '}
                 <br className="hidden sm:block" />
-                <span className="gradient-text italic">Sin levantar el telefono.</span>
+                <span className="text-brand-purple italic">Sin levantar el telefono.</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-text-secondary text-lg lg:text-xl leading-relaxed mb-4 max-w-2xl mx-auto animate-fade-up">
+              <p className="text-text-secondary text-base lg:text-lg font-mono leading-relaxed mb-3 max-w-2xl mx-auto animate-fade-up">
                 SofIA atiende pacientes por WhatsApp las 24 horas, agenda citas, cobra anticipos
                 y detecta oportunidades de negocio — mientras tu duermes.
               </p>
 
               {/* PAS hook */}
-              <p className="text-text-muted text-sm lg:text-base mb-10 max-w-xl mx-auto animate-fade-up">
+              <p className="text-text-muted text-xs lg:text-sm font-mono mb-8 max-w-xl mx-auto animate-fade-up">
                 Cada noche tu clinica pierde pacientes que escriben despues de las 6PM y no obtienen respuesta.
                 <span className="text-brand-gold font-medium"> SofIA responde en menos de 3 segundos. Siempre.</span>
               </p>
 
               {/* Primary CTA */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6 animate-fade-up">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-5 animate-fade-up">
                 <Link
                   href="/onboarding"
-                  className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple to-brand-purple-dark text-white font-bold text-lg flex items-center gap-3 hover:shadow-2xl hover:shadow-brand-purple/30 transition-all duration-300 hover:scale-[1.02] w-full sm:w-auto justify-center"
+                  className="group px-7 py-3.5 rounded-lg bg-brand-purple text-white font-bold text-base font-mono flex items-center gap-2.5 hover:bg-brand-purple-dark transition-colors duration-300 hover:scale-[1.02] w-full sm:w-auto justify-center"
                 >
                   <Zap size={20} className="text-brand-gold" />
                   Prueba Gratis 7 Dias
@@ -502,14 +502,14 @@ export default function LandingPage() {
                 </Link>
                 <a
                   href="#demo"
-                  className="px-8 py-4 rounded-2xl bg-surface-2 border border-border text-text-muted font-semibold text-base hover:border-brand-purple/30 hover:text-text-primary transition-all w-full sm:w-auto text-center"
+                  className="px-7 py-3.5 rounded-lg bg-surface-2 border border-border text-text-muted font-semibold text-sm font-mono hover:border-brand-purple/30 hover:text-text-primary transition-all w-full sm:w-auto text-center"
                 >
                   Ver demo en vivo
                 </a>
               </div>
 
               {/* Trust signals below CTA */}
-              <div className="flex flex-wrap gap-4 justify-center text-xs text-text-dim animate-fade-in">
+              <div className="flex flex-wrap gap-3 justify-center text-[11px] font-mono text-text-dim animate-fade-in">
                 {[
                   { icon: <Shield size={12} />, text: 'Sin tarjeta de credito' },
                   { icon: <Check size={12} />, text: 'Setup en 5 minutos' },
@@ -527,18 +527,18 @@ export default function LandingPage() {
         </section>
 
         {/* ── SOCIAL PROOF BAR ───────────────────────────────────────────── */}
-        <section className="border-y border-border/50 bg-surface/30 py-8">
+        <section className="border-y border-border/50 bg-surface/30 py-6">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-              <p className="text-text-dim text-sm text-center lg:text-left">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+              <p className="text-text-dim text-xs font-mono text-center lg:text-left">
                 Con la confianza de clinicas lideres en Colombia y Latinoamerica
               </p>
-              <div className="flex flex-wrap gap-6 lg:gap-10 items-center justify-center">
+              <div className="flex flex-wrap gap-5 lg:gap-8 items-center justify-center">
                 {[
                   'Sonrisa Perfect', 'Clinica Estetica Bello', 'OdontoVida Medellin',
                   'Dermaclinic Pro', 'Centro Dental Norte'
                 ].map(name => (
-                  <span key={name} className="text-text-dim text-sm font-medium opacity-50 hover:opacity-80 transition-opacity">
+                  <span key={name} className="text-text-dim text-xs font-mono font-medium opacity-50 hover:opacity-80 transition-opacity">
                     {name}
                   </span>
                 ))}
@@ -548,10 +548,10 @@ export default function LandingPage() {
         </section>
 
         {/* ── ANIMATED STATS ─────────────────────────────────────────────── */}
-        <section className="py-20 lg:py-28">
+        <section className="py-16 lg:py-24">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="glass-card-elevated p-10 lg:p-16">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-6">
+            <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-8 lg:p-12">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-5">
                 <AnimatedStat value={40} suffix="%" label="Reduccion en citas perdidas por no-show" delay={0} />
                 <AnimatedStat value={3} suffix="s" label="Tiempo de respuesta promedio de SofIA" delay={150} />
                 <AnimatedStat value={24} suffix="/7" label="Atencion sin interrupciones, nunca duerme" delay={300} />
@@ -562,21 +562,21 @@ export default function LandingPage() {
         </section>
 
         {/* ── PROBLEM → AGITATION ────────────────────────────────────────── */}
-        <section className="py-16 lg:py-20 bg-surface/20">
+        <section className="py-14 lg:py-18 bg-surface/20">
           <div className="max-w-4xl mx-auto px-4 lg:px-8 text-center">
-            <span className="badge badge-danger mb-6 inline-flex">El problema real</span>
-            <h2 className="font-display text-3xl lg:text-5xl font-bold text-text-primary mb-6">
+            <span className="badge badge-danger mb-5 inline-flex">El problema real</span>
+            <h2 className="font-mono text-2xl lg:text-4xl font-bold text-text-primary mb-5">
               Cada noche tu clinica{' '}
               <span className="text-status-danger">pierde dinero</span>{' '}
               mientras duermes
             </h2>
-            <p className="text-text-muted text-lg leading-relaxed mb-12 max-w-2xl mx-auto">
+            <p className="text-text-muted text-sm font-mono leading-relaxed mb-10 max-w-2xl mx-auto">
               Un paciente escribe a las 11PM buscando una cita urgente.
               Tu WhatsApp no responde. El paciente busca a tu competencia.
               Tu competencia tiene SofIA. Tu competencia cierra la cita.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-6 text-left">
+            <div className="grid md:grid-cols-3 gap-4 text-left">
               {[
                 {
                   stat: '68%',
@@ -597,9 +597,9 @@ export default function LandingPage() {
                   color: 'text-brand-cyan',
                 },
               ].map(({ stat, label, pain, color }) => (
-                <div key={stat} className="glass-card p-6">
-                  <div className={`text-3xl font-bold font-mono ${color} mb-2`}>{stat}</div>
-                  <p className="text-text-muted text-sm leading-relaxed">
+                <div key={stat} className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5">
+                  <div className={`text-2xl font-bold font-mono ${color} mb-1.5`}>{stat}</div>
+                  <p className="text-text-muted text-xs font-mono leading-relaxed">
                     {label}{' '}
                     <span className="text-text-primary font-semibold">{pain}</span>
                   </p>
@@ -610,21 +610,21 @@ export default function LandingPage() {
         </section>
 
         {/* ── FEATURES ───────────────────────────────────────────────────── */}
-        <section id="features" className="py-20 lg:py-28">
+        <section id="features" className="py-16 lg:py-24">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="text-center mb-16">
-              <span className="badge badge-purple mb-4 inline-flex">Funciones</span>
-              <h2 className="font-display text-3xl lg:text-5xl font-bold text-text-primary mb-4">
+            <div className="text-center mb-12">
+              <span className="badge badge-purple mb-3 inline-flex">Funciones</span>
+              <h2 className="font-mono text-2xl lg:text-4xl font-bold text-text-primary mb-3">
                 Todo lo que tu clinica necesita.{' '}
-                <span className="gradient-text italic">Automatizado.</span>
+                <span className="text-brand-purple italic">Automatizado.</span>
               </h2>
-              <p className="text-text-muted text-lg max-w-2xl mx-auto">
+              <p className="text-text-muted text-sm font-mono max-w-2xl mx-auto">
                 SofIA no es solo un chatbot. Es el empleado mas dedicado que tendras —
                 nunca llega tarde, nunca se enferma, nunca pide aumento.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               <FeatureCard
                 icon={<MessageSquare size={22} />}
                 title="Atencion 24/7 por WhatsApp"
@@ -678,22 +678,22 @@ export default function LandingPage() {
         </section>
 
         {/* ── LIVE DEMO ──────────────────────────────────────────────────── */}
-        <section id="demo" className="py-20 lg:py-28 bg-surface/20">
+        <section id="demo" className="py-16 lg:py-24 bg-surface/20">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                <span className="badge badge-purple mb-6 inline-flex">Demo en tiempo real</span>
-                <h2 className="font-display text-3xl lg:text-5xl font-bold text-text-primary mb-6">
+                <span className="badge badge-purple mb-4 inline-flex">Demo en tiempo real</span>
+                <h2 className="font-mono text-2xl lg:text-4xl font-bold text-text-primary mb-4">
                   Mira a SofIA{' '}
-                  <span className="gradient-text italic">en accion</span>
+                  <span className="text-brand-purple italic">en accion</span>
                 </h2>
-                <p className="text-text-muted text-lg leading-relaxed mb-8">
+                <p className="text-text-muted text-sm font-mono leading-relaxed mb-6">
                   Esta es una conversacion real de SofIA con un paciente.
                   Sin intervencion humana. Sin errores. En menos de 2 minutos:
                   consulta recibida, cita agendada, anticipo cobrado.
                 </p>
 
-                <div className="space-y-4 mb-10">
+                <div className="space-y-3 mb-8">
                   {[
                     { step: '01', text: 'Paciente escribe a las 11PM buscando cita' },
                     { step: '02', text: 'SofIA responde en 3 segundos con opciones de horario' },
@@ -701,18 +701,18 @@ export default function LandingPage() {
                     { step: '04', text: 'SofIA solicita anticipo y envia link de pago' },
                     { step: '05', text: 'Pago confirmado — cita bloqueada en el calendario' },
                   ].map(({ step, text }) => (
-                    <div key={step} className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-purple text-xs font-bold font-mono flex-shrink-0">
+                    <div key={step} className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[11px] font-bold font-mono flex-shrink-0">
                         {step}
                       </div>
-                      <p className="text-text-secondary text-sm">{text}</p>
+                      <p className="text-text-secondary text-xs font-mono">{text}</p>
                     </div>
                   ))}
                 </div>
 
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-sm hover:shadow-lg hover:shadow-brand-purple/25 transition-all"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md bg-brand-purple text-white font-semibold text-xs font-mono hover:bg-brand-purple-dark transition-colors"
                 >
                   Quiero SofIA para mi clinica <ArrowRight size={16} />
                 </Link>
@@ -724,14 +724,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── ROI CALCULATOR ─────────────────────────────────────────────── */}
-        <section className="py-20 lg:py-28">
+        <section className="py-16 lg:py-24">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="text-center mb-12">
-              <span className="badge badge-purple mb-4 inline-flex">Calculadora de ROI</span>
-              <h2 className="font-display text-3xl lg:text-4xl font-bold text-text-primary mb-4">
+            <div className="text-center mb-10">
+              <span className="badge badge-purple mb-3 inline-flex">Calculadora de ROI</span>
+              <h2 className="font-mono text-2xl lg:text-3xl font-bold text-text-primary mb-3">
                 Cuanto valdria SofIA para tu clinica?
               </h2>
-              <p className="text-text-muted max-w-xl mx-auto">
+              <p className="text-text-muted text-sm font-mono max-w-xl mx-auto">
                 Ingresa tus datos reales y descubre cuanto dinero recuperarias cada mes.
               </p>
             </div>
@@ -740,20 +740,20 @@ export default function LandingPage() {
         </section>
 
         {/* ── TESTIMONIALS ───────────────────────────────────────────────── */}
-        <section id="testimonials" className="py-20 lg:py-28 bg-surface/20">
+        <section id="testimonials" className="py-16 lg:py-24 bg-surface/20">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="text-center mb-16">
-              <span className="badge badge-purple mb-4 inline-flex">Testimonios</span>
-              <h2 className="font-display text-3xl lg:text-5xl font-bold text-text-primary mb-4">
+            <div className="text-center mb-12">
+              <span className="badge badge-purple mb-3 inline-flex">Testimonios</span>
+              <h2 className="font-mono text-2xl lg:text-4xl font-bold text-text-primary mb-3">
                 Lo que dicen nuestros{' '}
-                <span className="gradient-text italic">clientes</span>
+                <span className="text-brand-purple italic">clientes</span>
               </h2>
-              <p className="text-text-muted text-lg max-w-xl mx-auto">
+              <p className="text-text-muted text-sm font-mono max-w-xl mx-auto">
                 Clinicas reales. Resultados reales.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
               <TestimonialCard
                 quote="Antes perdiamos entre 8 y 10 citas a la semana por no responder rapido. Desde que tenemos SofIA, ese numero bajo a menos de 2. El ROI fue visible desde el primer mes."
                 name="Dr. Carlos Medina"
@@ -799,24 +799,24 @@ export default function LandingPage() {
             </div>
 
             {/* NPS Social Proof Bar */}
-            <div className="glass-card-elevated p-8 text-center">
-              <div className="grid grid-cols-3 gap-8">
+            <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-6 text-center">
+              <div className="grid grid-cols-3 gap-6">
                 <div>
-                  <div className="text-4xl font-bold font-mono gradient-text mb-2">4.9</div>
+                  <div className="text-3xl font-bold font-mono text-brand-purple mb-1.5">4.9</div>
                   <div className="flex gap-1 justify-center mb-1">
-                    {[1,2,3,4,5].map(i => <Star key={i} size={14} className="fill-brand-gold text-brand-gold" />)}
+                    {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-gold text-brand-gold" />)}
                   </div>
-                  <div className="text-text-dim text-xs">Calificacion promedio</div>
+                  <div className="text-text-dim text-[11px] font-mono">Calificacion promedio</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold font-mono gradient-text mb-2">40+</div>
-                  <div className="text-text-muted text-sm mb-1">Clinicas activas</div>
-                  <div className="text-text-dim text-xs">Colombia y LATAM</div>
+                  <div className="text-3xl font-bold font-mono text-brand-purple mb-1.5">40+</div>
+                  <div className="text-text-muted text-xs font-mono mb-1">Clinicas activas</div>
+                  <div className="text-text-dim text-[11px] font-mono">Colombia y LATAM</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold font-mono gradient-text mb-2">98%</div>
-                  <div className="text-text-muted text-sm mb-1">Renuevan cada mes</div>
-                  <div className="text-text-dim text-xs">Tasa de retencion</div>
+                  <div className="text-3xl font-bold font-mono text-brand-purple mb-1.5">98%</div>
+                  <div className="text-text-muted text-xs font-mono mb-1">Renuevan cada mes</div>
+                  <div className="text-text-dim text-[11px] font-mono">Tasa de retencion</div>
                 </div>
               </div>
             </div>
@@ -824,15 +824,15 @@ export default function LandingPage() {
         </section>
 
         {/* ── PRICING ────────────────────────────────────────────────────── */}
-        <section id="pricing" className="py-20 lg:py-28">
+        <section id="pricing" className="py-16 lg:py-24">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="text-center mb-16">
-              <span className="badge badge-purple mb-4 inline-flex">Precio simple</span>
-              <h2 className="font-display text-3xl lg:text-5xl font-bold text-text-primary mb-4">
+            <div className="text-center mb-12">
+              <span className="badge badge-purple mb-3 inline-flex">Precio simple</span>
+              <h2 className="font-mono text-2xl lg:text-4xl font-bold text-text-primary mb-3">
                 Un precio. Todo incluido.{' '}
-                <span className="gradient-text italic">Sin sorpresas.</span>
+                <span className="text-brand-purple italic">Sin sorpresas.</span>
               </h2>
-              <p className="text-text-muted text-lg max-w-xl mx-auto">
+              <p className="text-text-muted text-sm font-mono max-w-xl mx-auto">
                 Sin costos por mensaje, sin limites de pacientes, sin modulos extra.
                 Todo lo que SofIA puede hacer, desde el dia uno.
               </p>
@@ -841,23 +841,23 @@ export default function LandingPage() {
             <div className="max-w-lg mx-auto">
               {/* Pricing card */}
               <div className="relative">
-                {/* Glow effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-brand-purple to-brand-cyan rounded-2xl blur-sm opacity-30" />
-                <div className="relative glass-card-elevated p-8 border-brand-purple/30">
-                  <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-semibold mb-4">
+                {/* Subtle border glow */}
+                <div className="absolute -inset-px bg-brand-purple/20 rounded-lg blur-sm" />
+                <div className="relative bg-brand-purple/8 border border-brand-purple/25 rounded-lg p-6">
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-[11px] font-mono font-semibold mb-3">
                       <Star size={10} className="fill-brand-gold" /> MAS POPULAR
                     </div>
-                    <div className="text-5xl font-bold font-mono text-text-primary mb-1">
+                    <div className="text-4xl font-bold font-mono text-text-primary mb-1">
                       $997
                     </div>
-                    <div className="text-text-muted text-sm">USD / mes — facturado mensualmente</div>
-                    <div className="text-brand-cyan text-xs mt-1 font-medium">
+                    <div className="text-text-muted text-xs font-mono">USD / mes — facturado mensualmente</div>
+                    <div className="text-brand-cyan text-[11px] font-mono mt-1 font-medium">
                       ~COP 4,000,000 / mes
                     </div>
                   </div>
 
-                  <div className="space-y-3 mb-8">
+                  <div className="space-y-2.5 mb-6">
                     {[
                       'Atencion 24/7 por WhatsApp Business API',
                       'Agenda automatica + recordatorios',
@@ -871,35 +871,35 @@ export default function LandingPage() {
                       'Soporte prioritario en español',
                       'Actualizaciones de IA sin costo extra',
                     ].map(feature => (
-                      <div key={feature} className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-status-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check size={11} className="text-status-success" />
+                      <div key={feature} className="flex items-start gap-2.5">
+                        <div className="w-4 h-4 rounded-sm bg-status-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check size={10} className="text-status-success" />
                         </div>
-                        <span className="text-text-secondary text-sm">{feature}</span>
+                        <span className="text-text-secondary text-xs font-mono">{feature}</span>
                       </div>
                     ))}
                   </div>
 
                   <Link
                     href="/onboarding"
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-bold text-base flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-brand-purple/25 transition-all mb-4"
+                    className="w-full py-3 rounded-md bg-brand-purple text-white font-bold text-sm font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors mb-3"
                   >
-                    Empezar con 7 dias gratis <ArrowRight size={18} />
+                    Empezar con 7 dias gratis <ArrowRight size={16} />
                   </Link>
 
-                  <p className="text-center text-text-dim text-xs">
+                  <p className="text-center text-text-dim text-[11px] font-mono">
                     Sin tarjeta de credito. Sin contratos. Cancela cuando quieras.
                   </p>
                 </div>
               </div>
 
               {/* Guarantee */}
-              <div className="mt-6 p-5 rounded-xl bg-status-success/5 border border-status-success/20 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Shield size={16} className="text-status-success" />
-                  <span className="text-status-success font-semibold text-sm">Garantia de resultados 30 dias</span>
+              <div className="mt-5 p-4 rounded-md bg-status-success/5 border border-status-success/20 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1.5">
+                  <Shield size={14} className="text-status-success" />
+                  <span className="text-status-success font-semibold text-xs font-mono">Garantia de resultados 30 dias</span>
                 </div>
-                <p className="text-text-muted text-xs leading-relaxed">
+                <p className="text-text-muted text-[11px] font-mono leading-relaxed">
                   Si en 30 dias SofIA no mejora tu tasa de agendamiento al menos un 20%,
                   te devolvemos el dinero. Sin preguntas.
                 </p>
@@ -909,30 +909,30 @@ export default function LandingPage() {
         </section>
 
         {/* ── FINAL CTA ─────────────────────────────────────────────────── */}
-        <section className="py-20 lg:py-32 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-purple/5 to-transparent pointer-events-none" />
+        <section className="py-16 lg:py-28 relative overflow-hidden">
+          <div className="absolute inset-0 bg-brand-purple/3 pointer-events-none" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-brand-purple/10 rounded-full blur-[80px] pointer-events-none" />
 
           <div className="max-w-4xl mx-auto px-4 lg:px-8 text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-status-danger/10 border border-status-danger/30 text-status-danger text-sm font-medium mb-8">
-              <div className="w-2 h-2 rounded-full bg-status-danger animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-status-danger/10 border border-status-danger/30 text-status-danger text-xs font-mono font-medium mb-6">
+              <div className="w-1.5 h-1.5 rounded-full bg-status-danger animate-pulse" />
               Cupos limitados este mes — solo quedan 8 spots disponibles
             </div>
 
-            <h2 className="font-display text-4xl lg:text-6xl font-bold text-text-primary mb-6">
+            <h2 className="font-mono text-3xl lg:text-5xl font-bold text-text-primary mb-5">
               Tu clinica merece trabajar{' '}
-              <span className="gradient-text italic">para ti.</span>
+              <span className="text-brand-purple italic">para ti.</span>
             </h2>
 
-            <p className="text-text-muted text-lg lg:text-xl leading-relaxed mb-12 max-w-2xl mx-auto">
+            <p className="text-text-muted text-sm lg:text-base font-mono leading-relaxed mb-10 max-w-2xl mx-auto">
               Cada dia que esperas es un dia que tu competencia automatiza mas.
               Empieza hoy con 7 dias gratis y ve la diferencia desde la primera noche.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
               <Link
                 href="/onboarding"
-                className="group px-10 py-5 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple to-brand-purple-dark text-white font-bold text-xl flex items-center gap-3 hover:shadow-2xl hover:shadow-brand-purple/35 transition-all duration-300 hover:scale-[1.02] w-full sm:w-auto justify-center"
+                className="group px-8 py-4 rounded-lg bg-brand-purple text-white font-bold text-lg font-mono flex items-center gap-2.5 hover:bg-brand-purple-dark transition-colors duration-300 hover:scale-[1.02] w-full sm:w-auto justify-center"
               >
                 <Zap size={22} className="text-brand-gold" />
                 Empezar Prueba Gratis
@@ -940,25 +940,25 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <p className="text-text-dim text-sm">
+            <p className="text-text-dim text-xs font-mono">
               Setup en 5 minutos &bull; Sin tarjeta &bull; Soporte en espanol
             </p>
           </div>
         </section>
 
         {/* ── FOOTER ─────────────────────────────────────────────────────── */}
-        <footer className="border-t border-border/50 py-12 bg-surface/30">
+        <footer className="border-t border-border/50 py-10 bg-surface/30">
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-              <div className="flex flex-col items-center lg:items-start gap-2">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+              <div className="flex flex-col items-center lg:items-start gap-1.5">
                 <SofiaLogo size="sm" variant="full" />
-                <p className="text-text-dim text-xs mt-2 max-w-xs text-center lg:text-left">
+                <p className="text-text-dim text-[11px] font-mono mt-1.5 max-w-xs text-center lg:text-left">
                   Asistente IA para clinicas de salud y estetica en Latinoamerica.
                   Ataraxia IA Labs &copy; {new Date().getFullYear()}
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-sm text-text-muted justify-center">
+              <div className="flex flex-wrap gap-5 text-xs font-mono text-text-muted justify-center">
                 <Link href="/onboarding" className="hover:text-text-primary transition-colors">Empezar gratis</Link>
                 <Link href="/login" className="hover:text-text-primary transition-colors">Iniciar sesion</Link>
                 <a href="#features" className="hover:text-text-primary transition-colors">Funciones</a>
@@ -967,13 +967,13 @@ export default function LandingPage() {
                 <Link href="/legal/privacidad" className="hover:text-text-primary transition-colors">Privacidad</Link>
               </div>
 
-              <div className="flex flex-col items-center lg:items-end gap-2">
-                <div className="flex items-center gap-2 text-xs text-text-dim">
-                  <Shield size={12} className="text-brand-purple" />
+              <div className="flex flex-col items-center lg:items-end gap-1.5">
+                <div className="flex items-center gap-2 text-[11px] font-mono text-text-dim">
+                  <Shield size={11} className="text-brand-purple" />
                   <span>Cumplimiento Ley 1581 de 2012 (HABEAS DATA)</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-text-dim">
-                  <Activity size={12} className="text-brand-cyan" />
+                <div className="flex items-center gap-2 text-[11px] font-mono text-text-dim">
+                  <Activity size={11} className="text-brand-cyan" />
                   <span>Disponibilidad 99.9% SLA</span>
                 </div>
                 {/* WhatsApp Support — remove placeholder, show real contact */}
@@ -981,7 +981,7 @@ export default function LandingPage() {
                   href="https://wa.me/573001000000?text=Hola,%20quiero%20saber%20mas%20sobre%20SofIA"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-xs text-[#25D366] hover:text-[#128C7E] transition-colors"
+                  className="flex items-center gap-2 text-[11px] font-mono text-[#25D366] hover:text-[#128C7E] transition-colors"
                 >
                   <MessageSquare size={12} />
                   <span>Soporte via WhatsApp</span>

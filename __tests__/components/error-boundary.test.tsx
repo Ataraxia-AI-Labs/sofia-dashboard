@@ -84,7 +84,7 @@ describe('ErrorBoundary', () => {
     expect(screen.queryByTestId('child-content')).not.toBeInTheDocument()
 
     // Error heading
-    expect(screen.getByText('Algo salió mal')).toBeInTheDocument()
+    expect(screen.getByText('Algo salio mal')).toBeInTheDocument()
 
     // Descriptive message
     expect(
@@ -171,7 +171,7 @@ describe('ErrorBoundary', () => {
     )
 
     // Verify error state
-    expect(screen.getByText('Algo salió mal')).toBeInTheDocument()
+    expect(screen.getByText('Algo salio mal')).toBeInTheDocument()
     expect(screen.queryByTestId('recovered')).not.toBeInTheDocument()
 
     // Fix the condition so re-render succeeds
@@ -182,7 +182,7 @@ describe('ErrorBoundary', () => {
 
     // Should now show recovered content
     expect(screen.getByTestId('recovered')).toBeInTheDocument()
-    expect(screen.queryByText('Algo salió mal')).not.toBeInTheDocument()
+    expect(screen.queryByText('Algo salio mal')).not.toBeInTheDocument()
   })
 
   it('should show error state again if retry is clicked but child still throws', () => {
@@ -197,12 +197,12 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     )
 
-    expect(screen.getByText('Algo salió mal')).toBeInTheDocument()
+    expect(screen.getByText('Algo salio mal')).toBeInTheDocument()
 
     // Click retry — child still throws, so error boundary catches again
     fireEvent.click(screen.getByRole('button', { name: /intentar de nuevo/i }))
 
-    expect(screen.getByText('Algo salió mal')).toBeInTheDocument()
+    expect(screen.getByText('Algo salio mal')).toBeInTheDocument()
   })
 
   // -----------------------------------------------------------------------
@@ -267,6 +267,6 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     )
 
-    expect(screen.getByText('Algo salió mal')).toBeInTheDocument()
+    expect(screen.getByText('Algo salio mal')).toBeInTheDocument()
   })
 })

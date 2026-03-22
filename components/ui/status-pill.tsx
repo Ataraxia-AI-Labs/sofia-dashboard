@@ -15,9 +15,9 @@ const colors = {
 export function StatusPill({ label, value, color }: StatusPillProps) {
   return (
     <div className={`badge ${colors[color]}`}>
-      <div className={`w-1.5 h-1.5 rounded-full bg-status-${color}`} />
-      <span className="text-text-muted text-[11px]">{label}</span>
-      <span className="font-bold text-xs">{value}</span>
+      <div className={`w-1 h-1 rounded-full bg-status-${color}`} />
+      <span className="text-text-muted text-[9px] font-mono">{label}</span>
+      <span className="font-bold text-[10px] font-mono">{value}</span>
     </div>
   )
 }

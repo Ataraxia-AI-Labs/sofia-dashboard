@@ -128,12 +128,12 @@ export default function PipelinePage() {
   const totalPatients = patients.length
 
   return (
-    <div className="space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">
             {totalPatients} pacientes en {STAGES.filter(s => grouped[s.key].length > 0).length} etapas
           </p>
         </div>
@@ -154,13 +154,13 @@ export default function PipelinePage() {
           return (
             <div key={stage.key} className={`glass-card p-3.5 ${stage.border} border`}>
               <div className="flex items-center justify-between mb-2">
-                <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${stage.gradient} flex items-center justify-center text-white`}>
+                <div className={`w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${stage.text}`}>
                   {stage.icon}
                 </div>
-                <span className={`text-lg font-bold font-mono ${stage.text}`}>{count}</span>
+                <span className={`text-sm font-bold font-mono ${stage.text}`}>{count}</span>
               </div>
-              <p className="text-[11px] font-semibold text-text-primary truncate">{stage.label}</p>
-              <p className="text-[10px] text-text-dim">{pct}% del total</p>
+              <p className="text-[10px] font-mono font-semibold text-text-primary truncate">{stage.label}</p>
+              <p className="text-[9px] font-mono text-text-dim">{pct}% del total</p>
             </div>
           )
         })}
@@ -171,7 +171,7 @@ export default function PipelinePage() {
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp size={14} className="text-brand-purple" />
-            <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">Flujo de Conversión</span>
+            <span className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Flujo de Conversión</span>
           </div>
           <div className="flex items-center justify-between">
             {STAGES.map((stage, i) => {
@@ -187,7 +187,7 @@ export default function PipelinePage() {
                     </div>
                     <div className="h-2 bg-surface-3 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full bg-gradient-to-r ${stage.gradient} transition-all duration-700`}
+                        className={`h-full rounded-full ${stage.dot} transition-all duration-700`}
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
@@ -250,9 +250,9 @@ function PipelineColumn({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className={stage.text}>{stage.icon}</span>
-            <span className="text-xs font-semibold text-text-primary">{stage.label}</span>
+            <span className="text-[10px] font-mono font-semibold text-text-primary">{stage.label}</span>
           </div>
-          <span className={`text-xs font-bold font-mono px-1.5 py-0.5 rounded-md ${stage.bg} ${stage.text}`}>
+          <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-md ${stage.bg} ${stage.text}`}>
             {patients.length}
           </span>
         </div>
@@ -262,7 +262,7 @@ function PipelineColumn({
       <div className="p-2 space-y-2 max-h-[520px] overflow-y-auto">
         {patients.length === 0 ? (
           <div className="py-6 text-center">
-            <p className="text-[11px] text-text-dim">Sin pacientes</p>
+            <p className="text-[10px] font-mono text-text-dim">Sin pacientes</p>
           </div>
         ) : (
           <>
@@ -300,10 +300,10 @@ function PatientCard({
     <div className="bg-surface-3/50 hover:bg-surface-3 rounded-lg px-3 py-2.5 transition-colors group cursor-default">
       {/* Name + avatar */}
       <div className="flex items-center gap-2 mb-1.5">
-        <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${stage.gradient} flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0`}>
+        <div className={`w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${stage.text} text-[9px] font-mono font-bold flex-shrink-0`}>
           {patient.full_name?.[0]?.toUpperCase() || '?'}
         </div>
-        <span className="text-xs font-semibold text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
+        <span className="text-[10px] font-mono font-semibold text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
           {patient.full_name || 'Sin nombre'}
         </span>
       </div>
@@ -312,12 +312,12 @@ function PatientCard({
       <div className="space-y-1 ml-8">
         <div className="flex items-center gap-1.5">
           <Phone size={9} className="text-text-dim" />
-          <span className="text-[10px] text-text-muted font-mono">{patient.phone}</span>
+          <span className="text-[9px] text-text-muted font-mono">{patient.phone}</span>
         </div>
         {patient.service_interest && patient.service_interest !== 'Por identificar' && (
           <div className="flex items-center gap-1.5">
             <Star size={9} className="text-text-dim" />
-            <span className="text-[10px] text-text-muted truncate">{patient.service_interest}</span>
+            <span className="text-[9px] font-mono text-text-muted truncate">{patient.service_interest}</span>
           </div>
         )}
         <div className="flex items-center justify-between">

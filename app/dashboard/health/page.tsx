@@ -59,46 +59,46 @@ export default function SystemHealthPage() {
   const healthConfig = HEALTH_CONFIG[health?.status || 'CRITICAL'] || HEALTH_CONFIG.CRITICAL
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-4 max-w-[1200px]">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl ${healthConfig.bg} flex items-center justify-center`}>
-            <Activity size={20} className={healthConfig.color} />
+          <div className={`w-9 h-9 rounded-md ${healthConfig.bg} flex items-center justify-center`}>
+            <Activity size={18} className={healthConfig.color} />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
-            <p className="text-xs text-text-dim">Circuit Breakers & Service Status</p>
+            <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+            <p className="text-[9px] font-mono text-text-dim">Circuit Breakers & Service Status</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-muted'}`}
+            className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold border ${autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-muted'}`}
           >
             {autoRefresh ? '● Auto-refresh ON' : '○ Auto-refresh OFF'}
           </button>
-          <button onClick={loadHealth} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          <button onClick={loadHealth} aria-label={tCommon('refresh')} className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
       {/* Overall Status */}
-      <div className={`glass-card p-5 border-l-4 ${health?.status === 'HEALTHY' ? 'border-l-status-success' : health?.status === 'DEGRADED' ? 'border-l-status-warning' : 'border-l-status-danger'}`}>
+      <div className={`glass-card p-4 border-l-4 ${health?.status === 'HEALTHY' ? 'border-l-status-success' : health?.status === 'DEGRADED' ? 'border-l-status-warning' : 'border-l-status-danger'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Shield size={24} className={healthConfig.color} />
+            <Shield size={20} className={healthConfig.color} />
             <div>
-              <div className={`text-lg font-bold ${healthConfig.color}`}>{healthConfig.label}</div>
-              <div className="text-xs text-text-dim">
+              <div className={`text-sm font-mono font-bold ${healthConfig.color}`}>{healthConfig.label}</div>
+              <div className="text-[9px] font-mono text-text-dim">
                 Uptime: {health?.uptime_human || '—'} | DB: {health?.database || '—'} | v{health?.version || '—'}
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-text-dim">Cola de mensajes</div>
-            <div className={`text-lg font-bold font-mono ${(health?.message_queue?.pending || 0) > 0 ? 'text-status-warning' : 'text-status-success'}`}>
+            <div className="text-[9px] font-mono text-text-dim">Cola de mensajes</div>
+            <div className={`text-sm font-bold font-mono ${(health?.message_queue?.pending || 0) > 0 ? 'text-status-warning' : 'text-status-success'}`}>
               {health?.message_queue?.pending || 0}
             </div>
           </div>
@@ -106,39 +106,39 @@ export default function SystemHealthPage() {
       </div>
 
       {/* Circuit Breakers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {health?.circuit_breakers && Object.entries(health.circuit_breakers).map(([key, breaker]) => {
           const statusConf = STATUS_CONFIG[breaker.state] || STATUS_CONFIG.OPEN
           const Icon = BREAKER_ICONS[key] || Server
           const StatusIcon = statusConf.icon
 
           return (
-            <div key={key} className="glass-card p-4">
-              <div className="flex items-center justify-between mb-3">
+            <div key={key} className="glass-card p-3">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-lg ${breaker.state === 'CLOSED' ? 'bg-status-success/10' : breaker.state === 'HALF_OPEN' ? 'bg-status-warning/10' : 'bg-status-danger/10'} flex items-center justify-center`}>
-                    <Icon size={16} className={statusConf.color} />
+                  <div className={`w-7 h-7 rounded-md ${breaker.state === 'CLOSED' ? 'bg-status-success/10' : breaker.state === 'HALF_OPEN' ? 'bg-status-warning/10' : 'bg-status-danger/10'} flex items-center justify-center`}>
+                    <Icon size={14} className={statusConf.color} />
                   </div>
-                  <span className="text-sm font-semibold text-text-primary">{breaker.name}</span>
+                  <span className="text-[10px] font-mono font-semibold text-text-primary">{breaker.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <StatusIcon size={14} className={statusConf.color} />
-                  <span className={`text-xs font-semibold ${statusConf.color}`}>{statusConf.label}</span>
+                  <StatusIcon size={12} className={statusConf.color} />
+                  <span className={`text-[9px] font-mono font-semibold ${statusConf.color}`}>{statusConf.label}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-void/50 rounded-lg p-2">
-                  <div className="text-xs font-bold text-text-primary font-mono">{breaker.failure_count}</div>
-                  <div className="text-[9px] text-text-dim">Fallos</div>
+                <div className="bg-void/50 rounded-md p-1.5">
+                  <div className="text-[10px] font-bold text-text-primary font-mono">{breaker.failure_count}</div>
+                  <div className="text-[8px] font-mono text-text-dim">Fallos</div>
                 </div>
-                <div className="bg-void/50 rounded-lg p-2">
-                  <div className="text-xs font-bold text-text-primary font-mono">{breaker.success_count}</div>
-                  <div className="text-[9px] text-text-dim">Éxitos</div>
+                <div className="bg-void/50 rounded-md p-1.5">
+                  <div className="text-[10px] font-bold text-text-primary font-mono">{breaker.success_count}</div>
+                  <div className="text-[8px] font-mono text-text-dim">Exitos</div>
                 </div>
-                <div className="bg-void/50 rounded-lg p-2">
-                  <div className="text-xs font-bold text-text-primary font-mono">{breaker.uptime_seconds}s</div>
-                  <div className="text-[9px] text-text-dim">En estado</div>
+                <div className="bg-void/50 rounded-md p-1.5">
+                  <div className="text-[10px] font-bold text-text-primary font-mono">{breaker.uptime_seconds}s</div>
+                  <div className="text-[8px] font-mono text-text-dim">En estado</div>
                 </div>
               </div>
             </div>
@@ -147,23 +147,23 @@ export default function SystemHealthPage() {
       </div>
 
       {/* How it works */}
-      <div className="glass-card p-5">
-        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Cómo funciona el Circuit Breaker</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="p-3 rounded-lg bg-status-success/5 border border-status-success/20">
-            <CheckCircle size={20} className="text-status-success mx-auto mb-2" />
-            <div className="text-xs font-semibold text-status-success">CLOSED</div>
-            <div className="text-[10px] text-text-dim mt-1">Todo funciona. Tráfico normal.</div>
+      <div className="glass-card p-4">
+        <h3 className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Como funciona el Circuit Breaker</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+          <div className="p-2.5 rounded-md bg-status-success/5 border border-status-success/20">
+            <CheckCircle size={18} className="text-status-success mx-auto mb-1.5" />
+            <div className="text-[10px] font-mono font-semibold text-status-success">CLOSED</div>
+            <div className="text-[9px] font-mono text-text-dim mt-1">Todo funciona. Trafico normal.</div>
           </div>
-          <div className="p-3 rounded-lg bg-status-warning/5 border border-status-warning/20">
-            <AlertTriangle size={20} className="text-status-warning mx-auto mb-2" />
-            <div className="text-xs font-semibold text-status-warning">HALF-OPEN</div>
-            <div className="text-[10px] text-text-dim mt-1">Probando recuperación. Tráfico limitado.</div>
+          <div className="p-2.5 rounded-md bg-status-warning/5 border border-status-warning/20">
+            <AlertTriangle size={18} className="text-status-warning mx-auto mb-1.5" />
+            <div className="text-[10px] font-mono font-semibold text-status-warning">HALF-OPEN</div>
+            <div className="text-[9px] font-mono text-text-dim mt-1">Probando recuperacion. Trafico limitado.</div>
           </div>
-          <div className="p-3 rounded-lg bg-status-danger/5 border border-status-danger/20">
-            <XCircle size={20} className="text-status-danger mx-auto mb-2" />
-            <div className="text-xs font-semibold text-status-danger">OPEN</div>
-            <div className="text-[10px] text-text-dim mt-1">Servicio caído. Usando fallback.</div>
+          <div className="p-2.5 rounded-md bg-status-danger/5 border border-status-danger/20">
+            <XCircle size={18} className="text-status-danger mx-auto mb-1.5" />
+            <div className="text-[10px] font-mono font-semibold text-status-danger">OPEN</div>
+            <div className="text-[9px] font-mono text-text-dim mt-1">Servicio caido. Usando fallback.</div>
           </div>
         </div>
       </div>

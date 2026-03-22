@@ -24,8 +24,13 @@ import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
   MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
-  Zap, ArrowRight, FileText, Brain, Megaphone
+  Zap, ArrowRight, FileText, Brain, Megaphone, Radio, Crosshair, DollarSign, Gauge
 } from 'lucide-react'
+
+/* ================================================================
+   NAV GROUPS — Sentient naming system
+   Routes stay the same. Only display labels change.
+   ================================================================ */
 
 function useNavGroups() {
   const t = useTranslations('nav')
@@ -33,8 +38,8 @@ function useNavGroups() {
     {
       label: t('principal'),
       items: [
-        { href: '/dashboard', icon: LayoutDashboard, label: t('overview') },
-        { href: '/dashboard/conversaciones', icon: MessageSquare, label: t('conversations') },
+        { href: '/dashboard', icon: Gauge, label: t('overview') },
+        { href: '/dashboard/conversaciones', icon: Radio, label: t('conversations') },
         { href: '/dashboard/pacientes', icon: Users, label: t('patients') },
         { href: '/dashboard/calendario', icon: Calendar, label: t('calendar') },
       ],
@@ -43,9 +48,9 @@ function useNavGroups() {
       label: t('sales'),
       items: [
         { href: '/dashboard/pipeline', icon: Kanban, label: t('pipeline') },
-        { href: '/dashboard/oportunidades', icon: Target, label: t('opportunities') },
-        { href: '/dashboard/campanas', icon: Megaphone, label: t('campaigns') },
-        { href: '/dashboard/pagos', icon: CreditCard, label: t('payments') },
+        { href: '/dashboard/oportunidades', icon: Crosshair, label: t('opportunities') },
+        { href: '/dashboard/campanas', icon: Zap, label: t('campaigns') },
+        { href: '/dashboard/pagos', icon: DollarSign, label: t('payments') },
       ],
     },
     {
@@ -69,9 +74,10 @@ function useNavGroups() {
   ]
 }
 
-// ============================================================
-// SIDEBAR (extracted as a standalone component — not inside render)
-// ============================================================
+/* ================================================================
+   SIDEBAR — Sentient Interface
+   Mono labels, left-border active, tight spacing, no noise.
+   ================================================================ */
 
 function Sidebar({
   isOpen,
@@ -106,16 +112,16 @@ function Sidebar({
 }) {
   return (
     <>
-      {/* Logo */}
-      <div className={`px-4 py-5 flex items-center ${isOpen ? 'gap-2' : 'justify-center'} border-b border-border/50`}>
+      {/* Logo + org identifier */}
+      <div className={`px-4 py-4 flex items-center ${isOpen ? 'gap-2' : 'justify-center'} border-b border-border`}>
         {isOpen ? (
           <div className="animate-fade-in flex-1 min-w-0">
             {logoUrl ? (
-              <img src={logoUrl} alt={orgName || 'Logo'} className="h-8 w-auto object-contain" />
+              <img src={logoUrl} alt={orgName || 'Logo'} className="h-7 w-auto object-contain" />
             ) : (
               <SofiaLogo size="sm" variant="full" />
             )}
-            <div className="text-text-dim text-[10px] truncate mt-1 pl-[38px]">{orgName}</div>
+            <div className="text-text-dim text-[9px] font-mono uppercase tracking-widest truncate mt-1 pl-[38px]">{orgName}</div>
           </div>
         ) : (
           logoUrl ? (
@@ -125,32 +131,28 @@ function Sidebar({
           )
         )}
         {mobile && onClose && (
-          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto flex-shrink-0" aria-label={closeMenuLabel}>
-            <X size={16} />
+          <button onClick={onClose} className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors ml-auto flex-shrink-0" aria-label={closeMenuLabel}>
+            <X size={14} />
           </button>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto" role="navigation" aria-label={navGroups[0]?.label || 'Navigation'}>
+      <nav className="flex-1 px-2 py-3 overflow-y-auto" role="navigation" aria-label={navGroups[0]?.label || 'Navigation'}>
         {navGroups.map((group, gi) => (
-          <div key={group.label} className={gi > 0 ? 'mt-4' : ''}>
-            {/* Group label — only visible when sidebar is expanded */}
+          <div key={group.label} className={gi > 0 ? 'mt-3' : ''}>
             {isOpen && (
               <div className="px-3 mb-1 animate-fade-in">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-text-dim">
+                <span className="text-[9px] font-mono font-medium uppercase tracking-[0.2em] text-text-dim">
                   {group.label}
                 </span>
               </div>
             )}
-            {/* Collapsed: thin divider between groups */}
             {!isOpen && gi > 0 && (
-              <div className="mx-3 mb-2 border-t border-border/50" />
+              <div className="mx-3 mb-2 border-t border-border" />
             )}
-            <div className="space-y-0.5">
+            <div className="space-y-px">
               {group.items.map((item) => {
-                // Exact match for /dashboard, startsWith for all other sections
-                // so nested routes like /dashboard/pacientes/[id] still highlight the parent nav item
                 const isActive = item.href === '/dashboard'
                   ? pathname === '/dashboard'
                   : pathname.startsWith(item.href)
@@ -159,12 +161,16 @@ function Sidebar({
                   <button
                     key={item.href}
                     onClick={() => onNavigate(item.href)}
-                    className={`sidebar-link w-full ${isActive ? 'active' : ''} cursor-pointer`}
+                    className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-[11px] font-mono tracking-wide transition-all duration-150 cursor-pointer ${
+                      isActive
+                        ? 'text-brand-purple bg-brand-purple/5 border-l-2 border-brand-purple rounded-r-md -ml-px'
+                        : 'text-text-muted hover:text-text-primary hover:bg-surface-2 rounded-md'
+                    } ${!isOpen ? 'justify-center' : ''}`}
                     title={!isOpen ? item.label : undefined}
                     aria-label={item.label}
                     aria-current={isActive ? 'page' : undefined}
                   >
-                    <Icon size={18} className="flex-shrink-0" />
+                    <Icon size={16} className="flex-shrink-0" strokeWidth={isActive ? 2 : 1.5} />
                     {isOpen && (
                       <span className="animate-fade-in truncate">{item.label}</span>
                     )}
@@ -177,24 +183,23 @@ function Sidebar({
       </nav>
 
       {/* Bottom actions */}
-      <div className="px-3 py-4 border-t border-border space-y-1">
-        {/* God Mode: back to admin panel */}
+      <div className="px-2 py-3 border-t border-border space-y-px">
         {godMode && onExitGodMode && (
           <button
             onClick={onExitGodMode}
-            className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
+            className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[11px] font-mono text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 transition-all ${!isOpen ? 'justify-center' : ''}`}
             aria-label={backLabel}
           >
-            <ArrowLeft size={18} className="flex-shrink-0" />
+            <ArrowLeft size={16} className="flex-shrink-0" />
             {isOpen && <span className="animate-fade-in">{backLabel}</span>}
           </button>
         )}
         <button
           onClick={onLogout}
-          className={`sidebar-link w-full text-status-danger/70 hover:text-status-danger hover:bg-status-danger/5 ${!isOpen ? 'justify-center' : ''}`}
+          className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[11px] font-mono text-text-dim hover:text-status-danger hover:bg-status-danger/5 transition-all ${!isOpen ? 'justify-center' : ''}`}
           aria-label={logoutLabel}
         >
-          <LogOut size={18} className="flex-shrink-0" />
+          <LogOut size={16} className="flex-shrink-0" />
           {isOpen && <span className="animate-fade-in">{logoutLabel}</span>}
         </button>
       </div>
@@ -202,38 +207,34 @@ function Sidebar({
   )
 }
 
-// ============================================================
-// GOD MODE BANNER — shown when super admin is impersonating
-// ============================================================
+/* ================================================================
+   GOD MODE BANNER — Flat, minimal, mono
+   ================================================================ */
 
 function GodModeBanner({ orgName, onExit }: { orgName: string; onExit: () => void }) {
   const t = useTranslations('godMode')
   const tNav = useTranslations('nav')
   return (
-    <div className="bg-gradient-to-r from-status-danger/10 via-brand-purple/10 to-status-danger/10 border-b border-status-danger/20 px-4 py-2 flex items-center justify-between">
-      <div className="flex items-center gap-2.5">
-        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-status-danger to-brand-purple flex items-center justify-center">
-          <Shield size={12} className="text-white" />
-        </div>
-        <div>
-          <span className="text-xs font-bold text-status-danger">{t('label')}</span>
-          <span className="text-xs text-text-muted ml-2">{t('viewing')} <strong className="text-text-primary">{orgName}</strong></span>
-        </div>
+    <div className="bg-status-danger/5 border-b border-status-danger/15 px-4 py-1.5 flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <Shield size={12} className="text-status-danger" />
+        <span className="text-[10px] font-mono font-bold text-status-danger uppercase tracking-wider">{t('label')}</span>
+        <span className="text-[10px] font-mono text-text-dim">{t('viewing')} <strong className="text-text-secondary">{orgName}</strong></span>
       </div>
       <button
         onClick={onExit}
-        className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-semibold hover:bg-status-danger/20 transition-colors"
+        className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-status-danger/8 border border-status-danger/15 text-status-danger text-[9px] font-mono font-semibold hover:bg-status-danger/15 transition-colors"
       >
-        <ArrowLeft size={10} />
+        <ArrowLeft size={9} />
         {tNav('backToAdmin')}
       </button>
     </div>
   )
 }
 
-// ============================================================
-// BRANCH SELECTOR (B10 — Multi-Sede)
-// ============================================================
+/* ================================================================
+   BRANCH SELECTOR — Dropdown, mono, minimal
+   ================================================================ */
 
 function BranchSelector({
   branches,
@@ -252,22 +253,22 @@ function BranchSelector({
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs font-medium text-text-muted hover:text-text-primary hover:border-brand-purple/30 transition-all"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-surface-2 border border-border text-[10px] font-mono text-text-muted hover:text-text-primary hover:border-brand-purple/30 transition-all"
       >
-        <MapPin size={12} className={selectedBranchId ? 'text-brand-purple' : ''} />
-        <span className="hidden sm:inline max-w-[120px] truncate">
+        <MapPin size={11} className={selectedBranchId ? 'text-brand-purple' : ''} />
+        <span className="hidden sm:inline max-w-[100px] truncate">
           {selected ? selected.name : tLayout('allBranches')}
         </span>
-        <ChevronDown size={12} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={10} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-40 w-52 bg-surface border border-border rounded-xl shadow-lg py-1 animate-fade-in">
+          <div className="absolute right-0 top-full mt-1 z-40 w-48 bg-surface border border-border rounded-lg shadow-lg py-1 animate-fade-in">
             <button
               onClick={() => { onSelect(null); setOpen(false) }}
-              className={`w-full text-left px-3 py-2 text-xs hover:bg-surface-2 transition-colors ${!selectedBranchId ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
+              className={`w-full text-left px-3 py-1.5 text-[10px] font-mono hover:bg-surface-2 transition-colors ${!selectedBranchId ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
             >
               {tLayout('allBranches')}
             </button>
@@ -275,7 +276,7 @@ function BranchSelector({
               <button
                 key={b.id}
                 onClick={() => { onSelect(b.id); setOpen(false) }}
-                className={`w-full text-left px-3 py-2 text-xs hover:bg-surface-2 transition-colors ${selectedBranchId === b.id ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
+                className={`w-full text-left px-3 py-1.5 text-[10px] font-mono hover:bg-surface-2 transition-colors ${selectedBranchId === b.id ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
               >
                 {b.name}
                 {b.city && <span className="text-text-dim ml-1">({b.city})</span>}
@@ -288,9 +289,9 @@ function BranchSelector({
   )
 }
 
-// ============================================================
-// TRIAL BANNER — Dismissible, loss-aversion copywriting
-// ============================================================
+/* ================================================================
+   TRIAL BANNER — Tight, urgent, mono
+   ================================================================ */
 
 function TrialBanner({
   org,
@@ -304,7 +305,6 @@ function TrialBanner({
   const [dismissed, setDismissed] = useState(false)
   const t = useTranslations('trial')
 
-  // Read dismiss state from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const key = `sofia_trial_banner_dismissed_${org?.id}`
@@ -337,53 +337,49 @@ function TrialBanner({
     : t('daysLeft', { days: daysLeft })
 
   return (
-    <div
-      className={`px-4 py-2.5 flex items-center justify-between border-b transition-all ${
-        isUrgent
-          ? 'bg-status-warning/8 border-status-warning/20'
-          : 'bg-amber-950/30 border-amber-800/20'
-      }`}
-    >
-      <div className="flex items-center gap-2.5 min-w-0">
-        <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 ${isUrgent ? 'bg-status-warning/20' : 'bg-amber-700/20'}`}>
-          {isUrgent ? (
-            <Clock size={11} className="text-status-warning" />
-          ) : (
-            <Zap size={11} className="text-amber-400" />
-          )}
-        </div>
-        <span className={`text-xs font-medium truncate ${isUrgent ? 'text-status-warning' : 'text-amber-300'}`}>
+    <div className={`px-4 py-1.5 flex items-center justify-between border-b transition-all ${
+      isUrgent
+        ? 'bg-status-warning/5 border-status-warning/15'
+        : 'bg-surface-2 border-border'
+    }`}>
+      <div className="flex items-center gap-2 min-w-0">
+        {isUrgent ? (
+          <Clock size={10} className="text-status-warning flex-shrink-0" />
+        ) : (
+          <Zap size={10} className="text-brand-purple flex-shrink-0" />
+        )}
+        <span className={`text-[10px] font-mono truncate ${isUrgent ? 'text-status-warning' : 'text-text-muted'}`}>
           {copy}
         </span>
       </div>
 
-      <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+      <div className="flex items-center gap-1.5 ml-3 flex-shrink-0">
         <button
           onClick={() => onNavigate('/dashboard/planes')}
-          className={`flex items-center gap-1 px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors ${
+          className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-mono font-semibold transition-colors ${
             isUrgent
-              ? 'bg-status-warning/15 text-status-warning hover:bg-status-warning/25'
-              : 'bg-amber-700/20 text-amber-300 hover:bg-amber-700/35'
+              ? 'bg-status-warning/10 text-status-warning hover:bg-status-warning/20'
+              : 'bg-brand-purple/8 text-brand-purple hover:bg-brand-purple/15'
           }`}
         >
           {t('upgrade')}
-          <ArrowRight size={10} />
+          <ArrowRight size={9} />
         </button>
         <button
           onClick={handleDismiss}
-          className="w-5 h-5 rounded flex items-center justify-center text-text-dim hover:text-text-muted transition-colors"
+          className="w-4 h-4 rounded flex items-center justify-center text-text-dim hover:text-text-muted transition-colors"
           aria-label={t('banner')}
         >
-          <X size={12} />
+          <X size={10} />
         </button>
       </div>
     </div>
   )
 }
 
-// ============================================================
-// DASHBOARD LAYOUT
-// ============================================================
+/* ================================================================
+   DASHBOARD LAYOUT — Nucleus
+   ================================================================ */
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -394,7 +390,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Organization | null>(null)
   const [role, setRole] = useState<'OWNER' | 'ADMIN' | 'STAFF'>('STAFF')
-  // Filter nav groups based on current user role (hide inaccessible items)
   const FILTERED_NAV_GROUPS = NAV_GROUPS.map(group => ({
     ...group,
     items: filterNavByRole(group.items, role),
@@ -424,13 +419,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setUser(session.user)
       Sentry.setUser({ id: session.user.id, email: session.user.email ?? undefined })
 
-      // Check God Mode: super admin impersonating a clinic
       const impersonatedOrgId = getImpersonatedOrgId()
       const impersonatedOrgName = getImpersonatedOrgName()
       const isAdmin = isSuperAdmin(session.user)
 
       if (isAdmin && impersonatedOrgId) {
-        // God Mode — load the impersonated org directly
         setGodMode(true)
         setGodModeOrgName(impersonatedOrgName || tLayout('orgUnknown'))
 
@@ -443,20 +436,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (!error && data) {
             setOrg(data as Organization)
             Sentry.setContext('organization', { id: data.id, name: data.name })
-            setRole('OWNER') // Super admin has full access in God Mode
+            setRole('OWNER')
           }
         } catch {
-          // Impersonated org not found — clear and redirect
           stopImpersonation()
           router.replace('/admin')
           return
         }
       } else if (isAdmin && !impersonatedOrgId) {
-        // Super admin without impersonation — redirect to admin panel
         router.replace('/admin')
         return
       } else {
-        // Normal clinic user
         try {
           const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
           setOrg(organization)
@@ -465,7 +455,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             Sentry.setContext('organization', { id: organization.id, name: organization.name })
           }
         } catch {
-          // Organization fetch failed — will show fallback UI
+          // Organization fetch failed
         }
       }
 
@@ -484,7 +474,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => subscription.unsubscribe()
   }, [router, tLayout])
 
-  // Fetch branches in background — never blocks dashboard loading
   useEffect(() => {
     if (!org?.id) return
     fetchBranches(org.id)
@@ -508,12 +497,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setMobileMenuOpen(false)
   }
 
-  // White-label: dynamic logo + brand colors (must be before early return)
   const whiteLabel = useMemo(() => (org?.config_settings as Record<string, unknown>)?.white_label as Record<string, unknown> | undefined, [org?.config_settings])
   const logoUrl = (whiteLabel?.logo_url as string) || ''
   const brandColors = useMemo(() => (whiteLabel?.brand_colors || {}) as Record<string, string>, [whiteLabel])
 
-  // Apply dynamic brand colors as CSS custom properties
   useEffect(() => {
     const root = document.documentElement
     if (brandColors.primary) root.style.setProperty('--color-brand-primary', brandColors.primary)
@@ -526,19 +513,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [brandColors])
 
+  /* ---- Loading state: sentient breathe ---- */
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-void">
-        <div className="flex flex-col items-center gap-5">
-          <div className="animate-logo-breathe">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-sentient-breathe">
             <SofiaLogo size="md" variant="mark" />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '0ms' }} />
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '150ms' }} />
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '300ms' }} />
+          <div className="flex items-center gap-1.5">
+            <div className="sentient-dot" style={{ animationDelay: '0ms' }} />
+            <div className="sentient-dot" style={{ animationDelay: '200ms' }} />
+            <div className="sentient-dot" style={{ animationDelay: '400ms' }} />
           </div>
-          <p className="text-text-muted text-xs font-mono tracking-widest uppercase">{tLayout('loadingDashboard')}</p>
+          <p className="text-text-dim text-[10px] font-mono tracking-[0.25em] uppercase">{tLayout('loadingDashboard')}</p>
         </div>
       </div>
     )
@@ -546,7 +534,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const sidebarProps = {
     pathname,
-    orgName: org?.name || 'Dashboard',
+    orgName: org?.name || 'Nucleus',
     navGroups: FILTERED_NAV_GROUPS,
     onNavigate: navigateTo,
     onLogout: handleLogout,
@@ -558,8 +546,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     logoUrl,
   }
 
+  const currentPageLabel = NAV_ITEMS.find(i => i.href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(i.href))?.label || 'Nucleus'
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-void">
       {/* GOD MODE BANNER */}
       {godMode && <GodModeBanner orgName={godModeOrgName} onExit={handleExitGodMode} />}
 
@@ -568,23 +558,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* TRIAL EXPIRED OVERLAY */}
       {org?.status === 'TRIAL_EXPIRED' && !godMode && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card p-8 max-w-md text-center">
-            <div className="w-16 h-16 rounded-2xl bg-status-danger/10 border border-status-danger/20 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle size={28} className="text-status-danger" />
+        <div className="fixed inset-0 z-50 bg-void/90 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass-card p-6 max-w-sm text-center">
+            <div className="w-12 h-12 rounded-lg bg-status-danger/8 border border-status-danger/15 flex items-center justify-center mx-auto mb-3">
+              <AlertTriangle size={20} className="text-status-danger" />
             </div>
-            <h2 className="text-lg font-bold text-text-primary mb-2">Tu periodo de prueba ha expirado</h2>
-            <p className="text-text-muted text-xs mb-4">
+            <h2 className="text-sm font-bold font-mono text-text-primary mb-1.5">Tu periodo de prueba ha expirado</h2>
+            <p className="text-text-muted text-[10px] font-mono mb-4">
               Para seguir usando SofIA y que tus pacientes sigan siendo atendidos, activa un plan.
             </p>
             <button
               onClick={() => navigateTo('/dashboard/planes')}
-              className="px-6 py-2.5 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors"
+              className="px-5 py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors"
             >
               Ver planes
             </button>
-            <p className="text-text-dim text-[10px] mt-3">
-              ¿Necesitas ayuda? Escribenos a gestion@ataraxiaialabs.ai
+            <p className="text-text-dim text-[9px] font-mono mt-2">
+              gestion@ataraxiaialabs.ai
             </p>
           </div>
         </div>
@@ -592,23 +582,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <div className="flex-1 flex">
         {/* ========== DESKTOP SIDEBAR ========== */}
-        <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-surface border-r border-border hidden lg:flex flex-col transition-all duration-300 relative flex-shrink-0`}>
+        <aside className={`${sidebarOpen ? 'w-56' : 'w-16'} bg-surface border-r border-border hidden lg:flex flex-col transition-all duration-200 relative flex-shrink-0`}>
           <Sidebar isOpen={sidebarOpen} {...sidebarProps} />
-          {/* Collapse button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-all z-10"
+            className="absolute -right-3 top-7 w-5 h-5 rounded-full bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary hover:border-brand-purple/30 transition-all z-10"
             aria-label={sidebarOpen ? tLayout('closeMenu') : tLayout('mainMenu')}
           >
-            {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
+            {sidebarOpen ? <ChevronLeft size={10} /> : <ChevronRight size={10} />}
           </button>
         </aside>
 
         {/* ========== MOBILE SIDEBAR OVERLAY ========== */}
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-            <aside className="relative w-72 h-full bg-surface border-r border-border flex flex-col animate-slide-in">
+            <div className="absolute inset-0 bg-void/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+            <aside className="relative w-64 h-full bg-surface border-r border-border flex flex-col animate-slide-in">
               <Sidebar isOpen mobile onClose={() => setMobileMenuOpen(false)} {...sidebarProps} />
             </aside>
           </div>
@@ -616,27 +605,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* ========== MAIN CONTENT ========== */}
         <div className="flex-1 flex flex-col min-w-0">
+          {/* Clinic Pulse — real-time heartbeat line */}
+          <div className="clinic-pulse" />
+
           {/* Topbar */}
-          <header className="h-14 lg:h-16 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 lg:px-6 sticky top-0 z-20">
-            <div className="flex items-center gap-3">
+          <header className="h-12 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 sticky top-0 z-20">
+            <div className="flex items-center gap-2.5">
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+                className="w-8 h-8 rounded-md bg-surface-2 border border-border flex lg:hidden items-center justify-center text-text-muted hover:text-text-primary transition-colors"
                 aria-label={tLayout('mainMenu')}
               >
-                <Menu size={18} />
+                <Menu size={16} />
               </button>
               <div>
-                <h1 className="text-text-primary font-semibold text-sm">
-                  {NAV_ITEMS.find(i => i.href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(i.href))?.label || 'Dashboard'}
+                <h1 className="text-text-primary font-mono font-semibold text-xs tracking-wide">
+                  {currentPageLabel}
                 </h1>
-                <p className="text-text-dim text-xs hidden sm:block">{org?.name}</p>
+                <p className="text-text-dim text-[9px] font-mono hidden sm:block">{org?.name}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 lg:gap-3">
-              {/* Branch selector — only if org has multiple branches (B10) */}
+            <div className="flex items-center gap-2">
+              {/* Branch selector */}
               {branches.length > 1 && (
                 <BranchSelector
                   branches={branches}
@@ -645,26 +637,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 />
               )}
 
-              {/* Live indicator */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-status-success/5 border border-status-success/10">
-                <div className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse" />
-                <span className="text-status-success text-xs font-medium">SofIA Online</span>
+              {/* Sentient dot — SofIA is alive */}
+              <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md bg-surface-2 border border-border">
+                <div className="sentient-dot" />
+                <span className="text-[9px] font-mono text-text-muted">SofIA</span>
               </div>
-              {/* Mobile: just the dot */}
-              <div className="sm:hidden w-2 h-2 rounded-full bg-status-success animate-pulse" />
+              {/* Mobile: just the sentient dot */}
+              <div className="sm:hidden sentient-dot" />
 
               <NotificationsDropdown orgId={org?.id || ''} />
 
               <ThemeToggle />
 
-              <div className={`w-9 h-9 rounded-lg border flex items-center justify-center font-semibold text-xs ${godMode ? 'bg-gradient-to-br from-status-danger/20 to-brand-purple/20 border-status-danger/20 text-status-danger' : 'bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border-brand-purple/20 text-brand-purple'}`}>
+              {/* User avatar — mono initial */}
+              <div className={`w-7 h-7 rounded-md border flex items-center justify-center font-mono font-bold text-[10px] ${godMode ? 'bg-status-danger/8 border-status-danger/15 text-status-danger' : 'bg-brand-purple/8 border-brand-purple/15 text-brand-purple'}`}>
                 {user?.email?.[0]?.toUpperCase() || 'U'}
               </div>
             </div>
           </header>
 
           {/* Page content */}
-          <main className="flex-1 p-4 lg:p-6 overflow-auto" role="main">
+          <main className="flex-1 p-3 lg:p-5 overflow-auto" role="main">
             {org && user ? (
               <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
                 <ErrorBoundary>
@@ -676,9 +669,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </ErrorBoundary>
               </OrgContext.Provider>
             ) : (
-              <div className="glass-card p-8 text-center">
-                <p className="text-text-muted">No se encontro organizacion asociada a tu cuenta.</p>
-                <p className="text-text-dim text-sm mt-2">Contacta al administrador de Ataraxia.</p>
+              <div className="glass-card p-6 text-center">
+                <p className="text-text-muted text-xs font-mono">No se encontro organizacion asociada a tu cuenta.</p>
+                <p className="text-text-dim text-[10px] font-mono mt-1">Contacta al administrador de Ataraxia.</p>
               </div>
             )}
           </main>

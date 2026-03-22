@@ -167,14 +167,14 @@ export default function CardTokenizationForm({
   }, [isValid, loading, disabled, wompiSandbox, wompiPublicKey, cleanNumber, cvc, expiry, cardHolder, onTokenized, onError])
 
   const inputClass =
-    'w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-xs placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20'
-  const labelClass = 'text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1.5'
-  const errorClass = 'text-[10px] text-status-danger mt-1'
+    'w-full px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20'
+  const labelClass = 'text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-1.5'
+  const errorClass = 'text-[9px] font-mono text-status-danger mt-1'
 
   return (
-    <form onSubmit={handleSubmit} className="glass-card p-5" autoComplete="off">
+    <form onSubmit={handleSubmit} className="glass-card p-4" autoComplete="off">
       {/* Card Number */}
-      <div className="mb-4">
+      <div className="mb-3">
         <label htmlFor="ct-number" className={labelClass}>Numero de tarjeta</label>
         <div className="relative">
           <input
@@ -197,7 +197,7 @@ export default function CardTokenizationForm({
       </div>
 
       {/* Expiry + CVC row */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-2 mb-3">
         <div>
           <label htmlFor="ct-expiry" className={labelClass}>Expiracion</label>
           <input
@@ -233,7 +233,7 @@ export default function CardTokenizationForm({
       </div>
 
       {/* Cardholder */}
-      <div className="mb-5">
+      <div className="mb-4">
         <label htmlFor="ct-holder" className={labelClass}>Titular de la tarjeta</label>
         <input
           id="ct-holder"
@@ -253,7 +253,7 @@ export default function CardTokenizationForm({
       <button
         type="submit"
         disabled={!isValid || loading || disabled}
-        className="w-full py-2.5 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
@@ -268,7 +268,7 @@ export default function CardTokenizationForm({
         )}
       </button>
 
-      <p className="text-[9px] text-text-dim text-center mt-3 flex items-center justify-center gap-1">
+      <p className="text-[9px] font-mono text-text-dim text-center mt-2.5 flex items-center justify-center gap-1">
         <Lock className="h-2.5 w-2.5" />
         Datos encriptados. No almacenamos tu tarjeta.
       </p>

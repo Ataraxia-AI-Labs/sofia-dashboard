@@ -83,14 +83,14 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
       <div className="space-y-5">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="glass-card p-4 animate-pulse">
+            <div key={i} className="glass-card p-3 animate-pulse">
               <div className="h-8 bg-surface-3 rounded w-8 mb-2" />
               <div className="h-5 bg-surface-3 rounded w-20 mb-1" />
               <div className="h-3 bg-surface-3 rounded w-28" />
             </div>
           ))}
         </div>
-        <div className="glass-card p-6 animate-pulse">
+        <div className="glass-card p-4 animate-pulse">
           <div className="h-48 bg-surface-3 rounded-lg" />
         </div>
       </div>
@@ -101,11 +101,11 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
     <div className="space-y-5">
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-text-dim">{t('subtitle')}</p>
+        <p className="text-xs font-mono text-text-dim">{t('subtitle')}</p>
         <button
           onClick={handleRecalculate}
           disabled={recalculating}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-mono font-semibold hover:bg-brand-purple/15 transition-all disabled:opacity-50"
         >
           <RefreshCw size={13} className={recalculating ? 'animate-spin' : ''} />
           {recalculating ? t('recalculating') : t('recalculate')}
@@ -117,26 +117,26 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <InsightCard
             icon={<DollarSign size={16} />}
-            gradient="from-brand-gold to-amber-500"
+            color="text-brand-gold"
             value={formatCurrency(insights.avg_ltv)}
             label={t('insights.avgLTV')}
           />
           <InsightCard
             icon={<Sparkles size={16} />}
-            gradient="from-brand-purple to-brand-purple-dark"
+            color="text-brand-purple"
             value={formatCurrency(insights.total_predicted_revenue)}
             label={t('insights.totalPredicted')}
           />
           <InsightCard
             icon={<Award size={16} />}
-            gradient="from-status-success to-emerald-600"
+            color="text-status-success"
             value={insights.best_channel || '--'}
             label={t('insights.bestChannel')}
             subValue={formatCurrency(insights.best_channel_avg_ltv)}
           />
           <InsightCard
             icon={<Users size={16} />}
-            gradient="from-brand-cyan to-blue-500"
+            color="text-brand-cyan"
             value={totalDistribution.toString()}
             label={t('insights.totalPredictions')}
           />
@@ -145,13 +145,13 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
       {/* TIER DISTRIBUTION */}
       {insights && totalDistribution > 0 && (
-        <div className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+        <div className="glass-card p-4">
+          <h3 className="text-sm font-mono font-semibold text-text-primary mb-4 flex items-center gap-2">
             <BarChart3 size={14} className="text-brand-purple" />
             {t('tierDistribution')}
           </h3>
           {/* Visual bar */}
-          <div className="flex rounded-xl overflow-hidden h-8 mb-4">
+          <div className="flex rounded-md overflow-hidden h-8 mb-4">
             {tierOrder.map(tier => {
               const count = insights.tier_distribution[tier] || 0
               const pct = totalDistribution > 0 ? (count / totalDistribution) * 100 : 0
@@ -160,7 +160,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
               return (
                 <div
                   key={tier}
-                  className={`relative bg-gradient-to-r ${cfg.gradient} flex items-center justify-center group cursor-default`}
+                  className={`relative ${cfg.gradient.includes('from-') ? `bg-gradient-to-r ${cfg.gradient}` : cfg.gradient} flex items-center justify-center group cursor-default`}
                   style={{ width: `${pct}%`, minWidth: pct > 3 ? undefined : '24px' }}
                   title={`${cfg.label}: ${count}`}
                 >
@@ -191,23 +191,23 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
       )}
 
       {/* TOP 10 RANKINGS */}
-      <div className="glass-card p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+      <div className="glass-card p-4">
+        <h3 className="text-sm font-mono font-semibold text-text-primary mb-4 flex items-center gap-2">
           <Award size={14} className="text-brand-gold" />
           {t('topPatients')}
         </h3>
         {rankings.length === 0 ? (
           <div className="text-center py-8">
             <Award size={28} className="text-text-dim mx-auto mb-2" />
-            <p className="text-xs text-text-muted">{t('noRankings')}</p>
-            <p className="text-[10px] text-text-dim mt-1">{t('noRankingsHint')}</p>
+            <p className="text-xs font-mono text-text-muted">{t('noRankings')}</p>
+            <p className="text-[10px] font-mono text-text-dim mt-1">{t('noRankingsHint')}</p>
           </div>
         ) : (
           <div className="space-y-2">
             {rankings.map((p, idx) => (
               <div
                 key={p.id}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-2/50 border border-border/50 hover:border-border transition-colors group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-2/50 border border-border/50 hover:border-border transition-colors group"
               >
                 {/* Rank */}
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
@@ -221,7 +221,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
                 {/* Name */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
+                  <p className="text-sm font-mono font-medium text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
                     {p.patient_name}
                   </p>
                 </div>
@@ -240,8 +240,8 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
       {/* AT-RISK PATIENTS */}
       {atRisk.length > 0 && (
-        <div className="glass-card p-5 border-status-danger/20">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+        <div className="glass-card p-4 border-status-danger/20">
+          <h3 className="text-sm font-mono font-semibold text-text-primary mb-4 flex items-center gap-2">
             <AlertTriangle size={14} className="text-status-danger" />
             {t('atRisk')}
           </h3>
@@ -249,13 +249,13 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
             {atRisk.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-status-danger/5 border border-status-danger/15 hover:border-status-danger/30 transition-colors"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-status-danger/5 border border-status-danger/15 hover:border-status-danger/30 transition-colors"
               >
                 <div className="w-8 h-8 rounded-lg bg-status-danger/10 border border-status-danger/20 flex items-center justify-center">
                   <TrendingDown size={14} className="text-status-danger" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-text-primary truncate">{p.patient_name}</p>
+                  <p className="text-sm font-mono font-medium text-text-primary truncate">{p.patient_name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <LTVTierInline tier={p.ltv_tier} />
                     <span className="text-[10px] text-status-danger font-semibold flex items-center gap-0.5">
@@ -277,8 +277,8 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
       {/* COHORT ANALYSIS */}
       {cohorts.length > 0 && (
-        <div className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+        <div className="glass-card p-4">
+          <h3 className="text-sm font-mono font-semibold text-text-primary mb-4 flex items-center gap-2">
             <BarChart3 size={14} className="text-brand-cyan" />
             {t('cohortAnalysis')}
           </h3>
@@ -296,7 +296,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                     <div className="flex-1 relative">
                       <div className="h-6 bg-surface-3 rounded-lg overflow-hidden">
                         <div
-                          className="h-full rounded-lg bg-gradient-to-r from-brand-purple/60 to-brand-cyan/60 transition-all duration-700 flex items-center px-2"
+                          className="h-full rounded-md bg-brand-purple/40 transition-all duration-700 flex items-center px-2"
                           style={{ width: `${Math.max(barWidth, 4)}%` }}
                         >
                           {barWidth > 20 && (
@@ -323,33 +323,33 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
       {/* Empty state when no data at all */}
       {!insights && rankings.length === 0 && (
-        <div className="glass-card p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center mx-auto mb-4">
+        <div className="glass-card p-8 text-center">
+          <div className="w-16 h-16 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center mx-auto mb-4">
             <Sparkles size={28} className="text-brand-purple" />
           </div>
-          <h3 className="text-sm font-semibold text-text-primary mb-1">{t('noData')}</h3>
-          <p className="text-xs text-text-dim max-w-xs mx-auto">{t('noDataHint')}</p>
+          <h3 className="text-sm font-mono font-semibold text-text-primary mb-1">{t('noData')}</h3>
+          <p className="text-xs font-mono text-text-dim max-w-xs mx-auto">{t('noDataHint')}</p>
         </div>
       )}
     </div>
   )
 }
 
-function InsightCard({ icon, gradient, value, label, subValue }: {
+function InsightCard({ icon, color, value, label, subValue }: {
   icon: React.ReactNode
-  gradient: string
+  color: string
   value: string
   label: string
   subValue?: string
 }) {
   return (
-    <div className="glass-card p-3.5">
-      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 shadow-md`}>
+    <div className="glass-card p-3">
+      <div className={`w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${color} mb-2`}>
         {icon}
       </div>
       <div className="text-base font-bold font-mono text-text-primary leading-tight">{value}</div>
       {subValue && <div className="text-[10px] font-mono text-text-dim">{subValue}</div>}
-      <div className="text-[10px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-[10px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

@@ -1,0 +1,72 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e9]: A
+        - generic [ref=e10]: Ataraxia IA Labs
+      - heading "Configura tu clínica en 5 minutos" [level=1] [ref=e11]
+      - paragraph [ref=e12]: SofIA atiende pacientes 24/7 por WhatsApp, agenda citas, cobra anticipos y detecta oportunidades de venta.
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - img [ref=e16]
+          - text: WhatsApp + Instagram + Messenger
+        - generic [ref=e18]:
+          - img [ref=e20]
+          - text: Agenda y recordatorios automáticos
+        - generic [ref=e23]:
+          - img [ref=e25]
+          - text: Cobros con Nequi, PSE, tarjeta
+        - generic [ref=e27]:
+          - img [ref=e29]
+          - text: IA que detecta oportunidades de venta
+    - generic [ref=e32]:
+      - generic [ref=e39]:
+        - generic [ref=e40]: Clínica
+        - generic [ref=e41]: Cuenta
+        - generic [ref=e42]: WhatsApp
+        - generic [ref=e43]: Confirmar
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - heading "Tu clínica" [level=2] [ref=e46]
+          - paragraph [ref=e47]: Información básica de tu negocio
+        - generic [ref=e48]:
+          - generic [ref=e49]: Nombre de la clínica *
+          - textbox "Nombre de la clínica *" [ref=e50]:
+            - /placeholder: "Ej: Sonrisa Perfect"
+        - generic [ref=e51]:
+          - generic [ref=e52]: Especialidad *
+          - generic [ref=e53]:
+            - button "🦷✨Estética + Odontología" [ref=e54] [cursor=pointer]
+            - button "🦷Odontología" [ref=e55] [cursor=pointer]
+            - button "✨Medicina Estética" [ref=e56] [cursor=pointer]
+            - button "🧴Dermatología" [ref=e57] [cursor=pointer]
+            - button "🏥Cirugía Plástica" [ref=e58] [cursor=pointer]
+            - button "⚕️Medicina General" [ref=e59] [cursor=pointer]
+        - generic [ref=e60]:
+          - generic [ref=e61]: Ciudad
+          - combobox "Ciudad" [ref=e62]:
+            - option "Seleccionar..." [selected]
+            - option "Bogotá"
+            - option "Medellín"
+            - option "Cali"
+            - option "Barranquilla"
+            - option "Cartagena"
+            - option "Bucaramanga"
+            - option "Pereira"
+            - option "Manizales"
+            - option "Santa Marta"
+            - option "Ibagué"
+            - option "Cúcuta"
+            - option "Villavicencio"
+            - option "Pasto"
+            - option "Montería"
+            - option "Neiva"
+            - option "Otra"
+      - button "Siguiente" [disabled] [ref=e64]:
+        - text: Siguiente
+        - img [ref=e65]
+  - alert [ref=e67]
+```

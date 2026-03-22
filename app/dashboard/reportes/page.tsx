@@ -53,18 +53,18 @@ export default function ReportesPage() {
   const bots = analytics?.sub_bots || {}
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 max-w-[1200px]">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
-          <p className="text-sm text-white/60">{t('subtitle')}</p>
+          <h1 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h1>
+          <p className="text-[9px] font-mono text-text-dim">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <select
             value={dias}
             onChange={(e) => setDias(Number(e.target.value))}
-            className="rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-white"
+            className="rounded-md bg-void border border-border px-3 py-1.5 text-[10px] font-mono text-text-primary"
           >
             <option value={7}>{t('days', { count: 7 })}</option>
             <option value={15}>{t('days', { count: 15 })}</option>
@@ -75,12 +75,12 @@ export default function ReportesPage() {
           <button
             onClick={handleDownload}
             disabled={downloading || !orgId}
-            className="flex items-center gap-2 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:bg-purple-800 disabled:opacity-50 px-4 py-2 text-sm font-medium text-white transition-colors"
+            className="flex items-center gap-2 rounded-md bg-brand-purple hover:bg-brand-purple-dark disabled:opacity-50 px-4 py-1.5 text-[10px] font-mono font-medium text-white transition-colors"
           >
             {downloading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : downloaded ? (
-              <CheckCircle className="h-4 w-4 text-green-400" />
+              <CheckCircle className="h-4 w-4 text-status-success" />
             ) : (
               <FileDown className="h-4 w-4" />
             )}
@@ -91,12 +91,12 @@ export default function ReportesPage() {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-brand-purple" />
         </div>
       ) : (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <SummaryCard
               icon={<Calendar className="h-5 w-5" />}
               label={t('totalAppointments')}
@@ -124,36 +124,36 @@ export default function ReportesPage() {
           </div>
 
           {/* Two-column layout */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-3">
             {/* Conversions Funnel */}
-            <div className="rounded-xl bg-white/5 border border-white/10 p-5">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-purple-400" />
+            <div className="glass-card p-4">
+              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-brand-purple" />
                 {t('conversionFunnel')}
               </h2>
               <FunnelBar label={t('messages')} value={conv.funnel?.mensajes ?? 0} max={conv.funnel?.mensajes ?? 1} />
               <FunnelBar label={t('patients')} value={conv.funnel?.pacientes ?? 0} max={conv.funnel?.mensajes ?? 1} />
               <FunnelBar label={t('appointments')} value={conv.funnel?.citas ?? 0} max={conv.funnel?.mensajes ?? 1} />
               <FunnelBar label={t('completed')} value={conv.funnel?.completadas ?? 0} max={conv.funnel?.mensajes ?? 1} />
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div className="mt-3 grid grid-cols-2 gap-3 text-[10px] font-mono">
                 <Rate label={t('conversion')} value={conv.tasa_conversion_pct} />
                 <Rate label={t('attendance')} value={conv.tasa_asistencia_pct} />
-                <Rate label={t('cancellation')} value={conv.tasa_cancelacion_pct} color="text-red-400" />
-                <Rate label={t('noShow')} value={conv.tasa_no_show_pct} color="text-yellow-400" />
+                <Rate label={t('cancellation')} value={conv.tasa_cancelacion_pct} color="text-status-danger" />
+                <Rate label={t('noShow')} value={conv.tasa_no_show_pct} color="text-status-warning" />
               </div>
             </div>
 
             {/* Revenue */}
-            <div className="rounded-xl bg-white/5 border border-white/10 p-5">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-green-400" />
+            <div className="glass-card p-4">
+              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-status-success" />
                 Revenue ({rev.moneda ?? 'COP'})
               </h2>
               <div className="space-y-3">
                 <RevenueRow label={t('charged')} value={rev.revenue_total} />
                 <RevenueRow label={t('pendingRevenue')} value={rev.revenue_pendiente} />
                 <RevenueRow label={t('pipelineRevenue')} value={rev.revenue_pipeline} />
-                <div className="border-t border-white/10 pt-3 mt-3">
+                <div className="border-t border-border pt-3 mt-3">
                   <RevenueRow label={t('averageTicket')} value={rev.ticket_promedio} />
                   <RevenueRow label={t('dailyAverage')} value={rev.revenue_diario_promedio} />
                   <RevenueRow label={t('monthlyProjection')} value={rev.proyeccion_mensual} bold />
@@ -162,12 +162,12 @@ export default function ReportesPage() {
             </div>
 
             {/* AI Performance */}
-            <div className="rounded-xl bg-white/5 border border-white/10 p-5">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Bot className="h-5 w-5 text-cyan-400" />
+            <div className="glass-card p-4">
+              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Bot className="h-5 w-5 text-brand-cyan" />
                 {t('aiPerformance')}
               </h2>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-[10px]">
                 <MetricRow label={t('totalTokens')} value={(perf.total_tokens ?? 0).toLocaleString()} />
                 <MetricRow label={t('totalCost')} value={`$${(perf.total_costo_usd ?? 0).toFixed(2)} USD`} />
                 <MetricRow label={t('costPerInteraction')} value={`$${(perf.costo_promedio_por_interaccion_usd ?? 0).toFixed(4)}`} />
@@ -176,11 +176,11 @@ export default function ReportesPage() {
               </div>
               {perf.distribucion_intents && Object.keys(perf.distribucion_intents).length > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-xs text-white/50 uppercase mb-2">{t('topIntents')}</h3>
+                  <h3 className="text-[9px] font-mono text-text-dim uppercase mb-2">{t('topIntents')}</h3>
                   {Object.entries(perf.distribucion_intents as Record<string, number>).slice(0, 5).map(([intent, count]) => (
-                    <div key={intent} className="flex justify-between text-xs text-white/70 py-0.5">
+                    <div key={intent} className="flex justify-between text-[10px] font-mono text-text-muted py-0.5">
                       <span>{intent}</span>
-                      <span className="text-white/40">{count}</span>
+                      <span className="text-text-dim">{count}</span>
                     </div>
                   ))}
                 </div>
@@ -188,19 +188,19 @@ export default function ReportesPage() {
             </div>
 
             {/* Sub-Bots */}
-            <div className="rounded-xl bg-white/5 border border-white/10 p-5">
-              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Bot className="h-5 w-5 text-purple-400" />
+            <div className="glass-card p-4">
+              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Bot className="h-5 w-5 text-brand-purple" />
                 {t('subBotsAutomatic')}
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <BotCard name="Reminder" count={bots.reminder_bot?.mensajes_enviados ?? 0} desc={t('appointmentReminders')} />
                 <BotCard name="Hunter" count={bots.hunter_bot?.followups_enviados ?? 0} desc={t('leadFollowups')} extra={bots.hunter_bot?.conversiones_post_followup ? `${bots.hunter_bot.conversiones_post_followup} ${t('converted')}` : undefined} />
                 <BotCard name="Nurse" count={bots.nurse_bot?.recordatorios_enviados ?? 0} desc={t('medicationReminders')} />
-                <div className="border-t border-white/10 pt-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-white/60">{t('totalAutomatic')}</span>
-                    <span className="font-bold text-white">{bots.total_mensajes_automaticos ?? 0}</span>
+                <div className="border-t border-border pt-3">
+                  <div className="flex justify-between text-[10px] font-mono">
+                    <span className="text-text-muted">{t('totalAutomatic')}</span>
+                    <span className="font-bold text-text-primary">{bots.total_mensajes_automaticos ?? 0}</span>
                   </div>
                 </div>
               </div>
@@ -208,13 +208,13 @@ export default function ReportesPage() {
           </div>
 
           {/* Download CTA */}
-          <div className="rounded-xl bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 p-6 text-center">
-            <h3 className="text-lg font-semibold text-white mb-2">{t('downloadFullReport')}</h3>
-            <p className="text-sm text-white/60 mb-4">{t('fullReportDesc')}</p>
+          <div className="glass-card p-5 text-center">
+            <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-2">{t('downloadFullReport')}</h3>
+            <p className="text-[9px] font-mono text-text-dim mb-3">{t('fullReportDesc')}</p>
             <button
               onClick={handleDownload}
               disabled={downloading || !orgId}
-              className="inline-flex items-center gap-2 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:opacity-50 px-6 py-3 text-sm font-medium text-white transition-colors"
+              className="inline-flex items-center gap-2 rounded-md bg-brand-purple hover:bg-brand-purple-dark disabled:opacity-50 px-5 py-2 text-[10px] font-mono font-medium text-white transition-colors"
             >
               {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
               {downloading ? t('generatingPDF') : t('downloadComplete')}
@@ -231,10 +231,10 @@ export default function ReportesPage() {
 
 function SummaryCard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string | number; sub: string }) {
   return (
-    <div className="rounded-xl bg-white/5 border border-white/10 p-4">
-      <div className="flex items-center gap-2 text-purple-400 mb-2">{icon}<span className="text-xs text-white/50">{label}</span></div>
-      <div className="text-2xl font-bold text-white">{value}</div>
-      <div className="text-xs text-white/40 mt-1">{sub}</div>
+    <div className="glass-card p-4">
+      <div className="flex items-center gap-2 text-brand-purple mb-2">{icon}<span className="text-[10px] font-mono text-text-dim">{label}</span></div>
+      <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
+      <div className="text-[9px] font-mono text-text-dim mt-1">{sub}</div>
     </div>
   )
 }
@@ -243,29 +243,29 @@ function FunnelBar({ label, value, max }: { label: string; value: number; max: n
   const pct = max > 0 ? Math.max((value / max) * 100, 2) : 2
   return (
     <div className="flex items-center gap-3 mb-2">
-      <span className="text-xs text-white/60 w-24">{label}</span>
-      <div className="flex-1 h-4 bg-white/5 rounded-full overflow-hidden">
-        <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+      <span className="text-[10px] font-mono text-text-muted w-24">{label}</span>
+      <div className="flex-1 h-3 bg-void rounded-full overflow-hidden">
+        <div className="h-full bg-brand-purple rounded-full transition-all" style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-xs font-bold text-white w-12 text-right">{value}</span>
+      <span className="text-[10px] font-mono font-bold text-text-primary w-12 text-right">{value}</span>
     </div>
   )
 }
 
-function Rate({ label, value, color = 'text-green-400' }: { label: string; value?: number; color?: string }) {
+function Rate({ label, value, color = 'text-status-success' }: { label: string; value?: number; color?: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-white/60">{label}</span>
-      <span className={`font-semibold ${color}`}>{value ?? 0}%</span>
+      <span className="text-text-muted font-mono text-[10px]">{label}</span>
+      <span className={`font-mono font-semibold ${color}`}>{value ?? 0}%</span>
     </div>
   )
 }
 
 function RevenueRow({ label, value, bold }: { label: string; value?: number; bold?: boolean }) {
   return (
-    <div className="flex justify-between text-sm">
-      <span className="text-white/60">{label}</span>
-      <span className={bold ? 'font-bold text-green-400' : 'text-white'}>{formatMoney(value ?? 0)}</span>
+    <div className="flex justify-between text-[10px] font-mono">
+      <span className="text-text-muted">{label}</span>
+      <span className={bold ? 'font-bold text-status-success' : 'text-text-primary'}>{formatMoney(value ?? 0)}</span>
     </div>
   )
 }
@@ -273,8 +273,8 @@ function RevenueRow({ label, value, bold }: { label: string; value?: number; bol
 function MetricRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-white/60">{label}</span>
-      <span className="text-white font-medium">{value}</span>
+      <span className="text-text-muted font-mono text-[10px]">{label}</span>
+      <span className="text-text-primary font-mono font-medium text-[10px]">{value}</span>
     </div>
   )
 }
@@ -283,12 +283,12 @@ function BotCard({ name, count, desc, extra }: { name: string; count: number; de
   return (
     <div className="flex items-center justify-between">
       <div>
-        <span className="text-sm font-medium text-white">{name} Bot</span>
-        <p className="text-xs text-white/40">{desc}</p>
+        <span className="text-xs font-mono font-medium text-text-primary">{name} Bot</span>
+        <p className="text-[9px] font-mono text-text-dim">{desc}</p>
       </div>
       <div className="text-right">
-        <span className="text-lg font-bold text-white">{count}</span>
-        {extra && <p className="text-xs text-green-400">{extra}</p>}
+        <span className="text-sm font-bold font-mono text-text-primary">{count}</span>
+        {extra && <p className="text-[9px] font-mono text-status-success">{extra}</p>}
       </div>
     </div>
   )

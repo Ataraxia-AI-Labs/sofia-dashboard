@@ -144,7 +144,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
           {loading && filteredConversations.length === 0 ? (
             <div className="p-3 space-y-2">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="p-3 rounded-xl animate-pulse">
+                <div key={i} className="p-3 rounded-lg animate-pulse">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-surface-3" />
                     <div className="flex-1 space-y-1.5">
@@ -175,7 +175,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                   <button
                     key={conv.patient_id}
                     onClick={() => handleSelectConversation(conv.patient_id)}
-                    className={`w-full text-left px-3 py-2.5 rounded-xl transition-all duration-150 group ${
+                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-150 group ${
                       isSelected
                         ? 'bg-brand-purple/10 border border-brand-purple/20'
                         : 'hover:bg-surface-3 border border-transparent'
@@ -184,9 +184,9 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                     <div className="flex items-start gap-2.5">
                       {/* Avatar */}
                       <div className="relative flex-shrink-0">
-                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                        <div className={`w-9 h-9 rounded-md flex items-center justify-center text-[10px] font-bold font-mono ${
                           isSelected
-                            ? 'bg-gradient-to-br from-brand-purple to-brand-purple-dark text-white'
+                            ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple'
                             : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'
                         } transition-colors`}>
                           {conv.patient_name[0]?.toUpperCase() || '?'}
@@ -199,7 +199,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-0.5">
-                          <span className={`text-[11px] font-semibold truncate ${
+                          <span className={`text-[11px] font-semibold font-mono truncate ${
                             isSelected ? 'text-brand-purple-light' : 'text-text-primary'
                           }`}>
                             {conv.patient_name}
@@ -237,14 +237,14 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
               >
                 <ArrowLeft size={14} />
               </button>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold font-mono flex-shrink-0">
                 {selectedConversation.patient_name[0]?.toUpperCase() || '?'}
               </div>
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-semibold text-text-primary truncate block">
+                <span className="text-sm font-semibold font-mono text-text-primary truncate block">
                   {selectedConversation.patient_name}
                 </span>
-                <span className="text-[10px] text-text-dim">
+                <span className="text-[10px] font-mono text-text-dim">
                   {t('crossChannelHistory')}
                 </span>
               </div>
@@ -256,7 +256,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                      <div className="w-2/3 h-12 bg-surface-3 rounded-2xl animate-pulse" />
+                      <div className="w-2/3 h-12 bg-surface-3 rounded-lg animate-pulse" />
                     </div>
                   ))}
                 </div>
@@ -287,8 +287,8 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                       <div className={`flex ${isOutbound ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[80%] ${
                           isOutbound
-                            ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-2xl rounded-br-md'
-                            : 'bg-surface-3 border border-border rounded-2xl rounded-bl-md'
+                            ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-lg rounded-br-md'
+                            : 'bg-surface-3 border border-border rounded-lg rounded-bl-md'
                         } px-3 py-2`}>
                           <div className="flex items-center gap-1.5 mb-0.5">
                             {isOutbound ? (
@@ -320,11 +320,11 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center px-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-purple/10 to-brand-cyan/10 border border-brand-purple/10 flex items-center justify-center mx-auto mb-3">
+              <div className="w-14 h-14 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center mx-auto mb-3">
                 <Inbox size={24} className="text-brand-purple/40" />
               </div>
-              <p className="text-text-muted text-sm font-medium">{t('selectConversation')}</p>
-              <p className="text-text-dim text-[10px] mt-1">{t('selectConversationHint')}</p>
+              <p className="text-text-muted text-sm font-medium font-mono">{t('selectConversation')}</p>
+              <p className="text-text-dim text-[10px] font-mono mt-1">{t('selectConversationHint')}</p>
             </div>
           </div>
         )}

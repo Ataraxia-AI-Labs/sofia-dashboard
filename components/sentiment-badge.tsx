@@ -76,7 +76,7 @@ export function SentimentBadge({ sentiment, compact = false, className = '' }: S
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
     >
       <span role="img" aria-label={cfg.label}>{cfg.emoji}</span>
       {cfg.label}

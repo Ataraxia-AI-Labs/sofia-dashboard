@@ -89,11 +89,11 @@ export function GamificationTierBadge({
   if (compact) {
     return (
       <div
-        className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border} ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}
         title={`${cfg.label}${totalPoints != null ? ` - ${totalPoints.toLocaleString()} pts` : ''}`}
       >
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
     )
   }
@@ -111,16 +111,16 @@ export function GamificationTierBadge({
   return (
     <div className={`flex flex-col items-center gap-1.5 ${className}`}>
       {/* Tier icon with glow */}
-      <div className={`w-12 h-12 rounded-2xl ${cfg.bg} border ${cfg.border} shadow-lg ${cfg.glowColor} flex items-center justify-center`}>
+      <div className={`w-12 h-12 rounded-md ${cfg.bg} border ${cfg.border} flex items-center justify-center`}>
         <span className="text-xl">{cfg.emoji}</span>
       </div>
 
       {/* Tier name */}
-      <span className={`text-xs font-bold ${cfg.textColor}`}>{cfg.label}</span>
+      <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
 
       {/* Total points */}
       {totalPoints != null && (
-        <span className={`text-[11px] font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
           {totalPoints.toLocaleString()} pts
         </span>
       )}
@@ -128,13 +128,13 @@ export function GamificationTierBadge({
       {/* Progress bar to next tier */}
       {nextTier && pointsToNext != null && pointsToNext > 0 && (
         <div className="w-full max-w-[120px]">
-          <div className="h-1.5 bg-void rounded-full overflow-hidden">
+          <div className="h-1.5 bg-void rounded overflow-hidden">
             <div
-              className={`h-full rounded-full bg-gradient-to-r ${cfg.progressColor} transition-all duration-700`}
+              className={`h-full rounded ${cfg.textColor.replace('text-', 'bg-')} transition-all duration-700`}
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className={`text-[9px] mt-0.5 text-center ${cfg.textColor} opacity-70`}>
+          <p className={`text-[9px] font-mono mt-0.5 text-center ${cfg.textColor} opacity-70`}>
             {pointsToNext.toLocaleString()} pts to {TIER_CONFIG[nextTier].label}
           </p>
         </div>
@@ -157,12 +157,12 @@ export function GamificationTierInline({
 
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
-      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border}`}>
+      <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border}`}>
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
       {totalPoints != null && (
-        <span className={`text-xs font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
           {totalPoints.toLocaleString()}
         </span>
       )}

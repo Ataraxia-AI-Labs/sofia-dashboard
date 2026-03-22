@@ -150,21 +150,21 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
   }
 
   return (
-    <div className="space-y-5">
-      {/* ══════════════ Section 1: Logo ══════════════ */}
-      <div className="glass-card p-6 space-y-4">
+    <div className="space-y-4">
+      {/* Section 1: Logo */}
+      <div className="glass-card p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <ImageIcon size={16} className="text-brand-purple" />
-          <h3 className="text-sm font-semibold text-text-primary">Logo de la Organizacion</h3>
+          <h3 className="text-xs font-mono font-semibold text-text-primary">Logo de la Organizacion</h3>
         </div>
-        <p className="text-xs text-text-dim">
+        <p className="text-[10px] font-mono text-text-dim">
           Sube el logo de tu clinica. Se mostrara en el sidebar del dashboard, el chat web y los reportes PDF.
           Formatos: PNG, JPG, SVG, WebP. Maximo 2MB.
         </p>
 
         {/* Current logo preview */}
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-xl bg-surface-3 border border-border flex items-center justify-center overflow-hidden">
+        <div className="flex items-center gap-3">
+          <div className="w-20 h-20 rounded-lg bg-surface-3 border border-border flex items-center justify-center overflow-hidden">
             {previewUrl ? (
               <img src={previewUrl} alt="Preview" className="max-w-full max-h-full object-contain" />
             ) : currentLogoUrl ? (
@@ -173,12 +173,12 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
               <ImageIcon size={24} className="text-text-dim" />
             )}
           </div>
-          <div className="flex-1 space-y-2">
-            <p className="text-xs text-text-muted">
+          <div className="flex-1 space-y-1.5">
+            <p className="text-[10px] font-mono text-text-muted">
               {currentLogoUrl ? 'Logo actual configurado' : 'Sin logo personalizado — se usa el logo de SofIA'}
             </p>
             {selectedFile && (
-              <p className="text-[11px] text-brand-purple font-medium">
+              <p className="text-[10px] font-mono text-brand-purple font-medium">
                 Archivo seleccionado: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(0)} KB)
               </p>
             )}
@@ -231,44 +231,26 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
         </div>
       </div>
 
-      {/* ══════════════ Section 2: Brand Colors ══════════════ */}
-      <div className="glass-card p-6 space-y-4">
+      {/* Section 2: Brand Colors */}
+      <div className="glass-card p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <Palette size={16} className="text-brand-purple" />
-          <h3 className="text-sm font-semibold text-text-primary">Colores de Marca</h3>
+          <h3 className="text-xs font-mono font-semibold text-text-primary">Colores de Marca</h3>
         </div>
-        <p className="text-xs text-text-dim">
+        <p className="text-[10px] font-mono text-text-dim">
           Define los colores principales de tu marca. Se aplican en el dashboard, el chat web y los reportes.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Primary */}
-          <ColorPicker
-            label="Primario"
-            value={primary}
-            onChange={setPrimary}
-            disabled={isReadOnly}
-          />
-          {/* Secondary */}
-          <ColorPicker
-            label="Secundario"
-            value={secondary}
-            onChange={setSecondary}
-            disabled={isReadOnly}
-          />
-          {/* Accent */}
-          <ColorPicker
-            label="Acento"
-            value={accent}
-            onChange={setAccent}
-            disabled={isReadOnly}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <ColorPicker label="Primario" value={primary} onChange={setPrimary} disabled={isReadOnly} />
+          <ColorPicker label="Secundario" value={secondary} onChange={setSecondary} disabled={isReadOnly} />
+          <ColorPicker label="Acento" value={accent} onChange={setAccent} disabled={isReadOnly} />
         </div>
 
         {/* Live preview strip */}
         <div>
-          <label className="block text-[10px] font-semibold text-text-dim uppercase tracking-wider mb-2">Vista previa</label>
-          <div className="flex rounded-xl overflow-hidden h-8 border border-border">
+          <label className="block text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider mb-1.5">Vista previa</label>
+          <div className="flex rounded-lg overflow-hidden h-8 border border-border">
             <div className="flex-1" style={{ backgroundColor: primary }} />
             <div className="flex-1" style={{ backgroundColor: secondary }} />
             <div className="flex-1" style={{ backgroundColor: accent }} />
@@ -299,13 +281,13 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
         </div>
       </div>
 
-      {/* ══════════════ Section 3: Custom Domain ══════════════ */}
-      <div className="glass-card p-6 space-y-4">
+      {/* Section 3: Custom Domain */}
+      <div className="glass-card p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <Globe size={16} className="text-brand-purple" />
-          <h3 className="text-sm font-semibold text-text-primary">Dominio Personalizado</h3>
+          <h3 className="text-xs font-mono font-semibold text-text-primary">Dominio Personalizado</h3>
         </div>
-        <p className="text-xs text-text-dim">
+        <p className="text-[10px] font-mono text-text-dim">
           Conecta un dominio propio para que tus pacientes accedan al chat web y la pagina de reservas desde tu marca.
           Ejemplo: <span className="text-brand-purple font-mono">reservas.tuclinica.com</span>
         </p>
@@ -316,7 +298,7 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             placeholder="reservas.tuclinica.com"
-            className="flex-1 px-4 py-2.5 rounded-xl bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40"
+            className="flex-1 px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40"
             disabled={isReadOnly}
           />
           <Button
@@ -332,7 +314,7 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
 
         {/* Status indicator */}
         {domainStatus !== 'idle' && (
-          <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold ${
+          <div className={`flex items-center gap-2 px-3 py-2 rounded-md border text-[10px] font-mono font-semibold ${
             domainStatus === 'verified'
               ? 'bg-status-success/10 border-status-success/20 text-status-success'
               : 'bg-status-warning/10 border-status-warning/20 text-status-warning'
@@ -353,29 +335,29 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
 
         {/* DNS Instructions */}
         {domainStatus === 'pending' && dnsInstructions && (
-          <div className="space-y-3 p-4 rounded-xl bg-surface-3/50 border border-border">
-            <h4 className="text-xs font-semibold text-text-primary">Instrucciones de configuracion DNS</h4>
-            <p className="text-[11px] text-text-muted">
+          <div className="space-y-2 p-3 rounded-md bg-surface-3/50 border border-border">
+            <h4 className="text-[10px] font-mono font-semibold text-text-primary">Instrucciones de configuracion DNS</h4>
+            <p className="text-[10px] font-mono text-text-muted">
               Agrega el siguiente registro CNAME en el panel de administracion de tu proveedor de dominio:
             </p>
-            <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
+            <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[10px] font-mono">
               <span className="text-text-dim font-semibold">Tipo:</span>
-              <span className="text-text-primary font-mono">CNAME</span>
+              <span className="text-text-primary">CNAME</span>
               <span className="text-text-dim font-semibold">Nombre:</span>
-              <span className="text-text-primary font-mono">{domain.split('.')[0] || 'reservas'}</span>
+              <span className="text-text-primary">{domain.split('.')[0] || 'reservas'}</span>
               <span className="text-text-dim font-semibold">Valor:</span>
-              <span className="text-brand-purple font-mono">{dnsInstructions}</span>
+              <span className="text-brand-purple">{dnsInstructions}</span>
               <span className="text-text-dim font-semibold">TTL:</span>
-              <span className="text-text-primary font-mono">3600</span>
+              <span className="text-text-primary">3600</span>
             </div>
-            <p className="text-[10px] text-text-dim">
+            <p className="text-[10px] font-mono text-text-dim">
               Los cambios de DNS pueden tardar hasta 48 horas en propagarse. Una vez configurado, vuelve a validar el dominio para verificar.
             </p>
           </div>
         )}
 
         {/* General instructions */}
-        <div className="text-[11px] text-text-dim space-y-1">
+        <div className="text-[10px] font-mono text-text-dim space-y-1">
           <p><strong className="text-text-muted">Pasos:</strong></p>
           <ol className="list-decimal list-inside space-y-0.5 ml-1">
             <li>Ingresa tu subdominio (ej: reservas.tuclinica.com)</li>
@@ -405,7 +387,7 @@ function ColorPicker({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-[10px] font-semibold text-text-dim uppercase tracking-wider">{label}</label>
+      <label className="block text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">{label}</label>
       <div className="flex items-center gap-2">
         <div className="relative">
           <input
@@ -413,7 +395,7 @@ function ColorPicker({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             disabled={disabled}
-            className="w-10 h-10 rounded-lg border border-border cursor-pointer bg-transparent [&::-webkit-color-swatch-wrapper]:p-0.5 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-none"
+            className="w-10 h-10 rounded-md border border-border cursor-pointer bg-transparent [&::-webkit-color-swatch-wrapper]:p-0.5 [&::-webkit-color-swatch]:rounded-md [&::-webkit-color-swatch]:border-none"
           />
         </div>
         <input
@@ -432,7 +414,7 @@ function ColorPicker({
           }}
           disabled={disabled}
           maxLength={7}
-          className="flex-1 px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 uppercase"
+          className="flex-1 px-3 py-2 rounded-md bg-void border border-border text-text-primary text-[10px] font-mono outline-none focus:border-brand-purple/40 uppercase"
           placeholder="#000000"
         />
       </div>

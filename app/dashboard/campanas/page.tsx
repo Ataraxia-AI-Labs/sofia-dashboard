@@ -184,16 +184,16 @@ export default function CampanasPage() {
   const VARIABLE_PILLS = ['{patient_name}', '{service}', '{clinica}', '{doctor}', '{fecha}']
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-pink-500 flex items-center justify-center text-white shadow-lg">
-            <Megaphone size={20} />
+          <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple">
+            <Megaphone size={18} />
           </div>
           <div>
-            <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
-            <p className="text-text-dim text-xs mt-0.5">{t('subtitle')}</p>
+            <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+            <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('subtitle')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -211,29 +211,29 @@ export default function CampanasPage() {
 
       {/* ANALYTICS */}
       {analytics && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <AnalyticCard icon={<Megaphone size={16} />} value={analytics.total_campaigns.toString()} label={t('totalCampaigns')} gradient="from-brand-purple to-brand-purple-dark" />
-          <AnalyticCard icon={<Send size={16} />} value={analytics.total_sent.toLocaleString()} label={t('totalSent')} gradient="from-status-info to-blue-600" />
-          <AnalyticCard icon={<TrendingUp size={16} />} value={`${(analytics.avg_conversion_rate * 100).toFixed(1)}%`} label={t('avgConversion')} gradient="from-status-success to-emerald-600" />
-          <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(analytics.total_revenue)} label={t('totalRevenue')} gradient="from-brand-gold to-amber-500" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <AnalyticCard icon={<Megaphone size={16} />} value={analytics.total_campaigns.toString()} label={t('totalCampaigns')} />
+          <AnalyticCard icon={<Send size={16} />} value={analytics.total_sent.toLocaleString()} label={t('totalSent')} />
+          <AnalyticCard icon={<TrendingUp size={16} />} value={`${(analytics.avg_conversion_rate * 100).toFixed(1)}%`} label={t('avgConversion')} />
+          <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(analytics.total_revenue)} label={t('totalRevenue')} />
         </div>
       )}
 
       {/* CAMPAIGN LIST */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {loading && campaigns.length === 0 ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-card p-5 animate-pulse">
+            <div key={i} className="glass-card p-4 animate-pulse">
               <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
               <div className="h-4 bg-surface-3 rounded w-72 mb-2" />
               <div className="h-3 bg-surface-3 rounded w-56" />
             </div>
           ))
         ) : campaigns.length === 0 ? (
-          <div className="glass-card p-12 text-center">
+          <div className="glass-card p-5 text-center">
             <Megaphone size={36} className="mx-auto text-text-dim mb-3 opacity-40" />
-            <p className="text-text-muted text-sm">{t('noCampaigns')}</p>
-            <p className="text-text-dim text-xs mt-1">{t('noCampaignsHint')}</p>
+            <p className="text-text-muted text-[10px] font-mono">{t('noCampaigns')}</p>
+            <p className="text-text-dim text-[9px] font-mono mt-1">{t('noCampaignsHint')}</p>
           </div>
         ) : (
           campaigns.map(campaign => {
@@ -241,11 +241,11 @@ export default function CampanasPage() {
             const segmentSummary = summarizeSegment(campaign.segment_criteria)
 
             return (
-              <div key={campaign.id} className="glass-card p-5 hover:border-border-2 transition-colors">
+              <div key={campaign.id} className="glass-card p-4 hover:border-border-2 transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2.5 mb-2">
-                      <h3 className="text-sm font-semibold text-text-primary truncate">{campaign.name}</h3>
+                      <h3 className="text-xs font-mono font-semibold text-text-primary truncate">{campaign.name}</h3>
                       <CampaignStatusBadge status={campaign.status} />
                     </div>
 
@@ -253,7 +253,7 @@ export default function CampanasPage() {
                     {segmentSummary && (
                       <div className="flex items-center gap-1.5 mb-2">
                         <Target size={11} className="text-text-dim" />
-                        <span className="text-xs text-text-muted">{segmentSummary}</span>
+                        <span className="text-[10px] font-mono text-text-muted">{segmentSummary}</span>
                       </div>
                     )}
 
@@ -326,10 +326,10 @@ export default function CampanasPage() {
       {modal === 'create' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
-          <div className="relative glass-card-elevated w-full max-w-2xl p-6 space-y-4 animate-fade-up max-h-[90vh] overflow-y-auto">
+          <div className="relative glass-card-elevated w-full max-w-2xl p-5 space-y-3 animate-fade-up max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-text-primary">{t('createTitle')}</h3>
-              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
+              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('createTitle')}</h3>
+              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
             </div>
@@ -370,9 +370,9 @@ export default function CampanasPage() {
             </div>
 
             {/* Segment criteria */}
-            <div className="space-y-3 p-4 rounded-xl bg-surface-2 border border-border">
+            <div className="space-y-3 p-4 rounded-lg bg-surface-2 border border-border">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-text-primary">{t('segmentCriteria')}</span>
+                <span className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wide">{t('segmentCriteria')}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -451,7 +451,7 @@ export default function CampanasPage() {
                   <button
                     onClick={handleSuggestSegment}
                     disabled={suggesting || !aiGoal.trim()}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-brand-purple text-white text-[10px] font-mono font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
                   >
                     {suggesting ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                     {t('aiSuggest')}
@@ -482,10 +482,10 @@ export default function CampanasPage() {
       {modal === 'preview' && selectedCampaign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
-          <div className="relative glass-card-elevated w-full max-w-lg p-6 space-y-4 animate-fade-up max-h-[80vh] overflow-y-auto">
+          <div className="relative glass-card-elevated w-full max-w-lg p-5 space-y-3 animate-fade-up max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-text-primary">{t('previewTitle')}</h3>
-              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
+              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('previewTitle')}</h3>
+              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
             </div>
@@ -497,16 +497,16 @@ export default function CampanasPage() {
               </div>
             ) : preview ? (
               <>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-brand-purple/5 border border-brand-purple/10">
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-brand-purple/8 border border-brand-purple/15">
                   <Users size={18} className="text-brand-purple" />
                   <div>
-                    <div className="text-2xl font-bold font-mono text-brand-purple">{preview.matching_patients}</div>
+                    <div className="text-lg font-bold font-mono text-brand-purple">{preview.matching_patients}</div>
                     <div className="text-[10px] text-text-dim uppercase">{t('matchingPatients')}</div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-primary">{t('sampleMessages')}</p>
+                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary">{t('sampleMessages')}</p>
                   {preview.sample_messages.map((sm, i) => (
                     <div key={i} className="px-3 py-2.5 rounded-lg bg-surface-2 border border-border">
                       <div className="text-[10px] text-text-dim mb-1">{sm.patient_name}</div>
@@ -516,7 +516,7 @@ export default function CampanasPage() {
                 </div>
               </>
             ) : (
-              <p className="text-text-dim text-xs text-center py-8">{t('previewUnavailable')}</p>
+              <p className="text-text-dim text-[10px] font-mono text-center py-8">{t('previewUnavailable')}</p>
             )}
           </div>
         </div>
@@ -526,10 +526,10 @@ export default function CampanasPage() {
       {modal === 'schedule' && selectedCampaign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
-          <div className="relative glass-card-elevated w-full max-w-sm p-6 space-y-4 animate-fade-up">
+          <div className="relative glass-card-elevated w-full max-w-sm p-5 space-y-3 animate-fade-up">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-text-primary">{t('scheduleTitle')}</h3>
-              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
+              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('scheduleTitle')}</h3>
+              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
             </div>
@@ -582,10 +582,10 @@ export default function CampanasPage() {
       {modal === 'results' && selectedCampaign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
-          <div className="relative glass-card-elevated w-full max-w-md p-6 space-y-4 animate-fade-up">
+          <div className="relative glass-card-elevated w-full max-w-md p-5 space-y-3 animate-fade-up">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-text-primary">{selectedCampaign.name}</h3>
-              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
+              <h3 className="text-xs font-mono font-semibold text-text-primary">{selectedCampaign.name}</h3>
+              <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
             </div>
@@ -612,9 +612,9 @@ export default function CampanasPage() {
             </div>
 
             {selectedCampaign.stats?.revenue != null && selectedCampaign.stats.revenue > 0 && (
-              <div className="p-4 rounded-xl bg-status-success/5 border border-status-success/10 text-center">
+              <div className="p-4 rounded-lg bg-status-success/5 border border-status-success/10 text-center">
                 <div className="text-[10px] text-text-dim uppercase mb-1">{t('revenueGenerated')}</div>
-                <div className="text-2xl font-bold font-mono gradient-text">{formatCOP(selectedCampaign.stats.revenue)}</div>
+                <div className="text-lg font-bold font-mono text-brand-purple">{formatCOP(selectedCampaign.stats.revenue)}</div>
               </div>
             )}
           </div>
@@ -624,14 +624,14 @@ export default function CampanasPage() {
   )
 }
 
-function AnalyticCard({ icon, value, label, gradient }: { icon: React.ReactNode; value: string; label: string; gradient: string }) {
+function AnalyticCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div className="glass-card p-4">
-      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2.5 shadow-lg`}>
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>
-      <div className="text-xl font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[11px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
+      <div className="text-[9px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

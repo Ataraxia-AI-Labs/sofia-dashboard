@@ -12,13 +12,13 @@ export interface MetricCardProps {
 
 export function MetricCard({ icon, iconColor, value, label, sub, subColor, delay = 0 }: MetricCardProps) {
   return (
-    <div className="glass-card metric-glow p-5 animate-fade-up" style={{ animationDelay: `${delay * 80}ms` }}>
-      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${iconColor} flex items-center justify-center text-white mb-3 shadow-lg`}>
+    <div className="glass-card metric-glow p-4 animate-fade-up" style={{ animationDelay: `${delay * 60}ms` }}>
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>
-      <div className="stat-number text-text-primary">{value}</div>
-      <div className="text-xs text-text-muted mt-1 font-medium">{label}</div>
-      {sub && <div className={`text-[11px] mt-1.5 font-semibold ${subColor || 'text-text-dim'}`}>{sub}</div>}
+      <div className="text-xl font-mono font-bold text-text-primary tracking-tight">{value}</div>
+      <div className="text-[10px] text-text-muted mt-0.5 font-mono">{label}</div>
+      {sub && <div className={`text-[9px] mt-1 font-mono font-semibold ${subColor || 'text-text-dim'}`}>{sub}</div>}
     </div>
   )
 }

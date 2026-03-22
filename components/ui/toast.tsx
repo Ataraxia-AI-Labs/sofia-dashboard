@@ -30,10 +30,10 @@ export function useToast(): ToastContextValue {
 }
 
 const iconMap: Record<ToastType, React.ReactNode> = {
-  success: <CheckCircle2 size={16} className="text-status-success flex-shrink-0" />,
-  error: <XCircle size={16} className="text-status-danger flex-shrink-0" />,
-  warning: <AlertTriangle size={16} className="text-status-warning flex-shrink-0" />,
-  info: <Info size={16} className="text-status-info flex-shrink-0" />,
+  success: <CheckCircle2 size={14} className="text-status-success flex-shrink-0" />,
+  error: <XCircle size={14} className="text-status-danger flex-shrink-0" />,
+  warning: <AlertTriangle size={14} className="text-status-warning flex-shrink-0" />,
+  info: <Info size={14} className="text-status-info flex-shrink-0" />,
 }
 
 const bgMap: Record<ToastType, string> = {
@@ -94,12 +94,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={t.id}
             className={clsx(
-              'pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-lg shadow-black/20 animate-slide-in min-w-[280px] max-w-[420px]',
+              'pointer-events-auto flex items-center gap-2.5 px-3 py-2.5 rounded-lg border animate-slide-in min-w-[260px] max-w-[380px]',
               bgMap[t.type],
             )}
           >
             {iconMap[t.type]}
-            <p className="text-text-primary text-sm flex-1">{t.message}</p>
+            <p className="text-text-primary text-[10px] font-mono flex-1">{t.message}</p>
             <button
               onClick={() => removeToast(t.id)}
               className="text-text-dim hover:text-text-muted transition-colors flex-shrink-0"

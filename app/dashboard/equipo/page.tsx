@@ -97,12 +97,12 @@ export default function EquipoPage() {
   const inactiveMembers = members.filter(m => !m.is_active)
 
   return (
-    <div className="max-w-[800px] space-y-5">
+    <div className="max-w-[800px] space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">{activeMembers.length} {t('subtitle')}</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">{activeMembers.length} {t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={loadMembers} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
@@ -117,17 +117,17 @@ export default function EquipoPage() {
       </div>
 
       {/* RBAC info */}
-      <div className="px-4 py-3 rounded-xl bg-status-info/10 border border-status-info/20 text-xs text-status-info leading-relaxed">
+      <div className="px-4 py-3 rounded-lg bg-status-info/10 border border-status-info/20 text-[10px] font-mono text-status-info leading-relaxed">
         <strong>{tCommon('role')}:</strong> {t('roles.OWNER')} &gt; {t('roles.ADMIN')} &gt; {t('roles.STAFF')}
       </div>
 
       {/* Members list */}
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="glass-card p-4 animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-surface-3" />
+                <div className="w-9 h-9 rounded-md bg-surface-3" />
                 <div className="flex-1">
                   <div className="h-4 bg-surface-3 rounded w-32 mb-2" />
                   <div className="h-3 bg-surface-3 rounded w-48" />
@@ -145,12 +145,12 @@ export default function EquipoPage() {
               <div key={member.id} className="glass-card p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/20 flex items-center justify-center text-brand-purple font-semibold text-sm">
+                    <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple font-mono font-semibold text-xs">
                       {(member.full_name || member.email || 'U')[0].toUpperCase()}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-text-primary">
+                        <span className="text-xs font-mono font-semibold text-text-primary">
                           {member.full_name || member.email || member.user_id.slice(0, 8)}
                         </span>
                         <Badge variant={roleConfig.variant} dot>
@@ -159,7 +159,7 @@ export default function EquipoPage() {
                         </Badge>
                       </div>
                       {member.email && (
-                        <p className="text-xs text-text-dim flex items-center gap-1 mt-0.5">
+                        <p className="text-[10px] font-mono text-text-dim flex items-center gap-1 mt-0.5">
                           <Mail size={10} />
                           {member.email}
                         </p>
@@ -178,12 +178,12 @@ export default function EquipoPage() {
                       {menuOpen === member.id && (
                         <>
                           <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(null)} />
-                          <div className="absolute right-0 top-full mt-1 z-40 w-48 bg-surface border border-border rounded-xl shadow-lg py-1 animate-fade-in">
+                          <div className="absolute right-0 top-full mt-1 z-40 w-48 bg-surface border border-border rounded-lg py-1 animate-fade-in">
                             {ROLE_OPTIONS.filter(r => r.value !== 'OWNER' && r.value !== member.role).map(r => (
                               <button
                                 key={r.value}
                                 onClick={() => handleRoleChange(member.id, r.value)}
-                                className="w-full text-left px-3 py-2 text-xs text-text-muted hover:bg-surface-2 transition-colors"
+                                className="w-full text-left px-3 py-2 text-[10px] font-mono text-text-muted hover:bg-surface-2 transition-colors"
                               >
                                 {t('changeTo', { role: r.label })}
                               </button>
@@ -191,7 +191,7 @@ export default function EquipoPage() {
                             <div className="border-t border-border my-1" />
                             <button
                               onClick={() => handleDeactivate(member.id, member.full_name || member.email || t('deactivated'))}
-                              className="w-full text-left px-3 py-2 text-xs text-status-danger hover:bg-status-danger/5 transition-colors flex items-center gap-2"
+                              className="w-full text-left px-3 py-2 text-[10px] font-mono text-status-danger hover:bg-status-danger/5 transition-colors flex items-center gap-2"
                             >
                               <Trash2 size={12} />
                               {t('deactivate')}
@@ -207,23 +207,23 @@ export default function EquipoPage() {
           })}
 
           {activeMembers.length === 0 && (
-            <div className="glass-card p-8 text-center text-text-dim text-sm">
+            <div className="glass-card p-5 text-center text-text-dim text-[10px] font-mono">
               {t('noMembers')}
             </div>
           )}
 
           {inactiveMembers.length > 0 && (
-            <div className="mt-6">
-              <p className="text-xs text-text-dim font-semibold uppercase tracking-wider mb-2">{t('inactiveMembers')}</p>
+            <div className="mt-4">
+              <p className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider mb-2">{t('inactiveMembers')}</p>
               {inactiveMembers.map(member => (
                 <div key={member.id} className="glass-card p-4 opacity-50">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-surface-3 border border-border flex items-center justify-center text-text-dim font-semibold text-sm">
+                    <div className="w-9 h-9 rounded-md bg-surface-3 border border-border flex items-center justify-center text-text-dim font-mono font-semibold text-xs">
                       {(member.full_name || member.email || 'U')[0].toUpperCase()}
                     </div>
                     <div>
-                      <span className="text-sm text-text-muted">{member.full_name || member.email || member.user_id.slice(0, 8)}</span>
-                      <p className="text-xs text-text-dim">{t('deactivated')}</p>
+                      <span className="text-xs font-mono text-text-muted">{member.full_name || member.email || member.user_id.slice(0, 8)}</span>
+                      <p className="text-[10px] font-mono text-text-dim">{t('deactivated')}</p>
                     </div>
                   </div>
                 </div>
@@ -262,7 +262,7 @@ export default function EquipoPage() {
       {/* Deactivate Confirmation Modal */}
       <Modal open={!!deactivateTarget} onClose={() => setDeactivateTarget(null)} title={t('confirmDeactivate')} size="sm">
         <div className="space-y-4">
-          <p className="text-sm text-text-muted">
+          <p className="text-[10px] font-mono text-text-muted">
             {t('deactivateConfirmText', { name: deactivateTarget?.name ?? '' })}
           </p>
           <div className="flex gap-2 justify-end">

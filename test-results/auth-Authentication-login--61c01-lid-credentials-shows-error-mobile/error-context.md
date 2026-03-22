@@ -1,0 +1,41 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - img [ref=e7]
+      - generic [ref=e14]:
+        - generic [ref=e15]: SofIA
+        - generic [ref=e16]: by Ataraxia IA Labs
+    - generic [ref=e17]:
+      - heading "Bienvenido" [level=2] [ref=e18]
+      - paragraph [ref=e19]: Ingresa a tu panel de control
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]: Email
+        - textbox "tu@clinica.com" [active] [ref=e23]
+      - generic [ref=e24]:
+        - generic [ref=e25]: Contrasena
+        - generic [ref=e26]:
+          - textbox "••••••••" [ref=e27]: wrongpassword
+          - button "Mostrar contrasena" [ref=e28] [cursor=pointer]:
+            - img [ref=e29]
+      - link "Olvide mi contrasena" [ref=e33]:
+        - /url: /forgot-password
+      - button "Entrar al Dashboard" [ref=e34] [cursor=pointer]:
+        - text: Entrar al Dashboard
+        - img [ref=e35]
+    - generic [ref=e37]:
+      - paragraph [ref=e38]: Aun no tienes cuenta?
+      - link "Empieza tu prueba gratis de 7 dias" [ref=e39]:
+        - /url: /onboarding
+        - img [ref=e40]
+        - text: Empieza tu prueba gratis de 7 dias
+        - img [ref=e42]
+      - paragraph [ref=e44]: Sin tarjeta. Setup en 5 minutos.
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - generic [ref=e49]: Powered by SofIA — Ataraxia IA Labs
+  - alert [ref=e50]
+```

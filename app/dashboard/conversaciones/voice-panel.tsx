@@ -109,7 +109,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[1, 2, 3, 4, 5].map(i => (
             <div key={i} className="glass-card p-4 animate-pulse">
               <div className="h-4 bg-surface-3 rounded w-20 mb-3" />
@@ -149,9 +149,9 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* ANALYTICS OVERVIEW */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <AnalyticsCard
           icon={<Phone size={16} />}
           label={t('totalCalls')}
@@ -180,7 +180,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
             <Users size={14} className="text-text-muted" />
-            <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">
+            <span className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider">
               {t('sentimentDistribution')}
             </span>
           </div>
@@ -212,7 +212,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
       {/* RECENT CALLS */}
       <div className="glass-card overflow-hidden">
         <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+          <h3 className="text-sm font-semibold font-mono text-text-primary flex items-center gap-2">
             <PhoneCall size={14} className="text-brand-purple" />
             {t('recentCalls')}
           </h3>
@@ -226,7 +226,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
         </div>
 
         {calls.length === 0 ? (
-          <div className="p-12 text-center">
+          <div className="p-8 text-center">
             <Phone size={28} className="mx-auto text-text-dim mb-2" />
             <p className="text-text-muted text-xs font-medium">{t('noCalls')}</p>
             <p className="text-text-dim text-[10px] mt-1">{t('noCallsHint')}</p>
@@ -276,16 +276,16 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
       {showModal && selectedCall && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
-          <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in">
+          <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface border border-border rounded-lg  flex flex-col overflow-hidden animate-fade-in">
             {/* Modal header */}
             <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold font-mono">
                   {selectedCall.patient_name?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-text-primary">
+                    <span className="text-sm font-semibold font-mono text-text-primary">
                       {selectedCall.patient_name}
                     </span>
                     <CallStatusBadge status={selectedCall.status} />
@@ -314,7 +314,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                 <div className="space-y-3">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                      <div className="w-3/4 h-10 bg-surface-3 rounded-2xl animate-pulse" />
+                      <div className="w-3/4 h-10 bg-surface-3 rounded-lg animate-pulse" />
                     </div>
                   ))}
                 </div>
@@ -340,8 +340,8 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                             <div className={`flex ${isSofia ? 'justify-end' : 'justify-start'}`}>
                               <div className={`max-w-[80%] ${
                                 isSofia
-                                  ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-2xl rounded-br-md'
-                                  : 'bg-surface-3 border border-border rounded-2xl rounded-bl-md'
+                                  ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-lg rounded-br-md'
+                                  : 'bg-surface-3 border border-border rounded-lg rounded-bl-md'
                               } px-3 py-2`}>
                                 <div className="flex items-center gap-1.5 mb-0.5">
                                   {isSofia ? (
@@ -484,7 +484,7 @@ function AnalyticsCard({
 }) {
   return (
     <div className="glass-card p-4">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 shadow-lg`}>
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>
       <div className="flex items-center gap-1.5">
@@ -498,7 +498,7 @@ function AnalyticsCard({
           </span>
         )}
       </div>
-      <span className="text-[10px] text-text-muted mt-0.5 block">{label}</span>
+      <span className="text-[10px] font-mono text-text-muted mt-0.5 block">{label}</span>
     </div>
   )
 }

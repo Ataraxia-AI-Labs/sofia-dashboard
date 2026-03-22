@@ -96,11 +96,11 @@ export function LTVTierBadge({
   if (compact) {
     return (
       <div
-        className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border} ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}
         title={`${cfg.label} — ${predictedValue ? formatCurrency(predictedValue) : ''}`}
       >
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
         {trendCfg && <trendCfg.icon size={10} className={trendCfg.color} />}
       </div>
     )
@@ -109,16 +109,16 @@ export function LTVTierBadge({
   return (
     <div className={`flex flex-col items-center gap-1 ${className}`}>
       {/* Tier icon with subtle glow */}
-      <div className={`w-12 h-12 rounded-2xl ${cfg.bg} border ${cfg.border} shadow-lg ${cfg.glowColor} flex items-center justify-center`}>
+      <div className={`w-12 h-12 rounded-md ${cfg.bg} border ${cfg.border} flex items-center justify-center`}>
         <span className="text-xl">{cfg.emoji}</span>
       </div>
 
       {/* Tier name */}
-      <span className={`text-xs font-bold ${cfg.textColor}`}>{cfg.label}</span>
+      <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
 
       {/* Predicted value */}
       {predictedValue !== undefined && (
-        <span className={`text-[11px] font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
           {formatCurrency(predictedValue)}
         </span>
       )}
@@ -127,7 +127,7 @@ export function LTVTierBadge({
       {trendCfg && (
         <div className="flex items-center gap-0.5">
           <trendCfg.icon size={11} className={trendCfg.color} />
-          <span className={`text-[9px] font-semibold ${trendCfg.color}`}>{trendCfg.label}</span>
+          <span className={`text-[9px] font-mono font-semibold ${trendCfg.color}`}>{trendCfg.label}</span>
         </div>
       )}
     </div>
@@ -151,12 +151,12 @@ export function LTVTierInline({
 
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
-      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border}`}>
+      <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border}`}>
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
       {predictedValue !== undefined && (
-        <span className={`text-xs font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
           {formatCurrency(predictedValue)}
         </span>
       )}

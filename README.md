@@ -1,123 +1,118 @@
-# SofIA Dashboard — Ataraxia IA Labs
+```
+╔══════════════════════════════════════════════╗
+║  NUCLEUS — SofIA's Command Center            ║
+║  Ataraxia IA Labs                            ║
+╚══════════════════════════════════════════════╝
+```
 
-Panel de control profesional para clínicas que usan SofIA.  
-Cada clínica ve SU data: métricas, pacientes, citas, oportunidades.
+> Sentient Interface v1.0 — monospace, 12-color palette, 8px grid, zero gradients.
 
 ## Stack
 
-- **Next.js 14** (App Router, TypeScript)
-- **Supabase** (Auth + DB, mismo proyecto que el backend)
-- **Tailwind CSS** (dark theme, custom brand)
-- **Recharts** (gráficas)
-- **Lucide** (iconos)
+```
+Next.js 14        App Router, TypeScript, RSC
+Tailwind CSS      Sentient Interface design system
+Supabase          Auth + PostgreSQL (shared with backend)
+Recharts          Data visualization
+Lucide            Icon system
+Playwright        E2E testing (chromium + mobile webkit)
+Jest              Unit testing
+next-intl         i18n (es/en/pt)
+Sentry            Error tracking
+```
 
-## Arquitectura
+## Architecture
 
 ```
 app/
-├── layout.tsx              ← Root layout (fonts, metadata)
-├── page.tsx                ← Redirect to /dashboard or /login
-├── globals.css             ← Tailwind + custom styles
-├── login/page.tsx          ← Auth screen
-└── dashboard/
-    ├── layout.tsx          ← Sidebar + topbar + auth guard
-    ├── page.tsx            ← Overview (métricas principales)
-    ├── pacientes/page.tsx  ← [PRÓXIMO] Lista + filtros
-    ├── calendario/page.tsx ← [PRÓXIMO] Calendario de citas
-    └── oportunidades/     ← [PRÓXIMO] Oportunidades detectadas
-lib/
-├── supabase.ts            ← Cliente Supabase + API URL
-└── api.ts                 ← Funciones fetch (analytics, pacientes, citas)
-types/
-└── index.ts               ← TypeScript interfaces
+├── dashboard/
+│   ├── layout.tsx              Nucleus shell (sidebar, topbar, clinic-pulse)
+│   ├── page.tsx                Pulso — overview + 5 innovations
+│   ├── conversaciones/         Transmisiones — unified inbox + voice + channels
+│   ├── pacientes/              Personas — patient CRM + 12 detail panels
+│   ├── calendario/             Agenda Viva — appointments + waiting room
+│   ├── pipeline/               Flujo — kanban conversion pipeline
+│   ├── oportunidades/          Radar — AI-detected opportunities
+│   ├── campanas/               Impulsos — campaign management
+│   ├── pagos/                  Revenue — payments + attribution
+│   ├── equipo/                 Team management + RBAC
+│   ├── reportes/               Inteligencia — analytics reports
+│   ├── datalake/               ML models + training + RAG
+│   ├── network/                Inter-clinic network
+│   ├── health/                 System health monitoring
+│   ├── planes/                 Subscription plans + checkout
+│   ├── facturacion/            Invoices + billing
+│   └── ajustes/                Control — 11 settings tabs
+├── admin/                      Super admin (god mode)
+├── onboarding/                 New clinic setup
+├── login/                      Authentication
+├── book/[orgId]/               Public booking page
+├── portal/[token]/             Patient portal
+└── legal/                      Privacy + terms
+
+components/
+├── innovations/                5 Sentient innovations
+│   ├── ataraxia-score.tsx      0-100 clinic tranquility index
+│   ├── sofia-speaks.tsx        Dashboard narrator (typewriter)
+│   ├── night-report.tsx        8AM briefing card
+│   └── phantom-grid.tsx        Adaptive layout engine
+├── ui/                         Design system primitives
+└── [30+ domain components]     Badges, forms, modals
+
+lib/api/                        39 API modules (typed fetch layer)
+messages/                       i18n: es.json, en.json, pt.json
 ```
 
-## Setup Local
+## Design Language
 
-### 1. Clonar e instalar
+**Sentient Interface v1.0** — born from r/unixporn philosophy applied to commercial SaaS.
+
+```
+PALETTE       VOID #050507 · SURFACE #0C0C14 · PURPLE #8B5CF6 · CYAN #06D6A0
+TYPOGRAPHY    font-mono everywhere. Precision over decoration.
+GRID          8px sacred grid. Tight spacing. No noise.
+CONTAINERS    bg-brand-purple/8 border border-brand-purple/15. Never gradient.
+BUTTONS       Solid bg-brand-purple. Never gradient.
+RADIUS        rounded-md / rounded-lg max. Never xl/2xl.
+SHADOWS       None. Flat surfaces only.
+LABELS        text-[10px] font-mono. Sublabels: text-[9px] font-mono.
+MOTION        breathe=loading, pulse=alive, fade=transition
+```
+
+## Numbers
+
+```
+23 pages  ·  42+ components  ·  39 API modules  ·  3 languages
+671 unit tests (Jest)  ·  159 E2E tests (Playwright)
+```
+
+## Setup
 
 ```bash
-git clone [tu-repo]
+git clone https://github.com/Ataraxia-AI-Labs/sofia-dashboard.git
 cd sofia-dashboard
 npm install
-```
-
-### 2. Variables de entorno
-
-```bash
 cp .env.example .env.local
-```
-
-Edita `.env.local`:
-```
-NEXT_PUBLIC_SUPABASE_URL=https://cvfzdxhkiyrbkptvpuja.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
-NEXT_PUBLIC_API_URL=https://ataraxia-api-core.onrender.com
-```
-
-### 3. Setup Supabase Auth
-
-1. Ve a Supabase → SQL Editor
-2. Ejecuta `setup_dashboard_auth.sql`
-3. Ve a Authentication → Users → Add User (crea tu login)
-4. Copia el UUID del user creado
-5. Ejecuta el INSERT de org_users (ver SQL file)
-
-### 4. Ejecutar
-
-```bash
+# Edit .env.local with your Supabase + API credentials
 npm run dev
 ```
 
-Abre http://localhost:3000
-
-## Deploy en Vercel
-
-### Opción A: Desde GitHub (recomendado)
-
-1. Crea un repo nuevo en GitHub (privado)
-2. Push el código:
-   ```bash
-   git init
-   git add .
-   git commit -m "SofIA Dashboard v1.0"
-   git remote add origin https://github.com/TU_USER/sofia-dashboard.git
-   git push -u origin main
-   ```
-3. Ve a [vercel.com](https://vercel.com) → New Project → Import tu repo
-4. En Environment Variables agrega:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_API_URL`
-5. Deploy 🚀
-
-### Opción B: Vercel CLI
+## Testing
 
 ```bash
-npm i -g vercel
-vercel
-# Sigue los prompts, agrega env vars cuando pregunte
+npm test                    # Unit tests (Jest)
+npx playwright test         # E2E tests (chromium + mobile)
+npx tsc --noEmit            # Type check
+npx next lint               # ESLint
 ```
 
-### Dominio personalizado (opcional)
+## Deploy
 
-En Vercel → Settings → Domains → agrega `dashboard.ataraxiaialabs.ai`  
-Luego en Cloudflare agrega un CNAME `dashboard` → `cname.vercel-dns.com`
+Vercel auto-deploys from `main`. Environment variables configured in Vercel dashboard.
 
-## CORS del Backend
+---
 
-Tu FastAPI ya tiene CORS con `allow_origins=["*"]`, así que el dashboard puede hacer fetch directamente. En producción, restringe a:
-
-```python
-allow_origins=["https://dashboard.ataraxiaialabs.ai", "http://localhost:3000"]
 ```
-
-## Vistas Próximas
-
-| Vista | Status | Descripción |
-|-------|--------|-------------|
-| Overview | ✅ LISTO | Métricas, funnel, revenue, bots |
-| Pacientes | 🔜 Próximo | Lista, búsqueda, detalle, ML features |
-| Calendario | 🔜 Próximo | Vista semanal/mensual, estados |
-| Oportunidades | 🔜 Próximo | Detectadas, valor, acciones |
-| Ajustes | 🔜 Futuro | System prompt, horarios, catálogo |
+Ataraxia IA Labs SAS · Colombia
+gestion@ataraxiaialabs.ai
+```

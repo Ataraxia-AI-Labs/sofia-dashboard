@@ -38,7 +38,7 @@ export function StatCard({ label, value, icon, trend, color }: StatCardProps) {
     <Card className="metric-glow">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-text-dim text-xs font-medium">{label}</p>
+          <p className="text-text-dim text-[10px] font-mono font-medium">{label}</p>
           <p className={clsx('stat-number mt-1', color || 'text-text-primary')}>
             {typeof value === 'number' ? value.toLocaleString() : value}
           </p>
@@ -53,7 +53,7 @@ export function StatCard({ label, value, icon, trend, color }: StatCardProps) {
           )}
         </div>
         {icon && (
-          <div className="w-10 h-10 rounded-xl bg-surface-3 border border-border flex items-center justify-center text-text-dim">
+          <div className="w-10 h-10 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-dim">
             {icon}
           </div>
         )}

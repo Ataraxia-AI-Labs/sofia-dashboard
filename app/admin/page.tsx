@@ -171,20 +171,20 @@ export default function AdminPage() {
     ? pulseScore >= 80 ? 'text-status-success' : pulseScore >= 50 ? 'text-status-warning' : 'text-status-danger'
     : 'text-text-dim'
   const pulseBg = pulseScore != null
-    ? pulseScore >= 80 ? 'from-status-success/10 to-brand-cyan/5' : pulseScore >= 50 ? 'from-status-warning/10 to-brand-gold/5' : 'from-status-danger/10 to-red-900/5'
-    : 'from-surface-3 to-surface-2'
+    ? pulseScore >= 80 ? 'bg-status-success/5' : pulseScore >= 50 ? 'bg-status-warning/5' : 'bg-status-danger/5'
+    : 'bg-surface-2'
 
   const autonomyScore = totalPRs > 0 ? Math.round((mergedPRs / totalPRs) * 100) : null
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* CEO COMMAND CENTER HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">
             {getGreeting()}, CEO
           </h2>
-          <p className="text-text-dim text-xs mt-0.5 flex items-center gap-2">
+          <p className="text-text-dim text-[9px] font-mono mt-0.5 flex items-center gap-2">
             Ataraxia IA Labs — Command Center
             {lastUpdated && (
               <span className="text-text-dim/60">
@@ -196,7 +196,7 @@ export default function AdminPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold border transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold border transition-colors ${
               autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-dim'
             }`}
           >
@@ -205,25 +205,24 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => router.push('/admin/organizaciones/nueva')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-purple to-brand-purple-dark text-white font-semibold text-xs hover:shadow-lg hover:shadow-brand-purple/20 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple text-white font-mono font-semibold text-xs hover:bg-brand-purple/90 transition-all"
           >
             <Plus size={14} />
             <span className="hidden sm:inline">Nueva Org</span>
           </button>
-          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadData} className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
       {/* SYSTEM PULSE — Hero */}
-      <div className={`glass-card p-5 bg-gradient-to-r ${pulseBg} relative overflow-hidden`}>
-        <div className="absolute -right-6 -top-6 w-28 h-28 rounded-full bg-gradient-to-br from-brand-purple/5 to-brand-cyan/5 blur-2xl" />
-        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+      <div className={`glass-card p-4 ${pulseBg} relative overflow-hidden`}>
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
             {/* Circular Pulse Score */}
-            <div className="relative w-16 h-16 flex-shrink-0">
-              <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+            <div className="relative w-14 h-14 flex-shrink-0">
+              <svg className="w-14 h-14 -rotate-90" viewBox="0 0 64 64">
                 <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" strokeWidth="4" className="text-surface-3" />
                 <circle
                   cx="32" cy="32" r="28" fill="none"
@@ -236,19 +235,19 @@ export default function AdminPage() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-sm font-bold font-mono ${pulseColor}`}>
+                <span className={`text-xs font-bold font-mono ${pulseColor}`}>
                   {pulseScore != null ? pulseScore : '...'}
                 </span>
               </div>
             </div>
             <div>
-              <div className="text-text-dim text-[10px] font-semibold uppercase tracking-wider">System Pulse</div>
-              <div className={`text-lg font-bold ${pulseColor}`}>
+              <div className="text-text-dim text-[9px] font-mono font-semibold uppercase tracking-wider">System Pulse</div>
+              <div className={`text-sm font-bold font-mono ${pulseColor}`}>
                 {pulseScore != null && pulseScore >= 80 ? 'Todo operativo' : pulseScore != null && pulseScore >= 50 ? 'Atention requerida' : pulseScore != null ? 'Sistema critico' : 'Verificando...'}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
             <PulseIndicator
               label="Backend"
               status={healthStatus === 'HEALTHY' ? 'ok' : healthStatus === 'DEGRADED' ? 'warn' : healthStatus ? 'error' : 'loading'}
@@ -280,7 +279,7 @@ export default function AdminPage() {
       </div>
 
       {/* QUICK ACTIONS + ACTIVITY FEED — 2 Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Quick Actions */}
         <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <QuickAction icon={<GitPullRequest size={16} />} label="Pipeline" sublabel={`${totalPRs} PRs esta semana`} onClick={() => router.push('/admin/pipeline')} color="text-brand-purple" />
@@ -290,20 +289,20 @@ export default function AdminPage() {
         </div>
 
         {/* Live Activity Feed */}
-        <div className="glass-card p-4 max-h-[200px] overflow-hidden">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="glass-card p-3 max-h-[200px] overflow-hidden">
+          <div className="flex items-center gap-2 mb-2">
             <div className="relative">
               <Sparkles size={12} className="text-brand-gold" />
             </div>
-            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Actividad Reciente</span>
+            <span className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">Actividad Reciente</span>
             {autoRefresh && <div className="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse ml-auto" />}
           </div>
-          <div className="space-y-2 overflow-y-auto max-h-[140px]">
+          <div className="space-y-1.5 overflow-y-auto max-h-[140px]">
             {recentLogs.length === 0 ? (
-              <p className="text-text-dim text-[10px]">Sin actividad reciente</p>
+              <p className="text-text-dim text-[10px] font-mono">Sin actividad reciente</p>
             ) : (
               recentLogs.map(log => (
-                <div key={log.id} className="flex items-start gap-2 text-[10px]">
+                <div key={log.id} className="flex items-start gap-2 text-[10px] font-mono">
                   <div className={`w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0 ${
                     log.status === 'SUCCESS' ? 'bg-status-success' : log.status === 'ERROR' ? 'bg-status-danger' : 'bg-status-warning'
                   }`} />
@@ -321,11 +320,11 @@ export default function AdminPage() {
 
       {/* GLOBAL METRICS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <MetricCard icon={<Building2 size={16} />} gradient="from-brand-purple to-brand-purple-dark" value={orgs.length.toString()} label="Organizaciones" />
-        <MetricCard icon={<Users size={16} />} gradient="from-status-info to-blue-600" value={metrics.patients.toLocaleString()} label="Pacientes totales" />
-        <MetricCard icon={<Calendar size={16} />} gradient="from-brand-cyan to-emerald-600" value={metrics.appointments.toLocaleString()} label="Citas totales" />
-        <MetricCard icon={<DollarSign size={16} />} gradient="from-brand-gold to-amber-500" value={formatCOP(metrics.revenue)} label="Revenue total" />
-        <MetricCard icon={<Database size={16} />} gradient="from-status-success to-emerald-600" value={metrics.dataLake.toLocaleString()} label="Data Lake entries" />
+        <MetricCard icon={<Building2 size={16} />} value={orgs.length.toString()} label="Organizaciones" />
+        <MetricCard icon={<Users size={16} />} value={metrics.patients.toLocaleString()} label="Pacientes totales" />
+        <MetricCard icon={<Calendar size={16} />} value={metrics.appointments.toLocaleString()} label="Citas totales" />
+        <MetricCard icon={<DollarSign size={16} />} value={formatCOP(metrics.revenue)} label="Revenue total" />
+        <MetricCard icon={<Database size={16} />} value={metrics.dataLake.toLocaleString()} label="Data Lake entries" />
       </div>
 
       {/* SEARCH */}
@@ -336,7 +335,7 @@ export default function AdminPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Buscar organizacion..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-sm outline-none focus:border-brand-purple/40 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 focus:ring-1 focus:ring-brand-purple/20 transition-all"
         />
       </div>
 
@@ -346,22 +345,22 @@ export default function AdminPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Organizacion</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Plan</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Estado</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Pacientes</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Citas</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Interacciones</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Revenue</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Ultima Actividad</th>
-                <th className="text-center px-4 py-3 text-[11px] font-semibold text-text-dim uppercase tracking-wider">Acciones</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Organizacion</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Plan</th>
+                <th className="text-left px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Estado</th>
+                <th className="text-right px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Pacientes</th>
+                <th className="text-right px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Citas</th>
+                <th className="text-right px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Interacciones</th>
+                <th className="text-right px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Revenue</th>
+                <th className="text-right px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Ultima Actividad</th>
+                <th className="text-center px-4 py-2.5 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="border-b border-border/50">
-                    <td colSpan={9} className="px-4 py-4">
+                    <td colSpan={9} className="px-4 py-3">
                       <div className="h-5 bg-surface-3 rounded w-full animate-pulse" />
                     </td>
                   </tr>
@@ -370,13 +369,13 @@ export default function AdminPage() {
                 <tr>
                   <td colSpan={9} className="px-4 py-12 text-center">
                     <Building2 size={28} className="mx-auto text-text-dim mb-3" />
-                    <p className="text-text-muted text-sm">
+                    <p className="text-text-muted text-xs font-mono">
                       {search ? `No se encontraron organizaciones para "${search}"` : 'No hay organizaciones registradas'}
                     </p>
                     {!search && (
                       <button
                         onClick={() => router.push('/admin/organizaciones/nueva')}
-                        className="mt-3 text-brand-purple text-xs font-semibold hover:underline"
+                        className="mt-3 text-brand-purple text-xs font-mono font-semibold hover:underline"
                       >
                         Crear primera organizacion
                       </button>
@@ -396,61 +395,61 @@ export default function AdminPage() {
                       onClick={() => router.push(`/admin/organizaciones/${org.id}`)}
                       className="border-b border-border/50 hover:bg-surface-3/50 cursor-pointer transition-colors"
                     >
-                      <td className="px-4 py-3.5">
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/20 flex items-center justify-center text-brand-purple font-bold text-xs flex-shrink-0">
+                          <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple font-bold text-xs font-mono flex-shrink-0">
                             {org.name[0]?.toUpperCase()}
                           </div>
                           <div>
-                            <div className="text-sm font-semibold text-text-primary">{org.name}</div>
+                            <div className="text-xs font-mono font-semibold text-text-primary">{org.name}</div>
                             {org.whatsapp_phone_id && (
-                              <div className="text-[10px] text-text-dim font-mono">WA: {org.whatsapp_phone_id.slice(0, 12)}...</div>
+                              <div className="text-[9px] text-text-dim font-mono">WA: {org.whatsapp_phone_id.slice(0, 12)}...</div>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3.5">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${planColor}`}>
+                      <td className="px-4 py-3">
+                        <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border ${planColor}`}>
                           {org.plan || 'TRIAL'}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5">
-                        <span className={`flex items-center gap-1.5 text-xs font-medium ${statusCfg.color}`}>
+                      <td className="px-4 py-3">
+                        <span className={`flex items-center gap-1.5 text-xs font-mono font-medium ${statusCfg.color}`}>
                           <StatusIcon size={12} />
                           {statusCfg.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className="text-sm font-mono text-text-primary">
+                      <td className="px-4 py-3 text-right">
+                        <span className="text-xs font-mono text-text-primary">
                           {statsLoading && !org.stats ? '...' : (org.stats?.patients ?? '-')}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className="text-sm font-mono text-text-primary">
+                      <td className="px-4 py-3 text-right">
+                        <span className="text-xs font-mono text-text-primary">
                           {statsLoading && !org.stats ? '...' : (org.stats?.appointments ?? '-')}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className="text-sm font-mono text-text-primary">
+                      <td className="px-4 py-3 text-right">
+                        <span className="text-xs font-mono text-text-primary">
                           {statsLoading && !org.stats ? '...' : (org.stats?.interactions ?? '-')}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className="text-sm font-mono font-semibold gradient-text">
+                      <td className="px-4 py-3 text-right">
+                        <span className="text-xs font-mono font-semibold text-text-primary">
                           {statsLoading && !org.stats ? '...' : formatCOP(org.stats?.revenue ?? 0)}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <span className={`text-xs ${org.lastActivity ? 'text-text-muted' : 'text-text-dim'}`}>
+                      <td className="px-4 py-3 text-right">
+                        <span className={`text-xs font-mono ${org.lastActivity ? 'text-text-muted' : 'text-text-dim'}`}>
                           {org.lastActivity ? timeAgo(org.lastActivity) : '\u2014'}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
                             onClick={(e) => handleGodMode(org.id, org.name, e)}
                             disabled={isEntering}
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-status-danger/10 to-brand-purple/10 border border-status-danger/20 text-status-danger text-[10px] font-semibold hover:from-status-danger/20 hover:to-brand-purple/20 transition-all disabled:opacity-50"
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-mono font-semibold hover:bg-status-danger/20 transition-all disabled:opacity-50"
                             title="Ver dashboard de esta clinica (God Mode)"
                           >
                             {isEntering ? (
@@ -462,7 +461,7 @@ export default function AdminPage() {
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); router.push(`/admin/organizaciones/${org.id}`) }}
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border text-text-dim text-[10px] font-semibold hover:text-text-primary hover:border-brand-purple/30 transition-all"
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-surface-2 border border-border text-text-dim text-[10px] font-mono font-semibold hover:text-text-primary hover:border-brand-purple/30 transition-all"
                             title="Ver detalle"
                           >
                             <ExternalLink size={10} />
@@ -482,14 +481,14 @@ export default function AdminPage() {
   )
 }
 
-function MetricCard({ icon, gradient, value, label }: { icon: React.ReactNode; gradient: string; value: string; label: string }) {
+function MetricCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <div className="glass-card p-3.5 group hover:border-brand-purple/20 transition-all">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 group-hover:scale-110 transition-transform`}>
+    <div className="glass-card p-3 group hover:border-brand-purple/20 transition-all">
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2 group-hover:scale-110 transition-transform">
         {icon}
       </div>
-      <div className="text-lg font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[10px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
+      <div className="text-[9px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }
@@ -501,9 +500,9 @@ function PulseIndicator({ label, status, value }: { label: string; status: 'ok' 
     <div className="text-center">
       <div className="flex items-center justify-center gap-1.5 mb-0.5">
         <div className={`w-2 h-2 rounded-full ${dotColor}`} />
-        <span className={`text-sm font-bold font-mono ${textColor}`}>{value ?? (status === 'ok' ? 'OK' : status === 'warn' ? '!' : status === 'error' ? 'ERR' : '...')}</span>
+        <span className={`text-xs font-bold font-mono ${textColor}`}>{value ?? (status === 'ok' ? 'OK' : status === 'warn' ? '!' : status === 'error' ? 'ERR' : '...')}</span>
       </div>
-      <div className="text-[9px] text-text-dim">{label}</div>
+      <div className="text-[9px] font-mono text-text-dim">{label}</div>
     </div>
   )
 }
@@ -514,14 +513,14 @@ function QuickAction({ icon, label, sublabel, onClick, color }: {
   return (
     <button
       onClick={onClick}
-      className="glass-card p-3.5 text-left hover:border-brand-purple/30 transition-all group cursor-pointer"
+      className="glass-card p-3 text-left hover:border-brand-purple/30 transition-all group cursor-pointer"
     >
       <div className="flex items-center justify-between mb-1.5">
         <span className={`${color} group-hover:scale-110 transition-transform`}>{icon}</span>
         <ArrowRight size={12} className="text-text-dim group-hover:text-brand-purple group-hover:translate-x-0.5 transition-all" />
       </div>
-      <div className="text-sm font-semibold text-text-primary">{label}</div>
-      <div className="text-[10px] text-text-dim">{sublabel}</div>
+      <div className="text-xs font-mono font-semibold text-text-primary">{label}</div>
+      <div className="text-[9px] font-mono text-text-dim">{sublabel}</div>
     </button>
   )
 }

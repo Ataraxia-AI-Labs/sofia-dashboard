@@ -127,7 +127,7 @@ export function SimilarityScoreBadge({
                 title={s.label}
               >
                 <Icon size={9} className={cfg.color} />
-                <span className={`text-[8px] font-semibold ${cfg.color}`}>{s.label}</span>
+                <span className={`text-[8px] font-mono font-semibold ${cfg.color}`}>{s.label}</span>
               </div>
             )
           })}
@@ -149,9 +149,9 @@ export function SimilarityScoreInline({
   const cfg = getConfig(score)
 
   return (
-    <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border} ${className}`}>
+    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}>
       <span className={`text-[10px] font-bold font-mono ${cfg.color}`}>{pct}%</span>
-      <span className={`text-[10px] font-semibold ${cfg.color}`}>{cfg.label}</span>
+      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

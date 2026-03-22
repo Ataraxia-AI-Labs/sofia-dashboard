@@ -15,7 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-gradient-to-r from-brand-purple to-brand-cyan text-white hover:shadow-lg hover:shadow-brand-purple/20',
+  primary: 'bg-brand-purple text-white hover:bg-brand-purple-dark',
   secondary: 'bg-brand-purple/15 text-brand-purple hover:bg-brand-purple/25',
   ghost: 'bg-surface-2 border border-border text-text-muted hover:text-text-primary hover:border-brand-purple/30',
   danger: 'bg-status-danger/15 text-status-danger hover:bg-status-danger/25',
@@ -35,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={clsx(
-          'inline-flex items-center justify-center font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed',
+          'inline-flex items-center justify-center font-mono font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed',
           variantStyles[variant],
           sizeStyles[size],
           className,

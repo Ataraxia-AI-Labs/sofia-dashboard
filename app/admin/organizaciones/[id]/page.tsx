@@ -20,7 +20,7 @@ import {
   Clock, ShoppingBag, Activity, FileText
 } from 'lucide-react'
 
-const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
 
 type Tab = 'general' | 'services' | 'hours' | 'users' | 'prompt' | 'activity'
 
@@ -87,7 +87,7 @@ export default function OrgDetailPage() {
       setEditPrompt((orgData.system_prompt as string) || '')
       setEditWhatsApp((orgData.whatsapp_phone_id as string) || '')
     } catch {
-      setMessage({ type: 'error', text: 'Error cargando datos de la organización' })
+      setMessage({ type: 'error', text: 'Error cargando datos de la organizacion' })
     }
     setLoading(false)
   }, [orgId])
@@ -107,7 +107,7 @@ export default function OrgDetailPage() {
           plan: editPlan,
         },
       })
-      setMessage({ type: 'success', text: 'Organización actualizada' })
+      setMessage({ type: 'success', text: 'Organizacion actualizada' })
       loadData()
     } catch (e) {
       setMessage({ type: 'error', text: `Error: ${e instanceof Error ? e.message : 'desconocido'}` })
@@ -173,7 +173,7 @@ export default function OrgDetailPage() {
   }
 
   const handleTestWhatsApp = async () => {
-    const phone = prompt('Número de teléfono para prueba (ej: 573001234567):')
+    const phone = prompt('Numero de telefono para prueba (ej: 573001234567):')
     if (!phone) return
     try {
       await testWhatsApp(orgId, phone)
@@ -194,11 +194,11 @@ export default function OrgDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[1200px] space-y-4">
+      <div className="max-w-[1200px] space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="glass-card p-6 animate-pulse">
-            <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
-            <div className="h-4 bg-surface-3 rounded w-72" />
+          <div key={i} className="glass-card p-4 animate-pulse">
+            <div className="h-4 bg-surface-3 rounded w-48 mb-3" />
+            <div className="h-3 bg-surface-3 rounded w-72" />
           </div>
         ))}
       </div>
@@ -206,16 +206,16 @@ export default function OrgDetailPage() {
   }
 
   return (
-    <div className="max-w-[1200px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.push('/admin')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={() => router.push('/admin')} className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <ChevronLeft size={16} />
           </button>
           <div>
-            <h2 className="text-xl font-semibold text-text-primary">{org?.name as string || 'Organización'}</h2>
-            <p className="text-text-dim text-xs mt-0.5 font-mono">{orgId}</p>
+            <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{org?.name as string || 'Organizacion'}</h2>
+            <p className="text-text-dim text-[9px] mt-0.5 font-mono">{orgId}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -225,12 +225,12 @@ export default function OrgDetailPage() {
               startImpersonation(orgId, (org?.name as string) || 'Org')
               router.push('/dashboard')
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-status-danger/10 to-brand-purple/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:from-status-danger/20 hover:to-brand-purple/20 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-mono font-semibold hover:bg-status-danger/20 transition-all"
           >
             <Eye size={12} />
             God Mode
           </button>
-          <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <button onClick={loadData} className="w-8 h-8 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} />
           </button>
         </div>
@@ -246,7 +246,7 @@ export default function OrgDetailPage() {
 
       {/* MESSAGE */}
       {message.text && (
-        <div className={`p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
+        <div className={`p-3 rounded-lg text-xs font-mono font-medium flex items-center gap-2 ${
           message.type === 'success' ? 'bg-status-success/10 border border-status-success/20 text-status-success' : 'bg-status-danger/10 border border-status-danger/20 text-status-danger'
         }`}>
           {message.type === 'success' ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
@@ -269,13 +269,13 @@ export default function OrgDetailPage() {
             <button
               key={t.id}
               onClick={() => { setTab(t.id); setMessage({ type: '', text: '' }) }}
-              className={`flex items-center gap-1.5 px-4 py-2.5 border-b-2 text-[11px] font-semibold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-3 py-2 border-b-2 text-[10px] font-mono font-semibold transition-all whitespace-nowrap ${
                 tab === t.id ? 'border-brand-purple text-brand-purple' : 'border-transparent text-text-dim hover:text-text-muted'
               }`}
             >
               <Icon size={13} />
               {t.label}
-              {t.id === 'activity' && <span className="text-[9px] text-text-dim ml-1">({activityLog.length})</span>}
+              {t.id === 'activity' && <span className="text-[9px] font-mono text-text-dim ml-1">({activityLog.length})</span>}
             </button>
           )
         })}
@@ -283,15 +283,15 @@ export default function OrgDetailPage() {
 
       {/* TAB: General */}
       {tab === 'general' && (
-        <div className="glass-card p-6 space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="glass-card p-4 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Nombre</label>
-              <input type="text" value={editName} onChange={e => setEditName(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 transition-all" />
+              <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Nombre</label>
+              <input type="text" value={editName} onChange={e => setEditName(e.target.value)} className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Estado</label>
-              <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 transition-all">
+              <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Estado</label>
+              <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all">
                 <option value="ACTIVE">Activa</option>
                 <option value="SETUP">En Setup</option>
                 <option value="PAUSED">Pausada</option>
@@ -299,8 +299,8 @@ export default function OrgDetailPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">Plan</label>
-              <select value={editPlan} onChange={e => setEditPlan(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-sm outline-none focus:border-brand-purple/40 transition-all">
+              <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Plan</label>
+              <select value={editPlan} onChange={e => setEditPlan(e.target.value)} className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all">
                 <option value="TRIAL">Trial</option>
                 <option value="STARTER">Starter</option>
                 <option value="PRO">Pro</option>
@@ -309,20 +309,20 @@ export default function OrgDetailPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">WhatsApp Phone ID</label>
-              <input type="text" value={editWhatsApp} onChange={e => setEditWhatsApp(e.target.value)} placeholder="Meta Business phone ID" className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-sm font-mono outline-none focus:border-brand-purple/40 transition-all" />
+              <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">WhatsApp Phone ID</label>
+              <input type="text" value={editWhatsApp} onChange={e => setEditWhatsApp(e.target.value)} placeholder="Meta Business phone ID" className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
             </div>
           </div>
 
           <div className="flex items-center gap-3 pt-2 flex-wrap">
-            <button onClick={handleSaveGeneral} disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-purple/15 text-brand-purple font-semibold text-xs hover:bg-brand-purple/25 transition-colors disabled:opacity-50">
+            <button onClick={handleSaveGeneral} disabled={saving} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple/15 text-brand-purple font-mono font-semibold text-xs hover:bg-brand-purple/25 transition-colors disabled:opacity-50">
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
               Guardar Cambios
             </button>
-            <button onClick={handleTestWhatsApp} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-status-success/10 border border-status-success/20 text-status-success font-semibold text-xs hover:bg-status-success/20 transition-colors">
+            <button onClick={handleTestWhatsApp} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success font-mono font-semibold text-xs hover:bg-status-success/20 transition-colors">
               <Send size={12} /> Test WhatsApp
             </button>
-            <button onClick={handlePopulateKB} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-status-info/10 border border-status-info/20 text-status-info font-semibold text-xs hover:bg-status-info/20 transition-colors">
+            <button onClick={handlePopulateKB} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-info/10 border border-status-info/20 text-status-info font-mono font-semibold text-xs hover:bg-status-info/20 transition-colors">
               <BookOpen size={12} /> Poblar KB
             </button>
           </div>
@@ -331,20 +331,20 @@ export default function OrgDetailPage() {
 
       {/* TAB: Services */}
       {tab === 'services' && (
-        <div className="space-y-4">
-          <div className="glass-card p-4">
-            <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Agregar Servicio</h4>
+        <div className="space-y-3">
+          <div className="glass-card p-3">
+            <h4 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-2">Agregar Servicio</h4>
             <div className="flex gap-2 flex-wrap">
-              <input type="text" value={newServiceName} onChange={e => setNewServiceName(e.target.value)} placeholder="Nombre" className="flex-1 min-w-[150px] px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-xs outline-none focus:border-brand-purple/40 transition-all" />
-              <input type="number" value={newServicePrice} onChange={e => setNewServicePrice(e.target.value)} placeholder="Precio COP" className="w-32 px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
-              <input type="number" value={newServiceDuration} onChange={e => setNewServiceDuration(e.target.value)} placeholder="Min" className="w-20 px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
-              <select value={newServiceCategory} onChange={e => setNewServiceCategory(e.target.value)} className="px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-xs outline-none focus:border-brand-purple/40 transition-all">
+              <input type="text" value={newServiceName} onChange={e => setNewServiceName(e.target.value)} placeholder="Nombre" className="flex-1 min-w-[150px] px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+              <input type="number" value={newServicePrice} onChange={e => setNewServicePrice(e.target.value)} placeholder="Precio COP" className="w-32 px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+              <input type="number" value={newServiceDuration} onChange={e => setNewServiceDuration(e.target.value)} placeholder="Min" className="w-20 px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+              <select value={newServiceCategory} onChange={e => setNewServiceCategory(e.target.value)} className="px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all">
                 <option value="GENERAL">General</option>
-                <option value="ESTETICA">Estética</option>
-                <option value="ODONTOLOGIA">Odontología</option>
+                <option value="ESTETICA">Estetica</option>
+                <option value="ODONTOLOGIA">Odontologia</option>
                 <option value="CONSULTA">Consulta</option>
               </select>
-              <button onClick={handleAddService} className="px-3 py-2 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
+              <button onClick={handleAddService} className="px-3 py-2 rounded-md bg-brand-purple/15 text-brand-purple text-xs font-mono font-semibold hover:bg-brand-purple/25 transition-colors">
                 <Plus size={14} />
               </button>
             </div>
@@ -354,24 +354,24 @@ export default function OrgDetailPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Servicio</th>
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Categoría</th>
-                  <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Precio</th>
-                  <th className="text-right px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Duración</th>
-                  <th className="px-4 py-2.5" />
+                  <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Servicio</th>
+                  <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Categoria</th>
+                  <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Precio</th>
+                  <th className="text-right px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Duracion</th>
+                  <th className="px-4 py-2" />
                 </tr>
               </thead>
               <tbody>
                 {services.length === 0 ? (
-                  <tr><td colSpan={5} className="px-4 py-8 text-center text-text-dim text-xs">Sin servicios configurados</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-text-dim text-xs font-mono">Sin servicios configurados</td></tr>
                 ) : (
                   services.map(s => (
                     <tr key={s.id} className="border-b border-border/50 hover:bg-surface-3/50">
-                      <td className="px-4 py-2.5 text-sm text-text-primary">{s.name}</td>
-                      <td className="px-4 py-2.5 text-xs text-text-muted">{s.category}</td>
-                      <td className="px-4 py-2.5 text-right text-sm font-mono text-text-primary">{formatCOP(s.price)}</td>
-                      <td className="px-4 py-2.5 text-right text-xs text-text-muted">{s.duration_minutes}min</td>
-                      <td className="px-4 py-2.5 text-right">
+                      <td className="px-4 py-2 text-xs font-mono text-text-primary">{s.name}</td>
+                      <td className="px-4 py-2 text-xs font-mono text-text-muted">{s.category}</td>
+                      <td className="px-4 py-2 text-right text-xs font-mono text-text-primary">{formatCOP(s.price)}</td>
+                      <td className="px-4 py-2 text-right text-xs font-mono text-text-muted">{s.duration_minutes}min</td>
+                      <td className="px-4 py-2 text-right">
                         <button onClick={() => handleDeleteService(s.id)} className="text-text-dim hover:text-status-danger transition-colors"><Trash2 size={13} /></button>
                       </td>
                     </tr>
@@ -385,15 +385,15 @@ export default function OrgDetailPage() {
 
       {/* TAB: Hours — Editable Grid */}
       {tab === 'hours' && (
-        <div className="glass-card p-5">
+        <div className="glass-card p-4">
           <div className="space-y-2">
             {hours.sort((a, b) => a.day_of_week - b.day_of_week).map(h => (
-              <div key={h.id} className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${h.is_open ? 'bg-surface-2 border-border' : 'bg-surface-3/30 border-border/50'}`}>
+              <div key={h.id} className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${h.is_open ? 'bg-surface-2 border-border' : 'bg-surface-3/30 border-border/50'}`}>
                 <div className="flex items-center gap-3">
                   <button onClick={() => handleToggleDay(h)} className={`w-9 h-5 rounded-full transition-all relative ${h.is_open ? 'bg-status-success' : 'bg-surface-3'}`}>
                     <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${h.is_open ? 'left-4' : 'left-0.5'}`} />
                   </button>
-                  <span className={`text-sm font-medium w-28 ${h.is_open ? 'text-text-primary' : 'text-text-dim'}`}>
+                  <span className={`text-xs font-mono font-medium w-28 ${h.is_open ? 'text-text-primary' : 'text-text-dim'}`}>
                     {DAY_NAMES[h.day_of_week]}
                   </span>
                 </div>
@@ -403,18 +403,18 @@ export default function OrgDetailPage() {
                       type="time"
                       value={h.open_time}
                       onChange={e => handleUpdateHourTime(h, 'open_time', e.target.value)}
-                      className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all"
+                      className="px-2 py-1.5 rounded-md bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all"
                     />
-                    <span className="text-text-dim text-xs">—</span>
+                    <span className="text-text-dim text-xs font-mono">—</span>
                     <input
                       type="time"
                       value={h.close_time}
                       onChange={e => handleUpdateHourTime(h, 'close_time', e.target.value)}
-                      className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all"
+                      className="px-2 py-1.5 rounded-md bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all"
                     />
                   </div>
                 ) : (
-                  <span className="text-xs text-text-dim">Cerrado</span>
+                  <span className="text-xs font-mono text-text-dim">Cerrado</span>
                 )}
               </div>
             ))}
@@ -428,17 +428,17 @@ export default function OrgDetailPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">User ID</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Rol</th>
-                <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Desde</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">User ID</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Rol</th>
+                <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Desde</th>
               </tr>
             </thead>
             <tbody>
               {users.map(u => (
                 <tr key={u.id} className="border-b border-border/50">
-                  <td className="px-4 py-3 text-xs font-mono text-text-muted">{u.user_id}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                  <td className="px-4 py-2.5 text-xs font-mono text-text-muted">{u.user_id}</td>
+                  <td className="px-4 py-2.5">
+                    <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border ${
                       u.role === 'OWNER' ? 'bg-brand-gold/10 text-brand-gold border-brand-gold/20'
                       : u.role === 'ADMIN' ? 'bg-brand-purple/10 text-brand-purple border-brand-purple/20'
                       : 'bg-surface-3 text-text-dim border-border'
@@ -446,7 +446,7 @@ export default function OrgDetailPage() {
                       {u.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-text-dim">{new Date(u.created_at).toLocaleDateString('es-CO')}</td>
+                  <td className="px-4 py-2.5 text-xs font-mono text-text-dim">{new Date(u.created_at).toLocaleDateString('es-CO')}</td>
                 </tr>
               ))}
             </tbody>
@@ -456,18 +456,18 @@ export default function OrgDetailPage() {
 
       {/* TAB: System Prompt */}
       {tab === 'prompt' && (
-        <div className="space-y-4">
-          <div className="glass-card p-5">
-            <label className="block text-xs font-medium text-text-muted mb-2 uppercase tracking-wider">System Prompt de SofIA</label>
+        <div className="space-y-3">
+          <div className="glass-card p-4">
+            <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">System Prompt de SofIA</label>
             <textarea
               value={editPrompt}
               onChange={e => setEditPrompt(e.target.value)}
               rows={18}
-              className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-xs font-mono leading-relaxed outline-none focus:border-brand-purple/40 focus:ring-1 focus:ring-brand-purple/20 transition-all resize-y"
+              className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono leading-relaxed outline-none focus:border-brand-purple/40 focus:ring-1 focus:ring-brand-purple/20 transition-all resize-y"
             />
             <div className="flex items-center justify-between mt-3">
-              <span className="text-[10px] text-text-dim">{editPrompt.length} caracteres</span>
-              <button onClick={handleSavePrompt} disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-purple/15 text-brand-purple font-semibold text-xs hover:bg-brand-purple/25 transition-colors disabled:opacity-50">
+              <span className="text-[9px] font-mono text-text-dim">{editPrompt.length} caracteres</span>
+              <button onClick={handleSavePrompt} disabled={saving} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple/15 text-brand-purple font-mono font-semibold text-xs hover:bg-brand-purple/25 transition-colors disabled:opacity-50">
                 {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                 Guardar Prompt
               </button>
@@ -479,37 +479,37 @@ export default function OrgDetailPage() {
       {/* TAB: Activity Log */}
       {tab === 'activity' && (
         <div className="glass-card overflow-hidden">
-          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity size={14} className="text-brand-purple" />
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Log de Actividad</h3>
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Log de Actividad</h3>
             </div>
-            <span className="text-[10px] text-text-dim">{activityLog.length} interacciones recientes</span>
+            <span className="text-[9px] font-mono text-text-dim">{activityLog.length} interacciones recientes</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Canal</th>
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Intent</th>
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Teléfono</th>
+                  <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Fecha</th>
+                  <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Canal</th>
+                  <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Intent</th>
+                  <th className="text-left px-4 py-2 text-[10px] font-mono font-semibold text-text-dim uppercase tracking-wider">Telefono</th>
                 </tr>
               </thead>
               <tbody>
                 {activityLog.length === 0 ? (
-                  <tr><td colSpan={4} className="px-4 py-12 text-center text-text-dim text-xs">Sin actividad registrada</td></tr>
+                  <tr><td colSpan={4} className="px-4 py-12 text-center text-text-dim text-xs font-mono">Sin actividad registrada</td></tr>
                 ) : (
                   activityLog.map(a => (
                     <tr key={a.id} className="border-b border-border/50 hover:bg-surface-3/50">
-                      <td className="px-4 py-2.5 text-xs text-text-muted">{timeAgo(a.created_at)}</td>
-                      <td className="px-4 py-2.5">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-3 border border-border text-text-muted uppercase">{a.channel}</span>
+                      <td className="px-4 py-2 text-xs font-mono text-text-muted">{timeAgo(a.created_at)}</td>
+                      <td className="px-4 py-2">
+                        <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-surface-3 border border-border text-text-muted uppercase">{a.channel}</span>
                       </td>
-                      <td className="px-4 py-2.5">
-                        <span className={`text-xs font-medium ${INTENT_COLORS[a.intent] || 'text-text-muted'}`}>{a.intent}</span>
+                      <td className="px-4 py-2">
+                        <span className={`text-xs font-mono font-medium ${INTENT_COLORS[a.intent] || 'text-text-muted'}`}>{a.intent}</span>
                       </td>
-                      <td className="px-4 py-2.5 text-xs font-mono text-text-dim">{a.patient_phone || '—'}</td>
+                      <td className="px-4 py-2 text-xs font-mono text-text-dim">{a.patient_phone || '\u2014'}</td>
                     </tr>
                   ))
                 )}
@@ -524,10 +524,10 @@ export default function OrgDetailPage() {
 
 function StatCard({ icon, color, value, label }: { icon: React.ReactNode; color: string; value: string; label: string }) {
   return (
-    <div className="glass-card p-3.5">
+    <div className="glass-card p-3">
       <div className={`${color} mb-1.5`}>{icon}</div>
-      <div className="text-lg font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[10px] text-text-muted">{label}</div>
+      <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
+      <div className="text-[9px] font-mono text-text-muted">{label}</div>
     </div>
   )
 }

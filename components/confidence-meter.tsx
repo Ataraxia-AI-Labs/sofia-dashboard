@@ -95,7 +95,7 @@ export function ConfidenceMeter({
         </div>
       </div>
       {label && (
-        <span className="text-[10px] text-text-dim font-semibold">{label}</span>
+        <span className="text-[10px] text-text-dim font-mono font-semibold">{label}</span>
       )}
     </div>
   )
@@ -114,9 +114,9 @@ export function ConfidenceBar({
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="flex-1 h-1.5 bg-void rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-void rounded overflow-hidden">
         <div
-          className="h-full rounded-full transition-all duration-700"
+          className="h-full rounded transition-all duration-700"
           style={{
             width: `${clampedValue}%`,
             backgroundColor: color,

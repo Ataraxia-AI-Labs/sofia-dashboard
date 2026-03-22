@@ -51,19 +51,19 @@ export default function PagosPage() {
   const attr = attribution?.attribution ?? {} as RevenueAttribution['attribution']
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-4 max-w-[1200px]">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-text-primary">{t('title')} & Revenue</h2>
-          <p className="text-xs text-text-dim">{payments.length} transacciones</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')} & Revenue</h2>
+          <p className="text-[9px] font-mono text-text-dim">{payments.length} transacciones</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
-            <button onClick={() => setActiveTab('pagos')} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${activeTab === 'pagos' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
+            <button onClick={() => setActiveTab('pagos')} className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${activeTab === 'pagos' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
               <CreditCard size={12} className="inline mr-1" />Pagos
             </button>
-            <button onClick={() => setActiveTab('attribution')} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${activeTab === 'attribution' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
+            <button onClick={() => setActiveTab('attribution')} className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${activeTab === 'attribution' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'}`}>
               <BarChart3 size={12} className="inline mr-1" />Attribution
             </button>
           </div>
@@ -74,44 +74,44 @@ export default function PagosPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-status-success/10 flex items-center justify-center">
-              <DollarSign size={16} className="text-status-success" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <DollarSign size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Revenue Total</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Revenue Total</span>
           </div>
-          <div className="text-xl font-bold text-status-success font-mono">{formatCOP(resumen.total_revenue || 0)}</div>
+          <div className="text-xs font-bold text-status-success font-mono">{formatCOP(resumen.total_revenue || 0)}</div>
           <div className="text-[10px] text-text-dim mt-1">{resumen.total_pagos || 0} pagos</div>
         </div>
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-status-warning/10 flex items-center justify-center">
-              <Clock size={16} className="text-status-warning" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Clock size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Pendiente</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Pendiente</span>
           </div>
-          <div className="text-xl font-bold text-status-warning font-mono">{formatCOP(resumen.total_pending || 0)}</div>
+          <div className="text-sm font-bold text-status-warning font-mono">{formatCOP(resumen.total_pending || 0)}</div>
           <div className="text-[10px] text-text-dim mt-1">{resumen.pagos_pendientes || 0} pendientes</div>
         </div>
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
               <TrendingUp size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">Ticket Promedio</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">Ticket Promedio</span>
           </div>
-          <div className="text-xl font-bold text-brand-purple font-mono">{formatCOP(resumen.ticket_promedio || 0)}</div>
+          <div className="text-xs font-bold text-brand-purple font-mono">{formatCOP(resumen.ticket_promedio || 0)}</div>
         </div>
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-status-info/10 flex items-center justify-center">
-              <Zap size={16} className="text-status-info" />
+            <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Zap size={16} className="text-brand-purple" />
             </div>
-            <span className="text-[10px] text-text-dim uppercase font-semibold">ROI</span>
+            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">ROI</span>
           </div>
-          <div className="text-xl font-bold text-status-info font-mono">{resumen.roi_estimado || 0}x</div>
+          <div className="text-xs font-bold text-status-info font-mono">{resumen.roi_estimado || 0}x</div>
           <div className="text-[10px] text-text-dim mt-1">IA: ${resumen.costo_ia_usd || 0} USD</div>
         </div>
       </div>
@@ -131,13 +131,13 @@ export default function PagosPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Paciente</th>
-                  <th className="text-left text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Servicio</th>
-                  <th className="text-right text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Monto</th>
-                  <th className="text-center text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Estado</th>
-                  <th className="text-center text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Método</th>
-                  <th className="text-right text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Fecha</th>
-                  <th className="text-center text-[10px] font-semibold text-text-muted uppercase px-5 py-3">Link</th>
+                  <th className="text-left text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Paciente</th>
+                  <th className="text-left text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Servicio</th>
+                  <th className="text-right text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Monto</th>
+                  <th className="text-center text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Estado</th>
+                  <th className="text-center text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Método</th>
+                  <th className="text-right text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Fecha</th>
+                  <th className="text-center text-[10px] font-mono font-semibold text-text-muted uppercase px-5 py-3">Link</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,22 +150,22 @@ export default function PagosPage() {
                     </tr>
                   ))
                 ) : payments.length === 0 ? (
-                  <tr><td colSpan={7} className="text-center py-12 text-text-dim text-sm">{t('noPayments')}</td></tr>
+                  <tr><td colSpan={7} className="text-center py-12 text-text-dim text-[10px] font-mono">{t('noPayments')}</td></tr>
                 ) : payments.map((p) => {
                   const status = STATUS_CONFIG[p.status] || STATUS_CONFIG.PENDING
                   return (
                     <tr key={p.id} className="border-b border-border/50 hover:bg-surface-3/50 transition-colors">
                       <td className="px-5 py-3">
-                        <span className="text-sm font-medium text-text-primary">{p.patients?.full_name || 'Sin nombre'}</span>
+                        <span className="text-xs font-mono font-medium text-text-primary">{p.patients?.full_name || 'Sin nombre'}</span>
                         <div className="text-[10px] text-text-dim font-mono">{p.patients?.phone || ''}</div>
                       </td>
-                      <td className="px-5 py-3 text-sm text-text-muted">{p.service_name}</td>
-                      <td className="px-5 py-3 text-right text-sm font-semibold font-mono text-text-primary">{formatCOP(p.amount_cop)}</td>
+                      <td className="px-5 py-3 text-xs font-mono text-text-muted">{p.service_name}</td>
+                      <td className="px-5 py-3 text-right text-xs font-semibold font-mono text-text-primary">{formatCOP(p.amount_cop)}</td>
                       <td className="px-5 py-3 text-center">
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold border ${status.bg} ${status.color}`}>{status.label}</span>
                       </td>
-                      <td className="px-5 py-3 text-center text-xs text-text-dim">{p.payment_method_type || '—'}</td>
-                      <td className="px-5 py-3 text-right text-xs text-text-dim">{timeAgo(p.created_at)}</td>
+                      <td className="px-5 py-3 text-center text-[10px] font-mono text-text-dim">{p.payment_method_type || '—'}</td>
+                      <td className="px-5 py-3 text-right text-[10px] font-mono text-text-dim">{timeAgo(p.created_at)}</td>
                       <td className="px-5 py-3 text-center">
                         {p.link_url && (
                           <a href={p.link_url} target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:text-brand-purple-light">
@@ -184,11 +184,11 @@ export default function PagosPage() {
 
       {/* TAB: ATTRIBUTION */}
       {activeTab === 'attribution' && attribution && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Revenue por Canal */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Revenue por Canal</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Revenue por Canal</h3>
               {Object.keys(attr.por_canal || {}).length > 0 ? (
                 <div className="space-y-3">
                   {Object.entries(attr.por_canal).sort(([, a], [, b]) => (b as number) - (a as number)).map(([canal, amount]) => {
@@ -201,19 +201,19 @@ export default function PagosPage() {
                           <span className="text-text-primary font-semibold font-mono">{formatCOP(amount)}</span>
                         </div>
                         <div className="h-2 bg-void rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-brand-purple rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                       </div>
                     )
                   })}
                 </div>
               ) : (
-                <p className="text-text-dim text-xs">Sin datos de attribution aún</p>
+                <p className="text-text-dim text-[10px] font-mono">Sin datos de attribution aun</p>
               )}
             </div>
 
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Revenue por Servicio</h3>
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Revenue por Servicio</h3>
               {Object.keys(attr.por_servicio || {}).length > 0 ? (
                 <div className="space-y-3">
                   {Object.entries(attr.por_servicio).sort(([, a], [, b]) => (b as number) - (a as number)).map(([svc, amount]) => {
@@ -226,22 +226,22 @@ export default function PagosPage() {
                           <span className="text-text-primary font-semibold font-mono">{formatCOP(amount)}</span>
                         </div>
                         <div className="h-2 bg-void rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-status-success to-status-info rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-status-success rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                       </div>
                     )
                   })}
                 </div>
               ) : (
-                <p className="text-text-dim text-xs">Sin datos aún</p>
+                <p className="text-text-dim text-[10px] font-mono">Sin datos aun</p>
               )}
             </div>
           </div>
 
-          {/* Revenue por Día + Time to Payment */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Revenue por Día de la Semana</h3>
+          {/* Revenue por Dia + Time to Payment */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Revenue por Día de la Semana</h3>
               <div className="flex items-end gap-2 h-32">
                 {Object.entries(attr.por_dia || {}).map(([day, amount]) => {
                   const max = Math.max(...Object.values(attr.por_dia || {}) as number[], 1)
@@ -249,7 +249,7 @@ export default function PagosPage() {
                   return (
                     <div key={day} className="flex-1 flex flex-col items-center gap-1">
                       <div className="w-full bg-void rounded-t-md overflow-hidden flex flex-col justify-end" style={{ height: '100px' }}>
-                        <div className="bg-gradient-to-t from-brand-purple to-brand-purple/50 rounded-t-md transition-all" style={{ height: `${Math.max(pct, 2)}%` }} />
+                        <div className="bg-brand-purple rounded-t-md transition-all" style={{ height: `${Math.max(pct, 2)}%` }} />
                       </div>
                       <span className="text-[9px] text-text-dim">{day}</span>
                     </div>
@@ -258,24 +258,24 @@ export default function PagosPage() {
               </div>
             </div>
 
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">Métricas de Attribution</h3>
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Métricas de Attribution</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-text-muted">Tiempo promedio a pago</span>
-                  <span className="text-sm font-bold text-text-primary font-mono">{resumen.tiempo_promedio_a_pago_horas || 0}h</span>
+                  <span className="text-[10px] font-mono text-text-muted">Tiempo promedio a pago</span>
+                  <span className="text-xs font-bold text-text-primary font-mono">{resumen.tiempo_promedio_a_pago_horas || 0}h</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-text-muted">Costo IA (período)</span>
-                  <span className="text-sm font-bold text-status-info font-mono">${resumen.costo_ia_usd || 0} USD</span>
+                  <span className="text-[10px] font-mono text-text-muted">Costo IA (período)</span>
+                  <span className="text-xs font-bold text-status-info font-mono">${resumen.costo_ia_usd || 0} USD</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-text-muted">ROI estimado</span>
-                  <span className="text-sm font-bold text-status-success font-mono">{resumen.roi_estimado || 0}x</span>
+                  <span className="text-[10px] font-mono text-text-muted">ROI estimado</span>
+                  <span className="text-xs font-bold text-status-success font-mono">{resumen.roi_estimado || 0}x</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-text-muted">Ticket promedio</span>
-                  <span className="text-sm font-bold text-brand-purple font-mono">{formatCOP(resumen.ticket_promedio || 0)}</span>
+                  <span className="text-[10px] font-mono text-text-muted">Ticket promedio</span>
+                  <span className="text-xs font-bold text-brand-purple font-mono">{formatCOP(resumen.ticket_promedio || 0)}</span>
                 </div>
               </div>
             </div>
@@ -283,20 +283,20 @@ export default function PagosPage() {
 
           {/* Top Conversaciones */}
           {(attribution.top_conversaciones?.length ?? 0) > 0 && (
-            <div className="glass-card p-5">
-              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4">🎯 Conversaciones que Generaron Revenue</h3>
-              <div className="space-y-3">
+            <div className="glass-card p-4">
+              <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">🎯 Conversaciones que Generaron Revenue</h3>
+              <div className="space-y-2">
                 {attribution.top_conversaciones!.map((conv, i) => (
-                  <div key={i} className="bg-void/50 rounded-lg px-4 py-3 flex items-center justify-between">
+                  <div key={i} className="bg-void/50 rounded-md px-3 py-2.5 flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-text-primary">{conv.patient}</span>
-                        <span className="text-[10px] text-text-dim">— {conv.service}</span>
+                        <span className="text-[10px] font-mono font-semibold text-text-primary">{conv.patient}</span>
+                        <span className="text-[9px] font-mono text-text-dim">-- {conv.service}</span>
                       </div>
-                      <p className="text-[11px] text-text-muted mt-0.5 truncate">{`"${conv.conversation_snippet}"`}</p>
+                      <p className="text-[10px] font-mono text-text-muted mt-0.5 truncate">{`"${conv.conversation_snippet}"`}</p>
                     </div>
                     <div className="text-right ml-4 flex-shrink-0">
-                      <div className="text-sm font-bold text-status-success font-mono">{formatCOP(conv.payment_amount)}</div>
+                      <div className="text-xs font-bold text-status-success font-mono">{formatCOP(conv.payment_amount)}</div>
                       <div className="text-[9px] text-text-dim">{conv.paid_at ? timeAgo(conv.paid_at) : ''}</div>
                     </div>
                   </div>

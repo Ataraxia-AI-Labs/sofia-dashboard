@@ -72,9 +72,9 @@ function CompetitorFormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative glass-card p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-text-primary">
+      <div className="relative glass-card p-4 w-full max-w-lg max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold font-mono text-text-primary">
             {competitor ? t('editCompetitor') : t('addCompetitor')}
           </h3>
           <button onClick={onClose} className="w-7 h-7 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
@@ -108,7 +108,7 @@ function CompetitorFormModal({
 
           {/* Service prices */}
           <div>
-            <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider mb-2">{t('servicePrices')}</p>
+            <p className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider mb-2">{t('servicePrices')}</p>
             <div className="space-y-2">
               {services.map((s, i) => (
                 <div key={i} className="flex items-center gap-2">
@@ -170,9 +170,9 @@ function ReportModal({ report, onClose }: { report: CompetitorReport; onClose: (
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative glass-card p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+      <div className="relative glass-card p-4 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold font-mono text-text-primary flex items-center gap-2">
             <FileText size={14} className="text-brand-purple" />
             {t('fullReport')}
           </h3>
@@ -182,7 +182,7 @@ function ReportModal({ report, onClose }: { report: CompetitorReport; onClose: (
         </div>
 
         {/* Position Summary */}
-        <div className="mb-4 p-4 rounded-xl bg-surface-2 border border-border">
+        <div className="mb-3 p-4 rounded-lg bg-surface-2 border border-border">
           <p className="text-xs font-semibold text-text-primary mb-1">{t('marketPosition')}</p>
           <p className="text-xs text-text-muted">
             {t('competitiveIn', { count: report.market_position.competitive_services, total: report.market_position.total_services })}
@@ -191,7 +191,7 @@ function ReportModal({ report, onClose }: { report: CompetitorReport; onClose: (
         </div>
 
         {/* SWOT */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <SwotCard type="strength" items={report.insights.strengths} />
           <SwotCard type="weakness" items={report.insights.weaknesses} />
           <SwotCard type="opportunity" items={report.insights.opportunities} />
@@ -200,7 +200,7 @@ function ReportModal({ report, onClose }: { report: CompetitorReport; onClose: (
 
         {/* AI Summary */}
         {report.insights.summary && (
-          <div className="p-4 rounded-xl bg-surface-2 border border-border">
+          <div className="p-4 rounded-lg bg-surface-2 border border-border">
             <p className="text-xs font-semibold text-text-primary mb-2 flex items-center gap-1.5">
               <Sparkles size={12} className="text-brand-purple" />
               {t('aiSummary')}
@@ -232,10 +232,10 @@ function SwotCard({ type, items }: { type: keyof typeof SWOT_CONFIG; items: stri
   const cfg = SWOT_CONFIG[type]
   const Icon = cfg.icon
   return (
-    <div className={`p-3 rounded-xl ${cfg.bg} border ${cfg.border}`}>
+    <div className={`p-3 rounded-lg ${cfg.bg} border ${cfg.border}`}>
       <div className="flex items-center gap-1.5 mb-2">
         <Icon size={12} className={cfg.color} />
-        <span className={`text-[10px] font-bold uppercase tracking-wider ${cfg.color}`}>{cfg.label}</span>
+        <span className={`text-[10px] font-bold font-mono uppercase tracking-wider ${cfg.color}`}>{cfg.label}</span>
       </div>
       {items.length > 0 ? (
         <ul className="space-y-1">
@@ -363,8 +363,8 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map(i => (
-          <div key={i} className="glass-card p-6 animate-pulse">
-            <div className="h-5 bg-surface-3 rounded w-48 mb-4" />
+          <div key={i} className="glass-card p-4 animate-pulse">
+            <div className="h-5 bg-surface-3 rounded w-48 mb-3" />
             <div className="h-20 bg-surface-3 rounded" />
           </div>
         ))}
@@ -379,12 +379,12 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
       {/* HEADER ACTIONS */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-purple to-status-danger flex items-center justify-center text-white shadow-lg">
+          <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple">
             <Swords size={14} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text-primary">{t('title')}</h3>
-            <p className="text-[10px] text-text-dim">{t('subtitle')}</p>
+            <h3 className="text-sm font-bold font-mono text-text-primary">{t('title')}</h3>
+            <p className="text-[10px] font-mono text-text-dim">{t('subtitle')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -413,7 +413,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
       {priceChanges.length > 0 && (
         <div className="space-y-2">
           {priceChanges.map((pc, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-status-warning/5 border border-status-warning/15">
+            <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-status-warning/5 border border-status-warning/15">
               <div className="w-7 h-7 rounded-lg bg-status-warning/10 flex items-center justify-center flex-shrink-0">
                 <AlertTriangle size={13} className="text-status-warning" />
               </div>
@@ -435,7 +435,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
 
       {/* MARKET POSITION SUMMARY */}
       {position && (
-        <div className="glass-card p-5">
+        <div className="glass-card p-4">
           <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
             <Target size={13} className="text-brand-purple" />
             {t('marketPosition')}
@@ -451,7 +451,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
               {/* Visual gauge */}
               <div className="h-2.5 rounded-full bg-surface-3 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan transition-all duration-500"
+                  className="h-full rounded-full bg-brand-purple transition-all duration-500"
                   style={{ width: `${position.total_services > 0 ? (position.competitive_services / position.total_services) * 100 : 0}%` }}
                 />
               </div>
@@ -480,7 +480,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
 
       {/* PRICING COMPARISON TABLE */}
       {pricing.length > 0 && (
-        <div className="glass-card p-5">
+        <div className="glass-card p-4">
           <h4 className="text-xs font-semibold text-text-primary mb-3">{t('pricingComparison')}</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -528,11 +528,11 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
 
       {/* BENCHMARKS VS MARKET */}
       {benchmarks.length > 0 && (
-        <div className="glass-card p-5">
+        <div className="glass-card p-4">
           <h4 className="text-xs font-semibold text-text-primary mb-3">{t('benchmarksTitle')}</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {benchmarks.map((bm, i) => (
-              <div key={i} className="px-4 py-3.5 rounded-xl bg-surface-2 border border-border">
+              <div key={i} className="px-4 py-3.5 rounded-lg bg-surface-2 border border-border">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-text-primary">{bm.metric}</span>
                   {bm.is_better ? (
@@ -560,7 +560,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
 
       {/* AI COMPETITIVE INSIGHTS (SWOT) */}
       {insights && (
-        <div className="glass-card p-5">
+        <div className="glass-card p-4">
           <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
             <Sparkles size={13} className="text-brand-purple" />
             {t('aiInsights')}
@@ -580,7 +580,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
       )}
 
       {/* REGISTERED COMPETITORS */}
-      <div className="glass-card p-5">
+      <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xs font-semibold text-text-primary flex items-center gap-2">
             <Building2 size={13} className="text-text-muted" />
@@ -596,7 +596,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {competitors.map(comp => (
-              <div key={comp.id} className="px-4 py-3 rounded-xl bg-surface-2 border border-border hover:border-border-2 transition-colors">
+              <div key={comp.id} className="px-4 py-3 rounded-lg bg-surface-2 border border-border hover:border-border-2 transition-colors">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-xs font-semibold text-text-primary">{comp.name}</p>
@@ -647,7 +647,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
 
       {/* EMPTY STATE — no data at all */}
       {!position && pricing.length === 0 && competitors.length === 0 && (
-        <div className="glass-card p-12 text-center">
+        <div className="glass-card p-8 text-center">
           <Swords size={36} className="mx-auto text-text-dim mb-3" />
           <p className="text-sm font-semibold text-text-primary mb-1">{t('emptyTitle')}</p>
           <p className="text-xs text-text-muted">{t('emptyHint')}</p>

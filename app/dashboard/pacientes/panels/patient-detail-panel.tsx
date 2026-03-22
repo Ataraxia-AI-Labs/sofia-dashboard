@@ -68,13 +68,13 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
       {/* Panel */}
       <div className="relative w-full max-w-lg bg-surface border-l border-border overflow-y-auto animate-slide-in">
         {/* Header */}
-        <div className="sticky top-0 bg-surface/90 backdrop-blur-md border-b border-border px-6 py-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-surface/90 backdrop-blur-md border-b border-border px-5 py-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple font-mono font-bold">
               {patient.full_name?.[0]?.toUpperCase() || '?'}
             </div>
             <div>
-              <h3 className="text-base font-semibold text-text-primary">{patient.full_name || 'Sin nombre'}</h3>
+              <h3 className="text-base font-mono font-semibold text-text-primary">{patient.full_name || 'Sin nombre'}</h3>
               <p className="text-xs text-text-muted font-mono">{patient.phone}</p>
             </div>
           </div>
@@ -84,33 +84,33 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-1.5 px-6 py-2 border-b border-border bg-surface/50">
-          <button onClick={props.onToggleEdit} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${props.editingPatient ? 'bg-brand-purple/15 text-brand-purple' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+        <div className="flex gap-1.5 px-5 py-2 border-b border-border bg-surface/50">
+          <button onClick={props.onToggleEdit} className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold transition-colors ${props.editingPatient ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
             <Edit3 size={11} className="inline mr-1" />Editar
           </button>
-          <button onClick={props.onToggleWhatsApp} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${props.showWhatsApp ? 'bg-status-success/15 text-status-success' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+          <button onClick={props.onToggleWhatsApp} className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold transition-colors ${props.showWhatsApp ? 'bg-status-success/8 border border-status-success/15 text-status-success' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
             <Send size={11} className="inline mr-1" />WhatsApp
           </button>
-          <button onClick={props.onToggleTreatment} className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors ${props.showTreatmentForm ? 'bg-status-info/15 text-status-info' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+          <button onClick={props.onToggleTreatment} className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold transition-colors ${props.showTreatmentForm ? 'bg-status-info/8 border border-status-info/15 text-status-info' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
             <Pill size={11} className="inline mr-1" />Tratamiento
           </button>
           <PortalLinkGenerator orgId={orgId} patientId={patient.id} patientName={patient.full_name} compact />
         </div>
 
         {/* Tab navigation */}
-        <div className="flex gap-0 px-6 border-b border-border bg-surface/50">
+        <div className="flex gap-0 px-5 border-b border-border bg-surface/50">
           {tabs.map((tab) => (
-            <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`px-3 py-2 text-[11px] font-semibold border-b-2 transition-colors ${detailTab === tab.id ? 'border-brand-purple text-brand-purple' : 'border-transparent text-text-dim hover:text-text-muted'}`}>
+            <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`px-3 py-2 text-[11px] font-mono font-semibold border-b-2 transition-colors ${detailTab === tab.id ? 'border-brand-purple text-brand-purple' : 'border-transparent text-text-dim hover:text-text-muted'}`}>
               {tab.label}
             </button>
           ))}
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-5 space-y-5">
           {detailLoading ? (
             <div className="space-y-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-20 bg-surface-2 rounded-xl animate-pulse" />
+                <div key={i} className="h-20 bg-surface-2 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : (

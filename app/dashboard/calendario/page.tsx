@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic'
 
 const WaitingRoomPanel = dynamic(() => import('./waiting-room-panel'), {
   ssr: false,
-  loading: () => <div className="glass-card p-8 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
+  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
 const STATUS_STYLE: Record<string, { color: string; bg: string; icon: typeof CheckCircle }> = {
@@ -252,12 +252,12 @@ export default function CalendarioPage() {
     : `${t(`months.${currentDate.getMonth()}`)} ${currentDate.getFullYear()}`
 
   return (
-    <div className="max-w-[1400px] space-y-5">
+    <div className="max-w-[1200px] space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">{t('appointmentsInPeriod', { count: appointments.length })}</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('appointmentsInPeriod', { count: appointments.length })}</p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -265,7 +265,7 @@ export default function CalendarioPage() {
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'calendar' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -274,7 +274,7 @@ export default function CalendarioPage() {
             </button>
             <button
               onClick={() => setActiveTab('waitingRoom')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'waitingRoom' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -288,7 +288,7 @@ export default function CalendarioPage() {
             <select
               value={staffFilter}
               onChange={(e) => setStaffFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs outline-none"
+              className="px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[10px] font-mono outline-none"
             >
               <option value="">{t('allStaff')}</option>
               {staffList.map((s) => (
@@ -301,7 +301,7 @@ export default function CalendarioPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs outline-none"
+            className="px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[10px] font-mono outline-none"
           >
             <option value="">{t('allStatuses')}</option>
             {STATUS_KEYS.map((key) => (
@@ -314,7 +314,7 @@ export default function CalendarioPage() {
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
                 viewMode === mode
                   ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                   : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -327,7 +327,7 @@ export default function CalendarioPage() {
           <button onClick={loadAppointments} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
-          <button onClick={openNewAppt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
+          <button onClick={openNewAppt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/25 transition-colors">
             <Plus size={13} /> {t('newAppointment')}
           </button>
         </div>
@@ -350,17 +350,17 @@ export default function CalendarioPage() {
           <button onClick={() => navigate(1)} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <ChevronRight size={16} />
           </button>
-          <button onClick={goToday} className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold hover:text-text-primary transition-colors">
+          <button onClick={goToday} className="px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[10px] font-mono font-semibold hover:text-text-primary transition-colors">
             {t('today')}
           </button>
         </div>
-        <h3 className="text-base font-semibold text-text-primary">{headerLabel}</h3>
+        <h3 className="text-xs font-mono font-semibold text-text-primary">{headerLabel}</h3>
       </div>
 
       {/* NEW APPOINTMENT FORM */}
       {showNewAppt && (
-        <div className="glass-card p-5 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-sm font-semibold text-text-primary">{t('newManualAppointment')}</h4>
+        <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
+          <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary">{t('newManualAppointment')}</h4>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
             <div>
               <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('patientRequired')}</label>
@@ -406,7 +406,7 @@ export default function CalendarioPage() {
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-border">
           {DAY_KEYS.map((d) => (
-            <div key={d} className="text-center text-[11px] font-semibold text-text-muted uppercase tracking-wider py-2.5 border-r border-border last:border-r-0">
+            <div key={d} className="text-center text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider py-2 border-r border-border last:border-r-0">
               {t(`days.${d}`)}
             </div>
           ))}
@@ -423,7 +423,7 @@ export default function CalendarioPage() {
                   !cell.isCurrentMonth ? 'bg-void/30' : ''
                 } ${cell.isToday ? 'bg-brand-purple/5' : ''}`}
               >
-                <div className={`text-xs font-semibold mb-1 px-1 ${
+                <div className={`text-[10px] font-mono font-semibold mb-1 px-1 ${
                   cell.isToday ? 'text-brand-purple' : cell.isCurrentMonth ? 'text-text-secondary' : 'text-text-dim'
                 }`}>
                   {cell.isToday && <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-purple mr-1 mb-0.5" />}
@@ -465,7 +465,7 @@ export default function CalendarioPage() {
       {/* Status legend */}
       <div className="flex gap-3 flex-wrap justify-center">
         {STATUS_KEYS.map((key) => (
-          <div key={key} className="flex items-center gap-1.5 text-xs text-text-muted">
+          <div key={key} className="flex items-center gap-1.5 text-[9px] font-mono text-text-muted">
             <div className={`w-2 h-2 rounded-full ${STATUS_STYLE[key].color.replace('text-', 'bg-')}`} />
             {t(`statuses.${key}`)}
           </div>
@@ -478,9 +478,9 @@ export default function CalendarioPage() {
       {selectedAppt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => { setSelectedAppt(null); setShowReschedule(false) }} />
-          <div className="relative glass-card-elevated w-full max-w-md p-6 space-y-4 animate-fade-up max-h-[90vh] overflow-y-auto">
+          <div className="relative glass-card-elevated w-full max-w-md p-5 space-y-3 animate-fade-up max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-text-primary">{t('appointmentDetail')}</h3>
+              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('appointmentDetail')}</h3>
               <button onClick={() => { setSelectedAppt(null); setShowReschedule(false) }} className="w-7 h-7 rounded-lg bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
@@ -492,9 +492,9 @@ export default function CalendarioPage() {
               const StatusIcon = cfg.icon
               return (
                 <div className="flex items-center gap-2 flex-wrap">
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${cfg.bg}`}>
-                    <StatusIcon size={12} className={cfg.color} />
-                    <span className={`text-xs font-semibold ${cfg.color}`}>{t(`statuses.${selectedAppt.status}`)}</span>
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border ${cfg.bg}`}>
+                    <StatusIcon size={11} className={cfg.color} />
+                    <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{t(`statuses.${selectedAppt.status}`)}</span>
                   </div>
                   {selectedMLFeatures?.no_show_probability != null && selectedAppt.status !== 'COMPLETED' && selectedAppt.status !== 'CANCELLED' && (
                     <NoShowBadge probability={selectedMLFeatures.no_show_probability} />
@@ -531,7 +531,7 @@ export default function CalendarioPage() {
                       ))}
                     </select>
                   ) : (
-                    <div className="text-sm text-text-primary">{getStaffName(selectedAppt.staff_id) || t('unassigned')}</div>
+                    <div className="text-xs font-mono text-text-primary">{getStaffName(selectedAppt.staff_id) || t('unassigned')}</div>
                   )}
                 </div>
               </div>
@@ -542,7 +542,7 @@ export default function CalendarioPage() {
                   <span className="text-text-dim mt-0.5"><ArrowRightLeft size={14} /></span>
                   <div>
                     <div className="text-[10px] text-text-dim uppercase">{t('previousTime')}</div>
-                    <div className="text-sm text-text-muted line-through">
+                    <div className="text-xs font-mono text-text-muted line-through">
                       {new Date(selectedAppt.previous_start_time).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}
                     </div>
                   </div>
@@ -550,7 +550,7 @@ export default function CalendarioPage() {
               )}
             </div>
 
-            <div className="pt-2 border-t border-border text-xs text-text-dim">
+            <div className="pt-2 border-t border-border text-[9px] font-mono text-text-dim">
               {t('created', { time: timeAgo(selectedAppt.created_at) })}
             </div>
 
@@ -577,25 +577,25 @@ export default function CalendarioPage() {
               <div className="pt-3 border-t border-border flex gap-2 flex-wrap">
                 <button
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'COMPLETED'); setSelectedAppt(null); loadAppointments() }}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs font-semibold hover:bg-status-success/20 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-[10px] font-mono font-semibold hover:bg-status-success/20 transition-colors"
                 >
                   <CheckCircle size={12} /> {t('completed')}
                 </button>
                 <button
                   onClick={() => { setShowReschedule(!showReschedule); setRescheduleData({ date: '', time: '09:00', reason: '' }) }}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-xs font-semibold hover:bg-brand-gold/20 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-[10px] font-mono font-semibold hover:bg-brand-gold/20 transition-colors"
                 >
                   <CalIcon size={12} /> {t('reschedule')}
                 </button>
                 <button
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'NO_SHOW'); setSelectedAppt(null); loadAppointments() }}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-status-warning text-xs font-semibold hover:bg-status-warning/20 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-status-warning text-[10px] font-mono font-semibold hover:bg-status-warning/20 transition-colors"
                 >
                   <AlertTriangle size={12} /> {t('noShowAction')}
                 </button>
                 <button
                   onClick={async () => { await updateAppointmentStatus(selectedAppt.id, 'CANCELLED', t('cancelledFromDashboard')); setSelectedAppt(null); loadAppointments() }}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-semibold hover:bg-status-danger/20 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-mono font-semibold hover:bg-status-danger/20 transition-colors"
                 >
                   <XCircle size={12} /> {t('cancelAction')}
                 </button>
@@ -627,7 +627,7 @@ function NoShowBadge({ probability }: { probability: number }) {
       : t('lowRisk')
 
   return (
-    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[10px] font-semibold ${color}`}>
+    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md border text-[9px] font-mono font-semibold ${color}`}>
       <TrendingDown size={10} />
       {t('noShowRisk')}: {label} ({pct}%)
     </div>
@@ -639,8 +639,8 @@ function ApptRow({ icon, label, value }: { icon: React.ReactNode; label: string;
     <div className="flex items-start gap-3">
       <span className="text-text-dim mt-0.5">{icon}</span>
       <div>
-        <div className="text-[10px] text-text-dim uppercase">{label}</div>
-        <div className="text-sm text-text-primary">{value}</div>
+        <div className="text-[9px] font-mono text-text-dim uppercase tracking-wide">{label}</div>
+        <div className="text-xs font-mono text-text-primary">{value}</div>
       </div>
     </div>
   )

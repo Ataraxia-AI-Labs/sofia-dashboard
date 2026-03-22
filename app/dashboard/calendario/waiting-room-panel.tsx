@@ -181,7 +181,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
       <div className="flex items-center gap-2">
         <button
           onClick={() => setShowCheckIn(!showCheckIn)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs font-semibold hover:bg-brand-purple/20 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs font-mono font-semibold hover:bg-brand-purple/20 transition-colors"
         >
           <UserPlus size={14} />
           {t('quickCheckIn')}
@@ -221,7 +221,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
                   className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-2 border border-border hover:border-brand-purple/30 transition-colors text-left"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold flex-shrink-0">
+                    <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold font-mono flex-shrink-0">
                       {p.full_name?.[0]?.toUpperCase() || '?'}
                     </div>
                     <div>
@@ -242,7 +242,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
         <div className="glass-card p-4 border-status-danger/20 bg-status-danger/5">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={14} className="text-status-danger" />
-            <h3 className="text-sm font-semibold text-status-danger">{t('lateTitle')}</h3>
+            <h3 className="text-sm font-semibold font-mono text-status-danger">{t('lateTitle')}</h3>
             <span className="text-[10px] font-mono text-status-danger/70">{latePatients.length}</span>
           </div>
           <div className="space-y-2">
@@ -302,7 +302,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
           Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="glass-card p-4 animate-pulse">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-surface-3 rounded-xl" />
+                <div className="w-10 h-10 bg-surface-3 rounded-lg" />
                 <div className="flex-1">
                   <div className="h-4 bg-surface-3 rounded w-32 mb-2" />
                   <div className="h-3 bg-surface-3 rounded w-48" />
@@ -311,7 +311,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
             </div>
           ))
         ) : queue.length === 0 ? (
-          <div className="glass-card p-12 text-center">
+          <div className="glass-card p-8 text-center">
             <Clock size={36} className="mx-auto text-text-dim mb-3 opacity-40" />
             <p className="text-text-muted text-sm">{t('emptyQueue')}</p>
             <p className="text-text-dim text-xs mt-1">{t('emptyQueueHint')}</p>
@@ -328,13 +328,13 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5 flex-1 min-w-0">
                     {/* Queue position */}
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-purple/20 to-brand-cyan/20 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
                       <span className="text-sm font-bold font-mono text-brand-purple">#{entry.queue_position}</span>
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-semibold text-text-primary truncate">{entry.patient_name}</span>
+                        <span className="text-sm font-semibold font-mono text-text-primary truncate">{entry.patient_name}</span>
                         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusStyle.bg}`}>
                           <span className={statusStyle.color}>{statusStyle.label}</span>
                         </span>
@@ -388,11 +388,11 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
 function StatCard({ icon, value, label, gradient }: { icon: React.ReactNode; value: string; label: string; gradient: string }) {
   return (
     <div className="glass-card p-3.5">
-      <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-2 shadow-lg`}>
+      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>
       <div className="text-xl font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[10px] text-text-muted mt-0.5">{label}</div>
+      <div className="text-[10px] font-mono text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

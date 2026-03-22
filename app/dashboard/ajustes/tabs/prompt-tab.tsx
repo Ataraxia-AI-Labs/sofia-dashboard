@@ -16,11 +16,11 @@ interface PromptTabProps {
 export function PromptTab({ systemPrompt, onChangePrompt, onSave, saving, isReadOnly }: PromptTabProps) {
   const t = useTranslations('prompt')
   return (
-    <div className="glass-card p-6 space-y-4">
+    <div className="glass-card p-5 space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-text-primary">{t('title')}</h3>
-          <p className="text-xs text-text-dim mt-0.5">{t('description')}</p>
+          <h3 className="text-xs font-mono font-semibold text-text-primary">{t('title')}</h3>
+          <p className="text-[10px] font-mono text-text-dim mt-0.5">{t('description')}</p>
         </div>
         <Button
           variant="secondary"
@@ -37,14 +37,13 @@ export function PromptTab({ systemPrompt, onChangePrompt, onSave, saving, isRead
         value={systemPrompt}
         onChange={(e) => onChangePrompt(e.target.value)}
         rows={16}
-        className="w-full px-4 py-3 rounded-xl bg-void border border-border text-text-primary text-sm font-mono leading-relaxed outline-none focus:border-brand-purple/40 resize-y"
+        className="w-full px-3 py-2.5 rounded-lg bg-void border border-border text-text-primary text-xs font-mono leading-relaxed outline-none focus:border-brand-purple/40 resize-y"
         placeholder={t('placeholder')}
       />
-      <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-brand-purple/5 border border-brand-purple/10">
+      <div className="flex items-start gap-2 px-3 py-2 rounded-md bg-brand-purple/8 border border-brand-purple/15">
         <Shield size={14} className="text-brand-purple mt-0.5 flex-shrink-0" />
-        <p className="text-[11px] text-text-muted leading-relaxed">{t('securityNote')}</p>
+        <p className="text-[10px] font-mono text-text-muted leading-relaxed">{t('securityNote')}</p>
       </div>
     </div>
   )
 }
-

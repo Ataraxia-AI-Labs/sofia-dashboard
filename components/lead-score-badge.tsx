@@ -76,7 +76,7 @@ export function LeadScoreBadge({
   if (compact) {
     return (
       <div
-        className={`w-7 h-7 rounded-lg ${cfg.bg} border ${cfg.border} flex items-center justify-center ${className}`}
+        className={`w-7 h-7 rounded-md ${cfg.bg} border ${cfg.border} flex items-center justify-center ${className}`}
         title={`${cfg.label} — Score: ${score}`}
       >
         <Icon size={14} className={cfg.color} />
@@ -86,13 +86,13 @@ export function LeadScoreBadge({
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg ${cfg.bg} border ${cfg.border} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}
     >
-      <Icon size={12} className={cfg.color} />
+      <Icon size={10} className={cfg.color} />
       {showScore && (
         <span className={`text-[10px] font-bold font-mono ${cfg.color}`}>{score}</span>
       )}
-      <span className={`text-[10px] font-semibold ${cfg.color}`}>{cfg.label}</span>
+      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

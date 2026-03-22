@@ -87,11 +87,11 @@ export default function AjustesPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[1000px] space-y-4">
+      <div className="max-w-[1000px] space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="glass-card p-6 animate-pulse">
-            <div className="h-5 bg-surface-3 rounded w-40 mb-4" />
-            <div className="h-32 bg-surface-3 rounded" />
+          <div key={i} className="glass-card p-4 animate-pulse">
+            <div className="h-4 bg-surface-3 rounded w-40 mb-3" />
+            <div className="h-28 bg-surface-3 rounded" />
           </div>
         ))}
       </div>
@@ -99,21 +99,21 @@ export default function AjustesPage() {
   }
 
   return (
-    <div className="max-w-[1000px] space-y-5">
+    <div className="max-w-[1000px] space-y-4">
       {isReadOnly && (
-        <div className="px-4 py-3 rounded-xl bg-status-warning/10 border border-status-warning/20 text-xs text-status-warning font-semibold flex items-center gap-2">
-          <Shield size={14} />
+        <div className="px-3 py-2.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-[10px] font-mono text-status-warning font-semibold flex items-center gap-2">
+          <Shield size={12} />
           {t('readOnly', { role })}
         </div>
       )}
 
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-xs mt-0.5">{org?.name || t('subtitle')}</p>
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">{org?.name || t('subtitle')}</p>
         </div>
-        <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-          <RefreshCw size={14} />
+        <button onClick={loadData} aria-label={tCommon('refresh')} className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+          <RefreshCw size={13} />
         </button>
       </div>
 

@@ -53,14 +53,14 @@ export function NetworkBenchmarkCard({
   return (
     <div className="glass-card p-5">
       <div className="flex items-start justify-between mb-3">
-        <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">{metricName}</h4>
-        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${bgClass} ${colorClass}`}>
+        <h4 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">{metricName}</h4>
+        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${bgClass} ${colorClass}`}>
           P{percentile}
         </span>
       </div>
 
       <div className="flex items-end gap-3 mb-3">
-        <div className="text-2xl font-bold font-mono text-text-primary">{formatValue(yours)}</div>
+        <div className="text-xl font-bold font-mono text-text-primary">{formatValue(yours)}</div>
         <div className="flex items-center gap-1 pb-0.5">
           {isClose ? (
             <Minus size={14} className={colorClass} />
@@ -69,7 +69,7 @@ export function NetworkBenchmarkCard({
           ) : (
             <TrendingDown size={14} className={colorClass} />
           )}
-          <span className={`text-xs font-semibold ${colorClass}`}>
+          <span className={`text-[10px] font-mono font-semibold ${colorClass}`}>
             {isAbove ? t('aboveAvg') : isClose ? '~' : t('belowAvg')}
           </span>
         </div>
@@ -81,7 +81,7 @@ export function NetworkBenchmarkCard({
           <span>{t('yourClinic')}</span>
           <span>{t('marketAvg')}</span>
         </div>
-        <div className="relative h-2 bg-surface-3 rounded-full overflow-hidden">
+        <div className="relative h-2 bg-surface-3 rounded overflow-hidden">
           {/* Market avg marker */}
           <div
             className="absolute top-0 h-full w-0.5 bg-text-dim z-10"
@@ -89,7 +89,7 @@ export function NetworkBenchmarkCard({
           />
           {/* Your value bar */}
           <div
-            className={`h-full rounded-full transition-all ${isAbove ? 'bg-status-success' : isClose ? 'bg-status-warning' : 'bg-status-danger'}`}
+            className={`h-full rounded transition-all ${isAbove ? 'bg-status-success' : isClose ? 'bg-status-warning' : 'bg-status-danger'}`}
             style={{ width: `${Math.min(100, (yours / Math.max(yours, marketAvg) * 1.2) * 100 / 1.2)}%` }}
           />
         </div>

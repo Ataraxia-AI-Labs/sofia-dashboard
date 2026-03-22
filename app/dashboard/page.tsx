@@ -5,6 +5,7 @@ import { useOrg } from '@/lib/org-context'
 import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
 import type { FullAnalytics, VoiceMetrics } from '@/types'
 import { MetricCard, SectionTitle, StatusPill, PerfItem, RevenueItem, BotCard, EmptyState } from '@/components/ui'
+import { AtaraxiaScore, SofiaSpeaks, NightReport, PhantomGrid } from '@/components/innovations'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import {
@@ -15,10 +16,9 @@ import {
 
 const LazyIntentsChart = dynamic(
   () => import('./DashboardCharts').then(mod => ({ default: mod.IntentsChart })),
-  { ssr: false, loading: () => <div className="h-56 bg-surface-3 rounded-lg animate-pulse" /> },
+  { ssr: false, loading: () => <div className="h-48 bg-surface-3 rounded-md animate-pulse" /> },
 )
 
-// Opportunity type colors
 const OPP_COLORS: Record<string, string> = {
   HOT_LEAD: '#8B5CF6',
   UPSELL: '#06D6A0',
@@ -29,8 +29,6 @@ const OPP_COLORS: Record<string, string> = {
   MULTI_PROCEDURE: '#C084FC',
   HIGH_VALUE: '#34D399',
 }
-
-// OPP_LABELS removed — now uses useTranslations('opportunities.types')
 
 export default function DashboardOverview() {
   const { orgId, branchId } = useOrg()
@@ -50,19 +48,16 @@ export default function DashboardOverview() {
   const loadData = useCallback(async (retryCount = 0) => {
     if (!orgId) return
 
-    // Prevent concurrent retries — only the first call proceeds
     if (retryCount > 0 && retryingRef.current) return
     if (retryCount > 0) retryingRef.current = true
 
     setLoading(true)
     if (retryCount > 0) setError(t('connecting'))
 
-    // Voice metrics go directly to Supabase — always load independently
     fetchVoiceMetrics(orgId, days, branchId)
       .then(v => setVoice(v))
       .catch(() => {})
 
-    // Analytics go to backend — may fail on cold start
     try {
       const analytics = await fetchFullAnalytics(orgId, days, branchId)
       setData(analytics)
@@ -73,7 +68,6 @@ export default function DashboardOverview() {
       const msg = e instanceof Error ? e.message : tCommon('errorUnknown')
       if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502') || msg.includes('autenticación'))) {
         setError(t('retrying'))
-        // Clear any existing retry timer before scheduling a new one
         if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
         retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), 10000)
         return
@@ -98,15 +92,16 @@ export default function DashboardOverview() {
     }
   }, [loadData])
 
+  /* ---- Loading skeleton ---- */
   if (loading && !data) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="space-y-4 max-w-[1200px]">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="glass-card p-5 animate-pulse">
-              <div className="w-10 h-10 rounded-xl bg-surface-3 mb-3" />
-              <div className="h-7 bg-surface-3 rounded w-20 mb-2" />
-              <div className="h-4 bg-surface-3 rounded w-28" />
+            <div key={i} className="glass-card p-4 animate-pulse">
+              <div className="w-8 h-8 rounded-md bg-surface-3 mb-2" />
+              <div className="h-6 bg-surface-3 rounded w-16 mb-1" />
+              <div className="h-3 bg-surface-3 rounded w-24" />
             </div>
           ))}
         </div>
@@ -114,22 +109,23 @@ export default function DashboardOverview() {
     )
   }
 
+  /* ---- Error state ---- */
   if (error && !data) {
     return (
-      <div className="glass-card p-8 border-status-danger/30">
-        <div className="flex items-center gap-3 text-status-danger mb-3">
-          <AlertTriangle size={20} />
-          <span className="font-semibold">{t('loadError')}</span>
+      <div className="glass-card p-6 border-status-danger/20 max-w-[1200px]">
+        <div className="flex items-center gap-2 text-status-danger mb-2">
+          <AlertTriangle size={16} />
+          <span className="text-xs font-mono font-semibold">{t('loadError')}</span>
         </div>
-        <p className="text-text-muted text-sm">{error}</p>
-        <button onClick={() => loadData()} className="mt-4 px-4 py-2 rounded-lg bg-brand-purple/10 text-brand-purple text-sm hover:bg-brand-purple/20 transition-colors">
+        <p className="text-text-muted text-[10px] font-mono">{error}</p>
+        <button onClick={() => loadData()} className="mt-3 px-3 py-1.5 rounded-md bg-brand-purple/8 text-brand-purple text-[10px] font-mono hover:bg-brand-purple/15 transition-colors">
           {tCommon('retry')}
         </button>
       </div>
     )
   }
 
-  // ===== EMPTY STATE — New clinic with no activity yet =====
+  /* ---- Empty state — new clinic ---- */
   const totalMensajes = data?.conversiones?.total_mensajes_inbound ?? 0
   const totalPacientes = data?.conversiones?.pacientes_unicos ?? 0
   const isNewClinic = !loading && !!data && totalMensajes === 0 && totalPacientes === 0
@@ -137,63 +133,56 @@ export default function DashboardOverview() {
   if (isNewClinic) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4">
-        <div className="w-full max-w-lg animate-fade-up">
-          {/* Glowing icon */}
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-purple/30 to-brand-cyan/20 blur-xl scale-150" />
-              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-purple to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-purple/30">
-                <Zap size={28} className="text-white" />
-              </div>
+        <div className="w-full max-w-md animate-fade-up">
+          {/* Icon */}
+          <div className="flex justify-center mb-5">
+            <div className="w-14 h-14 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+              <Zap size={24} className="text-brand-purple" />
             </div>
           </div>
 
-          {/* Card */}
-          <div className="glass-card p-8 text-center gradient-border">
-            <h2 className="text-2xl font-bold text-text-primary mb-2">
+          <div className="glass-card p-6 text-center">
+            <h2 className="text-lg font-mono font-bold text-text-primary mb-1">
               {t('clinicReady')}{' '}
-              <span className="gradient-text">{t('activateSofia')}</span>
+              <span className="text-brand-purple">{t('activateSofia')}</span>
             </h2>
-            <p className="text-text-muted text-sm leading-relaxed mb-6">
+            <p className="text-text-muted text-[10px] font-mono leading-relaxed mb-5">
               {t('connectWhatsAppDesc')}
             </p>
 
-            {/* Primary CTA */}
             <a
               href="/dashboard/ajustes"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-sm font-semibold hover:shadow-lg hover:shadow-brand-purple/30 hover:-translate-y-0.5 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors"
             >
-              <MessageSquare size={16} />
+              <MessageSquare size={14} />
               {t('connectWhatsApp')}
-              <ArrowRight size={14} />
+              <ArrowRight size={12} />
             </a>
 
-            {/* Secondary copy */}
-            <p className="text-text-dim text-xs mt-4">
+            <p className="text-text-dim text-[9px] font-mono mt-3">
               {t('sofiaResponds247')}
             </p>
 
             {/* Trust indicators */}
-            <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 gap-4">
+            <div className="mt-5 pt-4 border-t border-border grid grid-cols-3 gap-3">
               {[
                 { value: '< 5 min', label: t('toActivate') },
                 { value: '24/7', label: t('availability') },
                 { value: '80%', label: t('lessWorkload') },
               ].map((item) => (
                 <div key={item.label} className="text-center">
-                  <div className="text-lg font-bold font-display gradient-text">{item.value}</div>
-                  <div className="text-[10px] text-text-dim mt-0.5">{item.label}</div>
+                  <div className="text-sm font-mono font-bold text-brand-purple">{item.value}</div>
+                  <div className="text-[8px] text-text-dim font-mono mt-0.5">{item.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Quick start hint */}
-          <p className="text-center text-text-dim text-xs mt-4">
+          <p className="text-center text-text-dim text-[9px] font-mono mt-3">
             {t('alreadyConnected')}{' '}
             <button
               onClick={() => loadData()}
-              className="text-brand-purple hover:underline font-medium"
+              className="text-brand-purple hover:underline font-semibold"
             >
               {t('refreshMetrics')}
             </button>
@@ -209,7 +198,6 @@ export default function DashboardOverview() {
   const o = data?.oportunidades
   const b = data?.sub_bots
 
-  // Prepare chart data
   const intentData = Object.entries(p?.distribucion_intents || {}).map(([k, v]) => ({
     name: k.replace('_', ' '),
     value: v,
@@ -229,41 +217,47 @@ export default function DashboardOverview() {
   ]
 
   return (
-    <div className="space-y-6 max-w-[1400px]">
-      {/* ===== HEADER ===== */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold font-display text-text-primary">{t('overview')}</h2>
+    <div className="space-y-5 max-w-[1200px]">
+      {/* ===== SENTIENT HEADER: Ataraxia Score + Controls ===== */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 items-start">
+        <div className="space-y-2">
+          {data && <AtaraxiaScore data={data} voice={voice} />}
+          {data && <SofiaSpeaks data={data} voice={voice} />}
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-1.5">
+            <button onClick={() => loadData()} aria-label={tCommon('refresh')} className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
+              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+            </button>
+            {[7, 30, 90].map((d) => (
+              <button
+                key={d}
+                onClick={() => setDays(d)}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold transition-all ${
+                  days === d
+                    ? 'bg-brand-purple/10 text-brand-purple border border-brand-purple/20'
+                    : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+                }`}
+              >
+                {d}d
+              </button>
+            ))}
+          </div>
           {lastUpdate && (
-            <p className="text-text-dim text-xs mt-0.5">
+            <p className="text-text-dim text-[9px] font-mono">
               {t('updated', { time: lastUpdate.toLocaleTimeString() })}
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => loadData()} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          </button>
-          {[7, 30, 90].map((d) => (
-            <button
-              key={d}
-              onClick={() => setDays(d)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                days === d
-                  ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
-                  : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
-              }`}
-            >
-              {d}d
-            </button>
-          ))}
-        </div>
       </div>
 
+      {/* ===== NIGHT REPORT ===== */}
+      <NightReport />
+
       {/* ===== TOP METRICS ===== */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <MetricCard
-          icon={<MessageSquare size={18} />}
+          icon={<MessageSquare size={16} />}
           iconColor="from-brand-purple to-brand-purple-dark"
           value={formatNumber(c?.total_mensajes_inbound || 0)}
           label={t('messagesReceived')}
@@ -271,14 +265,14 @@ export default function DashboardOverview() {
           delay={0}
         />
         <MetricCard
-          icon={<Users size={18} />}
+          icon={<Users size={16} />}
           iconColor="from-brand-cyan to-brand-cyan-light"
           value={formatNumber(c?.pacientes_unicos || 0)}
           label={t('uniquePatients')}
           delay={1}
         />
         <MetricCard
-          icon={<CalendarCheck size={18} />}
+          icon={<CalendarCheck size={16} />}
           iconColor="from-brand-purple to-brand-cyan"
           value={formatNumber(c?.total_citas || 0)}
           label={t('scheduledAppointments')}
@@ -287,7 +281,7 @@ export default function DashboardOverview() {
           delay={2}
         />
         <MetricCard
-          icon={<DollarSign size={18} />}
+          icon={<DollarSign size={16} />}
           iconColor="from-brand-gold to-amber-500"
           value={formatCOP(r?.revenue_total || 0)}
           label={t('revenue')}
@@ -295,7 +289,7 @@ export default function DashboardOverview() {
           delay={3}
         />
         <MetricCard
-          icon={<Cpu size={18} />}
+          icon={<Cpu size={16} />}
           iconColor="from-status-success to-emerald-400"
           value={formatUSD(p?.total_costo_usd || 0)}
           label={t('totalAICost')}
@@ -304,253 +298,191 @@ export default function DashboardOverview() {
         />
       </div>
 
-      {/* ===== FUNNEL + REVENUE ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Funnel */}
-        <div className="glass-card-accent p-6">
-          <SectionTitle icon={<TrendingUp size={16} />} title={t('conversionFunnel')} />
-          <div className="flex items-end justify-between gap-4 mt-6 px-2">
-            {funnelData.map((step, i) => {
-              const maxVal = funnelData[0].value || 1
-              const height = Math.max((step.value / maxVal) * 140, 24)
-              return (
-                <div key={step.name} className="flex flex-col items-center flex-1">
-                  <span className="text-lg font-bold font-mono text-text-primary mb-2">
-                    {formatNumber(step.value)}
-                  </span>
-                  <div
-                    className="w-full rounded-t-lg transition-all duration-700"
-                    style={{
-                      height: `${height}px`,
-                      background: step.color,
-                      opacity: 0.85,
-                      animationDelay: `${i * 0.15}s`,
-                    }}
-                  />
-                  <span className="text-[11px] text-text-muted mt-2 text-center">{step.name}</span>
-                  {i > 0 && funnelData[i - 1].value > 0 && (
-                    <span className="text-[10px] text-text-dim mt-0.5">
-                      {((step.value / funnelData[i - 1].value) * 100).toFixed(0)}%
-                    </span>
-                  )}
+      {/* ===== ADAPTIVE SECTIONS (Phantom Grid) ===== */}
+      <PhantomGrid className="space-y-5" sections={[
+        /* --- Funnel + Revenue --- */
+        {
+          id: 'funnel-revenue',
+          priority: 1,
+          element: (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <div className="glass-card-accent p-5">
+                <SectionTitle icon={<TrendingUp size={14} />} title={t('conversionFunnel')} />
+                <div className="flex items-end justify-between gap-3 mt-5 px-1">
+                  {funnelData.map((step, i) => {
+                    const maxVal = funnelData[0].value || 1
+                    const height = Math.max((step.value / maxVal) * 120, 20)
+                    return (
+                      <div key={step.name} className="flex flex-col items-center flex-1">
+                        <span className="text-sm font-mono font-bold text-text-primary mb-1.5">{formatNumber(step.value)}</span>
+                        <div className="w-full rounded-t-md transition-all duration-700" style={{ height: `${height}px`, background: step.color, opacity: 0.8, animationDelay: `${i * 0.15}s` }} />
+                        <span className="text-[9px] font-mono text-text-muted mt-1.5 text-center">{step.name}</span>
+                        {i > 0 && funnelData[i - 1].value > 0 && (
+                          <span className="text-[8px] font-mono text-text-dim mt-0.5">{((step.value / funnelData[i - 1].value) * 100).toFixed(0)}%</span>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
-              )
-            })}
-          </div>
-          {/* Status pills */}
-          <div className="flex gap-3 mt-6 justify-center flex-wrap">
-            <StatusPill label={t('attendance')} value={formatPercent(c?.tasa_asistencia_pct || 0)} color="success" />
-            <StatusPill label={t('cancellation')} value={formatPercent(c?.tasa_cancelacion_pct || 0)} color="danger" />
-            <StatusPill label={t('noShow')} value={formatPercent(c?.tasa_no_show_pct || 0)} color="warning" />
-          </div>
-        </div>
-
-        {/* Revenue */}
-        <div className="glass-card-accent p-6">
-          <SectionTitle icon={<DollarSign size={16} />} title={t('revenue')} />
-          <div className="grid grid-cols-2 gap-6 mt-6">
-            <RevenueItem label={t('revenueVerified')} value={formatCOP(r?.revenue_total || 0)} color="text-status-success" />
-            <RevenueItem label={t('pending')} value={formatCOP(r?.revenue_pendiente || 0)} color="text-status-warning" />
-            <RevenueItem label={t('pipelineAppointments')} value={formatCOP(r?.revenue_pipeline || 0)} color="text-status-info" />
-            <RevenueItem label={t('monthlyProjection')} value={formatCOP(r?.proyeccion_mensual || 0)} color="text-brand-purple" />
-          </div>
-          <div className="mt-6 pt-4 border-t border-border flex gap-6 text-sm text-text-muted">
-            <span>{t('averageTicket')}: <span className="text-text-primary font-semibold">{formatCOP(r?.ticket_promedio || 0)}</span></span>
-            <span>{t('transactions')}: <span className="text-text-primary font-semibold">{formatNumber(r?.total_transacciones || 0)}</span></span>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== VOICE AI ===== */}
-      {voice && (voice.total_calls > 0 || voice.total_whatsapp > 0) && (
-        <div className="glass-card-accent p-6">
-          <SectionTitle icon={<PhoneCall size={16} />} title="Voice AI" />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-5">
-            {/* Total calls */}
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center text-white shadow-lg">
-                <PhoneCall size={18} />
+                <div className="flex gap-2 mt-5 justify-center flex-wrap">
+                  <StatusPill label={t('attendance')} value={formatPercent(c?.tasa_asistencia_pct || 0)} color="success" />
+                  <StatusPill label={t('cancellation')} value={formatPercent(c?.tasa_cancelacion_pct || 0)} color="danger" />
+                  <StatusPill label={t('noShow')} value={formatPercent(c?.tasa_no_show_pct || 0)} color="warning" />
+                </div>
               </div>
-              <div>
-                <div className="text-2xl font-bold font-mono text-text-primary">{formatNumber(voice.total_calls)}</div>
-                <div className="text-xs text-text-muted">{t('voiceCalls')}</div>
+              <div className="glass-card-accent p-5">
+                <SectionTitle icon={<DollarSign size={14} />} title={t('revenue')} />
+                <div className="grid grid-cols-2 gap-4 mt-5">
+                  <RevenueItem label={t('revenueVerified')} value={formatCOP(r?.revenue_total || 0)} color="text-status-success" />
+                  <RevenueItem label={t('pending')} value={formatCOP(r?.revenue_pendiente || 0)} color="text-status-warning" />
+                  <RevenueItem label={t('pipelineAppointments')} value={formatCOP(r?.revenue_pipeline || 0)} color="text-status-info" />
+                  <RevenueItem label={t('monthlyProjection')} value={formatCOP(r?.proyeccion_mensual || 0)} color="text-brand-purple" />
+                </div>
+                <div className="mt-4 pt-3 border-t border-border flex gap-4 text-text-muted">
+                  <span className="text-[9px] font-mono">{t('averageTicket')}: <span className="text-text-primary font-semibold">{formatCOP(r?.ticket_promedio || 0)}</span></span>
+                  <span className="text-[9px] font-mono">{t('transactions')}: <span className="text-text-primary font-semibold">{formatNumber(r?.total_transacciones || 0)}</span></span>
+                </div>
               </div>
             </div>
+          ),
+        },
 
-            {/* Avg duration */}
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-cyan to-emerald-500 flex items-center justify-center text-white shadow-lg">
-                <Clock size={18} />
-              </div>
-              <div>
-                <div className="text-2xl font-bold font-mono text-text-primary">
-                  {voice.avg_duration_seconds > 0
-                    ? `${Math.floor(voice.avg_duration_seconds / 60)}:${String(voice.avg_duration_seconds % 60).padStart(2, '0')}`
-                    : '—'}
-                </div>
-                <div className="text-xs text-text-muted">{t('avgDuration')}</div>
-              </div>
-            </div>
-
-            {/* Voice vs WhatsApp appointments */}
-            <div className="md:col-span-2">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-text-muted font-semibold uppercase tracking-wider">{t('appointmentsByChannel')}</span>
-                <span className="text-[10px] text-text-dim">
-                  {formatNumber(voice.appointments_by_voice + voice.appointments_by_whatsapp)} {t('total')}
-                </span>
-              </div>
-              <div className="space-y-2.5">
-                {/* Voice bar */}
+        /* --- Voice AI (conditional) --- */
+        ...(voice && (voice.total_calls > 0 || voice.total_whatsapp > 0) ? [{
+          id: 'voice-ai',
+          priority: 2,
+          element: (
+            <div className="glass-card-accent p-5">
+              <SectionTitle icon={<PhoneCall size={14} />} title="Voice AI" />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
-                    <PhoneCall size={12} className="text-brand-purple" />
-                    <span className="text-xs text-text-muted">{t('voice')}</span>
+                  <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple"><PhoneCall size={16} /></div>
+                  <div>
+                    <div className="text-xl font-mono font-bold text-text-primary">{formatNumber(voice.total_calls)}</div>
+                    <div className="text-[9px] font-mono text-text-muted">{t('voiceCalls')}</div>
                   </div>
-                  <div className="flex-1 h-5 bg-surface-3 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-brand-purple to-brand-purple-light transition-all duration-700"
-                      style={{
-                        width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0
-                          ? Math.max((voice.appointments_by_voice / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2)
-                          : 0}%`
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs font-bold font-mono text-brand-purple w-8 text-right">{voice.appointments_by_voice}</span>
                 </div>
-                {/* WhatsApp bar */}
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
-                    <Smartphone size={12} className="text-status-success" />
-                    <span className="text-xs text-text-muted">WhatsApp</span>
-                  </div>
-                  <div className="flex-1 h-5 bg-surface-3 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-status-success to-emerald-400 transition-all duration-700"
-                      style={{
-                        width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0
-                          ? Math.max((voice.appointments_by_whatsapp / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2)
-                          : 0}%`
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs font-bold font-mono text-status-success w-8 text-right">{voice.appointments_by_whatsapp}</span>
-                </div>
-              </div>
-              {/* Voice % pill */}
-              <div className="mt-3 flex gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-purple/10 text-brand-purple font-semibold">
-                  {t('voiceInteractions', { pct: voice.voice_pct })}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ===== INTENTS + OPPORTUNITIES + PERFORMANCE ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Intents chart */}
-        <div className="glass-card p-6">
-          <SectionTitle icon={<MessageSquare size={16} />} title={t('intents')} />
-          {intentData.length > 0 ? (
-            <div className="mt-4 h-56">
-              <LazyIntentsChart data={intentData} />
-            </div>
-          ) : (
-            <EmptyState title={t('noDataYet')} />
-          )}
-        </div>
-
-        {/* Opportunities */}
-        <div className="glass-card p-6">
-          <SectionTitle icon={<Target size={16} />} title={tOppSection('title')} />
-          {(o?.total || 0) > 0 ? (
-            <div className="mt-4">
-              <div className="text-3xl font-bold font-display gradient-text mb-4">{o?.total}</div>
-              <div className="space-y-2.5">
-                {oppData.map((opp) => (
-                  <div key={opp.name} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full" style={{ background: opp.color }} />
-                      <span className="text-text-muted">{opp.name}</span>
+                  <div className="w-8 h-8 rounded-md bg-brand-cyan/8 border border-brand-cyan/15 flex items-center justify-center text-brand-cyan"><Clock size={16} /></div>
+                  <div>
+                    <div className="text-xl font-mono font-bold text-text-primary">
+                      {voice.avg_duration_seconds > 0 ? `${Math.floor(voice.avg_duration_seconds / 60)}:${String(voice.avg_duration_seconds % 60).padStart(2, '0')}` : '\u2014'}
                     </div>
-                    <span className="text-text-primary font-semibold font-mono">{opp.value}</span>
+                    <div className="text-[9px] font-mono text-text-muted">{t('avgDuration')}</div>
                   </div>
-                ))}
-              </div>
-              <div className="mt-4 pt-3 border-t border-border text-xs text-text-muted">
-                {t('estimatedValue')}: <span className="text-brand-purple font-semibold">{formatCOP(o?.valor_total_estimado || 0)}</span>
-              </div>
-            </div>
-          ) : (
-            <EmptyState title={t('noDataYet')} />
-          )}
-        </div>
-
-        {/* Performance */}
-        <div className="glass-card p-6">
-          <SectionTitle icon={<Cpu size={16} />} title={t('performanceAI')} />
-          <div className="mt-4 space-y-4">
-            <PerfItem label={t('interactions')} value={formatNumber(p?.total_interacciones || 0)} />
-            <PerfItem label={t('totalTokens')} value={formatNumber(p?.total_tokens || 0)} />
-            <PerfItem label={t('avgResponseTime')} value={`${formatNumber(p?.response_time_promedio_ms || 0)}ms`} />
-            <PerfItem label={t('totalCost')} value={formatUSD(p?.total_costo_usd || 0)} accent />
-            <PerfItem label={t('monthlyProjection')} value={formatUSD(p?.proyeccion_costo_mensual_usd || 0)} accent />
-            <div className="pt-3 border-t border-border">
-              <div className="text-xs text-text-dim mb-2">{t('mostUsedTools')}</div>
-              {Object.entries(p?.herramientas_usadas || {}).slice(0, 4).map(([tool, count]) => (
-                <div key={tool} className="flex justify-between text-xs py-1">
-                  <span className="text-text-muted font-mono">{tool}</span>
-                  <span className="text-text-primary font-semibold">{count as number}</span>
                 </div>
-              ))}
+                <div className="md:col-span-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[9px] font-mono text-text-muted uppercase tracking-wider">{t('appointmentsByChannel')}</span>
+                    <span className="text-[8px] font-mono text-text-dim">{formatNumber(voice.appointments_by_voice + voice.appointments_by_whatsapp)} {t('total')}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 w-20 flex-shrink-0"><PhoneCall size={10} className="text-brand-purple" /><span className="text-[9px] font-mono text-text-muted">{t('voice')}</span></div>
+                      <div className="flex-1 h-4 bg-surface-3 rounded-md overflow-hidden">
+                        <div className="h-full rounded-md bg-brand-purple transition-all duration-700" style={{ width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0 ? Math.max((voice.appointments_by_voice / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2) : 0}%` }} />
+                      </div>
+                      <span className="text-[10px] font-mono font-bold text-brand-purple w-6 text-right">{voice.appointments_by_voice}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 w-20 flex-shrink-0"><Smartphone size={10} className="text-status-success" /><span className="text-[9px] font-mono text-text-muted">WhatsApp</span></div>
+                      <div className="flex-1 h-4 bg-surface-3 rounded-md overflow-hidden">
+                        <div className="h-full rounded-md bg-status-success transition-all duration-700" style={{ width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0 ? Math.max((voice.appointments_by_whatsapp / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2) : 0}%` }} />
+                      </div>
+                      <span className="text-[10px] font-mono font-bold text-status-success w-6 text-right">{voice.appointments_by_whatsapp}</span>
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-brand-purple/8 text-brand-purple font-mono font-semibold">{t('voiceInteractions', { pct: voice.voice_pct })}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+          ),
+        }] : []),
 
-      {/* ===== SUB-BOTS ===== */}
-      <div>
-        <SectionTitle icon={<Bot size={16} />} title={t('subBots')} className="mb-4" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <BotCard
-            emoji="⏰"
-            name="Reminder Bot"
-            value={b?.reminder_bot?.mensajes_enviados || 0}
-            label={t('remindersSent')}
-            desc={b?.reminder_bot?.descripcion}
-            gradient="from-brand-purple to-brand-purple-dark"
-            formatNumber={formatNumber}
-          />
-          <BotCard
-            emoji="🎯"
-            name="Hunter Bot"
-            value={b?.hunter_bot?.followups_enviados || 0}
-            label={t('followupsSent')}
-            extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`}
-            desc={b?.hunter_bot?.descripcion}
-            gradient="from-brand-gold to-amber-600"
-            formatNumber={formatNumber}
-          />
-          <BotCard
-            emoji="💊"
-            name="Nurse Bot"
-            value={b?.nurse_bot?.recordatorios_enviados || 0}
-            label={t('medicationReminders')}
-            desc={b?.nurse_bot?.descripcion}
-            gradient="from-brand-cyan to-emerald-500"
-            formatNumber={formatNumber}
-          />
-        </div>
-      </div>
+        /* --- Intents + Opportunities + Performance --- */
+        {
+          id: 'intents-opps-perf',
+          priority: 3,
+          element: (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+              <div className="glass-card p-5">
+                <SectionTitle icon={<MessageSquare size={14} />} title={t('intents')} />
+                {intentData.length > 0 ? (
+                  <div className="mt-3 h-48"><LazyIntentsChart data={intentData} /></div>
+                ) : (
+                  <EmptyState title={t('noDataYet')} />
+                )}
+              </div>
+              <div className="glass-card p-5">
+                <SectionTitle icon={<Target size={14} />} title={tOppSection('title')} />
+                {(o?.total || 0) > 0 ? (
+                  <div className="mt-3">
+                    <div className="text-2xl font-mono font-bold text-brand-purple mb-3">{o?.total}</div>
+                    <div className="space-y-2">
+                      {oppData.map((opp) => (
+                        <div key={opp.name} className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full" style={{ background: opp.color }} />
+                            <span className="text-text-muted text-[10px] font-mono">{opp.name}</span>
+                          </div>
+                          <span className="text-text-primary font-mono font-semibold text-[10px]">{opp.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-border text-[9px] font-mono text-text-muted">
+                      {t('estimatedValue')}: <span className="text-brand-purple font-semibold">{formatCOP(o?.valor_total_estimado || 0)}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <EmptyState title={t('noDataYet')} />
+                )}
+              </div>
+              <div className="glass-card p-5">
+                <SectionTitle icon={<Cpu size={14} />} title={t('performanceAI')} />
+                <div className="mt-3 space-y-3">
+                  <PerfItem label={t('interactions')} value={formatNumber(p?.total_interacciones || 0)} />
+                  <PerfItem label={t('totalTokens')} value={formatNumber(p?.total_tokens || 0)} />
+                  <PerfItem label={t('avgResponseTime')} value={`${formatNumber(p?.response_time_promedio_ms || 0)}ms`} />
+                  <PerfItem label={t('totalCost')} value={formatUSD(p?.total_costo_usd || 0)} accent />
+                  <PerfItem label={t('monthlyProjection')} value={formatUSD(p?.proyeccion_costo_mensual_usd || 0)} accent />
+                  <div className="pt-2 border-t border-border">
+                    <div className="text-[9px] font-mono text-text-dim mb-1.5">{t('mostUsedTools')}</div>
+                    {Object.entries(p?.herramientas_usadas || {}).slice(0, 4).map(([tool, count]) => (
+                      <div key={tool} className="flex justify-between text-[10px] py-0.5">
+                        <span className="text-text-muted font-mono">{tool}</span>
+                        <span className="text-text-primary font-mono font-semibold">{count as number}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ),
+        },
+
+        /* --- Sub-Bots --- */
+        {
+          id: 'sub-bots',
+          priority: 4,
+          element: (
+            <div>
+              <SectionTitle icon={<Bot size={14} />} title={t('subBots')} className="mb-3" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <BotCard emoji="\u23F0" name="Reminder Bot" value={b?.reminder_bot?.mensajes_enviados || 0} label={t('remindersSent')} desc={b?.reminder_bot?.descripcion} gradient="from-brand-purple to-brand-purple-dark" formatNumber={formatNumber} />
+                <BotCard emoji="\uD83C\uDFAF" name="Hunter Bot" value={b?.hunter_bot?.followups_enviados || 0} label={t('followupsSent')} extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`} desc={b?.hunter_bot?.descripcion} gradient="from-brand-gold to-amber-600" formatNumber={formatNumber} />
+                <BotCard emoji="\uD83D\uDC8A" name="Nurse Bot" value={b?.nurse_bot?.recordatorios_enviados || 0} label={t('medicationReminders')} desc={b?.nurse_bot?.descripcion} gradient="from-brand-cyan to-emerald-500" formatNumber={formatNumber} />
+              </div>
+            </div>
+          ),
+        },
+      ]} />
 
       {/* Footer */}
-      <div className="text-center py-4 text-text-dim text-xs">
+      <div className="text-center py-3 text-text-dim text-[9px] font-mono">
         {t('footer')}
       </div>
     </div>
   )
 }
-

@@ -53,7 +53,7 @@ export function ThemeToggle() {
             className={`
               w-7 h-7 rounded-md flex items-center justify-center transition-all duration-200
               ${isActive
-                ? 'bg-brand-purple text-white shadow-sm shadow-brand-purple/30'
+                ? 'bg-brand-purple text-white'
                 : 'text-text-muted hover:text-text-primary hover:bg-surface-3'
               }
             `}

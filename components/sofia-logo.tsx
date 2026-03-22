@@ -8,10 +8,10 @@ interface SofiaLogoProps {
 }
 
 const sizes = {
-  sm: { mark: 28, text: 'text-sm', sub: 'text-[9px]' },
-  md: { mark: 36, text: 'text-base', sub: 'text-[10px]' },
-  lg: { mark: 44, text: 'text-xl', sub: 'text-xs' },
-  xl: { mark: 60, text: 'text-3xl', sub: 'text-sm' },
+  sm: { mark: 24, text: 'text-xs', sub: 'text-[8px]' },
+  md: { mark: 32, text: 'text-sm', sub: 'text-[9px]' },
+  lg: { mark: 40, text: 'text-lg', sub: 'text-[10px]' },
+  xl: { mark: 56, text: 'text-2xl', sub: 'text-xs' },
 }
 
 export function SofiaLogo({ size = 'md', variant = 'full', className = '' }: SofiaLogoProps) {
@@ -19,7 +19,7 @@ export function SofiaLogo({ size = 'md', variant = 'full', className = '' }: Sof
   const px = s.mark
 
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-center gap-2 ${className}`}>
       {/* Icon mark — geometric S + neural arc */}
       <svg
         width={px}
@@ -40,8 +40,8 @@ export function SofiaLogo({ size = 'md', variant = 'full', className = '' }: Sof
           </linearGradient>
         </defs>
         {/* Background tile */}
-        <rect width="44" height="44" rx="10" fill="#0D0D15" />
-        <rect width="44" height="44" rx="10" fill="url(#sofia-grad-b)" fillOpacity="0.15" />
+        <rect width="44" height="44" rx="8" fill="#0C0C14" />
+        <rect width="44" height="44" rx="8" fill="url(#sofia-grad-b)" fillOpacity="0.1" />
         {/* Neural arc top */}
         <path
           d="M12 14 Q22 8 32 14"
@@ -74,11 +74,11 @@ export function SofiaLogo({ size = 'md', variant = 'full', className = '' }: Sof
 
       {variant === 'full' && (
         <div className="flex flex-col leading-none">
-          <span className={`font-display font-bold text-text-primary tracking-tight ${s.text}`}>
-            Sof<span className="gradient-text italic">IA</span>
+          <span className={`font-mono font-bold text-text-primary tracking-tight ${s.text}`}>
+            Sof<span className="text-brand-purple">IA</span>
           </span>
-          <span className={`text-text-dim font-body font-light ${s.sub} mt-0.5`}>
-            by Ataraxia IA Labs
+          <span className={`text-text-dim font-mono ${s.sub} mt-0.5 tracking-wider uppercase`}>
+            Ataraxia IA Labs
           </span>
         </div>
       )}
