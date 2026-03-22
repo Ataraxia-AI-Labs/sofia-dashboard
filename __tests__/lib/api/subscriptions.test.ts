@@ -138,10 +138,10 @@ describe('Subscriptions API', () => {
   describe('fetchUsage', () => {
     it('returns usage data', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ messages_used: 500 }),
+        ok: true, json: () => Promise.resolve({ message_count: 500 }),
       })
       const result = await fetchUsage('org-1')
-      expect(result!.messages_used).toBe(500)
+      expect(result!.message_count).toBe(500)
     })
 
     it('returns null on error', async () => {

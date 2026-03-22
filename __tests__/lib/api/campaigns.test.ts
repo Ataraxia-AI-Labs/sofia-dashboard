@@ -69,10 +69,10 @@ describe('Campaigns API', () => {
   describe('previewCampaign', () => {
     it('returns preview on success', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ audience_count: 50 }),
+        ok: true, json: () => Promise.resolve({ matching_patients: 50 }),
       })
       const result = await previewCampaign('org-1', 'c-1')
-      expect(result!.audience_count).toBe(50)
+      expect(result!.matching_patients).toBe(50)
     })
 
     it('returns null on error', async () => {
@@ -130,10 +130,10 @@ describe('Campaigns API', () => {
   describe('getCampaignResults', () => {
     it('returns results', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ delivered: 45 }),
+        ok: true, json: () => Promise.resolve({ stats: { delivered: 45 } }),
       })
       const result = await getCampaignResults('org-1', 'c-1')
-      expect(result!.delivered).toBe(45)
+      expect(result!.stats.delivered).toBe(45)
     })
 
     it('returns null on error', async () => {

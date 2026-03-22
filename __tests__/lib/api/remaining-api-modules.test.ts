@@ -33,10 +33,10 @@ describe('Data Lake API', () => {
   describe('fetchDataLakeStats', () => {
     it('returns stats', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ total_records: 5000 }),
+        ok: true, json: () => Promise.resolve({ raw_data_total: 5000 }),
       })
       const result = await fetchDataLakeStats('org-1')
-      expect(result!.total_records).toBe(5000)
+      expect(result!.raw_data_total).toBe(5000)
     })
 
     it('includes branch_id', async () => {
@@ -127,8 +127,8 @@ import {
 describe('Network API', () => {
   describe('getNetworkBenchmarks', () => {
     it('returns benchmarks', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ avg_response_time: 1.5 }) })
-      expect((await getNetworkBenchmarks('org-1'))!.avg_response_time).toBe(1.5)
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ response_time: { yours: 1.5, market_avg: 2.0, percentile: 75 } }) })
+      expect((await getNetworkBenchmarks('org-1'))!.response_time.yours).toBe(1.5)
     })
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
@@ -244,10 +244,10 @@ describe('Portal API', () => {
   describe('getPortalData', () => {
     it('fetches portal data with token', async () => {
       mockFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ patient_name: 'Maria' }),
+        ok: true, json: () => Promise.resolve({ clinic_name: 'Maria' }),
       })
       const result = await getPortalData('tok-123')
-      expect(result!.patient_name).toBe('Maria')
+      expect(result!.clinic_name).toBe('Maria')
       expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/api/portal/tok-123'))
     })
     it('returns null on error', async () => {
@@ -280,8 +280,8 @@ describe('Portal API', () => {
 
   describe('getGamification (portal)', () => {
     it('returns gamification data', async () => {
-      mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ points: 150 }) })
-      expect((await getGamification('tok-123'))!.points).toBe(150)
+      mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ total_points: 150 }) })
+      expect((await getGamification('tok-123'))!.total_points).toBe(150)
     })
     it('returns null on error', async () => {
       mockFetch.mockResolvedValue({ ok: false })
@@ -329,9 +329,9 @@ import {
 describe('Segments API', () => {
   describe('generateEmbeddings', () => {
     it('sends POST', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ processed: 100 }) })
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ embeddings_generated: 100 }) })
       const result = await generateEmbeddings('org-1')
-      expect(result!.processed).toBe(100)
+      expect(result!.embeddings_generated).toBe(100)
     })
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
@@ -369,8 +369,8 @@ describe('Segments API', () => {
 
   describe('getPatientSegment', () => {
     it('returns patient segment', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ segment_name: 'VIP' }) })
-      expect((await getPatientSegment('org-1', 'p1'))!.segment_name).toBe('VIP')
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ segment_label: 'VIP' }) })
+      expect((await getPatientSegment('org-1', 'p1'))!.segment_label).toBe('VIP')
     })
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
@@ -519,8 +519,8 @@ describe('Models API', () => {
 
   describe('evaluateModel', () => {
     it('evaluates model', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ accuracy: 0.9 }) })
-      expect((await evaluateModel('org-1', 'm1'))!.accuracy).toBe(0.9)
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ overall_score: 0.9 }) })
+      expect((await evaluateModel('org-1', 'm1'))!.overall_score).toBe(0.9)
     })
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
@@ -541,8 +541,8 @@ describe('Models API', () => {
 
   describe('compareModels', () => {
     it('compares two models', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ winner: 'm1' }) })
-      expect((await compareModels('org-1', 'm1', 'm2'))!.winner).toBe('m1')
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ model_a: { id: 'm1' }, model_b: { id: 'm2' } }) })
+      expect((await compareModels('org-1', 'm1', 'm2'))!.model_a.id).toBe('m1')
     })
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
@@ -573,9 +573,9 @@ import {
 describe('Waiting Room API', () => {
   describe('checkIn', () => {
     it('checks in patient', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'wr-1', position: 3 }) })
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'wr-1', queue_position: 3 }) })
       const result = await checkIn('org-1', 'p1', 'a1')
-      expect(result.position).toBe(3)
+      expect(result.queue_position).toBe(3)
     })
     it('throws on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
@@ -656,8 +656,8 @@ describe('Waiting Room API', () => {
 
   describe('getWaitingStats', () => {
     it('returns stats', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ avg_wait: 15 }) })
-      expect((await getWaitingStats('org-1'))!.avg_wait).toBe(15)
+      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({ avg_wait_today: 15 }) })
+      expect((await getWaitingStats('org-1'))!.avg_wait_today).toBe(15)
     })
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })

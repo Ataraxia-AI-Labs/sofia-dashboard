@@ -111,9 +111,9 @@ describe('Channels API', () => {
   describe('getChannelComparison', () => {
     it('returns comparison', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ best_channel: 'WHATSAPP' }),
+        ok: true, json: () => Promise.resolve({ best_by_messages: 'WHATSAPP' }),
       })
-      expect((await getChannelComparison('org-1'))!.best_channel).toBe('WHATSAPP')
+      expect((await getChannelComparison('org-1'))!.best_by_messages).toBe('WHATSAPP')
     })
 
     it('returns null on error', async () => {
@@ -190,9 +190,9 @@ describe('Channels API', () => {
   describe('getChannelInsights', () => {
     it('returns insights', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ recommendation: 'Focus on IG' }),
+        ok: true, json: () => Promise.resolve({ insight: 'Focus on IG' }),
       })
-      expect((await getChannelInsights('org-1'))!.recommendation).toBe('Focus on IG')
+      expect((await getChannelInsights('org-1'))!.insight).toBe('Focus on IG')
     })
 
     it('returns null on error', async () => {

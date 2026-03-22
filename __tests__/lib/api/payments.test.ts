@@ -56,11 +56,11 @@ describe('Payments API', () => {
   describe('fetchRevenueAttribution', () => {
     it('fetches attribution data', async () => {
       mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ total_revenue: 100000 }),
+        ok: true, json: () => Promise.resolve({ resumen: { total_revenue: 100000 } }),
       })
       const result = await fetchRevenueAttribution('org-1')
       expect(result).toBeDefined()
-      expect(result!.total_revenue).toBe(100000)
+      expect(result!.resumen.total_revenue).toBe(100000)
     })
 
     it('uses custom days parameter', async () => {
