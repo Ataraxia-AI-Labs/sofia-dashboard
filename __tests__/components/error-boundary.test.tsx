@@ -211,7 +211,8 @@ describe('ErrorBoundary', () => {
 
   it('should show error details in development mode', () => {
     const originalEnv = process.env.NODE_ENV
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', configurable: true })
+    // Override NODE_ENV directly since Object.defineProperty may not work in all Jest configs
+    process.env.NODE_ENV = 'development'
 
     render(
       <ErrorBoundary>
@@ -224,12 +225,12 @@ describe('ErrorBoundary', () => {
     // The error message should appear in the details panel
     expect(screen.getByText(/Test explosion/i)).toBeInTheDocument()
 
-    Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, configurable: true })
+    process.env.NODE_ENV = originalEnv
   })
 
   it('should hide error details in production mode', () => {
     const originalEnv = process.env.NODE_ENV
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', configurable: true })
+    process.env.NODE_ENV = 'production'
 
     render(
       <ErrorBoundary>
@@ -240,7 +241,7 @@ describe('ErrorBoundary', () => {
     // In production mode, error details should not be visible
     expect(screen.queryByText(/Detalles del error/i)).not.toBeInTheDocument()
 
-    Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, configurable: true })
+    process.env.NODE_ENV = originalEnv
   })
 
   // -----------------------------------------------------------------------
