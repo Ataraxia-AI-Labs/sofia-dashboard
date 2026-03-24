@@ -47,7 +47,7 @@ const mockNotificationsTab = jest.fn((props: any) => <div data-testid="notificat
 const mockTemplatesTab = jest.fn((props: any) => <div data-testid="templates-tab" />)
 const mockBotsTab = jest.fn((props: any) => <div data-testid="bots-tab" />)
 const mockChannelsTab = jest.fn((props: any) => <div data-testid="channels-tab" />)
-const mockSecurityTab = jest.fn(() => <div data-testid="security-tab" />)
+const mockSecurityTab = jest.fn((_props?: any) => <div data-testid="security-tab" />)
 const mockBrandingTab = jest.fn((props: any) => <div data-testid="branding-tab" />)
 const mockPricingTab = jest.fn((props: any) => <div data-testid="pricing-tab" />)
 

@@ -605,7 +605,7 @@ describe('DashboardOverview', () => {
   describe('Empty data sections', () => {
     it('should render EmptyState for intents when distribucion_intents is empty', async () => {
       const analytics = makeAnalytics()
-      analytics.performance_ia.distribucion_intents = {}
+      analytics.performance_ia.distribucion_intents = {} as any
       mockFetchAnalytics.mockResolvedValue(analytics)
 
       render(<DashboardOverview />)
@@ -619,7 +619,7 @@ describe('DashboardOverview', () => {
     it('should render EmptyState for opportunities when total is 0', async () => {
       const analytics = makeAnalytics()
       analytics.oportunidades.total = 0
-      analytics.oportunidades.por_tipo = {}
+      analytics.oportunidades.por_tipo = {} as any
       mockFetchAnalytics.mockResolvedValue(analytics)
 
       render(<DashboardOverview />)
