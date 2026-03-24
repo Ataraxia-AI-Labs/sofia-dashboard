@@ -14,7 +14,28 @@ import * as Sentry from '@sentry/nextjs'
 import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { SofiaLogo } from '@/components/sofia-logo'
+// Sentient eye SVG — replaces SofiaLogo for the default case
+function SentientEye({ size = 28, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" className={className}>
+      <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
+      <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
+        <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
+    </svg>
+  )
+}
+
+function SentientEyeSmall({ className = '' }: { className?: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 48 48" className={className}>
+      <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="2" opacity="0.5" />
+      <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8" />
+      <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
+    </svg>
+  )
+}
 import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
 import { ServiceWorkerRegister } from '@/components/service-worker-register'
 import type { User } from '@supabase/supabase-js'
@@ -119,15 +140,18 @@ function Sidebar({
             {logoUrl ? (
               <img src={logoUrl} alt={orgName || 'Logo'} className="h-7 w-auto object-contain" />
             ) : (
-              <SofiaLogo size="sm" variant="full" />
+              <div className="flex items-center gap-2">
+                <SentientEyeSmall />
+                <span className="text-xs font-mono font-bold text-brand-purple tracking-wide">Nucleus</span>
+              </div>
             )}
-            <div className="text-text-dim text-[9px] font-mono uppercase tracking-widest truncate mt-1 pl-[38px]">{orgName}</div>
+            <div className="text-text-dim text-[9px] font-mono uppercase tracking-widest truncate mt-1">{orgName}</div>
           </div>
         ) : (
           logoUrl ? (
             <img src={logoUrl} alt={orgName || 'Logo'} className="h-7 w-7 object-contain rounded" />
           ) : (
-            <SofiaLogo size="sm" variant="mark" />
+            <SentientEyeSmall />
           )
         )}
         {mobile && onClose && (
@@ -518,9 +542,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="min-h-screen flex items-center justify-center bg-void">
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-sentient-breathe">
-            <SofiaLogo size="md" variant="mark" />
-          </div>
+          <SentientEye size={48} className="animate-sentient-breathe" />
           <div className="flex items-center gap-1.5">
             <div className="sentient-dot" style={{ animationDelay: '0ms' }} />
             <div className="sentient-dot" style={{ animationDelay: '200ms' }} />
