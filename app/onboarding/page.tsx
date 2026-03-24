@@ -264,11 +264,23 @@ export default function OnboardingPage() {
         payload.turnstile_token = turnstileToken
       }
 
-      const res = await fetch(`${API_URL}/onboarding/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
+      // Retry once on network failure (Render free tier cold start can timeout)
+      let res: Response
+      try {
+        res = await fetch(`${API_URL}/onboarding/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+      } catch {
+        // First attempt failed (likely cold start) — wait and retry
+        await new Promise(r => setTimeout(r, 3000))
+        res = await fetch(`${API_URL}/onboarding/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+      }
 
       let data: any
       try {
@@ -304,7 +316,10 @@ export default function OnboardingPage() {
       setSuccess(true)
       setResendCooldown(60)
     } catch (e: any) {
-      setError(e.message || 'Error de conexion')
+      setError(
+        'El servidor esta despertando. Espera 30 segundos e intenta de nuevo. ' +
+        '(Si el error persiste, contacta soporte)'
+      )
     }
 
     setLoading(false)
