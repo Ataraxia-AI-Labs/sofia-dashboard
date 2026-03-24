@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Script from 'next/script'
-const API_URL = process.env.NEXT_PUBLIC_API_URL!
+import { API_URL } from '@/lib/supabase'
 import {
   ArrowRight, ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare,
   Eye, EyeOff, ExternalLink, Shield, Mail, RefreshCw
