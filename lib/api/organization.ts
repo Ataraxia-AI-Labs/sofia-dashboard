@@ -16,7 +16,7 @@ export async function fetchOrganization(orgId: string) {
 export async function fetchUserOrganization(userId: string): Promise<{ organization: Organization | null; role: 'OWNER' | 'ADMIN' | 'STAFF' }> {
   const { data, error } = await supabase
     .from('org_members')
-    .select('organization_id, role, is_active, organizations(id, name, status)')
+    .select('organization_id, role, is_active, organizations(id, name, status, plan, trial_ends_at, plan_started_at, billing_cycle, config_settings, specialty, country)')
     .eq('user_id', userId)
     .eq('is_active', true)
     .limit(1)
