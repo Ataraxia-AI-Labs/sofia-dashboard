@@ -48,10 +48,11 @@
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-brand-purple/40; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.4); }
 
   ::selection {
-    @apply bg-brand-purple/20 text-white;
+    background: rgba(139, 92, 246, 0.2);
+    @apply text-white;
   }
 
   .dark select { color-scheme: dark; }
@@ -79,7 +80,8 @@
   }
   .glass-card-accent::before {
     content: '';
-    @apply absolute top-0 left-0 right-0 h-px bg-brand-purple/40;
+    @apply absolute top-0 left-0 right-0 h-px;
+    background: rgba(139, 92, 246, 0.4);
   }
 
   /* ---- Text ---- */
@@ -92,7 +94,8 @@
     @apply flex items-center gap-3 px-3 py-2 rounded-md text-text-muted text-xs font-mono tracking-wide transition-all duration-150 hover:bg-surface-2 hover:text-text-primary;
   }
   .sidebar-link.active {
-    @apply bg-brand-purple/10 text-brand-purple border-l-2 border-brand-purple rounded-l-none;
+    @apply text-brand-purple border-l-2 border-brand-purple rounded-l-none;
+    background: rgba(139, 92, 246, 0.1);
   }
 
   /* ---- Stats ---- */
@@ -104,11 +107,11 @@
   .badge {
     @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium tracking-wide uppercase;
   }
-  .badge-success { @apply bg-status-success/10 text-status-success border border-status-success/15; }
-  .badge-warning { @apply bg-status-warning/10 text-status-warning border border-status-warning/15; }
-  .badge-danger  { @apply bg-status-danger/10 text-status-danger border border-status-danger/15; }
-  .badge-info    { @apply bg-status-info/10 text-status-info border border-status-info/15; }
-  .badge-purple  { @apply bg-brand-purple/10 text-brand-purple border border-brand-purple/15; }
+  .badge-success { @apply text-status-success border; background: rgba(6, 214, 160, 0.1); border-color: rgba(6, 214, 160, 0.15); }
+  .badge-warning { @apply text-status-warning border; background: rgba(245, 200, 66, 0.1); border-color: rgba(245, 200, 66, 0.15); }
+  .badge-danger  { @apply text-status-danger border; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.15); }
+  .badge-info    { @apply text-status-info border; background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.15); }
+  .badge-purple  { @apply text-brand-purple border; background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.15); }
 
   /* ---- Metric glow (hover only) ---- */
   .metric-glow {
@@ -126,11 +129,13 @@
 
   /* ---- Clinic Pulse (heartbeat) ---- */
   .clinic-pulse {
-    @apply h-px w-full bg-brand-purple/20 relative overflow-hidden;
+    @apply h-px w-full relative overflow-hidden;
+    background: rgba(139, 92, 246, 0.2);
   }
   .clinic-pulse::after {
     content: '';
-    @apply absolute inset-y-0 left-0 w-16 bg-brand-purple/40;
+    @apply absolute inset-y-0 left-0 w-16;
+    background: rgba(139, 92, 246, 0.4);
     animation: clinicHeartbeat 2s ease-in-out infinite;
   }
 }
