@@ -74,16 +74,16 @@ describe('LoginPage', () => {
     expect(screen.getByPlaceholderText(/••••/)).toBeInTheDocument()
   })
 
-  it('should render the "Bienvenido" heading', () => {
+  it('should render the "Acceder al Nucleus" heading', () => {
     render(<LoginPage />)
 
-    expect(screen.getByText('Bienvenido')).toBeInTheDocument()
+    expect(screen.getByText('Acceder al Nucleus')).toBeInTheDocument()
   })
 
-  it('should render the "Ingresa a tu panel de control" subtitle', () => {
+  it('should render the clinic control subtitle', () => {
     render(<LoginPage />)
 
-    expect(screen.getByText('Ingresa a tu panel de control')).toBeInTheDocument()
+    expect(screen.getByText(/centro de control/i)).toBeInTheDocument()
   })
 
   it('should render the submit button with text "Entrar"', () => {
@@ -104,8 +104,7 @@ describe('LoginPage', () => {
   it('should render the "Powered by SofIA" footer', () => {
     render(<LoginPage />)
 
-    expect(screen.getByText(/Powered by/i)).toBeInTheDocument()
-    expect(screen.getByText('SofIA')).toBeInTheDocument()
+    expect(screen.getByText(/Powered by SofIA/i)).toBeInTheDocument()
   })
 
   it('should render email input with required attribute', () => {

@@ -16,7 +16,7 @@ describe('NotFound (404 page)', () => {
 
   it('renders dashboard link', () => {
     render(<NotFound />)
-    const dashboardLink = screen.getByText('Ir al Dashboard')
+    const dashboardLink = screen.getByText('Ir al Nucleus')
     expect(dashboardLink).toBeInTheDocument()
     expect(dashboardLink.closest('a')).toHaveAttribute('href', '/dashboard')
   })

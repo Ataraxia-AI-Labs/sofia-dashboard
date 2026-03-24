@@ -35,11 +35,6 @@ jest.mock('next/navigation', () => ({
 // Mock Sentry
 jest.mock('@sentry/nextjs', () => ({ captureException: jest.fn() }))
 
-// Mock sofia-logo
-jest.mock('@/components/sofia-logo', () => ({
-  SofiaLogo: () => <div data-testid="sofia-logo" />,
-}))
-
 const mockGetMFAStatus = getMFAStatus as jest.Mock
 const mockVerifyMFA = verifyMFA as jest.Mock
 
