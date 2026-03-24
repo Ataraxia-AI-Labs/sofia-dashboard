@@ -182,7 +182,14 @@ export default function OnboardingPage() {
       try {
         data = await res.json()
       } catch {
-        setError('Error de conexion con el servidor. Intenta de nuevo.')
+        // Backend returned non-JSON (likely HTML proxy error from Render)
+        setError(
+          res.status === 502 || res.status === 503
+            ? 'El servidor esta iniciando. Espera 30 segundos e intenta de nuevo.'
+            : res.status === 429
+            ? 'Demasiados intentos. Espera un minuto e intenta de nuevo.'
+            : `Error de conexion con el servidor (${res.status}). Intenta de nuevo.`
+        )
         setLoading(false)
         return
       }
