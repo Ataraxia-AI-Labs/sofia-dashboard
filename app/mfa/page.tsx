@@ -4,7 +4,6 @@ import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import * as Sentry from '@sentry/nextjs'
 import { ShieldCheck, ArrowRight, AlertTriangle, Loader2 } from 'lucide-react'
-import { SofiaLogo } from '@/components/sofia-logo'
 import { getMFAStatus, verifyMFA } from '@/lib/mfa-api'
 
 export default function MFAPage() {
@@ -51,9 +50,15 @@ function MFAForm() {
   return (
     <div className="min-h-screen flex items-center justify-center px-5 bg-void">
       <div className="relative w-full max-w-sm">
-        {/* Logo */}
+        {/* Sentient Eye */}
         <div className="flex justify-center mb-6">
-          <SofiaLogo size="md" variant="full" />
+          <svg width="36" height="36" viewBox="0 0 48 48">
+            <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
+            <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
+              <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
+          </svg>
         </div>
 
         {/* Card */}

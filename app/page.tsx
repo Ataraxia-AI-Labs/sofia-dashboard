@@ -4,7 +4,18 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { SofiaLogo } from '@/components/sofia-logo'
+// Sentient Eye SVG component
+function SentientEye({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48">
+      <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
+      <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
+        <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
+    </svg>
+  )
+}
 import {
   ArrowRight, Check, Zap, Clock, Shield, MessageSquare,
   CreditCard, Target, Calendar, TrendingUp, Star,
@@ -377,7 +388,7 @@ export default function LandingPage() {
       <div className="min-h-screen flex items-center justify-center bg-void">
         <div className="flex flex-col items-center gap-5">
           <div className="animate-logo-breathe">
-            <SofiaLogo size="md" variant="mark" />
+            <SentientEye size={40} />
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-loader-dot" style={{ animationDelay: '0ms' }} />
@@ -401,7 +412,10 @@ export default function LandingPage() {
         {/* ── STICKY NAV ─────────────────────────────────────────────────── */}
         <nav className="fixed top-0 left-0 right-0 z-40 bg-void/80 backdrop-blur-xl border-b border-border/50">
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
-            <SofiaLogo size="sm" variant="full" />
+            <div className="flex items-center gap-2">
+              <SentientEye size={20} />
+              <span className="text-xs font-mono font-semibold text-brand-purple tracking-wide">SofIA</span>
+            </div>
 
             {/* Desktop nav links */}
             <div className="hidden md:flex items-center gap-6 text-xs font-mono text-text-muted">
@@ -951,7 +965,10 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
               <div className="flex flex-col items-center lg:items-start gap-1.5">
-                <SofiaLogo size="sm" variant="full" />
+                <div className="flex items-center gap-2">
+              <SentientEye size={20} />
+              <span className="text-xs font-mono font-semibold text-brand-purple tracking-wide">SofIA</span>
+            </div>
                 <p className="text-text-dim text-[11px] font-mono mt-1.5 max-w-xs text-center lg:text-left">
                   Asistente IA para clinicas de salud y estetica en Latinoamerica.
                   Ataraxia IA Labs &copy; {new Date().getFullYear()}
