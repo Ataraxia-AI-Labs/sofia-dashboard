@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 import { API_URL } from '@/lib/supabase'
-import { SofiaLogo } from '@/components/sofia-logo'
 import {
   ArrowRight, ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare,
   Eye, EyeOff, ExternalLink, Shield, Mail, RefreshCw
@@ -12,7 +11,6 @@ import {
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
 
-// Cloudflare Turnstile type declarations
 declare global {
   interface Window {
     turnstile?: {
@@ -40,6 +38,30 @@ const CITIES = [
 
 type Step = 1 | 2 | 3 | 4
 
+// --- Portal narrative for each step ---
+const STEP_NARRATIVE = [
+  {
+    title: 'Nombra tu universo',
+    sub: 'Cada clinica es un mundo. El tuyo comienza ahora.',
+    hint: 'SofIA aprendera todo sobre tu clinica para atender como si fuera parte de tu equipo.',
+  },
+  {
+    title: 'El comandante',
+    sub: 'Cada Nucleus necesita un piloto. Identificate.',
+    hint: 'Estas credenciales te daran acceso al centro de control de tu clinica.',
+  },
+  {
+    title: 'Conecta la senal',
+    sub: 'SofIA necesita un canal para hablar con el mundo.',
+    hint: 'WhatsApp es el canal principal. Puedes conectar mas despues.',
+  },
+  {
+    title: 'Activar el portal',
+    sub: 'Todo listo. Un clic y tu clinica nunca vuelve a dormir.',
+    hint: 'Al confirmar, SofIA comienza a aprender sobre tu clinica.',
+  },
+]
+
 export default function OnboardingPage() {
   const router = useRouter()
   const [step, setStep] = useState<Step>(1)
@@ -47,8 +69,9 @@ export default function OnboardingPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [result, setResult] = useState<any>(null)
-
   const [showPw, setShowPw] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
   const [form, setForm] = useState({
     clinic_name: '',
     owner_name: '',
@@ -78,7 +101,6 @@ export default function OnboardingPage() {
   const [resendLoading, setResendLoading] = useState(false)
   const [resendSuccess, setResendSuccess] = useState(false)
 
-  // Countdown timer for resend button
   useEffect(() => {
     if (resendCooldown <= 0) return
     const timer = setInterval(() => {
@@ -87,10 +109,84 @@ export default function OnboardingPage() {
     return () => clearInterval(timer)
   }, [resendCooldown])
 
-  // Render Turnstile widget when Step 4 is active
+  // --- Particle field background ---
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId: number
+    let particles: { x: number; y: number; vx: number; vy: number; r: number; a: number }[] = []
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * window.devicePixelRatio
+      canvas.height = canvas.offsetHeight * window.devicePixelRatio
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    // Create particles
+    const w = canvas.offsetWidth
+    const h = canvas.offsetHeight
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.5 + 0.5,
+        a: Math.random() * 0.4 + 0.1,
+      })
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight)
+
+      for (const p of particles) {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < 0) p.x = canvas.offsetWidth
+        if (p.x > canvas.offsetWidth) p.x = 0
+        if (p.y < 0) p.y = canvas.offsetHeight
+        if (p.y > canvas.offsetHeight) p.y = 0
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(139, 92, 246, ${p.a})`
+        ctx.fill()
+      }
+
+      // Draw connection lines between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 100) {
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `rgba(139, 92, 246, ${0.06 * (1 - dist / 100)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      animId = requestAnimationFrame(draw)
+    }
+    draw()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
   const renderTurnstile = useCallback(() => {
     if (!TURNSTILE_SITE_KEY || !turnstileRef.current) return
-    // Clean up previous widget if any
     if (turnstileWidgetId.current !== null && window.turnstile) {
       try { window.turnstile.remove(turnstileWidgetId.current) } catch {}
       turnstileWidgetId.current = null
@@ -108,13 +204,11 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (step === 4 && TURNSTILE_SITE_KEY) {
-      // Small delay to let the DOM render the container
       const t = setTimeout(renderTurnstile, 300)
       return () => clearTimeout(t)
     }
   }, [step, renderTurnstile])
 
-  // Resend verification email
   const handleResend = async () => {
     if (resendCooldown > 0 || resendLoading) return
     setResendLoading(true)
@@ -130,14 +224,13 @@ export default function OnboardingPage() {
         setResendCooldown(60)
       }
     } catch {
-      // Silently fail — user can retry
+      // Silently fail
     }
     setResendLoading(false)
   }
 
   const passwordsMatch = form.password === form.password_confirm
   const passwordValid = form.password.length >= 8
-  // International phone: + followed by 7-15 digits (supports 20+ countries per i18n)
   const phoneValid = /^\+?\d{7,15}$/.test(form.phone.replace(/[\s\-()]/g, ''))
 
   const canProceed = () => {
@@ -167,7 +260,6 @@ export default function OnboardingPage() {
         plan: 'TRIAL',
       }
 
-      // Include Turnstile token when CAPTCHA is enabled
       if (TURNSTILE_SITE_KEY && turnstileToken) {
         payload.turnstile_token = turnstileToken
       }
@@ -182,7 +274,6 @@ export default function OnboardingPage() {
       try {
         data = await res.json()
       } catch {
-        // Backend returned non-JSON (likely HTML proxy error from Render)
         setError(
           res.status === 502 || res.status === 503
             ? 'El servidor esta iniciando. Espera 30 segundos e intenta de nuevo.'
@@ -202,7 +293,6 @@ export default function OnboardingPage() {
           setError(msg)
         }
         setLoading(false)
-        // Reset Turnstile on error so user can retry
         if (TURNSTILE_SITE_KEY && window.turnstile && turnstileWidgetId.current !== null) {
           window.turnstile.reset(turnstileWidgetId.current)
           setTurnstileToken('')
@@ -212,7 +302,7 @@ export default function OnboardingPage() {
 
       setResult(data)
       setSuccess(true)
-      setResendCooldown(60) // Start cooldown immediately after registration
+      setResendCooldown(60)
     } catch (e: any) {
       setError(e.message || 'Error de conexion')
     }
@@ -220,56 +310,64 @@ export default function OnboardingPage() {
     setLoading(false)
   }
 
+  // ======= SUCCESS SCREEN: Email Verification =======
   if (success && result) {
     return (
-      <div className="min-h-screen bg-void flex items-center justify-center px-4">
-        <div className="max-w-lg w-full text-center">
-          {/* Envelope icon with animated pulse ring */}
-          <div className="relative w-16 h-16 mx-auto mb-6">
-            <div className="absolute inset-0 rounded-lg bg-brand-purple/20 animate-ping" style={{ animationDuration: '2s' }} />
-            <div className="relative w-16 h-16 rounded-lg bg-brand-purple flex items-center justify-center">
-              <Mail size={28} className="text-white" />
+      <div className="min-h-screen bg-void flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-[0.04]"
+          style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)' }} />
+
+        <div className="max-w-lg w-full text-center relative z-10">
+          {/* Animated portal ring */}
+          <div className="relative w-20 h-20 mx-auto mb-8">
+            <div className="absolute inset-0 rounded-full border border-brand-purple/20 animate-sentient-breathe" />
+            <div className="absolute inset-2 rounded-full border border-brand-purple/30 animate-sentient-breathe" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute inset-4 rounded-full bg-brand-purple flex items-center justify-center">
+              <Mail size={24} className="text-white" />
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-text-primary font-mono mb-1">Revisa tu correo</h1>
-          <p className="text-text-muted text-xs font-mono mb-1.5 leading-relaxed">
-            Te enviamos un link de verificacion a
+          <h1 className="text-2xl font-bold text-white font-mono mb-2 tracking-tight">Portal activado</h1>
+          <p className="text-text-muted text-xs font-mono mb-1 leading-relaxed">
+            Enviamos un link de verificacion a
           </p>
-          <p className="text-brand-purple font-semibold text-xs font-mono mb-6 break-all">
+          <p className="text-brand-purple font-semibold text-sm font-mono mb-8 break-all">
             {form.owner_email}
           </p>
 
-          <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-4 text-left mb-5">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+          {/* Setup status */}
+          <div className="bg-surface border border-border rounded-lg p-5 text-left mb-4">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                style={{ background: 'rgba(139, 92, 246, 0.1)' }}>
                 <Mail size={12} className="text-brand-purple" />
               </div>
               <div>
-                <p className="text-xs text-text-primary font-mono font-medium mb-0.5">Verifica tu email para continuar</p>
+                <p className="text-xs text-white font-mono font-medium mb-0.5">Verifica tu email para continuar</p>
                 <p className="text-[10px] text-text-muted font-mono leading-relaxed">
                   Revisa tu bandeja de entrada (y la carpeta de spam).
-                  Haz clic en el link de verificacion para activar tu cuenta y acceder al dashboard.
+                  Haz clic en el link para activar tu cuenta.
                 </p>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-3">
+              <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2 font-medium">Estado del portal</p>
+              <div className="space-y-1.5">
+                <SetupItem done={true} label="Organizacion creada" />
+                <SetupItem done={true} label="Horarios configurados (Lun-Sab)" />
+                <SetupItem done={true} label={`${result.setup?.services || 0} servicios de ejemplo`} />
+                <SetupItem done={result.setup?.whatsapp} label="WhatsApp conectado" />
               </div>
             </div>
           </div>
 
-          <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-4 text-left mb-5">
-            <h3 className="text-[10px] font-semibold text-text-dim font-mono uppercase tracking-wider mb-2">Tu clinica esta lista</h3>
-            <div className="space-y-1.5">
-              <SetupItem done={true} label="Organizacion creada" />
-              <SetupItem done={true} label="Horarios configurados (Lun-Sab)" />
-              <SetupItem done={true} label={`${result.setup?.services || 0} servicios de ejemplo`} />
-              <SetupItem done={result.setup?.whatsapp} label="WhatsApp conectado" />
-            </div>
-          </div>
-
-          {/* Resend email button */}
+          {/* Resend */}
           <button
             onClick={handleResend}
             disabled={resendCooldown > 0 || resendLoading}
-            className="w-full py-2.5 rounded-lg bg-surface-2 border border-border text-text-muted font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:border-brand-purple/30 hover:text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-2"
+            className="w-full py-2.5 rounded-lg bg-surface border border-border text-text-muted font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:border-brand-purple/30 hover:text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-2"
           >
             {resendLoading ? (
               <div className="w-3.5 h-3.5 border-2 border-text-dim/30 border-t-text-muted rounded-full animate-spin" />
@@ -290,10 +388,9 @@ export default function OnboardingPage() {
             </p>
           )}
 
-          {/* Go to login button */}
           <button
             onClick={() => router.push('/login')}
-            className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors"
+            className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:brightness-110 transition-all"
           >
             Ya verifique mi email <ArrowRight size={14} />
           </button>
@@ -302,88 +399,193 @@ export default function OnboardingPage() {
     )
   }
 
+  // ======= MAIN ONBOARDING FLOW =======
+  const narrative = STEP_NARRATIVE[step - 1]
+  const depthPercent = (step / 4) * 100
+
   return (
-    <div className="min-h-screen bg-void flex">
-      {/* Cloudflare Turnstile script — loaded only when site key is configured */}
+    <div className="min-h-screen bg-void flex relative overflow-hidden">
+      {/* Cloudflare Turnstile */}
       {TURNSTILE_SITE_KEY && (
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js"
           async
           defer
-          onLoad={() => {
-            // If already on step 4, render immediately
-            if (step === 4) renderTurnstile()
-          }}
+          onLoad={() => { if (step === 4) renderTurnstile() }}
         />
       )}
 
-      {/* Left panel */}
-      <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden bg-surface items-center justify-center">
-        <div className="relative z-10 px-10 max-w-md">
-          <div className="mb-8">
-            <SofiaLogo size="md" variant="full" />
+      {/* Particle canvas — full background */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ opacity: 0.6 }}
+      />
+
+      {/* Depth glow — intensifies with each step */}
+      <div
+        className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-1000 pointer-events-none"
+        style={{
+          width: `${300 + depthPercent * 4}px`,
+          height: `${300 + depthPercent * 4}px`,
+          background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)',
+          opacity: 0.02 + (step * 0.01),
+        }}
+      />
+
+      {/* ===== LEFT PANEL — Dynamic Portal ===== */}
+      <div className="hidden lg:flex lg:w-[42%] relative items-center justify-center">
+        <div className="relative z-10 px-12 max-w-md">
+          {/* Sentient eye */}
+          <div className="mb-10">
+            <svg width="48" height="48" viewBox="0 0 48 48" className="animate-sentient-breathe">
+              <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
+              <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
+                <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
+            </svg>
           </div>
 
-          <h1 className="font-display text-3xl font-bold text-text-primary leading-tight mb-3">
-            Configura tu clinica en <span className="text-brand-purple italic">5 minutos</span>
+          {/* Step counter */}
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[10px] font-mono text-brand-purple uppercase tracking-widest">
+              Paso {step} de 4
+            </span>
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-[10px] font-mono text-text-dim">
+              {Math.round(depthPercent)}%
+            </span>
+          </div>
+
+          {/* Narrative title — changes per step */}
+          <h1
+            className="font-mono text-3xl font-bold text-white leading-tight mb-3 transition-all duration-500"
+            key={`title-${step}`}
+            style={{ animation: 'fadeUp 0.4s ease-out' }}
+          >
+            {narrative.title}
           </h1>
 
-          <p className="text-text-muted text-xs font-mono leading-relaxed mb-6">
-            SofIA atiende pacientes 24/7 por WhatsApp, agenda citas, cobra anticipos y detecta oportunidades de venta.
+          <p
+            className="text-text-secondary text-sm font-mono leading-relaxed mb-8"
+            key={`sub-${step}`}
+            style={{ animation: 'fadeUp 0.5s ease-out' }}
+          >
+            {narrative.sub}
           </p>
 
-          <div className="space-y-3">
-            {[
-              { icon: <MessageSquare size={14} />, text: 'WhatsApp + Instagram + Messenger' },
-              { icon: <Clock size={14} />, text: 'Agenda y recordatorios automaticos' },
-              { icon: <CreditCard size={14} />, text: 'Cobros con Nequi, PSE, tarjeta' },
-              { icon: <Zap size={14} />, text: 'IA que detecta oportunidades de venta' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-xs font-mono text-text-muted">
-                <div className="w-7 h-7 rounded-lg bg-brand-purple/10 flex items-center justify-center text-brand-purple">{item.icon}</div>
-                {item.text}
+          {/* Portal depth indicator — visual pipeline */}
+          <div className="space-y-2">
+            {STEP_NARRATIVE.map((s, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                  i + 1 < step ? 'bg-brand-purple'
+                  : i + 1 === step ? 'bg-brand-purple animate-sentient-pulse'
+                  : 'bg-border'
+                }`} />
+                <div className={`h-px flex-1 transition-all duration-500 ${
+                  i + 1 <= step ? 'bg-brand-purple/40' : 'bg-border'
+                }`} />
+                <span className={`text-[10px] font-mono transition-colors duration-500 ${
+                  i + 1 === step ? 'text-brand-purple' : i + 1 < step ? 'text-text-muted' : 'text-text-dim'
+                }`}>
+                  {s.title}
+                </span>
               </div>
             ))}
           </div>
+
+          {/* Benefit pills — only on step 1 */}
+          {step === 1 && (
+            <div className="mt-10 space-y-2.5" style={{ animation: 'fadeUp 0.6s ease-out' }}>
+              {[
+                { icon: <MessageSquare size={13} />, text: 'WhatsApp 24/7 con IA' },
+                { icon: <Clock size={13} />, text: 'Agenda automatica' },
+                { icon: <CreditCard size={13} />, text: 'Cobros integrados' },
+                { icon: <Zap size={13} />, text: 'Deteccion de oportunidades' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 text-xs font-mono text-text-muted">
+                  <div className="w-7 h-7 rounded-md flex items-center justify-center text-brand-purple"
+                    style={{ background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.12)' }}>
+                    {item.icon}
+                  </div>
+                  {item.text}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Right panel - form */}
-      <div className="flex-1 flex items-center justify-center px-5 py-10">
+      {/* ===== RIGHT PANEL — Form ===== */}
+      <div className="flex-1 flex items-center justify-center px-5 py-10 relative z-10">
         <div className="w-full max-w-md">
-          {/* Progress */}
-          <div className="mb-6">
-            <div className="flex gap-1.5 mb-1.5">
-              {[1, 2, 3, 4].map((s) => (
-                <div key={s} className={`flex-1 h-1 rounded-full transition-colors ${s <= step ? 'bg-brand-purple' : 'bg-surface-3'}`} />
-              ))}
+          {/* Mobile: step counter + narrative */}
+          <div className="lg:hidden mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <svg width="24" height="24" viewBox="0 0 48 48" className="animate-sentient-breathe">
+                <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
+                <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8" />
+                <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
+              </svg>
+              <span className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
+                Paso {step}/4
+              </span>
             </div>
-            <div className="flex justify-between text-[10px] font-mono text-text-dim px-0.5">
-              {['Clinica', 'Cuenta', 'WhatsApp', 'Confirmar'].map((label, i) => (
-                <span key={label} className={i + 1 === step ? 'text-brand-purple font-semibold' : ''}>{label}</span>
+            <h2 className="text-lg font-mono font-bold text-white">{narrative.title}</h2>
+            <p className="text-text-muted text-xs font-mono">{narrative.sub}</p>
+          </div>
+
+          {/* Progress pipeline */}
+          <div className="mb-6">
+            <div className="flex gap-1 mb-1.5">
+              {[1, 2, 3, 4].map((s) => (
+                <div
+                  key={s}
+                  className="flex-1 h-0.5 rounded-full transition-all duration-500"
+                  style={{
+                    background: s <= step
+                      ? '#8B5CF6'
+                      : 'rgba(26, 26, 46, 1)',
+                    boxShadow: s === step ? '0 0 8px rgba(139, 92, 246, 0.3)' : 'none',
+                  }}
+                />
               ))}
             </div>
           </div>
 
-          {/* Step 1: Clinica */}
+          {/* ---- Step 1: Clinic ---- */}
           {step === 1 && (
-            <div className="space-y-4 animate-fade-in">
-              <div>
-                <h2 className="text-xl font-semibold text-text-primary font-mono mb-0.5">Tu clinica</h2>
-                <p className="text-text-muted text-xs font-mono">Informacion basica de tu negocio</p>
-              </div>
-
+            <div className="space-y-4" key="step1" style={{ animation: 'fadeUp 0.3s ease-out' }}>
               <div>
                 <label htmlFor="ob-clinic-name" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre de la clinica *</label>
-                <input id="ob-clinic-name" type="text" value={form.clinic_name} onChange={(e) => updateForm('clinic_name', e.target.value)} placeholder="Ej: Sonrisa Perfect" className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/50" />
+                <input
+                  id="ob-clinic-name"
+                  type="text"
+                  value={form.clinic_name}
+                  onChange={(e) => updateForm('clinic_name', e.target.value)}
+                  placeholder="Ej: Sonrisa Perfect"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                  autoFocus
+                />
               </div>
 
               <div>
                 <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Especialidad *</label>
                 <div className="grid grid-cols-2 gap-1.5">
                   {SPECIALTIES.map((s) => (
-                    <button key={s.value} onClick={() => updateForm('specialty', s.value)} className={`px-2.5 py-2.5 rounded-lg border text-left text-xs font-mono transition-all ${form.specialty === s.value ? 'border-brand-purple bg-brand-purple/10 text-brand-purple' : 'border-border bg-surface-2 text-text-muted hover:border-border-2'}`}>
-                      <span className="text-lg mr-1.5">{s.icon}</span>
+                    <button
+                      key={s.value}
+                      onClick={() => updateForm('specialty', s.value)}
+                      className={`px-2.5 py-2.5 rounded-md border text-left text-xs font-mono transition-all ${
+                        form.specialty === s.value
+                          ? 'border-brand-purple text-brand-purple'
+                          : 'border-border bg-surface text-text-muted hover:border-border-2'
+                      }`}
+                      style={form.specialty === s.value ? { background: 'rgba(139, 92, 246, 0.08)' } : {}}
+                    >
+                      <span className="text-base mr-1">{s.icon}</span>
                       <span className="text-[10px] font-medium">{s.label}</span>
                     </button>
                   ))}
@@ -392,7 +594,12 @@ export default function OnboardingPage() {
 
               <div>
                 <label htmlFor="ob-city" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Ciudad</label>
-                <select id="ob-city" value={form.city} onChange={(e) => updateForm('city', e.target.value)} className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none">
+                <select
+                  id="ob-city"
+                  value={form.city}
+                  onChange={(e) => updateForm('city', e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none"
+                >
                   <option value="">Seleccionar...</option>
                   {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -400,29 +607,53 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* Step 2: Dueno */}
+          {/* ---- Step 2: Owner ---- */}
           {step === 2 && (
-            <div className="space-y-4 animate-fade-in">
-              <div>
-                <h2 className="text-xl font-semibold text-text-primary font-mono mb-0.5">Tu informacion</h2>
-                <p className="text-text-muted text-xs font-mono">Datos del administrador de la clinica</p>
-              </div>
-
+            <div className="space-y-4" key="step2" style={{ animation: 'fadeUp 0.3s ease-out' }}>
               <div>
                 <label htmlFor="ob-owner-name" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre completo *</label>
-                <input id="ob-owner-name" type="text" value={form.owner_name} onChange={(e) => updateForm('owner_name', e.target.value)} placeholder="Dr. Juan Perez" className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/50" />
+                <input
+                  id="ob-owner-name"
+                  type="text"
+                  value={form.owner_name}
+                  onChange={(e) => updateForm('owner_name', e.target.value)}
+                  placeholder="Dr. Juan Perez"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                  autoFocus
+                />
               </div>
 
               <div>
                 <label htmlFor="ob-email" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Email *</label>
-                <input id="ob-email" type="email" value={form.owner_email} onChange={(e) => updateForm('owner_email', e.target.value)} placeholder="juan@clinica.com" className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/50" />
+                <input
+                  id="ob-email"
+                  type="email"
+                  value={form.owner_email}
+                  onChange={(e) => updateForm('owner_email', e.target.value)}
+                  placeholder="juan@clinica.com"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                />
               </div>
 
               <div>
                 <label htmlFor="ob-password" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Contrasena del Dashboard *</label>
                 <div className="relative">
-                  <input id="ob-password" type={showPw ? 'text' : 'password'} value={form.password} onChange={(e) => updateForm('password', e.target.value)} placeholder="Minimo 8 caracteres" className={`w-full px-3 py-2.5 pr-10 rounded-lg bg-surface-2 border text-text-primary text-xs font-mono outline-none transition-colors ${form.password && !passwordValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
-                  <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors" aria-label={showPw ? 'Ocultar contrasena' : 'Mostrar contrasena'}>
+                  <input
+                    id="ob-password"
+                    type={showPw ? 'text' : 'password'}
+                    value={form.password}
+                    onChange={(e) => updateForm('password', e.target.value)}
+                    placeholder="Minimo 8 caracteres"
+                    className={`w-full px-3 py-2.5 pr-10 rounded-md bg-surface border text-white text-xs font-mono outline-none transition-colors placeholder:text-text-dim ${
+                      form.password && !passwordValid ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw(!showPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors"
+                    aria-label={showPw ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+                  >
                     {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
@@ -433,7 +664,16 @@ export default function OnboardingPage() {
 
               <div>
                 <label htmlFor="ob-pw-confirm" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Confirmar contrasena *</label>
-                <input id="ob-pw-confirm" type={showPw ? 'text' : 'password'} value={form.password_confirm} onChange={(e) => updateForm('password_confirm', e.target.value)} placeholder="Repite la contrasena" className={`w-full px-3 py-2.5 rounded-lg bg-surface-2 border text-text-primary text-xs font-mono outline-none transition-colors ${form.password_confirm && !passwordsMatch ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                <input
+                  id="ob-pw-confirm"
+                  type={showPw ? 'text' : 'password'}
+                  value={form.password_confirm}
+                  onChange={(e) => updateForm('password_confirm', e.target.value)}
+                  placeholder="Repite la contrasena"
+                  className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-mono outline-none transition-colors placeholder:text-text-dim ${
+                    form.password_confirm && !passwordsMatch ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
+                  }`}
+                />
                 {form.password_confirm && !passwordsMatch && (
                   <p className="text-[10px] font-mono text-status-danger mt-0.5">Las contrasenas no coinciden</p>
                 )}
@@ -444,97 +684,107 @@ export default function OnboardingPage() {
 
               <div>
                 <label htmlFor="ob-phone" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">WhatsApp del doctor *</label>
-                <input id="ob-phone" type="tel" value={form.phone} onChange={(e) => updateForm('phone', e.target.value)} placeholder="+573001234567" className={`w-full px-3 py-2.5 rounded-lg bg-surface-2 border text-text-primary text-xs font-mono outline-none transition-colors ${form.phone && !phoneValid ? 'border-status-danger/40 focus:border-status-danger/60' : 'border-border focus:border-brand-purple/50'}`} />
+                <input
+                  id="ob-phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => updateForm('phone', e.target.value)}
+                  placeholder="+573001234567"
+                  className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-mono outline-none transition-colors placeholder:text-text-dim ${
+                    form.phone && !phoneValid ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
+                  }`}
+                />
                 {form.phone && !phoneValid ? (
-                  <p className="text-[10px] font-mono text-status-danger mt-0.5">Formato internacional: codigo de pais + numero (ej: +573001234567)</p>
+                  <p className="text-[10px] font-mono text-status-danger mt-0.5">Formato: codigo de pais + numero (ej: +573001234567)</p>
                 ) : (
-                  <p className="text-[10px] font-mono text-text-dim mt-0.5">Aqui SofIA enviara alertas de emergencia y escalamiento</p>
+                  <p className="text-[10px] font-mono text-text-dim mt-0.5">SofIA enviara alertas de emergencia aqui</p>
                 )}
               </div>
             </div>
           )}
 
-          {/* Step 3: WhatsApp */}
+          {/* ---- Step 3: WhatsApp ---- */}
           {step === 3 && (
-            <div className="space-y-4 animate-fade-in">
-              <div>
-                <h2 className="text-xl font-semibold text-text-primary font-mono mb-0.5">WhatsApp Business</h2>
-                <p className="text-text-muted text-xs font-mono">Conecta el WhatsApp de tu clinica para que SofIA atienda pacientes</p>
-              </div>
-
-              {/* Primary: Embedded Signup (post-registration in dashboard) */}
-              <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-4 space-y-2">
+            <div className="space-y-4" key="step3" style={{ animation: 'fadeUp 0.3s ease-out' }}>
+              {/* Quick connect info */}
+              <div className="bg-surface border border-border rounded-md p-4 space-y-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-md flex items-center justify-center"
+                    style={{ background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.12)' }}>
                     <Zap size={14} className="text-brand-purple" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-mono font-semibold text-text-primary">Conexion con un clic</h3>
-                    <p className="text-[10px] font-mono text-text-dim">Disponible despues del registro, en Ajustes &rarr; Canales</p>
+                    <h3 className="text-xs font-mono font-semibold text-white">Conexion con un clic</h3>
+                    <p className="text-[10px] font-mono text-text-dim">Disponible en Ajustes &rarr; Canales</p>
                   </div>
                 </div>
                 <p className="text-[10px] font-mono text-text-muted leading-relaxed">
                   Despues de crear tu cuenta, podras conectar WhatsApp, Instagram y Messenger
-                  con un solo clic desde el dashboard. Solo necesitas tu cuenta de Meta Business.
+                  con un solo clic desde el dashboard.
                 </p>
               </div>
 
-              {/* Secondary: Manual Phone ID (optional) */}
+              {/* Manual phone ID */}
               <div>
                 <label htmlFor="ob-phone-id" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Phone Number ID (opcional)</label>
-                <input id="ob-phone-id" type="text" value={form.whatsapp_phone_id} onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)} placeholder="Ej: 123456789012345" className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/50" />
+                <input
+                  id="ob-phone-id"
+                  type="text"
+                  value={form.whatsapp_phone_id}
+                  onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)}
+                  placeholder="Ej: 123456789012345"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                />
                 <p className="text-[10px] font-mono text-text-dim mt-0.5 flex items-center gap-1">
-                  Si ya tienes el Phone ID de Meta Business, puedes ingresarlo ahora
-                  <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:text-brand-purple-light inline-flex items-center gap-0.5">
+                  Si ya tienes el Phone ID de Meta Business
+                  <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:brightness-125 inline-flex items-center gap-0.5">
                     Ir a Meta <ExternalLink size={9} />
                   </a>
                 </p>
               </div>
 
-              <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-4 space-y-1.5">
+              <div className="bg-surface border border-border rounded-md p-4">
                 <div className="flex items-start gap-2">
                   <Shield size={12} className="text-brand-purple mt-0.5 flex-shrink-0" />
                   <p className="text-[10px] font-mono text-text-muted leading-relaxed">
-                    No te preocupes si no tienes el Phone ID ahora. Puedes conectar WhatsApp en segundos
-                    desde <strong>Ajustes &rarr; Canales</strong> despues de iniciar sesion.
+                    Puedes configurar WhatsApp en cualquier momento desde
+                    <strong className="text-text-primary"> Control &rarr; Canales</strong>.
+                    SofIA estara lista cuando tu lo estes.
                   </p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 4: Confirmacion */}
+          {/* ---- Step 4: Confirm ---- */}
           {step === 4 && (
-            <div className="space-y-4 animate-fade-in">
-              <div>
-                <h2 className="text-xl font-semibold text-text-primary font-mono mb-0.5">Confirmar setup</h2>
-                <p className="text-text-muted text-xs font-mono">Revisa que todo este correcto</p>
-              </div>
-
-              <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-4 space-y-2">
+            <div className="space-y-4" key="step4" style={{ animation: 'fadeUp 0.3s ease-out' }}>
+              {/* Summary */}
+              <div className="bg-surface border border-border rounded-md p-4 space-y-2">
                 <ConfirmRow label="Clinica" value={form.clinic_name} />
                 <ConfirmRow label="Especialidad" value={form.specialty} />
-                <ConfirmRow label="Ciudad" value={form.city || 'No especificada'} />
-                <ConfirmRow label="Doctor" value={form.owner_name} />
+                <ConfirmRow label="Ciudad" value={form.city || '—'} />
+                <ConfirmRow label="Comandante" value={form.owner_name} />
                 <ConfirmRow label="Email" value={form.owner_email} />
                 <ConfirmRow label="WhatsApp" value={form.phone} />
-                <ConfirmRow label="WA Phone ID" value={form.whatsapp_phone_id || 'Pendiente'} />
+                <ConfirmRow label="Phone ID" value={form.whatsapp_phone_id || 'Pendiente'} />
               </div>
 
-              <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-4">
+              <div className="bg-surface border border-border rounded-md p-4">
                 <p className="text-[10px] font-mono text-text-muted leading-relaxed">
                   Al confirmar se creara: organizacion, horarios (Lun-Sab 8AM-6PM),
-                  servicios de ejemplo segun tu especialidad, y el system prompt personalizado para <strong>{form.clinic_name}</strong>.
+                  servicios de ejemplo, y el prompt personalizado para <strong className="text-white">{form.clinic_name}</strong>.
                 </p>
               </div>
 
-              {/* Cloudflare Turnstile CAPTCHA */}
+              {/* Turnstile */}
               {TURNSTILE_SITE_KEY && (
                 <div className="flex justify-center">
                   <div ref={turnstileRef} />
                 </div>
               )}
 
+              {/* Terms */}
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
@@ -543,16 +793,22 @@ export default function OnboardingPage() {
                   className="mt-0.5 w-4 h-4 rounded border-border accent-brand-purple"
                 />
                 <span className="text-[10px] font-mono text-text-muted leading-relaxed group-hover:text-text-primary transition-colors">
-                  Acepto los terminos de servicio y la politica de privacidad de Ataraxia IA Labs.
-                  Los datos de pacientes seran procesados conforme a la regulacion colombiana de proteccion de datos (Ley 1581 de 2012).
+                  Acepto los terminos de servicio y la politica de privacidad.
+                  Datos procesados conforme a Ley 1581 de 2012.
                 </span>
               </label>
             </div>
           )}
 
+          {/* Hint text */}
+          <p className="text-[10px] font-mono text-text-dim mt-4 leading-relaxed italic">
+            {narrative.hint}
+          </p>
+
           {/* Error */}
           {error && (
-            <div className="mt-3 px-3 py-2.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-mono">
+            <div className="mt-3 px-3 py-2.5 rounded-md bg-surface border border-status-danger/20 text-status-danger text-xs font-mono"
+              style={{ background: 'rgba(239, 68, 68, 0.06)' }}>
               {error}
             </div>
           )}
@@ -560,24 +816,35 @@ export default function OnboardingPage() {
           {/* Navigation */}
           <div className="flex gap-3 mt-6">
             {step > 1 && (
-              <button onClick={() => setStep((step - 1) as Step)} className="px-4 py-2.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-mono font-semibold flex items-center gap-2">
+              <button
+                onClick={() => setStep((step - 1) as Step)}
+                className="px-4 py-2.5 rounded-md bg-surface border border-border text-text-muted text-xs font-mono font-semibold flex items-center gap-2 hover:border-brand-purple/20 transition-colors"
+              >
                 <ArrowLeft size={14} /> Atras
               </button>
             )}
             <button
               onClick={() => step < 4 ? setStep((step + 1) as Step) : handleSubmit()}
               disabled={!canProceed() || loading}
-              className="flex-1 py-2.5 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50"
+              className="flex-1 py-2.5 rounded-md bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : step < 4 ? (
                 <>Siguiente <ArrowRight size={14} /></>
               ) : (
-                <>Crear Clinica <Check size={14} /></>
+                <>Activar Portal <Check size={14} /></>
               )}
             </button>
           </div>
+
+          {/* Footer */}
+          <p className="text-[9px] font-mono text-text-dim text-center mt-8">
+            Ya tienes cuenta?{' '}
+            <a href="/login" className="text-brand-purple hover:brightness-125 transition-colors">
+              Iniciar sesion
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -587,10 +854,12 @@ export default function OnboardingPage() {
 function SetupItem({ done, label }: { done: boolean; label: string }) {
   return (
     <div className="flex items-center gap-2">
-      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${done ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>
+      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+        done ? 'text-status-success' : 'bg-surface-3 text-text-dim'
+      }`} style={done ? { background: 'rgba(6, 214, 160, 0.1)' } : {}}>
         {done ? <Check size={10} /> : <span className="text-[8px]">—</span>}
       </div>
-      <span className={`text-xs font-mono ${done ? 'text-text-primary' : 'text-text-dim'}`}>{label}</span>
+      <span className={`text-xs font-mono ${done ? 'text-white' : 'text-text-dim'}`}>{label}</span>
     </div>
   )
 }
@@ -598,8 +867,8 @@ function SetupItem({ done, label }: { done: boolean; label: string }) {
 function ConfirmRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-[10px] font-mono text-text-dim">{label}</span>
-      <span className="text-xs font-mono text-text-primary font-medium">{value}</span>
+      <span className="text-[10px] font-mono text-text-dim uppercase tracking-wider">{label}</span>
+      <span className="text-xs font-mono text-white font-medium">{value}</span>
     </div>
   )
 }
