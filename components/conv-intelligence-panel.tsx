@@ -122,9 +122,9 @@ export function ConvIntelligencePanel({ orgId, patientId, patientName }: Props) 
                 <div key={dim} className="flex items-center gap-2">
                   <span className="text-[9px] font-mono text-text-muted w-28 capitalize">{dim}</span>
                   <div className="flex-1 h-1.5 bg-surface-2 rounded-full">
-                    <div className="h-full bg-brand-purple/60 rounded-full transition-all" style={{ width: `${((personality as Record<string, unknown>)[dim] as number || 0) * 100}%` }} />
+                    <div className="h-full bg-brand-purple/60 rounded-full transition-all" style={{ width: `${((personality as unknown as Record<string, number>)[dim] || 0) * 100}%` }} />
                   </div>
-                  <span className="text-[9px] font-mono text-text-dim w-8 text-right">{(((personality as Record<string, unknown>)[dim] as number || 0) * 100).toFixed(0)}%</span>
+                  <span className="text-[9px] font-mono text-text-dim w-8 text-right">{(((personality as unknown as Record<string, number>)[dim] || 0) * 100).toFixed(0)}%</span>
                 </div>
               ))}
               {personality.dominant_traits?.length > 0 && (
