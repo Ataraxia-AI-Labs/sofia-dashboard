@@ -74,6 +74,10 @@ export function useCachedFetch<T>(
   const [error, setError] = useState('')
   const [isStale, setIsStale] = useState(false)
   const mountedRef = useRef(true)
+  const dataRef = useRef<T | null>(null)
+
+  // Keep ref in sync so doFetch can read current data without depending on it
+  dataRef.current = data
 
   const doFetch = useCallback(async (ignoreCache = false) => {
     if (skip) return
@@ -114,7 +118,7 @@ export function useCachedFetch<T>(
       return
     }
 
-    if (!data && !ignoreCache) setLoading(true)
+    if (!dataRef.current && !ignoreCache) setLoading(true)
 
     const promise = fetcher()
     inflight.set(key, promise)
@@ -136,7 +140,7 @@ export function useCachedFetch<T>(
       inflight.delete(key)
       if (mountedRef.current) setLoading(false)
     }
-  }, [key, fetcher, ttl, skip, data])
+  }, [key, fetcher, ttl, skip])
 
   // Initial fetch
   useEffect(() => {

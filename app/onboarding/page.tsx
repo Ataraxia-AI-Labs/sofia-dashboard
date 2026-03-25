@@ -68,7 +68,7 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<{ setup?: { services?: number; whatsapp?: boolean }; [key: string]: unknown } | null>(null)
   const [showPw, setShowPw] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -283,7 +283,7 @@ export default function OnboardingPage() {
         })
       }
 
-      let data: any
+      let data: Record<string, unknown>
       try {
         data = await res.json()
       } catch {
@@ -299,7 +299,7 @@ export default function OnboardingPage() {
       }
 
       if (!res.ok) {
-        const msg = data.detail || data.mensaje || 'Error creando clinica'
+        const msg = String(data.detail || data.mensaje || 'Error creando clinica')
         if (msg.toLowerCase().includes('already') || msg.toLowerCase().includes('duplicate') || msg.toLowerCase().includes('existe')) {
           setError('Ya existe una cuenta con este email. Intenta iniciar sesion o usa otro email.')
         } else {
@@ -316,7 +316,7 @@ export default function OnboardingPage() {
       setResult(data)
       setSuccess(true)
       setResendCooldown(60)
-    } catch (e: any) {
+    } catch (e: unknown) {
       setError(
         'El servidor esta despertando. Espera 30 segundos e intenta de nuevo. ' +
         '(Si el error persiste, contacta soporte)'
@@ -374,7 +374,7 @@ export default function OnboardingPage() {
                 <SetupItem done={true} label="Organizacion creada" />
                 <SetupItem done={true} label="Horarios configurados (Lun-Sab)" />
                 <SetupItem done={true} label={`${result.setup?.services || 0} servicios de ejemplo`} />
-                <SetupItem done={result.setup?.whatsapp} label="WhatsApp conectado" />
+                <SetupItem done={result.setup?.whatsapp ?? false} label="WhatsApp conectado" />
               </div>
             </div>
           </div>
