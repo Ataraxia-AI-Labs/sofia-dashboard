@@ -78,6 +78,7 @@
     "conversionRate": "Taxa de conversao",
     "loadError": "Erro ao carregar metricas",
     "connecting": "Conectando ao servidor...",
+    "serverWaking": "Iniciando servidor... isso leva alguns segundos",
     "retrying": "Conectando ao servidor... (tentando novamente)",
     "activateSofia": "Ative a SofIA.",
     "messagesReceived": "Mensagens recebidas",

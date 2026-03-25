@@ -78,6 +78,7 @@
     "conversionRate": "Conversion rate",
     "loadError": "Error loading metrics",
     "connecting": "Connecting to server...",
+    "serverWaking": "Starting server... this takes a few seconds",
     "retrying": "Connecting to server... (retrying)",
     "activateSofia": "Activate SofIA.",
     "messagesReceived": "Messages received",

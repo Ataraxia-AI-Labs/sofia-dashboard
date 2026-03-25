@@ -90,7 +90,7 @@ const PLANS: PlanDef[] = [
       { key: 'dataLakeExport', included: true },
       { key: 'upTo10Locations', included: true },
       { key: 'prioritySupport', included: true },
-      { key: 'apiAccess', included: false },
+      { key: 'apiAccess', included: true },
       { key: 'fineTuningAI', included: false },
     ],
   },

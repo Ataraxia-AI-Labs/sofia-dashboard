@@ -49,8 +49,8 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
     headers.set('Content-Type', 'application/json')
   }
 
-  // Timeout protection — prevent hanging requests (e.g. Render cold starts)
-  const timeoutMs = options?.timeoutMs ?? 15000
+  // Timeout protection — Render Starter cold starts take 20-40s
+  const timeoutMs = options?.timeoutMs ?? 45000
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
 

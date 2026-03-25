@@ -67,9 +67,9 @@ export default function DashboardOverview() {
     } catch (e) {
       const msg = e instanceof Error ? e.message : tCommon('errorUnknown')
       if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502') || msg.includes('autenticación'))) {
-        setError(t('retrying'))
+        setError(retryCount === 0 ? t('serverWaking') : t('retrying'))
         if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
-        retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), 10000)
+        retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), retryCount === 0 ? 5000 : 10000)
         return
       }
       setError(msg)
