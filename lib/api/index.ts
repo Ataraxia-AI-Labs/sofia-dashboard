@@ -107,3 +107,47 @@ export { getPricingRules, updatePricingRules, suggestPrice, suggestPriceBatch, g
 
 // Network Intelligence (P4-07)
 export { getNetworkBenchmarks, getServiceTrends, getPricingBenchmark, getConversionPatterns, getOptimalHours, getNetworkAlerts, getNetworkNarrative, getNetworkStats, publishMetrics } from './network'
+
+// Audit Logs
+export { fetchAuditLogs } from './audit'
+export type { AuditLogEntry, AuditLogResponse } from './audit'
+
+// Webhooks (P6-C)
+export { listWebhookEndpoints, createWebhookEndpoint, updateWebhookEndpoint, deleteWebhookEndpoint, testWebhookEndpoint, listWebhookDeliveries, retryWebhookDelivery, getWebhookEventCatalog } from './webhooks'
+export type { WebhookEndpoint, WebhookDelivery } from './webhooks'
+
+// Workflows (P6-A)
+export { listWorkflows, getWorkflow, createWorkflow, updateWorkflow, activateWorkflow, pauseWorkflow, archiveWorkflow, listTemplates, createFromTemplate, enrollPatients, listEnrollments, getWorkflowAnalytics, getWorkflowComparison } from './workflows'
+export type { Workflow, WorkflowStep, WorkflowTemplate, WorkflowEnrollment } from './workflows'
+
+// Growth (P6-E)
+export { getAttribution, getChannelROI, getPatientJourney, getGrowthDashboard, listAdCampaigns, getAdCampaignROI, generateAdContent, generateKeywords, getSEOHealth } from './growth'
+export type { AttributionData, GrowthMetrics, AdCampaign } from './growth'
+
+// Conversational Intelligence (P6-D)
+export { getPatientMemories, addPatientMemory, deletePatientMemory, searchPatientMemories, getPatientPersonality, getPatientEmotions, getEmotionTrajectory, getEmotionAnalytics, getPatientIntents, getIntentAnalytics, getPatientSummary, generatePatientSummary, getCoachingPatterns, getCoachingTips, markTipRead, getStaffMetrics, getCoachingDashboard, getProactiveQueue, getProactiveAnalytics } from './conv-intel'
+export type { PatientMemory, PersonalityProfile, EmotionProfile, EmotionTrajectory, CoachingTip, StaffMetric } from './conv-intel'
+
+// Content AI Studio (P6-E)
+export { listContent, createContent, updateContent, getContentAnalytics, suggestTopics, getContentCalendar } from './content'
+export type { ContentItem } from './content'
+
+// Referrals (P6-E)
+export { getReferralProgram, updateReferralProgram, generateReferralLink, getReferralLeaderboard, getReferralAnalytics } from './referrals'
+export type { ReferralProgram, ReferralLeaderEntry, ReferralAnalytics } from './referrals'
+
+// Reviews / GMB
+export { listReviews, getReviewStats, replyToReview, generateReviewReply, syncReviews, getReputationDashboard, getNPS, requestReview } from './reviews'
+export type { Review, ReviewStats } from './reviews'
+
+// Marketplace & Plugins (P6-C)
+export { browseConnectors, getConnectorDetail, getCategories, installConnector, uninstallConnector, listInstalled, getConnectorReviews, listPlugins, createPlugin, updatePlugin, deletePlugin, testPlugin } from './marketplace'
+export type { Connector, InstalledConnector, Plugin } from './marketplace'
+
+// API Keys
+export { listApiKeys, createApiKey, revokeApiKey } from './api-keys'
+export type { ApiKey } from './api-keys'
+
+// Revenue Dashboard (P6-B)
+export { getRevenueDashboard, getMRR, getChurn, getCohorts, getRevenueFunnel, getRevenueForecast } from './revenue'
+export type { RevenueDashboard, CohortData } from './revenue'

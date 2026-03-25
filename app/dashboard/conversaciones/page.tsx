@@ -12,11 +12,12 @@ import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
+import { ConvIntelligencePanel } from '@/components/conv-intelligence-panel'
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock, Shield, Loader2, Inbox, Layers, Mic
+  Hash, Clock, Shield, Loader2, Inbox, Layers, Mic, Brain
 } from 'lucide-react'
 
 const ChannelsPanel = dynamic(() => import('./channels-panel'), {
@@ -628,6 +629,9 @@ function ConversationDetail({
   const platformCfg = PLATFORM_STYLE[thread.channel] || PLATFORM_STYLE.WHATSAPP
   const PlatformIcon = platformCfg.icon
 
+  // Conv Intelligence panel
+  const [showIntel, setShowIntel] = useState(false)
+
   // Takeover state
   const [isTakeover, setIsTakeover] = useState(false)
   const [takeoverLoading, setTakeoverLoading] = useState(false)
@@ -741,6 +745,20 @@ function ConversationDetail({
           </span>
         </div>
 
+        {/* Conv Intelligence toggle */}
+        <button
+          onClick={() => setShowIntel(!showIntel)}
+          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+            showIntel
+              ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
+              : 'bg-surface-3 border-border text-text-muted hover:text-text-primary'
+          }`}
+          aria-label="Inteligencia Conversacional"
+          title="Inteligencia Conversacional"
+        >
+          <Brain size={14} />
+        </button>
+
         {/* Takeover button */}
         {canTakeover && (
           <button
@@ -761,6 +779,13 @@ function ConversationDetail({
           </button>
         )}
       </div>
+
+      {/* Conv Intelligence Panel */}
+      {showIntel && (
+        <div className="px-4 py-3 border-b border-border flex-shrink-0 max-h-[350px] overflow-y-auto animate-fade-in">
+          <ConvIntelligencePanel orgId={orgId} patientId={thread.patientId} patientName={displayName} />
+        </div>
+      )}
 
       {/* Messages area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-1">

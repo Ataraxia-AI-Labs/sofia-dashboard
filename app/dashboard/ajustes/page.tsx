@@ -5,10 +5,10 @@ import { useOrg } from '@/lib/org-context'
 import { fetchOrganization, fetchServicesCatalog, fetchBusinessHours, updateOrganization } from '@/lib/api'
 import { Tabs } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
-import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab, BrandingTab, PricingTab } from './tabs'
+import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab, BrandingTab, PricingTab, ApiKeysTab, WebchatTab } from './tabs'
 import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
 import { useTranslations } from 'next-intl'
-import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Lock, Palette, DollarSign } from 'lucide-react'
+import { MessageSquare, Clock, ShoppingBag, Bell, Phone, Activity, RefreshCw, Shield, Wifi, Lock, Palette, DollarSign, Key, MessageCircle } from 'lucide-react'
 
 const TAB_ICONS: Record<string, typeof MessageSquare> = {
   prompt: MessageSquare,
@@ -21,9 +21,11 @@ const TAB_ICONS: Record<string, typeof MessageSquare> = {
   security: Lock,
   branding: Palette,
   pricing: DollarSign,
+  apikeys: Key,
+  webchat: MessageCircle,
 }
 
-const TAB_IDS = ['prompt', 'services', 'hours', 'notifications', 'templates', 'bots', 'channels', 'security', 'branding', 'pricing']
+const TAB_IDS = ['prompt', 'services', 'hours', 'notifications', 'templates', 'bots', 'channels', 'security', 'branding', 'pricing', 'apikeys', 'webchat']
 
 export default function AjustesPage() {
   const { orgId, role } = useOrg()
@@ -148,6 +150,12 @@ export default function AjustesPage() {
       )}
       {activeTab === 'pricing' && (
         <PricingTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
+      )}
+      {activeTab === 'apikeys' && (
+        <ApiKeysTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
+      )}
+      {activeTab === 'webchat' && (
+        <WebchatTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
       )}
     </div>
   )

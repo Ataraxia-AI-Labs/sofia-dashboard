@@ -8,6 +8,7 @@ import { Button, Badge, Modal, Input, Select } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { useTranslations } from 'next-intl'
 import { Users, UserPlus, Shield, Crown, Mail, MoreVertical, RefreshCw, Trash2 } from 'lucide-react'
+import { StaffCoachingPanel } from '@/components/staff-coaching-panel'
 
 const ROLE_BADGE: Record<string, { variant: 'purple' | 'info' | 'neutral'; icon: typeof Crown }> = {
   OWNER: { variant: 'purple', icon: Crown },
@@ -273,6 +274,11 @@ export default function EquipoPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Staff Coaching Panel */}
+      {canManage && (
+        <StaffCoachingPanel orgId={orgId} />
+      )}
     </div>
   )
 }

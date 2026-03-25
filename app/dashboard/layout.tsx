@@ -8,6 +8,7 @@ import { isSuperAdmin } from '@/lib/admin-api'
 import { getImpersonatedOrgId, getImpersonatedOrgName, stopImpersonation, isImpersonating } from '@/lib/impersonation'
 import { OrgContext } from '@/lib/org-context'
 import { filterNavByRole } from '@/lib/role-permissions'
+import { canAccessByPlan } from '@/lib/plan-features'
 import { RoleGuard } from '@/components/role-guard'
 import { ErrorBoundary } from '@/components/error-boundary'
 import * as Sentry from '@sentry/nextjs'
@@ -45,7 +46,8 @@ import {
   LayoutDashboard, Users, Calendar, Target, Settings,
   LogOut, ChevronLeft, ChevronRight, CreditCard, Database, Activity, Kanban, Menu, X,
   MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
-  Zap, ArrowRight, FileText, Brain, Megaphone, Radio, Crosshair, DollarSign, Gauge
+  Zap, ArrowRight, FileText, Brain, Megaphone, Radio, Crosshair, DollarSign, Gauge, Lock,
+  TrendingUp, Palette, Gift, Star, Store, Webhook, Puzzle
 } from 'lucide-react'
 
 /* ================================================================
@@ -72,6 +74,15 @@ function useNavGroups() {
         { href: '/dashboard/oportunidades', icon: Crosshair, label: t('opportunities') },
         { href: '/dashboard/campanas', icon: Zap, label: t('campaigns') },
         { href: '/dashboard/pagos', icon: DollarSign, label: t('payments') },
+        { href: '/dashboard/referidos', icon: Gift, label: t('referrals') },
+      ],
+    },
+    {
+      label: t('growth'),
+      items: [
+        { href: '/dashboard/crecimiento', icon: TrendingUp, label: t('growthCenter') },
+        { href: '/dashboard/contenido', icon: Palette, label: t('contentStudio') },
+        { href: '/dashboard/resenas', icon: Star, label: t('reviews') },
       ],
     },
     {
@@ -80,6 +91,15 @@ function useNavGroups() {
         { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
         { href: '/dashboard/reportes', icon: FileText, label: t('reports') },
         { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
+        { href: '/dashboard/auditoria', icon: Shield, label: t('audit') },
+        { href: '/dashboard/automatizaciones', icon: Zap, label: t('automations') },
+      ],
+    },
+    {
+      label: t('platform'),
+      items: [
+        { href: '/dashboard/marketplace', icon: Store, label: t('marketplace') },
+        { href: '/dashboard/webhooks', icon: Webhook, label: t('webhooks') },
         { href: '/dashboard/network', icon: Brain, label: t('network') },
         { href: '/dashboard/health', icon: Activity, label: t('systemHealth') },
       ],
@@ -106,6 +126,7 @@ function Sidebar({
   pathname,
   orgName,
   navGroups,
+  plan,
   onNavigate,
   onLogout,
   onClose,
@@ -121,6 +142,7 @@ function Sidebar({
   pathname: string
   orgName: string
   navGroups: ReturnType<typeof useNavGroups>
+  plan: Organization['plan']
   onNavigate: (href: string) => void
   onLogout: () => void
   onClose?: () => void
@@ -181,22 +203,28 @@ function Sidebar({
                   ? pathname === '/dashboard'
                   : pathname.startsWith(item.href)
                 const Icon = item.icon
+                const locked = !canAccessByPlan(plan, item.href)
                 return (
                   <button
                     key={item.href}
-                    onClick={() => onNavigate(item.href)}
+                    onClick={() => onNavigate(locked ? '/dashboard/planes' : item.href)}
                     className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-[11px] font-mono tracking-wide transition-all duration-150 cursor-pointer ${
-                      isActive
+                      locked
+                        ? 'text-text-dim/50 hover:text-text-muted hover:bg-surface-2 rounded-md'
+                        : isActive
                         ? 'text-brand-purple bg-brand-purple/5 border-l-2 border-brand-purple rounded-r-md -ml-px'
                         : 'text-text-muted hover:text-text-primary hover:bg-surface-2 rounded-md'
                     } ${!isOpen ? 'justify-center' : ''}`}
-                    title={!isOpen ? item.label : undefined}
-                    aria-label={item.label}
+                    title={!isOpen ? (locked ? `${item.label} (Upgrade)` : item.label) : undefined}
+                    aria-label={locked ? `${item.label} — requiere upgrade` : item.label}
                     aria-current={isActive ? 'page' : undefined}
                   >
                     <Icon size={16} className="flex-shrink-0" strokeWidth={isActive ? 2 : 1.5} />
                     {isOpen && (
-                      <span className="animate-fade-in truncate">{item.label}</span>
+                      <span className={`animate-fade-in truncate ${locked ? 'flex-1' : ''}`}>{item.label}</span>
+                    )}
+                    {isOpen && locked && (
+                      <Lock size={12} className="flex-shrink-0 text-text-dim/40" />
                     )}
                   </button>
                 )
@@ -449,12 +477,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       if (isAdmin && impersonatedOrgId) {
         setGodMode(true)
-        setGodModeOrgName(impersonatedOrgName || tLayout('orgUnknown'))
+        setGodModeOrgName(impersonatedOrgName || 'Org desconocida')
 
         try {
           const { data, error } = await supabase
             .from('organizations')
-            .select('id, name, status')
+            .select('id, name, status, plan, trial_ends_at, plan_started_at, billing_cycle, config_settings, specialty, country')
             .eq('id', impersonatedOrgId)
             .single()
           if (!error && data) {
@@ -478,8 +506,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           if (organization) {
             Sentry.setContext('organization', { id: organization.id, name: organization.name })
           }
-        } catch {
-          // Organization fetch failed
+        } catch (err) {
+          console.error('[layout] fetchUserOrganization failed:', err)
+          Sentry.captureException(err, { tags: { context: 'org_bootstrap' } })
         }
       }
 
@@ -496,7 +525,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     })
 
     return () => subscription.unsubscribe()
-  }, [router, tLayout])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router])
 
   useEffect(() => {
     if (!org?.id) return
@@ -558,6 +588,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     pathname,
     orgName: org?.name || 'Nucleus',
     navGroups: FILTERED_NAV_GROUPS,
+    plan: org?.plan || ('STARTER' as Organization['plan']),
     onNavigate: navigateTo,
     onLogout: handleLogout,
     godMode,

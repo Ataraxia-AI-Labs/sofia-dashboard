@@ -11,6 +11,8 @@ import {
   cancelSubscription,
   fetchWompiConfig,
 } from '@/lib/api/subscriptions'
+import { getMRR, getChurn, getCohorts, getRevenueFunnel, getRevenueForecast } from '@/lib/api/revenue'
+import type { CohortData } from '@/lib/api/revenue'
 import CardTokenizationForm from '@/components/card-tokenization-form'
 import type { Subscription, Invoice, UsageData, WompiConfig } from '@/types'
 import { formatCOP } from '@/lib/api'
@@ -22,6 +24,8 @@ import {
   ArrowRight,
   X,
   Loader2,
+  TrendingUp,
+  BarChart3,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -67,6 +71,12 @@ export default function FacturacionPage() {
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancelling, setCancelling] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [revenueData, setRevenueData] = useState<{ mrr: number; arr: number; growth_rate: number } | null>(null)
+  const [churnData, setChurnData] = useState<{ churn_rate: number } | null>(null)
+  const [cohorts, setCohorts] = useState<CohortData[]>([])
+  const [funnel, setFunnel] = useState<Record<string, unknown>>({})
+  const [forecast, setForecast] = useState<Record<string, unknown>>({})
+  const [showRevenue, setShowRevenue] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -81,6 +91,18 @@ export default function FacturacionPage() {
       setInvoices(inv)
       setUsage(u)
       setWompiCfg(w)
+      // Revenue metrics (optional — may fail for non-admin users)
+      try {
+        const [mrr, churn, coh, fun, fore] = await Promise.all([
+          getMRR(), getChurn(), getCohorts(6), getRevenueFunnel(30), getRevenueForecast(3),
+        ])
+        setRevenueData(mrr)
+        setChurnData(churn)
+        setCohorts(coh)
+        setFunnel(fun)
+        setForecast(fore)
+        setShowRevenue(true)
+      } catch { /* revenue endpoints require admin — ok to fail */ }
     } catch {
       /* silently degrade — sections show empty states */
     }
@@ -172,6 +194,115 @@ export default function FacturacionPage() {
 
   return (
     <div className="max-w-[900px] mx-auto space-y-4">
+      {/* -- Revenue Insights (admin/owner only) -- */}
+      {revenueData && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="border border-border rounded-lg p-3">
+            <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">MRR</p>
+            <p className="text-sm font-mono font-bold text-text-primary mt-0.5">{formatCOP(revenueData.mrr)}</p>
+          </div>
+          <div className="border border-border rounded-lg p-3">
+            <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">ARR</p>
+            <p className="text-sm font-mono font-bold text-text-primary mt-0.5">{formatCOP(revenueData.arr)}</p>
+          </div>
+          <div className="border border-border rounded-lg p-3">
+            <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{t('growthRate') || 'Crecimiento'}</p>
+            <p className={`text-sm font-mono font-bold mt-0.5 ${revenueData.growth_rate >= 0 ? 'text-status-success' : 'text-status-danger'}`}>
+              {revenueData.growth_rate >= 0 ? '+' : ''}{(revenueData.growth_rate * 100).toFixed(1)}%
+            </p>
+          </div>
+          {churnData && (
+            <div className="border border-border rounded-lg p-3">
+              <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">Churn</p>
+              <p className={`text-sm font-mono font-bold mt-0.5 ${churnData.churn_rate > 5 ? 'text-status-danger' : 'text-status-success'}`}>
+                {(churnData.churn_rate).toFixed(1)}%
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* -- Revenue Funnel -- */}
+      {showRevenue && Object.keys(funnel).length > 0 && (
+        <div className="glass-card p-4">
+          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3 flex items-center gap-1.5">
+            <TrendingUp size={13} className="text-brand-purple" />
+            {t('revenueFunnel') || 'Revenue Funnel'}
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {Object.entries(funnel).map(([k, v]) => (
+              <div key={k} className="border border-border rounded-lg p-3">
+                <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{k.replace(/_/g, ' ')}</p>
+                <p className="text-sm font-mono font-bold text-text-primary mt-0.5">
+                  {typeof v === 'number' ? (k.includes('rate') ? `${(v * 100).toFixed(1)}%` : v.toLocaleString()) : String(v)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* -- Revenue Forecast -- */}
+      {showRevenue && Object.keys(forecast).length > 0 && (
+        <div className="glass-card p-4">
+          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3 flex items-center gap-1.5">
+            <BarChart3 size={13} className="text-brand-cyan" />
+            {t('forecast') || 'Pronóstico (3 meses)'}
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {Object.entries(forecast).map(([k, v]) => (
+              <div key={k} className="border border-border rounded-lg p-3">
+                <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{k.replace(/_/g, ' ')}</p>
+                <p className="text-sm font-mono font-bold text-text-primary mt-0.5">
+                  {typeof v === 'number' ? (k.includes('revenue') || k.includes('mrr') ? formatCOP(v) : v.toLocaleString()) : String(v)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* -- Cohorts -- */}
+      {showRevenue && cohorts.length > 0 && (
+        <div className="glass-card p-4">
+          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3">
+            {t('cohorts') || 'Cohortes de Retención'}
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[9px] font-mono">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-1.5 px-2 text-text-dim uppercase tracking-wider">{t('cohortMonth') || 'Cohorte'}</th>
+                  <th className="text-right py-1.5 px-2 text-text-dim uppercase tracking-wider">{t('initial') || 'Inicial'}</th>
+                  {cohorts[0] && Object.keys(cohorts[0].months).map(m => (
+                    <th key={m} className="text-right py-1.5 px-2 text-text-dim uppercase tracking-wider">M{m}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {cohorts.map(c => (
+                  <tr key={c.cohort} className="border-b border-border/50">
+                    <td className="py-1.5 px-2 text-text-primary font-semibold">{c.cohort}</td>
+                    <td className="py-1.5 px-2 text-right text-text-primary">{c.initial_count}</td>
+                    {Object.entries(c.months).map(([m, pct]) => (
+                      <td key={m} className="py-1.5 px-2 text-right">
+                        <span className={`px-1.5 py-0.5 rounded ${
+                          pct >= 80 ? 'bg-status-success/10 text-status-success' :
+                          pct >= 50 ? 'bg-status-warning/10 text-status-warning' :
+                          'bg-status-danger/10 text-status-danger'
+                        }`}>
+                          {typeof pct === 'number' ? `${pct.toFixed(0)}%` : pct}
+                        </span>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* -- Section 1: Plan actual -- */}
       <div className="glass-card p-4">
         <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3">{t('currentPlan')}</h3>
