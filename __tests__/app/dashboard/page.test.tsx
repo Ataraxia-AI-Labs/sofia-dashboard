@@ -252,9 +252,9 @@ describe('DashboardOverview', () => {
         expect(mockFetchAnalytics).toHaveBeenCalledTimes(1)
       })
 
-      // Show retrying message
+      // Show serverWaking message on first retry
       await waitFor(() => {
-        expect(screen.getByText('retrying')).toBeInTheDocument()
+        expect(screen.getByText('serverWaking')).toBeInTheDocument()
       })
     })
 
