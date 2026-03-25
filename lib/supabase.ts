@@ -38,18 +38,19 @@ export async function parseAPIError(res: Response): Promise<string> {
 // ============================================================
 
 export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
-  // getSession() reads from local cache (fast). The JWT is re-validated server-side
-  // by the backend's auth.py, so we don't need the overhead of getUser() here.
   const { data: { session } } = await supabase.auth.getSession()
   const headers = new Headers(options?.headers)
-  if (session?.access_token) {
-    headers.set('Authorization', `Bearer ${session.access_token}`)
+
+  if (!session?.access_token) {
+    console.warn('[authFetch] No session token available for:', url)
+    throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')
   }
+
+  headers.set('Authorization', `Bearer ${session.access_token}`)
   if (!headers.has('Content-Type') && options?.body && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json')
   }
 
-  // Timeout protection — Render Starter cold starts take 20-40s
   const timeoutMs = options?.timeoutMs ?? 45000
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
@@ -61,10 +62,14 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
       signal: options?.signal ?? controller.signal,
     })
 
-    // Return the response and let calling code handle via `if (!res.ok)`.
-    // This prevents unhandled throws from breaking pages that use Promise.all
-    // without try/catch. The response status is available for callers to check.
+    if (!res.ok) {
+      console.warn(`[authFetch] ${res.status} ${options?.method || 'GET'} ${url}`)
+    }
+
     return res
+  } catch (err) {
+    console.error(`[authFetch] Network error for ${url}:`, err)
+    throw err
   } finally {
     clearTimeout(timer)
   }

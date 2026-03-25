@@ -72,18 +72,14 @@ describe('authFetch', () => {
     expect(headers.get('Authorization')).toBe('Bearer test-jwt-token-abc123')
   })
 
-  it('should NOT set Authorization header when there is no session', async () => {
+  it('should throw when there is no session', async () => {
     mockGetSession.mockResolvedValue({
       data: { session: null },
       error: null,
     })
-    mockFetch.mockResolvedValue(createMockResponse(200))
 
-    await authFetch(`${API_URL}/api/patients`)
-
-    const [, options] = mockFetch.mock.calls[0]
-    const headers = options.headers as Headers
-    expect(headers.get('Authorization')).toBeNull()
+    await expect(authFetch(`${API_URL}/api/patients`)).rejects.toThrow(/sesión/)
+    expect(mockFetch).not.toHaveBeenCalled()
   })
 
   // -----------------------------------------------------------------------
