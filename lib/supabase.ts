@@ -61,25 +61,9 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
       signal: options?.signal ?? controller.signal,
     })
 
-    // Global 401 — Backend rejected the token.
-    // Do NOT auto-signout: the Supabase session may still be valid
-    // (backend could be deploying, cold starting, or have JWT config issues).
-    // Let the calling code handle the error gracefully.
-    if (res.status === 401) {
-      throw new Error('Error de autenticación con el servidor. Intenta recargar la página.')
-    }
-
-    // Global 403 — Access denied (e.g. user accessing another org's data)
-    if (res.status === 403) {
-      const msg = await parseAPIError(res)
-      throw new Error(msg || 'No tienes acceso a este recurso')
-    }
-
-    // Global 429 — Rate limit exceeded
-    if (res.status === 429) {
-      throw new Error('Demasiadas solicitudes. Espera un momento e intenta de nuevo.')
-    }
-
+    // Return the response and let calling code handle via `if (!res.ok)`.
+    // This prevents unhandled throws from breaking pages that use Promise.all
+    // without try/catch. The response status is available for callers to check.
     return res
   } finally {
     clearTimeout(timer)

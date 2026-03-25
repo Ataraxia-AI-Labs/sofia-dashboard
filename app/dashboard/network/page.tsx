@@ -37,22 +37,26 @@ export default function NetworkPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true)
-    const [bm, tr, pat, hr, al, nar, st] = await Promise.all([
-      getNetworkBenchmarks(orgId),
-      getServiceTrends(orgId),
-      getConversionPatterns(orgId),
-      getOptimalHours(orgId),
-      getNetworkAlerts(orgId),
-      getNetworkNarrative(orgId),
-      getNetworkStats(),
-    ])
-    setBenchmarks(bm)
-    setTrends(tr)
-    setPatterns(pat)
-    setHours(hr)
-    setAlerts(al)
-    setNarrative(nar)
-    setStats(st)
+    try {
+      const [bm, tr, pat, hr, al, nar, st] = await Promise.all([
+        getNetworkBenchmarks(orgId),
+        getServiceTrends(orgId),
+        getConversionPatterns(orgId),
+        getOptimalHours(orgId),
+        getNetworkAlerts(orgId),
+        getNetworkNarrative(orgId),
+        getNetworkStats(),
+      ])
+      setBenchmarks(bm)
+      setTrends(tr)
+      setPatterns(pat)
+      setHours(hr)
+      setAlerts(al)
+      setNarrative(nar)
+      setStats(st)
+    } catch {
+      // Non-critical — page renders empty state
+    }
     setLoading(false)
   }, [orgId])
 

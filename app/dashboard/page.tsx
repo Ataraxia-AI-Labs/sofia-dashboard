@@ -65,11 +65,12 @@ export default function DashboardOverview() {
       setError('')
       retryingRef.current = false
     } catch (e) {
-      const msg = e instanceof Error ? e.message : tCommon('errorUnknown')
-      if (retryCount < 3 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502') || msg.includes('autenticación'))) {
-        setError(retryCount === 0 ? t('serverWaking') : t('retrying'))
+      const msg = e instanceof Error ? e.message : 'Error desconocido'
+      // Only retry on cold-start errors (502/503/timeout), NOT on auth failures
+      if (retryCount < 2 && (msg.includes('aborted') || msg.includes('Failed to fetch') || msg.includes('503') || msg.includes('502'))) {
+        setError(retryCount === 0 ? 'Servidor iniciando...' : 'Reintentando...')
         if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
-        retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), retryCount === 0 ? 5000 : 10000)
+        retryTimerRef.current = setTimeout(() => loadData(retryCount + 1), 8000)
         return
       }
       setError(msg)

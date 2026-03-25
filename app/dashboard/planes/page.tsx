@@ -142,14 +142,18 @@ export default function PlanesPage() {
   /* Fetch data on mount */
   const loadData = useCallback(async () => {
     setLoading(true)
-    const [sub, usg, cfg] = await Promise.all([
-      fetchSubscription(orgId),
-      fetchUsage(orgId),
-      fetchWompiConfig(),
-    ])
-    setSubscription(sub)
-    setUsage(usg)
-    setWompi(cfg)
+    try {
+      const [sub, usg, cfg] = await Promise.all([
+        fetchSubscription(orgId),
+        fetchUsage(orgId),
+        fetchWompiConfig(),
+      ])
+      setSubscription(sub)
+      setUsage(usg)
+      setWompi(cfg)
+    } catch {
+      // Non-critical — page still renders with plan cards
+    }
     setLoading(false)
   }, [orgId])
 

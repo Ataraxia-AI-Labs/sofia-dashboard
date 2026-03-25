@@ -252,9 +252,9 @@ describe('DashboardOverview', () => {
         expect(mockFetchAnalytics).toHaveBeenCalledTimes(1)
       })
 
-      // Show serverWaking message on first retry
+      // Show hardcoded Spanish message on first retry
       await waitFor(() => {
-        expect(screen.getByText('serverWaking')).toBeInTheDocument()
+        expect(screen.getByText('Servidor iniciando...')).toBeInTheDocument()
       })
     })
 
@@ -264,7 +264,7 @@ describe('DashboardOverview', () => {
       render(<DashboardOverview />)
 
       await waitFor(() => {
-        expect(screen.getByText('errorUnknown')).toBeInTheDocument()
+        expect(screen.getByText('Error desconocido')).toBeInTheDocument()
       })
     })
   })

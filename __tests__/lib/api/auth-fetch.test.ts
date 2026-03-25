@@ -155,41 +155,28 @@ describe('authFetch', () => {
   })
 
   // -----------------------------------------------------------------------
-  // Error status handling (401, 403, 429)
+  // Error status handling (401, 403, 429) — returns response, does NOT throw
+  // Callers use `if (!res.ok)` to handle errors gracefully
   // -----------------------------------------------------------------------
 
-  it('should throw on 401 with authentication error message', async () => {
+  it('should return response on 401 without throwing', async () => {
     mockFetch.mockResolvedValue(createMockResponse(401))
-
-    await expect(authFetch(`${API_URL}/api/patients`)).rejects.toThrow(
-      /autenticaci[oó]n/i
-    )
+    const res = await authFetch(`${API_URL}/api/patients`)
+    expect(res.status).toBe(401)
   })
 
-  it('should throw on 403 with the message from parseAPIError', async () => {
+  it('should return response on 403 without throwing', async () => {
     mockFetch.mockResolvedValue(
       createMockResponse(403, { message: 'No perteneces a esta organizacion' })
     )
-
-    await expect(authFetch(`${API_URL}/api/org/123`)).rejects.toThrow(
-      'No perteneces a esta organizacion'
-    )
+    const res = await authFetch(`${API_URL}/api/org/123`)
+    expect(res.status).toBe(403)
   })
 
-  it('should throw on 403 with fallback message when backend returns no message', async () => {
-    mockFetch.mockResolvedValue(createMockResponse(403, {}))
-
-    await expect(authFetch(`${API_URL}/api/org/123`)).rejects.toThrow(
-      /acceso|403/i
-    )
-  })
-
-  it('should throw on 429 with rate limit message', async () => {
+  it('should return response on 429 without throwing', async () => {
     mockFetch.mockResolvedValue(createMockResponse(429))
-
-    await expect(authFetch(`${API_URL}/api/patients`)).rejects.toThrow(
-      /solicitudes/i
-    )
+    const res = await authFetch(`${API_URL}/api/patients`)
+    expect(res.status).toBe(429)
   })
 
   // -----------------------------------------------------------------------

@@ -24,12 +24,16 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
 
   const loadData = useCallback(async () => {
     setLoading(true)
-    const [sugData, insData] = await Promise.all([
-      getPriceSuggestions(orgId, statusFilter || undefined),
-      getPricingInsights(orgId),
-    ])
-    setSuggestions(sugData)
-    setInsights(insData)
+    try {
+      const [sugData, insData] = await Promise.all([
+        getPriceSuggestions(orgId, statusFilter || undefined),
+        getPricingInsights(orgId),
+      ])
+      setSuggestions(sugData)
+      setInsights(insData)
+    } catch {
+      // Non-critical
+    }
     setLoading(false)
   }, [orgId, statusFilter])
 
