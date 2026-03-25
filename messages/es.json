@@ -227,7 +227,7 @@
   },
   "hours": {
     "title": "Horarios de Atencion",
-    "noHours": "No hay horarios configurados. Ve a Ajustes para agregar los horarios de tu clinica.",
+    "noHours": "No hay horarios configurados. Los horarios se crean automaticamente al registrar tu clinica. Si no aparecen, contacta soporte.",
     "day": "Dia",
     "openTime": "Apertura",
     "closeTime": "Cierre",

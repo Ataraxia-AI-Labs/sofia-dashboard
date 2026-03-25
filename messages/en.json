@@ -227,7 +227,7 @@
   },
   "hours": {
     "title": "Business Hours",
-    "noHours": "No hours configured. Go to Settings to add your clinic hours.",
+    "noHours": "No hours configured. Hours are created automatically when you register your clinic. If missing, contact support.",
     "day": "Day",
     "openTime": "Open",
     "closeTime": "Close",

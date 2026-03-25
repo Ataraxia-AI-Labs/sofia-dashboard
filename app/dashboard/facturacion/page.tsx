@@ -114,24 +114,25 @@ export default function FacturacionPage() {
   /* -- Handlers -- */
 
   const handleCardTokenized = async (token: string) => {
-    if (!wompiCfg?.acceptance_token) return
+    if (!wompiCfg?.acceptance_token || loading) return
     setActionError(null)
     const res = await updatePaymentMethod(orgId, token, wompiCfg.acceptance_token)
     if (res.exito) {
       setShowCardModal(false)
-      load()
+      await load()
     } else {
       setActionError(res.error || t('updatePaymentError'))
     }
   }
 
   const handleCancel = async () => {
+    if (loading) return
     setCancelling(true)
     setActionError(null)
     const res = await cancelSubscription(orgId)
     if (res.exito) {
       setShowCancelModal(false)
-      load()
+      await load()
     } else {
       setActionError(res.error || t('cancelError'))
     }

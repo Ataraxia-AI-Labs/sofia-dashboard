@@ -43,10 +43,11 @@ export default function EquipoPage() {
       const data = await fetchTeamMembers(orgId)
       setMembers(data)
     } catch {
-      toast.error(t('loadError'))
+      // Load error — user sees empty state
     }
     setLoading(false)
-  }, [orgId, toast, t])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgId])
 
   useEffect(() => { loadMembers() }, [loadMembers])
 

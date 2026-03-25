@@ -43,10 +43,11 @@ export default function SystemHealthPage() {
       const data = await fetchSystemHealth()
       setHealth(data)
     } catch {
-      setHealth({ status: 'CRITICAL', error: t('loadError') })
+      setHealth({ status: 'CRITICAL', error: 'Error al cargar' })
     }
     setLoading(false)
-  }, [t])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => { loadHealth() }, [loadHealth])
 

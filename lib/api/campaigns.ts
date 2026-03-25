@@ -31,7 +31,7 @@ export async function getCampaign(orgId: string, campaignId: string): Promise<Ca
 }
 
 export async function previewCampaign(orgId: string, campaignId: string): Promise<CampaignPreview | null> {
-  const res = await authFetch(`${API_URL}/campaigns/${orgId}/${campaignId}/preview`)
+  const res = await authFetch(`${API_URL}/campaigns/${orgId}/${campaignId}/preview`, { method: 'POST' })
   if (!res.ok) return null
   return res.json()
 }

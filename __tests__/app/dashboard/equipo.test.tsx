@@ -458,12 +458,12 @@ describe('EquipoPage', () => {
     })
   })
 
-  // 23. Error state — load failure
-  it('shows error toast when loading fails', async () => {
+  // 23. Error state — load failure shows empty state (no toast to avoid infinite loop)
+  it('shows empty state when loading fails', async () => {
     mockFetchTeam.mockRejectedValue(new Error('Network error'))
     render(<EquipoPage />)
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith('loadError')
+      expect(screen.getByText('noMembers')).toBeInTheDocument()
     })
   })
 

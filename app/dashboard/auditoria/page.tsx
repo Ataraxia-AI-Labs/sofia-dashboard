@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchAuditLogs } from '@/lib/api/audit'
 import type { AuditLogEntry } from '@/lib/api/audit'
@@ -21,6 +21,8 @@ export default function AuditoriaPage() {
   const [actionFilter, setActionFilter] = useState('')
   const [actions, setActions] = useState<string[]>([])
 
+  const actionsLoaded = useRef(false)
+
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -31,17 +33,18 @@ export default function AuditoriaPage() {
       })
       setLogs(res.data || [])
       setTotal(res.total || 0)
-      // Extract unique actions for filter
-      if (actions.length === 0 && res.data?.length) {
+      // Extract unique actions for filter (only once)
+      if (!actionsLoaded.current && res.data?.length) {
         const unique = [...new Set(res.data.map(l => l.action))]
         setActions(unique)
+        actionsLoaded.current = true
       }
     } catch {
       setLogs([])
     } finally {
       setLoading(false)
     }
-  }, [orgId, page, actionFilter, actions.length])
+  }, [orgId, page, actionFilter])
 
   useEffect(() => { load() }, [load])
 

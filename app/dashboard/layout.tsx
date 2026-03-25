@@ -553,19 +553,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const whiteLabel = useMemo(() => (org?.config_settings as Record<string, unknown>)?.white_label as Record<string, unknown> | undefined, [org?.config_settings])
   const logoUrl = (whiteLabel?.logo_url as string) || ''
-  const brandColors = useMemo(() => (whiteLabel?.brand_colors || {}) as Record<string, string>, [whiteLabel])
+  const brandPrimary = (whiteLabel?.brand_colors as Record<string, string> | undefined)?.primary || ''
+  const brandSecondary = (whiteLabel?.brand_colors as Record<string, string> | undefined)?.secondary || ''
+  const brandAccent = (whiteLabel?.brand_colors as Record<string, string> | undefined)?.accent || ''
 
   useEffect(() => {
     const root = document.documentElement
-    if (brandColors.primary) root.style.setProperty('--color-brand-primary', brandColors.primary)
-    if (brandColors.secondary) root.style.setProperty('--color-brand-secondary', brandColors.secondary)
-    if (brandColors.accent) root.style.setProperty('--color-brand-accent', brandColors.accent)
+    if (brandPrimary) root.style.setProperty('--color-brand-primary', brandPrimary)
+    if (brandSecondary) root.style.setProperty('--color-brand-secondary', brandSecondary)
+    if (brandAccent) root.style.setProperty('--color-brand-accent', brandAccent)
     return () => {
       root.style.removeProperty('--color-brand-primary')
       root.style.removeProperty('--color-brand-secondary')
       root.style.removeProperty('--color-brand-accent')
     }
-  }, [brandColors])
+  }, [brandPrimary, brandSecondary, brandAccent])
 
   /* ---- Loading state: sentient breathe ---- */
   if (loading) {

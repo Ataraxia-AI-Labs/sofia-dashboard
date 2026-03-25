@@ -7,8 +7,7 @@
    12-color closed palette. 8px grid. Purpose-driven motion.
    ============================================================ */
 
-/* Dark theme (default — the only real theme for Nucleus) */
-:root,
+/* Dark theme (default — the core Nucleus experience) */
 .dark {
   --color-void: #050507;
   --color-surface: #0C0C14;
@@ -23,8 +22,7 @@
   --color-white: #F5F3FF;
 }
 
-/* Light theme (transitional surfaces only) */
-:root:not(.dark),
+/* Light theme */
 .light {
   --color-void: #F5F3FF;
   --color-surface: #FFFFFF;
@@ -37,6 +35,38 @@
   --color-text-muted: #6B6480;
   --color-text-dim: #9B94B0;
   --color-white: #1A1625;
+}
+
+/* System theme — follows OS preference with brand-tinted surfaces */
+@media (prefers-color-scheme: dark) {
+  :root:not(.dark):not(.light) {
+    --color-void: #080812;
+    --color-surface: #0E0E1A;
+    --color-surface-2: #161628;
+    --color-surface-3: #1E1E36;
+    --color-border: #2A2450;
+    --color-border-2: #352E60;
+    --color-text-primary: #E8E4F8;
+    --color-text-secondary: #9088B8;
+    --color-text-muted: #5C5480;
+    --color-text-dim: #3A3260;
+    --color-white: #F5F3FF;
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root:not(.dark):not(.light) {
+    --color-void: #F8F5FF;
+    --color-surface: #FDFCFF;
+    --color-surface-2: #F3EFFE;
+    --color-surface-3: #EBE5FC;
+    --color-border: #D8D0F0;
+    --color-border-2: #C0B5E5;
+    --color-text-primary: #1A1430;
+    --color-text-secondary: #3D3460;
+    --color-text-muted: #6B6090;
+    --color-text-dim: #9B90C0;
+    --color-white: #1A1430;
+  }
 }
 
 @layer base {
