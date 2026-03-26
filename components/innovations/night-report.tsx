@@ -23,9 +23,12 @@ interface NightReportData {
  * Data comes from interaction_logs (event_type=DAILY_REPORT).
  */
 
-async function fetchNightReport(orgId: string): Promise<NightReportData | null> {
+async function fetchNightReport(orgId: string, branchId?: string | null): Promise<NightReportData | null> {
   try {
-    const res = await authFetch(`${API_URL}/analytics/${orgId}/night-report`)
+    const url = branchId
+      ? `${API_URL}/analytics/${orgId}/night-report?branch_id=${branchId}`
+      : `${API_URL}/analytics/${orgId}/night-report`
+    const res = await authFetch(url)
     if (!res.ok) return null
     const data = await res.json()
     // Backend returns null if no report exists
@@ -37,17 +40,17 @@ async function fetchNightReport(orgId: string): Promise<NightReportData | null> 
 }
 
 export function NightReport() {
-  const { orgId } = useOrg()
+  const { orgId, branchId } = useOrg()
   const [report, setReport] = useState<NightReportData | null>(null)
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
     setLoading(true)
-    const data = await fetchNightReport(orgId)
+    const data = await fetchNightReport(orgId, branchId)
     setReport(data)
     setLoading(false)
-  }, [orgId])
+  }, [orgId, branchId])
 
   useEffect(() => { load() }, [load])
 
