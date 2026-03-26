@@ -1198,8 +1198,16 @@ export interface ChannelConfig {
   tone_preference?: string
 }
 
+export interface ChannelInsightItem {
+  title: string
+  observation: string
+  recommendation: string
+  impact: string
+}
+
 export interface ChannelInsight {
   insight: string
+  insights: ChannelInsightItem[]
   generated_at: string
 }
 

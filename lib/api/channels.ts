@@ -140,7 +140,21 @@ export async function getChannelInsights(
 ): Promise<ChannelInsight | null> {
   const res = await authFetch(`${API_URL}/channels/${orgId}/insights`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  if (data?.error) return null
+
+  // Backend returns { insights: [{title, observation, recommendation, impact}], generated_at }
+  // Frontend needs { insight: string, insights: [...], generated_at }
+  const items = data.insights || []
+  const insight = items.map((i: { title: string; observation: string; recommendation: string; impact: string }) =>
+    `**${i.title}**\n${i.observation}\n→ ${i.recommendation}${i.impact ? ` (${i.impact})` : ''}`
+  ).join('\n\n') || data.insight || ''
+
+  return {
+    insight,
+    insights: items,
+    generated_at: data.generated_at || new Date().toISOString(),
+  }
 }
 
 export async function suggestRedirect(

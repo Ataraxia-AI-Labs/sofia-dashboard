@@ -283,9 +283,28 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
         </div>
         {insights ? (
           <div>
-            <p className="text-xs text-text-muted leading-relaxed whitespace-pre-line">
-              {insights.insight}
-            </p>
+            {insights.insights?.length > 0 ? (
+              <div className="space-y-3">
+                {insights.insights.map((item, idx) => (
+                  <div key={idx} className="p-3 rounded-lg bg-surface-2 border border-border">
+                    <p className="text-[11px] font-mono font-semibold text-text-primary mb-1">{item.title}</p>
+                    <p className="text-[10px] text-text-muted leading-relaxed mb-1.5">{item.observation}</p>
+                    {item.recommendation && (
+                      <p className="text-[10px] text-brand-purple leading-relaxed">
+                        → {item.recommendation}
+                      </p>
+                    )}
+                    {item.impact && (
+                      <p className="text-[9px] text-text-dim mt-1">{item.impact}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-text-muted leading-relaxed whitespace-pre-line">
+                {insights.insight}
+              </p>
+            )}
             <p className="text-[9px] text-text-dim mt-2">
               {timeAgo(insights.generated_at)}
             </p>
