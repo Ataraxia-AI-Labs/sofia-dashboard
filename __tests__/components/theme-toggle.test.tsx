@@ -15,12 +15,13 @@ describe('ThemeToggle', () => {
     mockTheme = 'dark'
   })
 
-  it('renders four theme buttons after mount', () => {
+  it('renders five theme buttons after mount', () => {
     render(<ThemeToggle />)
     expect(screen.getByRole('button', { name: 'Claro' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Oscuro' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'SofIA' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Sistema' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Oscuro' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Ataraxia Cyan' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Ataraxia Purple' })).toBeInTheDocument()
   })
 
   it('marks the active theme button as pressed', () => {
@@ -28,7 +29,8 @@ describe('ThemeToggle', () => {
     expect(screen.getByRole('button', { name: 'Oscuro' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: 'Claro' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: 'SofIA' })).toHaveAttribute('aria-pressed', 'false')
-    expect(screen.getByRole('button', { name: 'Sistema' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Ataraxia Cyan' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Ataraxia Purple' })).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('calls setTheme with "light" when clicking Claro', () => {
@@ -49,10 +51,16 @@ describe('ThemeToggle', () => {
     expect(mockSetTheme).toHaveBeenCalledWith('brand')
   })
 
-  it('calls setTheme with "system" when clicking Sistema', () => {
+  it('calls setTheme with "ataraxia-cyan" when clicking Ataraxia Cyan', () => {
     render(<ThemeToggle />)
-    fireEvent.click(screen.getByRole('button', { name: 'Sistema' }))
-    expect(mockSetTheme).toHaveBeenCalledWith('system')
+    fireEvent.click(screen.getByRole('button', { name: 'Ataraxia Cyan' }))
+    expect(mockSetTheme).toHaveBeenCalledWith('ataraxia-cyan')
+  })
+
+  it('calls setTheme with "ataraxia-purple" when clicking Ataraxia Purple', () => {
+    render(<ThemeToggle />)
+    fireEvent.click(screen.getByRole('button', { name: 'Ataraxia Purple' }))
+    expect(mockSetTheme).toHaveBeenCalledWith('ataraxia-purple')
   })
 
   it('has correct group role and label', () => {

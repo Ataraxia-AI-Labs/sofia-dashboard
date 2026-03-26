@@ -7,8 +7,9 @@
    12-color closed palette. 8px grid. Purpose-driven motion.
    ============================================================ */
 
-/* Brand theme (Sistema) — Sentient Interface signature look.
-   Deep void with purple-tinted surfaces. The core Nucleus experience. */
+/* Brand theme (SofIA) — Sentient Interface signature look.
+   Deep void with purple-tinted surfaces. The core Nucleus experience.
+   Purple accents. The original. Balanced and authoritative. */
 .brand {
   --color-void: #050507;
   --color-surface: #0C0C14;
@@ -53,21 +54,57 @@
   --color-white: #1A1625;
 }
 
+/* Ataraxia Cyan — Immersive cyan atmosphere.
+   The doctor enters an underwater command center. Cyan bathes every surface.
+   Trust, calm, clinical precision. Purple appears as rare signal flares.
+   Psychology: cyan = tranquility + trust + innovation. The Ataraxia feeling. */
+.ataraxia-cyan {
+  --color-void: #030A0C;
+  --color-surface: #071214;
+  --color-surface-2: #0B1A1E;
+  --color-surface-3: #102428;
+  --color-border: #0E2A2E;
+  --color-border-2: #14383E;
+  --color-text-primary: #D0F0E8;
+  --color-text-secondary: #7AB8A8;
+  --color-text-muted: #3D7868;
+  --color-text-dim: #1E4A40;
+  --color-white: #E8FFF6;
+}
+
+/* Ataraxia Purple — Deep violet immersion.
+   The doctor enters the neural core. Purple saturates the void.
+   Power, intelligence, premium. Cyan sparks as vital signals.
+   Psychology: purple = authority + luxury + wisdom. SofIA's mind. */
+.ataraxia-purple {
+  --color-void: #08050E;
+  --color-surface: #0F0A1A;
+  --color-surface-2: #161024;
+  --color-surface-3: #1E1632;
+  --color-border: #221840;
+  --color-border-2: #30204E;
+  --color-text-primary: #E4D8FF;
+  --color-text-secondary: #A088D0;
+  --color-text-muted: #604898;
+  --color-text-dim: #3A2868;
+  --color-white: #F0E8FF;
+}
+
 @layer base {
   body {
     @apply bg-void text-text-primary font-body antialiased;
   }
 
-  /* Scrollbar — slim but visible */
+  /* Scrollbar — slim, brand-colored */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
-  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; min-height: 40px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.4); }
+  ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 9999px; min-height: 40px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
 
   /* Utility: scrollbar with spacing from content */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
     padding-right: 2px;
   }
 
