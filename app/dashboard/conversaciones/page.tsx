@@ -750,21 +750,19 @@ function ConversationDetail({
           </span>
         </div>
 
-        {/* Conv Intelligence toggle (text channels only) */}
-        {!isVoiceCall && (
-          <button
-            onClick={() => setShowIntel(!showIntel)}
-            className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
-              showIntel
-                ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
-                : 'bg-surface-3 border-border text-text-muted hover:text-text-primary'
-            }`}
-            aria-label="Inteligencia Conversacional"
+        {/* Conv Intelligence toggle */}
+        <button
+          onClick={() => setShowIntel(!showIntel)}
+          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+            showIntel
+              ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
+              : 'bg-surface-3 border-border text-text-muted hover:text-text-primary'
+          }`}
+          aria-label="Inteligencia Conversacional"
             title="Inteligencia Conversacional"
           >
             <Brain size={14} />
           </button>
-        )}
 
         {/* Takeover button */}
         {canTakeover && (
