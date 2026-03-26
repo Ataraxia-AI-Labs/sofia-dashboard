@@ -65,6 +65,11 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   useEffect(() => { loadData() }, [loadData])
 
   const handleToggleChannel = async (channel: ChannelType, enabled: boolean) => {
+    // Block toggle if channel has no real config
+    const cfg = config.find(c => c.channel === channel)
+    const hasRealConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
+    if (!hasRealConfig) return
+
     // Optimistic update
     setConfig(prev => prev.map(c =>
       c.channel === channel ? { ...c, is_enabled: enabled } : c
@@ -140,6 +145,8 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           const Icon = channelCfg.icon
           // Channel is "active" only if explicitly enabled in config
           const isEnabled = cfg?.is_enabled ?? false
+          // Channel cannot be toggled if config is empty or missing
+          const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
 
           return (
             <div
@@ -154,14 +161,17 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title={t('active')} />
                 )}
                 <button
-                  onClick={() => handleToggleChannel(channel, !isEnabled)}
+                  onClick={() => hasConfig && handleToggleChannel(channel, !isEnabled)}
+                  disabled={!hasConfig}
                   className={`w-8 h-4 rounded-full transition-colors relative ${
+                    !hasConfig ? 'bg-surface-3 opacity-40 cursor-not-allowed' :
                     isEnabled ? 'bg-emerald-500/30' : 'bg-surface-3'
                   }`}
-                  aria-label={isEnabled ? t('disable') : t('enable')}
+                  aria-label={!hasConfig ? t('notConfigured') : isEnabled ? t('disable') : t('enable')}
+                  title={!hasConfig ? t('notConfigured') : undefined}
                 >
                   <span className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${
-                    isEnabled
+                    isEnabled && hasConfig
                       ? 'right-0.5 bg-emerald-400'
                       : 'left-0.5 bg-text-dim'
                   }`} />
@@ -337,6 +347,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
             const m = metricsMap[channel]
             const channelCfg = CHANNEL_CONFIG[channel]
             const isEnabled = cfg?.is_enabled ?? false
+            const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
 
             return (
               <div
@@ -348,18 +359,23 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   <span className="text-xs font-semibold font-mono text-text-primary">{channelCfg.label}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-[10px] font-semibold font-mono ${isEnabled ? 'text-emerald-400' : 'text-text-dim'}`}>
-                    {isEnabled ? tCommon('enabled') : tCommon('disabled')}
+                  <span className={`text-[10px] font-semibold font-mono ${
+                    !hasConfig ? 'text-amber-400' : isEnabled ? 'text-emerald-400' : 'text-text-dim'
+                  }`}>
+                    {!hasConfig ? t('notConfigured') : isEnabled ? tCommon('enabled') : tCommon('disabled')}
                   </span>
                   <button
-                    onClick={() => handleToggleChannel(channel, !isEnabled)}
+                    onClick={() => hasConfig && handleToggleChannel(channel, !isEnabled)}
+                    disabled={!hasConfig}
                     className={`w-9 h-5 rounded-full transition-colors relative ${
+                      !hasConfig ? 'bg-surface-3 opacity-40 cursor-not-allowed' :
                       isEnabled ? 'bg-emerald-500/30' : 'bg-surface-3'
                     }`}
-                    aria-label={`${isEnabled ? t('disable') : t('enable')} ${channelCfg.label}`}
+                    aria-label={`${!hasConfig ? t('notConfigured') : isEnabled ? t('disable') : t('enable')} ${channelCfg.label}`}
+                    title={!hasConfig ? t('notConfigured') : undefined}
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${
-                      isEnabled
+                      isEnabled && hasConfig
                         ? 'right-0.5 bg-emerald-400'
                         : 'left-0.5 bg-text-dim'
                     }`} />

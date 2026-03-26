@@ -1197,6 +1197,7 @@ export interface ChannelConfig {
   channel: ChannelType
   is_enabled: boolean
   tone_preference?: string
+  config?: Record<string, unknown>
 }
 
 export interface ChannelInsightItem {

@@ -599,6 +599,7 @@
     "refreshInsights": "Refresh Insights",
     "noInsights": "No insights available. Insights are generated automatically.",
     "configuration": "Channel Configuration",
+    "notConfigured": "Not configured",
     "allChannels": "All",
     "emptyInbox": "Empty inbox",
     "emptyInboxHint": "When messages arrive from any channel, they will appear here.",

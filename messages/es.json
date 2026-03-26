@@ -599,6 +599,7 @@
     "refreshInsights": "Actualizar Insights",
     "noInsights": "Sin insights disponibles. Los insights se generan automaticamente.",
     "configuration": "Configuracion de Canales",
+    "notConfigured": "No configurado",
     "allChannels": "Todos",
     "emptyInbox": "Bandeja vacia",
     "emptyInboxHint": "Cuando lleguen mensajes de cualquier canal, apareceran aqui.",

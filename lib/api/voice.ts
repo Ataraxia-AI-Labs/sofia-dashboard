@@ -67,11 +67,13 @@ export async function generateCallSummary(
   orgId: string,
   callId: string
 ): Promise<CallRecord | null> {
-  const res = await authFetch(`${API_URL}/voice/${orgId}/calls/${callId}/summary`, {
+  const res = await authFetch(`${API_URL}/voice/${orgId}/summary/${callId}`, {
     method: 'POST',
   })
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  if (data?.error) return null
+  return data
 }
 
 export async function getVoiceAnalytics(
