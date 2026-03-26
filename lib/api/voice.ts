@@ -47,7 +47,8 @@ export async function getCallHistory(
   if (patientId) url += `?patient_id=${patientId}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  return Array.isArray(data) ? data : data.calls || []
 }
 
 export async function getCallDetail(

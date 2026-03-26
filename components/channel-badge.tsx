@@ -1,6 +1,6 @@
 'use client'
 
-import { MessageCircle, Instagram, Globe, PhoneCall } from 'lucide-react'
+import { MessageCircle, Instagram, Globe, PhoneCall, MessagesSquare } from 'lucide-react'
 import type { ChannelType } from '@/types'
 
 // ============================================================
@@ -35,6 +35,13 @@ const CHANNEL_CONFIG: Record<ChannelType, {
     color: 'text-fuchsia-400',
     bg: 'bg-fuchsia-500/10',
     border: 'border-fuchsia-500/25',
+  },
+  MESSENGER: {
+    icon: MessagesSquare,
+    label: 'Messenger',
+    color: 'text-sky-400',
+    bg: 'bg-sky-500/10',
+    border: 'border-sky-500/25',
   },
   WEBCHAT: {
     icon: Globe,

@@ -93,7 +93,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
     )
   }
 
-  const CHANNEL_ORDER: ChannelType[] = ['WHATSAPP', 'INSTAGRAM', 'WEBCHAT', 'VOICE']
+  const CHANNEL_ORDER: ChannelType[] = ['WHATSAPP', 'INSTAGRAM', 'MESSENGER', 'WEBCHAT', 'VOICE']
 
   // Build metrics map for easy lookup
   const metricsMap: Record<string, ChannelMetrics> = {}

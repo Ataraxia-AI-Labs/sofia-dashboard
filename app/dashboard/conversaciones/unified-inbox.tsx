@@ -74,7 +74,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
   }, [conversations, search])
 
   const selectedConversation = conversations.find(c => c.patient_id === selectedPatientId)
-  const CHANNELS: (ChannelType | '')[] = ['', 'WHATSAPP', 'INSTAGRAM', 'WEBCHAT', 'VOICE']
+  const CHANNELS: (ChannelType | '')[] = ['', 'WHATSAPP', 'INSTAGRAM', 'MESSENGER', 'WEBCHAT', 'VOICE']
 
   return (
     <div className="flex gap-3 h-[calc(100vh-16rem)] min-h-[400px]">

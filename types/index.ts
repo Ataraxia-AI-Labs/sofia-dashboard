@@ -1161,7 +1161,7 @@ export interface PointsHistoryEntry {
 // CHANNEL MANAGEMENT (P5-07)
 // ============================================================
 
-export type ChannelType = 'WHATSAPP' | 'INSTAGRAM' | 'WEBCHAT' | 'VOICE'
+export type ChannelType = 'WHATSAPP' | 'INSTAGRAM' | 'MESSENGER' | 'WEBCHAT' | 'VOICE'
 
 export interface ChannelMetrics {
   channel: ChannelType

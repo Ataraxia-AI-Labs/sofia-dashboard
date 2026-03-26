@@ -84,7 +84,8 @@ export async function getUnifiedInbox(
   if (qs) url += `?${qs}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  return Array.isArray(data) ? data : data.conversations || []
 }
 
 export async function getConversationDetail(
@@ -101,7 +102,8 @@ export async function getChannelConfig(
 ): Promise<ChannelConfig[]> {
   const res = await authFetch(`${API_URL}/channels/${orgId}/config`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  return Array.isArray(data) ? data : data.channels || []
 }
 
 export async function updateChannelConfig(

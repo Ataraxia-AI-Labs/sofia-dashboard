@@ -120,8 +120,8 @@ describe('SentimentBadge', () => {
 import { ChannelBadge, CHANNEL_CONFIG } from '@/components/channel-badge'
 
 describe('CHANNEL_CONFIG', () => {
-  it('has all 4 channels', () => {
-    expect(Object.keys(CHANNEL_CONFIG)).toEqual(['WHATSAPP', 'INSTAGRAM', 'WEBCHAT', 'VOICE'])
+  it('has all 5 channels', () => {
+    expect(Object.keys(CHANNEL_CONFIG)).toEqual(['WHATSAPP', 'INSTAGRAM', 'MESSENGER', 'WEBCHAT', 'VOICE'])
   })
 })
 
