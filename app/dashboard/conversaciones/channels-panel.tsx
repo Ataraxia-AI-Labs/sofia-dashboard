@@ -37,20 +37,29 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const [m, comp, cfg, ins] = await Promise.all([
+      // Load core data first (fast) — insights loaded separately (GPT call, slow)
+      const [mRes, compRes, cfgRes] = await Promise.allSettled([
         getChannelMetrics(orgId),
         getChannelComparison(orgId),
         getChannelConfig(orgId),
-        getChannelInsights(orgId),
       ])
-      setMetrics(m)
-      setComparison(comp)
-      setConfig(cfg)
-      setInsights(ins)
+      if (mRes.status === 'fulfilled') setMetrics(mRes.value)
+      if (compRes.status === 'fulfilled') setComparison(compRes.value)
+      if (cfgRes.status === 'fulfilled') setConfig(cfgRes.value)
     } catch (err) {
       Sentry.captureException(err)
     }
     setLoading(false)
+
+    // Load AI insights in background (GPT-4o-mini, can be slow)
+    setInsightsLoading(true)
+    try {
+      const ins = await getChannelInsights(orgId)
+      setInsights(ins)
+    } catch (err) {
+      Sentry.captureException(err)
+    }
+    setInsightsLoading(false)
   }, [orgId])
 
   useEffect(() => { loadData() }, [loadData])
@@ -118,7 +127,8 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           const cfg = configMap[channel]
           const channelCfg = CHANNEL_CONFIG[channel]
           const Icon = channelCfg.icon
-          const isEnabled = cfg?.is_enabled ?? m?.is_enabled ?? false
+          // Channel is "active" if explicitly enabled OR has messages (no config yet = infer from data)
+          const isEnabled = cfg?.is_enabled ?? m?.is_enabled ?? (m?.message_count ?? 0) > 0
 
           return (
             <div
@@ -294,8 +304,9 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {CHANNEL_ORDER.map(channel => {
             const cfg = configMap[channel]
+            const m = metricsMap[channel]
             const channelCfg = CHANNEL_CONFIG[channel]
-            const isEnabled = cfg?.is_enabled ?? false
+            const isEnabled = cfg?.is_enabled ?? (m?.message_count ?? 0) > 0
 
             return (
               <div
