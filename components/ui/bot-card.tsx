@@ -1,7 +1,8 @@
 import React from 'react'
 
 export interface BotCardProps {
-  emoji: string
+  emoji?: string
+  icon?: React.ReactNode
   name: string
   value: number
   label: string
@@ -11,13 +12,13 @@ export interface BotCardProps {
   formatNumber?: (n: number) => string
 }
 
-export function BotCard({ emoji, name, value, label, extra, desc, gradient, formatNumber: fmt }: BotCardProps) {
+export function BotCard({ emoji, icon, name, value, label, extra, desc, gradient, formatNumber: fmt }: BotCardProps) {
   const display = fmt ? fmt(value) : value.toLocaleString()
   return (
     <div className="glass-card p-4">
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-sm">
-          {emoji}
+          {icon || emoji}
         </div>
         <span className="text-[11px] font-mono font-semibold text-text-primary">{name}</span>
       </div>

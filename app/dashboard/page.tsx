@@ -386,7 +386,7 @@ export default function DashboardOverview() {
           element: (
             <div className="glass-card-accent p-5">
               <SectionTitle icon={<PhoneCall size={14} />} title="Voice AI" />
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple"><PhoneCall size={16} /></div>
                   <div>
@@ -403,31 +403,16 @@ export default function DashboardOverview() {
                     <div className="text-[9px] font-mono text-text-muted">{t('avgDuration')}</div>
                   </div>
                 </div>
-                <div className="md:col-span-2">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-mono text-text-muted uppercase tracking-wider">{t('appointmentsByChannel')}</span>
-                    <span className="text-[8px] font-mono text-text-dim">{formatNumber(voice.appointments_by_voice + voice.appointments_by_whatsapp)} {t('total')}</span>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 w-20 flex-shrink-0"><PhoneCall size={10} className="text-brand-purple" /><span className="text-[9px] font-mono text-text-muted">{t('voice')}</span></div>
-                      <div className="flex-1 h-4 bg-surface-3 rounded-md overflow-hidden">
-                        <div className="h-full rounded-md bg-brand-purple transition-all duration-700" style={{ width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0 ? Math.max((voice.appointments_by_voice / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2) : 0}%` }} />
-                      </div>
-                      <span className="text-[10px] font-mono font-bold text-brand-purple w-6 text-right">{voice.appointments_by_voice}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 w-20 flex-shrink-0"><Smartphone size={10} className="text-status-success" /><span className="text-[9px] font-mono text-text-muted">WhatsApp</span></div>
-                      <div className="flex-1 h-4 bg-surface-3 rounded-md overflow-hidden">
-                        <div className="h-full rounded-md bg-status-success transition-all duration-700" style={{ width: `${(voice.appointments_by_voice + voice.appointments_by_whatsapp) > 0 ? Math.max((voice.appointments_by_whatsapp / (voice.appointments_by_voice + voice.appointments_by_whatsapp)) * 100, 2) : 0}%` }} />
-                      </div>
-                      <span className="text-[10px] font-mono font-bold text-status-success w-6 text-right">{voice.appointments_by_whatsapp}</span>
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-brand-purple/8 text-brand-purple font-mono font-semibold">{t('voiceInteractions', { pct: voice.voice_pct })}</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-md bg-status-success/8 border border-status-success/15 flex items-center justify-center text-status-success"><Smartphone size={16} /></div>
+                  <div>
+                    <div className="text-xl font-mono font-bold text-text-primary">{formatNumber(voice.total_whatsapp)}</div>
+                    <div className="text-[9px] font-mono text-text-muted">WhatsApp</div>
                   </div>
                 </div>
+              </div>
+              <div className="mt-3">
+                <span className="text-[8px] px-1.5 py-0.5 rounded bg-brand-purple/8 text-brand-purple font-mono font-semibold">{t('voiceInteractions', { pct: voice.voice_pct })}</span>
               </div>
             </div>
           ),
@@ -502,9 +487,9 @@ export default function DashboardOverview() {
             <div>
               <SectionTitle icon={<Bot size={14} />} title={t('subBots')} className="mb-3" />
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <BotCard emoji="\u23F0" name="Reminder Bot" value={b?.reminder_bot?.mensajes_enviados || 0} label={t('remindersSent')} desc={b?.reminder_bot?.descripcion} gradient="from-brand-purple to-brand-purple-dark" formatNumber={formatNumber} />
-                <BotCard emoji="\uD83C\uDFAF" name="Hunter Bot" value={b?.hunter_bot?.followups_enviados || 0} label={t('followupsSent')} extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`} desc={b?.hunter_bot?.descripcion} gradient="from-brand-gold to-amber-600" formatNumber={formatNumber} />
-                <BotCard emoji="\uD83D\uDC8A" name="Nurse Bot" value={b?.nurse_bot?.recordatorios_enviados || 0} label={t('medicationReminders')} desc={b?.nurse_bot?.descripcion} gradient="from-brand-cyan to-emerald-500" formatNumber={formatNumber} />
+                <BotCard emoji="" name="Reminder Bot" value={b?.reminder_bot?.mensajes_enviados || 0} label={t('remindersSent')} desc={b?.reminder_bot?.descripcion} gradient="from-brand-purple to-brand-purple-dark" formatNumber={formatNumber} icon={<CalendarCheck size={14} className="text-brand-purple" />} />
+                <BotCard emoji="" name="Hunter Bot" value={b?.hunter_bot?.followups_enviados || 0} label={t('followupsSent')} extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`} desc={b?.hunter_bot?.descripcion} gradient="from-brand-gold to-amber-600" formatNumber={formatNumber} icon={<Target size={14} className="text-brand-gold" />} />
+                <BotCard emoji="" name="Nurse Bot" value={b?.nurse_bot?.recordatorios_enviados || 0} label={t('medicationReminders')} desc={b?.nurse_bot?.descripcion} gradient="from-brand-cyan to-emerald-500" formatNumber={formatNumber} icon={<Cpu size={14} className="text-brand-cyan" />} />
               </div>
             </div>
           ),
