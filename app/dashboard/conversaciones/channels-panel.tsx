@@ -138,8 +138,8 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           const cfg = configMap[channel]
           const channelCfg = CHANNEL_CONFIG[channel]
           const Icon = channelCfg.icon
-          // Channel is "active" if explicitly enabled OR has messages (no config yet = infer from data)
-          const isEnabled = cfg?.is_enabled ?? m?.is_enabled ?? (m?.message_count ?? 0) > 0
+          // Channel is "active" only if explicitly enabled in config
+          const isEnabled = cfg?.is_enabled ?? false
 
           return (
             <div
@@ -336,7 +336,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
             const cfg = configMap[channel]
             const m = metricsMap[channel]
             const channelCfg = CHANNEL_CONFIG[channel]
-            const isEnabled = cfg?.is_enabled ?? (m?.message_count ?? 0) > 0
+            const isEnabled = cfg?.is_enabled ?? false
 
             return (
               <div
