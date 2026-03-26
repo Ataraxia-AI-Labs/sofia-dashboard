@@ -31,6 +31,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null)
   const [detail, setDetail] = useState<ConversationMessage[]>([])
   const [detailLoading, setDetailLoading] = useState(false)
+  const [detailError, setDetailError] = useState<string | null>(null)
 
   const loadInbox = useCallback(async () => {
     setLoading(true)
@@ -41,6 +42,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
       setConversations(data)
     } catch (err) {
       Sentry.captureException(err)
+      setConversations([])
     }
     setLoading(false)
   }, [orgId, channelFilter])
@@ -49,11 +51,14 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
 
   const loadDetail = useCallback(async (patientId: string) => {
     setDetailLoading(true)
+    setDetailError(null)
     try {
       const data = await getConversationDetail(orgId, patientId)
-      setDetail(data)
+      setDetail(Array.isArray(data) ? data : [])
     } catch (err) {
       Sentry.captureException(err)
+      setDetail([])
+      setDetailError('No se pudo cargar la conversación')
     }
     setDetailLoading(false)
   }, [orgId])
@@ -63,15 +68,25 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
     loadDetail(patientId)
   }
 
-  // Filter by search
+  // Filter by search + double-check channel filter (safety net)
   const filteredConversations = useMemo(() => {
-    if (!search.trim()) return conversations
-    const q = search.toLowerCase()
-    return conversations.filter(c =>
-      c.patient_name.toLowerCase().includes(q) ||
-      c.last_message.toLowerCase().includes(q)
-    )
-  }, [conversations, search])
+    let filtered = conversations
+
+    // Safety: ensure channel filter is applied even if backend missed it
+    if (channelFilter) {
+      filtered = filtered.filter(c => c.channel === channelFilter)
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      filtered = filtered.filter(c =>
+        c.patient_name.toLowerCase().includes(q) ||
+        c.last_message.toLowerCase().includes(q)
+      )
+    }
+
+    return filtered
+  }, [conversations, search, channelFilter])
 
   const selectedConversation = conversations.find(c => c.patient_id === selectedPatientId)
   const CHANNELS: (ChannelType | '')[] = ['', 'WHATSAPP', 'INSTAGRAM', 'MESSENGER', 'WEBCHAT', 'VOICE']
@@ -167,9 +182,12 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
             <div className="p-1.5 space-y-0.5">
               {filteredConversations.map(conv => {
                 const isSelected = selectedPatientId === conv.patient_id
-                const preview = conv.last_message.length > 60
-                  ? conv.last_message.slice(0, 60) + '...'
-                  : conv.last_message
+                const msgPrefix = conv.direction === 'OUTBOUND' ? 'SofIA: ' : ''
+                const msgText = conv.last_message || ''
+                const fullPreview = msgPrefix + msgText
+                const preview = fullPreview.length > 60
+                  ? fullPreview.slice(0, 60) + '...'
+                  : fullPreview
 
                 return (
                   <button
@@ -259,6 +277,10 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                       <div className="w-2/3 h-12 bg-surface-3 rounded-lg animate-pulse" />
                     </div>
                   ))}
+                </div>
+              ) : detailError ? (
+                <div className="flex-1 flex items-center justify-center py-12">
+                  <p className="text-status-danger text-xs">{detailError}</p>
                 </div>
               ) : detail.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center py-12">

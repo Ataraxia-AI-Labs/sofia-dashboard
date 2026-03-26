@@ -110,7 +110,41 @@ export async function getConversationDetail(
 ): Promise<ConversationMessage[]> {
   const res = await authFetch(`${API_URL}/channels/${orgId}/conversation/${patientId}`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+
+  // Backend returns { messages: [{id, channel, direction, content, ai_response, ...}] }
+  // Frontend expects ConversationMessage[] with message_content field
+  const rawMessages = Array.isArray(data) ? data : data.messages || []
+  const result: ConversationMessage[] = []
+
+  for (const msg of rawMessages) {
+    const channel = msg.channel || 'WHATSAPP'
+    const direction = msg.direction || 'INBOUND'
+    const content = msg.content || msg.raw_content || ''
+    const aiResponse = msg.ai_response || ''
+    const base = { id: msg.id, channel, created_at: msg.created_at || '' }
+
+    // Human takeover: OUTBOUND + raw content is doctor's message
+    if (direction === 'OUTBOUND' && content && aiResponse?.includes('[Human takeover]')) {
+      result.push({ ...base, direction: 'OUTBOUND', message_content: content })
+      continue
+    }
+
+    // Patient message (INBOUND)
+    if (content) {
+      result.push({ ...base, direction: 'INBOUND', message_content: content })
+    }
+    // SofIA response (OUTBOUND)
+    if (aiResponse) {
+      result.push({ ...base, id: `${msg.id}-ai`, direction: 'OUTBOUND', message_content: aiResponse })
+    }
+    // Fallback: empty message
+    if (!content && !aiResponse) {
+      result.push({ ...base, direction: direction as 'INBOUND' | 'OUTBOUND', message_content: '' })
+    }
+  }
+
+  return result
 }
 
 export async function getChannelConfig(

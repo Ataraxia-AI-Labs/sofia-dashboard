@@ -1188,6 +1188,7 @@ export interface InboxConversation {
   channel: ChannelType
   last_message: string
   last_message_at: string
+  direction?: 'INBOUND' | 'OUTBOUND'
   unread: boolean
   status: string
 }
