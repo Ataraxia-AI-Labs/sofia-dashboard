@@ -72,7 +72,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
     try {
       const result = await updateChannelConfig(orgId, channel, { is_enabled: enabled })
       // If backend returned null or error, revert
-      if (!result || ('error' in (result as Record<string, unknown>))) {
+      if (!result || ('error' in (result as unknown as Record<string, unknown>))) {
         setConfig(prev => prev.map(c =>
           c.channel === channel ? { ...c, is_enabled: !enabled } : c
         ))
