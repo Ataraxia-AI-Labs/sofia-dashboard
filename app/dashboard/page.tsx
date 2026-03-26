@@ -37,7 +37,6 @@ export default function DashboardOverview() {
   const tOppSection = useTranslations('opportunities')
   const tCommon = useTranslations('common')
   const [data, setData] = useState<FullAnalytics | null>(null)
-  const [orgData, setOrgData] = useState<FullAnalytics | null>(null) // Always org-wide (no branch filter) for Score & SofIA Speaks
   const [voice, setVoice] = useState<VoiceMetrics | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -59,17 +58,9 @@ export default function DashboardOverview() {
       .then(v => setVoice(v))
       .catch(() => {})
 
-    // If filtering by branch, also fetch org-wide data for Score & SofIA Speaks
-    if (branchId) {
-      fetchFullAnalytics(orgId, days, null)
-        .then(d => setOrgData(d))
-        .catch(() => {})
-    }
-
     try {
       const analytics = await fetchFullAnalytics(orgId, days, branchId)
       setData(analytics)
-      if (!branchId) setOrgData(analytics) // When no branch filter, org data = same data
       setLastUpdate(new Date())
       setError('')
       retryingRef.current = false
@@ -262,8 +253,8 @@ export default function DashboardOverview() {
       {/* ===== SENTIENT HEADER: Ataraxia Score + Controls ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 items-start">
         <div className="space-y-2">
-          {(orgData || data) && <AtaraxiaScore data={(orgData || data)!} voice={voice} />}
-          {(orgData || data) && <SofiaSpeaks data={(orgData || data)!} voice={voice} />}
+          {data && <AtaraxiaScore data={data} voice={voice} />}
+          {data && <SofiaSpeaks data={data} voice={voice} />}
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-1.5">
