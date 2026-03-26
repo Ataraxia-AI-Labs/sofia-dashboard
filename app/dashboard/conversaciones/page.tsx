@@ -958,9 +958,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
 
           {/* Annotation buttons -- only on AI responses */}
           {isOutbound && (
-            <div className={`ml-auto transition-opacity ${
-              currentRating ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-            }`}>
+            <div className="ml-auto opacity-60 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
               <AnnotationButton
                 orgId={orgId}
                 interactionId={realInteractionId}

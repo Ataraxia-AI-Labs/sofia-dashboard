@@ -96,7 +96,7 @@ export function AnnotationButton({
           className={`${btnPadding} rounded-md transition-all ${
             rating === 'thumbs_up'
               ? 'bg-status-success/15 text-status-success'
-              : 'text-text-dim hover:text-status-success hover:bg-status-success/10'
+              : 'text-text-muted hover:text-status-success hover:bg-status-success/10'
           } disabled:opacity-40`}
           title={t('goodResponse')}
           aria-label={t('goodResponse')}
@@ -113,7 +113,7 @@ export function AnnotationButton({
           className={`${btnPadding} rounded-md transition-all ${
             rating === 'thumbs_down'
               ? 'bg-status-danger/15 text-status-danger'
-              : 'text-text-dim hover:text-status-danger hover:bg-status-danger/10'
+              : 'text-text-muted hover:text-status-danger hover:bg-status-danger/10'
           } disabled:opacity-40`}
           title={t('badResponse')}
           aria-label={t('badResponse')}
@@ -130,7 +130,7 @@ export function AnnotationButton({
             className={`${btnPadding} rounded-md transition-all ${
               showNotesInput || notes
                 ? 'bg-brand-purple/10 text-brand-purple'
-                : 'text-text-dim hover:text-brand-purple hover:bg-brand-purple/10'
+                : 'text-text-muted hover:text-brand-purple hover:bg-brand-purple/10'
             }`}
             title={t('addNotes')}
             aria-label={t('addNotes')}
