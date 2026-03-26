@@ -69,11 +69,11 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
         getCallEvents(orgId, call.id),
       ])
       if (detail) {
-        setTranscription(detail.transcription)
-        // Update call with latest data
-        setSelectedCall(detail.call)
+        setTranscription(detail.transcription || [])
+        // Only update call data if backend returned it — don't overwrite with undefined
+        if (detail.call) setSelectedCall(detail.call)
       }
-      setEvents(ev)
+      setEvents(ev || [])
     } catch (err) {
       Sentry.captureException(err)
     }

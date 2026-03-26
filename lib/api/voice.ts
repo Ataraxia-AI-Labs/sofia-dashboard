@@ -55,9 +55,12 @@ export async function getCallDetail(
   orgId: string,
   callId: string
 ): Promise<{ call: CallRecord; transcription: TranscriptionSegment[] } | null> {
-  const res = await authFetch(`${API_URL}/voice/${orgId}/calls/${callId}`)
+  // Use /call/ (singular) for call detail, not /calls/ (that's patient history)
+  const res = await authFetch(`${API_URL}/voice/${orgId}/call/${callId}`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  if (data?.error) return null
+  return data
 }
 
 export async function generateCallSummary(
@@ -86,7 +89,8 @@ export async function getCallEvents(
   orgId: string,
   callId: string
 ): Promise<CallEvent[]> {
-  const res = await authFetch(`${API_URL}/voice/${orgId}/calls/${callId}/events`)
+  const res = await authFetch(`${API_URL}/voice/${orgId}/call/${callId}/events`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  return Array.isArray(data) ? data : data.events || []
 }
