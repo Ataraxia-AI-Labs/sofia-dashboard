@@ -29,9 +29,20 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
   const [channelFilter, setChannelFilter] = useState<string>('')
   const [search, setSearch] = useState('')
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null)
+  const [selectedChannel, setSelectedChannel] = useState<string | null>(null)
   const [detail, setDetail] = useState<ConversationMessage[]>([])
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailError, setDetailError] = useState<string | null>(null)
+
+  // Clear conversations + selection when filter changes to prevent stale data
+  const handleFilterChange = useCallback((newFilter: string) => {
+    setChannelFilter(newFilter)
+    setConversations([])
+    setSelectedPatientId(null)
+    setSelectedChannel(null)
+    setDetail([])
+    setDetailError(null)
+  }, [])
 
   const loadInbox = useCallback(async () => {
     setLoading(true)
@@ -63,8 +74,9 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
     setDetailLoading(false)
   }, [orgId])
 
-  const handleSelectConversation = (patientId: string) => {
+  const handleSelectConversation = (patientId: string, channel: string) => {
     setSelectedPatientId(patientId)
+    setSelectedChannel(channel)
     loadDetail(patientId)
   }
 
@@ -74,21 +86,44 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
 
     // Safety: ensure channel filter is applied even if backend missed it
     if (channelFilter) {
-      filtered = filtered.filter(c => c.channel === channelFilter)
+      filtered = filtered.filter(c =>
+        (c.channel || '').toUpperCase() === channelFilter.toUpperCase()
+      )
     }
 
     if (search.trim()) {
       const q = search.toLowerCase()
       filtered = filtered.filter(c =>
-        c.patient_name.toLowerCase().includes(q) ||
-        c.last_message.toLowerCase().includes(q)
+        (c.patient_name || '').toLowerCase().includes(q) ||
+        (c.last_message || '').toLowerCase().includes(q)
       )
     }
 
     return filtered
   }, [conversations, search, channelFilter])
 
-  const selectedConversation = conversations.find(c => c.patient_id === selectedPatientId)
+  // Clear selected if it's no longer in the filtered list
+  useEffect(() => {
+    if (selectedPatientId && filteredConversations.length > 0) {
+      const stillVisible = filteredConversations.some(
+        c => c.patient_id === selectedPatientId && c.channel === selectedChannel
+      )
+      if (!stillVisible) {
+        setSelectedPatientId(null)
+        setSelectedChannel(null)
+        setDetail([])
+      }
+    }
+  }, [filteredConversations, selectedPatientId, selectedChannel])
+
+  // Use patient_id + channel as unique key (patient can have multiple channels)
+  const selectedConversation = filteredConversations.find(
+    c => c.patient_id === selectedPatientId && c.channel === selectedChannel
+  ) || (selectedPatientId
+    ? conversations.find(c => c.patient_id === selectedPatientId)
+    : null
+  )
+
   const CHANNELS: (ChannelType | '')[] = ['', 'WHATSAPP', 'INSTAGRAM', 'MESSENGER', 'WEBCHAT', 'VOICE']
 
   return (
@@ -99,15 +134,15 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
       } flex-col w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 glass-card overflow-hidden`}>
         {/* Channel filter tabs */}
         <div className="px-3 pt-3 pb-2 border-b border-border flex-shrink-0">
-          <div className="flex gap-1 mb-2 overflow-x-auto">
+          <div className="flex gap-1.5 mb-2.5 overflow-x-auto pb-1 scrollbar-thin">
             {CHANNELS.map(ch => {
               const isActive = channelFilter === ch
               if (ch === '') {
                 return (
                   <button
                     key="all"
-                    onClick={() => setChannelFilter('')}
-                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${
+                    onClick={() => handleFilterChange('')}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all whitespace-nowrap ${
                       isActive
                         ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                         : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
@@ -122,15 +157,15 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
               return (
                 <button
                   key={ch}
-                  onClick={() => setChannelFilter(channelFilter === ch ? '' : ch)}
-                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1 ${
+                  onClick={() => handleFilterChange(channelFilter === ch ? '' : ch)}
+                  className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
                     isActive
                       ? `${cfg.bg} ${cfg.color} border ${cfg.border}`
                       : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
                   }`}
                 >
-                  <Icon size={10} />
-                  <span className="hidden sm:inline">{cfg.label}</span>
+                  <Icon size={11} />
+                  <span>{cfg.label}</span>
                 </button>
               )
             })}
@@ -144,7 +179,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={tConv('searchByNameOrPhone')}
-              className="w-full pl-8 pr-8 py-1.5 bg-surface-3 border border-border rounded-lg text-[11px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
+              className="w-full pl-8 pr-8 py-2 bg-surface-3 border border-border rounded-lg text-[11px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
             />
             {search && (
               <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted">
@@ -155,8 +190,8 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
         </div>
 
         {/* List */}
-        <div className="flex-1 overflow-y-auto">
-          {loading && filteredConversations.length === 0 ? (
+        <div className="flex-1 overflow-y-auto scrollbar-thin">
+          {loading ? (
             <div className="p-3 space-y-2">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="p-3 rounded-lg animate-pulse">
@@ -181,7 +216,8 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
           ) : (
             <div className="p-1.5 space-y-0.5">
               {filteredConversations.map(conv => {
-                const isSelected = selectedPatientId === conv.patient_id
+                const convKey = `${conv.patient_id}-${conv.channel}`
+                const isSelected = selectedPatientId === conv.patient_id && selectedChannel === conv.channel
                 const msgPrefix = conv.direction === 'OUTBOUND' ? 'SofIA: ' : ''
                 const msgText = conv.last_message || ''
                 const fullPreview = msgPrefix + msgText
@@ -191,8 +227,8 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
 
                 return (
                   <button
-                    key={conv.patient_id}
-                    onClick={() => handleSelectConversation(conv.patient_id)}
+                    key={convKey}
+                    onClick={() => handleSelectConversation(conv.patient_id, conv.channel)}
                     className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-150 group ${
                       isSelected
                         ? 'bg-brand-purple/10 border border-brand-purple/20'
@@ -207,7 +243,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                             ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple'
                             : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'
                         } transition-colors`}>
-                          {conv.patient_name[0]?.toUpperCase() || '?'}
+                          {(conv.patient_name || '?')[0]?.toUpperCase() || '?'}
                         </div>
                         {conv.unread && (
                           <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-brand-purple border-2 border-surface" />
@@ -249,14 +285,14 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
             {/* Header */}
             <div className="px-4 py-3 border-b border-border flex items-center gap-3 flex-shrink-0">
               <button
-                onClick={() => setSelectedPatientId(null)}
+                onClick={() => { setSelectedPatientId(null); setSelectedChannel(null) }}
                 className="lg:hidden w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
                 aria-label={t('back')}
               >
                 <ArrowLeft size={14} />
               </button>
               <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold font-mono flex-shrink-0">
-                {selectedConversation.patient_name[0]?.toUpperCase() || '?'}
+                {(selectedConversation.patient_name || '?')[0]?.toUpperCase() || '?'}
               </div>
               <div className="flex-1 min-w-0">
                 <span className="text-sm font-semibold font-mono text-text-primary truncate block">
@@ -269,7 +305,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+            <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-4 space-y-2">
               {detailLoading ? (
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, i) => (
