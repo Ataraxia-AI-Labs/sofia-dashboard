@@ -132,6 +132,37 @@ export default function DashboardOverview() {
   const isNewClinic = !loading && !!data && totalMensajes === 0 && totalPacientes === 0
 
   if (isNewClinic) {
+    // If filtering by a specific branch, show branch-specific empty state
+    if (branchId) {
+      return (
+        <div className="min-h-[40vh] flex items-center justify-center p-4">
+          <div className="w-full max-w-md animate-fade-up">
+            <div className="glass-card p-6 text-center">
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-12 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+                  <Target size={20} className="text-brand-purple" />
+                </div>
+              </div>
+              <h2 className="text-sm font-mono font-bold text-text-primary mb-1">
+                Esta sede aun no tiene actividad
+              </h2>
+              <p className="text-text-muted text-[10px] font-mono leading-relaxed mb-4">
+                Los datos apareceran cuando los pacientes interactuen con esta sede.
+                Puedes volver a &quot;Todas las sedes&quot; para ver el panorama general.
+              </p>
+              <button
+                onClick={() => loadData()}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple/8 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/15 transition-colors"
+              >
+                <RefreshCw size={12} />
+                Actualizar
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4">
         <div className="w-full max-w-md animate-fade-up">
