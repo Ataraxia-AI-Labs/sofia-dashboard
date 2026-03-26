@@ -49,7 +49,7 @@ export async function fetchInteractions(orgId: string, opts?: {
       conversation_id: (item.conversation_id || '') as string,
       created_at: (item.created_at || '') as string,
       annotation: (item.annotation || null) as InteractionAnnotation | null,
-      patients: item.patients as InteractionLog['patients'],
+      patients: (item.patients || (item.patient_name ? { full_name: item.patient_name, phone: item.patient_phone || '' } : undefined)) as InteractionLog['patients'],
     }
 
     // If backend already returns message_content + direction, use as-is
@@ -65,22 +65,33 @@ export async function fetchInteractions(orgId: string, opts?: {
     // Otherwise split raw_content (patient) and ai_response (bot) into separate messages
     const rawContent = (item.raw_content || '') as string
     const aiResponse = (item.ai_response || '') as string
+    const rowDirection = (item.direction || 'INBOUND') as string
 
-    if (rawContent) {
+    // Human takeover: direction is OUTBOUND and raw_content is the doctor's message
+    // Don't split — treat raw_content as the outbound message, skip ai_response marker
+    if (rowDirection === 'OUTBOUND' && rawContent && aiResponse?.includes('[Human takeover]')) {
       messages.push({
         ...base,
-        direction: 'INBOUND',
+        direction: 'OUTBOUND',
         message_content: rawContent,
       })
-    }
-    if (aiResponse) {
-      messages.push({
-        ...base,
-        id: `${item.id}-ai`,
-        direction: 'OUTBOUND',
-        message_content: aiResponse,
-        response_time_ms: (item.response_time_ms || 0) as number,
-      })
+    } else {
+      if (rawContent) {
+        messages.push({
+          ...base,
+          direction: 'INBOUND',
+          message_content: rawContent,
+        })
+      }
+      if (aiResponse) {
+        messages.push({
+          ...base,
+          id: `${item.id}-ai`,
+          direction: 'OUTBOUND',
+          message_content: aiResponse,
+          response_time_ms: (item.response_time_ms || 0) as number,
+        })
+      }
     }
     // If neither exists, still add a placeholder
     if (!rawContent && !aiResponse) {
