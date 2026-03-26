@@ -84,7 +84,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
       } flex-col w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 glass-card overflow-hidden`}>
         {/* Channel filter tabs */}
         <div className="px-3 pt-3 pb-2 border-b border-border flex-shrink-0">
-          <div className="flex gap-1 mb-2">
+          <div className="flex gap-1 mb-2 overflow-x-auto">
             {CHANNELS.map(ch => {
               const isActive = channelFilter === ch
               if (ch === '') {
