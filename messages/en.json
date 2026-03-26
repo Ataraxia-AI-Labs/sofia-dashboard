@@ -564,6 +564,7 @@
     "doctorMode": "Doctor mode — Messages are sent directly to the patient",
     "writeAsDoctor": "Write as doctor...",
     "aiAutoResponses": "SofIA responses are generated automatically via AI.",
+    "voiceCallLog": "Voice call log — Read only",
     "noContent": "(no content)",
     "noName": "No name",
     "goodResponse": "Good response",

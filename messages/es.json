@@ -564,6 +564,7 @@
     "doctorMode": "Modo doctor — Los mensajes se envian directamente al paciente",
     "writeAsDoctor": "Escribe como doctor...",
     "aiAutoResponses": "Las respuestas de SofIA se generan automaticamente via IA.",
+    "voiceCallLog": "Registro de llamada de voz — Solo lectura",
     "noContent": "(sin contenido)",
     "noName": "Sin nombre",
     "goodResponse": "Buena respuesta",

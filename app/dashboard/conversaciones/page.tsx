@@ -79,14 +79,18 @@ function groupByPatient(interactions: InteractionLog[], patientsMap: Map<string,
   const map = new Map<string, InteractionLog[]>()
 
   for (const log of interactions) {
-    const key = log.patient_id
+    // Group by patient + channel so WhatsApp and Voice are separate threads
+    const ch = (log.channel || 'WHATSAPP').toUpperCase()
+    const key = `${log.patient_id}::${ch}`
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push(log)
   }
 
   const threads: ConversationThread[] = []
 
-  for (const [patientId, msgs] of Array.from(map.entries())) {
+  for (const [compositeKey, msgs] of Array.from(map.entries())) {
+    const patientId = compositeKey.split('::')[0]
+
     // Sort messages chronologically (oldest first)
     msgs.sort((a: InteractionLog, b: InteractionLog) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
 
@@ -628,14 +632,15 @@ function ConversationDetail({
   const scrollRef = useRef<HTMLDivElement>(null)
   const platformCfg = PLATFORM_STYLE[thread.channel] || PLATFORM_STYLE.WHATSAPP
   const PlatformIcon = platformCfg.icon
+  const isVoiceCall = thread.channel === 'VOICE_CALL'
 
   // Conv Intelligence panel
   const [showIntel, setShowIntel] = useState(false)
 
-  // Takeover state
+  // Takeover state (not applicable for voice calls)
   const [isTakeover, setIsTakeover] = useState(false)
   const [takeoverLoading, setTakeoverLoading] = useState(false)
-  const canTakeover = role === 'OWNER' || role === 'ADMIN'
+  const canTakeover = !isVoiceCall && (role === 'OWNER' || role === 'ADMIN')
 
   // Handle annotation change — update local message state
   const handleAnnotationChange = useCallback((msgId: string, annotation: InteractionLog['annotation']) => {
@@ -745,19 +750,21 @@ function ConversationDetail({
           </span>
         </div>
 
-        {/* Conv Intelligence toggle */}
-        <button
-          onClick={() => setShowIntel(!showIntel)}
-          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
-            showIntel
-              ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
-              : 'bg-surface-3 border-border text-text-muted hover:text-text-primary'
-          }`}
-          aria-label="Inteligencia Conversacional"
-          title="Inteligencia Conversacional"
-        >
-          <Brain size={14} />
-        </button>
+        {/* Conv Intelligence toggle (text channels only) */}
+        {!isVoiceCall && (
+          <button
+            onClick={() => setShowIntel(!showIntel)}
+            className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+              showIntel
+                ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
+                : 'bg-surface-3 border-border text-text-muted hover:text-text-primary'
+            }`}
+            aria-label="Inteligencia Conversacional"
+            title="Inteligencia Conversacional"
+          >
+            <Brain size={14} />
+          </button>
+        )}
 
         {/* Takeover button */}
         {canTakeover && (
@@ -824,7 +831,12 @@ function ConversationDetail({
 
       {/* Bottom bar */}
       <div className="px-4 py-2.5 border-t border-border flex-shrink-0">
-        {isTakeover ? (
+        {isVoiceCall ? (
+          <div className="flex items-center gap-2 text-[10px] text-text-dim">
+            <PhoneCall size={12} className="text-brand-cyan/50" />
+            <span>{t('voiceCallLog')}</span>
+          </div>
+        ) : isTakeover ? (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-[10px] text-status-warning">
               <Shield size={10} />
