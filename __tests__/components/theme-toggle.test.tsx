@@ -15,10 +15,11 @@ describe('ThemeToggle', () => {
     mockTheme = 'dark'
   })
 
-  it('renders three theme buttons after mount', () => {
+  it('renders four theme buttons after mount', () => {
     render(<ThemeToggle />)
     expect(screen.getByRole('button', { name: 'Claro' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Oscuro' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'SofIA' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Sistema' })).toBeInTheDocument()
   })
 
@@ -26,6 +27,7 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />)
     expect(screen.getByRole('button', { name: 'Oscuro' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: 'Claro' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'SofIA' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: 'Sistema' })).toHaveAttribute('aria-pressed', 'false')
   })
 
@@ -41,10 +43,16 @@ describe('ThemeToggle', () => {
     expect(mockSetTheme).toHaveBeenCalledWith('dark')
   })
 
-  it('calls setTheme with "brand" when clicking Sistema', () => {
+  it('calls setTheme with "brand" when clicking SofIA', () => {
+    render(<ThemeToggle />)
+    fireEvent.click(screen.getByRole('button', { name: 'SofIA' }))
+    expect(mockSetTheme).toHaveBeenCalledWith('brand')
+  })
+
+  it('calls setTheme with "system" when clicking Sistema', () => {
     render(<ThemeToggle />)
     fireEvent.click(screen.getByRole('button', { name: 'Sistema' }))
-    expect(mockSetTheme).toHaveBeenCalledWith('brand')
+    expect(mockSetTheme).toHaveBeenCalledWith('system')
   })
 
   it('has correct group role and label', () => {

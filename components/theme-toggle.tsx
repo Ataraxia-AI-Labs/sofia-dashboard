@@ -2,14 +2,15 @@
 
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
-import { Sun, Moon, Zap, type LucideIcon } from 'lucide-react'
+import { Sun, Moon, Zap, Monitor, type LucideIcon } from 'lucide-react'
 
-type ThemeOption = 'light' | 'dark' | 'brand'
+type ThemeOption = 'light' | 'dark' | 'brand' | 'system'
 
 const options: { value: ThemeOption; icon: LucideIcon; label: string }[] = [
   { value: 'light', icon: Sun, label: 'Claro' },
-  { value: 'brand', icon: Zap, label: 'Sistema' },
+  { value: 'brand', icon: Zap, label: 'SofIA' },
   { value: 'dark', icon: Moon, label: 'Oscuro' },
+  { value: 'system', icon: Monitor, label: 'Sistema' },
 ]
 
 export function ThemeToggle() {
