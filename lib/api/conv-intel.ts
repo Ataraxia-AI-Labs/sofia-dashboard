@@ -18,7 +18,9 @@ export async function getPatientMemories(orgId: string, patientId: string, categ
   const q = category ? `?category=${category}` : ''
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/memories${q}`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  // Backend wraps: { memories: [...], count: N }
+  return Array.isArray(data) ? data : (data.memories || [])
 }
 
 export async function addPatientMemory(orgId: string, patientId: string, data: {
@@ -60,7 +62,9 @@ export interface PersonalityProfile {
 export async function getPatientPersonality(orgId: string, patientId: string): Promise<PersonalityProfile | null> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/personality`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  // Backend wraps: { profile: {...} }
+  return data?.profile || data || null
 }
 
 // ============================================================
@@ -89,7 +93,15 @@ export interface EmotionTrajectory {
 export async function getPatientEmotions(orgId: string, patientId: string): Promise<EmotionProfile | null> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/emotions`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  // Backend wraps: { emotions: [...], count: N } — but we need EmotionProfile object
+  // If backend returns an array of emotion records, take the latest one
+  if (data?.emotions && Array.isArray(data.emotions)) {
+    return data.emotions[0] || null
+  }
+  // If it returns the profile directly
+  if (data?.dominant_emotion) return data
+  return null
 }
 
 export async function getEmotionTrajectory(orgId: string, patientId: string, days?: number): Promise<EmotionTrajectory[]> {
@@ -128,7 +140,11 @@ export async function getIntentAnalytics(orgId: string): Promise<Record<string, 
 export async function getPatientSummary(orgId: string, patientId: string): Promise<{ summary: string; brief: string } | null> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/summary`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  // Backend wraps: { summary: {...} } where inner has summary + brief
+  if (data?.summary && typeof data.summary === 'object') return data.summary
+  if (data?.summary && typeof data.summary === 'string') return data
+  return data || null
 }
 
 export async function generatePatientSummary(orgId: string, patientId: string): Promise<{ summary: string }> {

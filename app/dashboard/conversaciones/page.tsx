@@ -40,11 +40,11 @@ const VoicePanel = dynamic(() => import('./voice-panel'), {
 // ============================================================
 
 const PLATFORM_STYLE: Record<string, { icon: typeof MessageCircle; color: string; bg: string }> = {
-  WHATSAPP:   { icon: MessageCircle, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
-  INSTAGRAM:  { icon: Instagram,     color: 'text-brand-purple',   bg: 'bg-brand-purple/10 border-brand-purple/20' },
-  VOICE_CALL: { icon: PhoneCall,     color: 'text-brand-cyan',     bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
-  MESSENGER:  { icon: MessageCircle, color: 'text-status-info',    bg: 'bg-status-info/10 border-status-info/20' },
-  WEB:        { icon: Hash,          color: 'text-status-warning',  bg: 'bg-status-warning/10 border-status-warning/20' },
+  WHATSAPP:   { icon: MessageCircle, color: 'text-emerald-400',  bg: 'bg-emerald-500/10 border-emerald-500/20' },
+  INSTAGRAM:  { icon: Instagram,     color: 'text-fuchsia-400',  bg: 'bg-fuchsia-500/10 border-fuchsia-500/20' },
+  VOICE_CALL: { icon: PhoneCall,     color: 'text-amber-400',    bg: 'bg-amber-500/10 border-amber-500/20' },
+  MESSENGER:  { icon: MessageCircle, color: 'text-sky-400',      bg: 'bg-sky-500/10 border-sky-500/20' },
+  WEB:        { icon: Hash,          color: 'text-blue-400',     bg: 'bg-blue-500/10 border-blue-500/20' },
 }
 
 const SENTIMENT_COLORS: Record<string, string> = {

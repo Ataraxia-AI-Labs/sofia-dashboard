@@ -573,9 +573,9 @@
     "platforms": {
       "WHATSAPP": "WhatsApp",
       "INSTAGRAM": "Instagram",
-      "VOICE_CALL": "Llamada",
+      "VOICE_CALL": "Voz",
       "MESSENGER": "Messenger",
-      "WEB": "Web"
+      "WEB": "Web Chat"
     },
     "tabs": {
       "conversations": "Chat",
@@ -730,8 +730,8 @@
       "WHATSAPP": "WhatsApp",
       "INSTAGRAM": "Instagram",
       "MESSENGER": "Messenger",
-      "WEB": "Web",
-      "VOICE_CALL": "Llamada"
+      "WEB": "Web Chat",
+      "VOICE_CALL": "Voz"
     }
   },
   "pipeline": {

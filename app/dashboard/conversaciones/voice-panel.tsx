@@ -99,10 +99,11 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
     setEvents([])
   }
 
-  // Format duration
-  const formatDuration = (seconds: number): string => {
+  // Format duration (null-safe)
+  const formatDuration = (seconds?: number | null): string => {
+    if (seconds == null || isNaN(seconds)) return '0:00'
     const m = Math.floor(seconds / 60)
-    const s = seconds % 60
+    const s = Math.floor(seconds % 60)
     return `${m}:${s.toString().padStart(2, '0')}`
   }
 
@@ -258,7 +259,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                         <Clock size={8} /> {formatDuration(call.duration_seconds)}
                       </span>
                       <span className="text-[10px] text-text-dim">
-                        {timeAgo(call.started_at)}
+                        {call.started_at ? timeAgo(call.started_at) : ''}
                       </span>
                     </div>
                   </div>
@@ -294,7 +295,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                     <span className="flex items-center gap-1">
                       <Clock size={8} /> {formatDuration(selectedCall.duration_seconds)}
                     </span>
-                    <span>{timeAgo(selectedCall.started_at)}</span>
+                    <span>{selectedCall.started_at ? timeAgo(selectedCall.started_at) : ''}</span>
                     <SentimentBadge sentiment={selectedCall.sentiment_overall} compact />
                   </div>
                 </div>

@@ -95,16 +95,22 @@
     @apply bg-void text-text-primary font-body antialiased;
   }
 
-  /* Scrollbar — slim, brand-colored */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; margin: 4px 0; }
-  ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 9999px; min-height: 40px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
+  /* Scrollbar — slim, adapts to theme border color */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-2);
+    border-radius: 9999px;
+    min-height: 40px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-dim);
+  }
 
   /* Utility: scrollbar with spacing from content */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+    scrollbar-color: var(--color-border-2) transparent;
     padding-right: 2px;
   }
 
