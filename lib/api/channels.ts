@@ -61,7 +61,13 @@ export async function getChannelMetrics(
   if (period) url += `?period=${period}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  // Backend returns {channels: {WHATSAPP: {...}, ...}} — convert to array
+  if (Array.isArray(data)) return data
+  if (data?.channels && typeof data.channels === 'object') {
+    return Object.values(data.channels) as ChannelMetrics[]
+  }
+  return []
 }
 
 export async function getChannelComparison(
@@ -69,7 +75,17 @@ export async function getChannelComparison(
 ): Promise<ChannelComparison | null> {
   const res = await authFetch(`${API_URL}/channels/${orgId}/comparison`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  // Backend returns {comparison: [...], top_channel: ...} — normalize to frontend type
+  if (data?.comparison) {
+    return {
+      channels: data.comparison,
+      best_by_messages: data.top_channel || '',
+      best_by_conversion: data.top_channel || '',
+      best_by_revenue: data.top_channel || '',
+    }
+  }
+  return data
 }
 
 export async function getUnifiedInbox(

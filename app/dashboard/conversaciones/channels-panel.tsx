@@ -106,7 +106,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   // Max values for bar chart
   const maxMessages = Math.max(1, ...metrics.map(m => m.message_count))
   const maxConversion = Math.max(1, ...metrics.map(m => m.conversion_rate))
-  const maxRevenue = Math.max(1, ...metrics.map(m => m.revenue))
+  const maxRevenue = Math.max(1, ...metrics.map(m => m.revenue || 0))
   const maxResponseTime = Math.max(1, ...metrics.map(m => m.avg_response_time_sec))
 
   return (
