@@ -41,10 +41,10 @@ describe('ThemeToggle', () => {
     expect(mockSetTheme).toHaveBeenCalledWith('dark')
   })
 
-  it('calls setTheme with "system" when clicking Sistema', () => {
+  it('calls setTheme with "brand" when clicking Sistema', () => {
     render(<ThemeToggle />)
     fireEvent.click(screen.getByRole('button', { name: 'Sistema' }))
-    expect(mockSetTheme).toHaveBeenCalledWith('system')
+    expect(mockSetTheme).toHaveBeenCalledWith('brand')
   })
 
   it('has correct group role and label', () => {

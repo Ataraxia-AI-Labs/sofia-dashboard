@@ -7,8 +7,9 @@
    12-color closed palette. 8px grid. Purpose-driven motion.
    ============================================================ */
 
-/* Dark theme (default — the core Nucleus experience) */
-.dark {
+/* Brand theme (Sistema) — Sentient Interface signature look.
+   Deep void with purple-tinted surfaces. The core Nucleus experience. */
+.brand {
   --color-void: #050507;
   --color-surface: #0C0C14;
   --color-surface-2: #12121E;
@@ -20,6 +21,21 @@
   --color-text-muted: #4A4862;
   --color-text-dim: #2A2842;
   --color-white: #F5F3FF;
+}
+
+/* Dark theme — neutral dark without purple tints */
+.dark {
+  --color-void: #0A0A0A;
+  --color-surface: #141414;
+  --color-surface-2: #1C1C1C;
+  --color-surface-3: #262626;
+  --color-border: #2A2A2A;
+  --color-border-2: #383838;
+  --color-text-primary: #E8E8E8;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #666666;
+  --color-text-dim: #404040;
+  --color-white: #F5F5F5;
 }
 
 /* Light theme */
@@ -35,38 +51,6 @@
   --color-text-muted: #6B6480;
   --color-text-dim: #9B94B0;
   --color-white: #1A1625;
-}
-
-/* System theme — follows OS preference with brand-tinted surfaces */
-@media (prefers-color-scheme: dark) {
-  :root:not(.dark):not(.light) {
-    --color-void: #080812;
-    --color-surface: #0E0E1A;
-    --color-surface-2: #161628;
-    --color-surface-3: #1E1E36;
-    --color-border: #2A2450;
-    --color-border-2: #352E60;
-    --color-text-primary: #E8E4F8;
-    --color-text-secondary: #9088B8;
-    --color-text-muted: #5C5480;
-    --color-text-dim: #3A3260;
-    --color-white: #F5F3FF;
-  }
-}
-@media (prefers-color-scheme: light) {
-  :root:not(.dark):not(.light) {
-    --color-void: #F8F5FF;
-    --color-surface: #FDFCFF;
-    --color-surface-2: #F3EFFE;
-    --color-surface-3: #EBE5FC;
-    --color-border: #D8D0F0;
-    --color-border-2: #C0B5E5;
-    --color-text-primary: #1A1430;
-    --color-text-secondary: #3D3460;
-    --color-text-muted: #6B6090;
-    --color-text-dim: #9B90C0;
-    --color-white: #1A1430;
-  }
 }
 
 @layer base {
