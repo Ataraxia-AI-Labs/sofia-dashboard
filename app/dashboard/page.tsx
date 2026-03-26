@@ -28,6 +28,7 @@ const OPP_COLORS: Record<string, string> = {
   PRICE_SENSITIVE: '#F59E0B',
   MULTI_PROCEDURE: '#C084FC',
   HIGH_VALUE: '#34D399',
+  CROSS_SELL: '#38BDF8',
 }
 
 export default function DashboardOverview() {

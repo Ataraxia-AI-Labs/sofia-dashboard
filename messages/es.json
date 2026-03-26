@@ -368,7 +368,8 @@
       "CHURN_RISK": "Riesgo Abandono",
       "PRICE_SENSITIVE": "Sensible a Precio",
       "MULTI_PROCEDURE": "Multi-procedimiento",
-      "HIGH_VALUE": "Alto Valor"
+      "HIGH_VALUE": "Alto Valor",
+      "CROSS_SELL": "Venta Cruzada"
     },
     "statuses": {
       "DETECTED": "Detectada",

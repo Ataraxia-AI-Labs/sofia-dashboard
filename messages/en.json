@@ -368,7 +368,8 @@
       "CHURN_RISK": "Churn Risk",
       "PRICE_SENSITIVE": "Price Sensitive",
       "MULTI_PROCEDURE": "Multi-procedure",
-      "HIGH_VALUE": "High Value"
+      "HIGH_VALUE": "High Value",
+      "CROSS_SELL": "Cross-Sell"
     },
     "statuses": {
       "DETECTED": "Detected",
