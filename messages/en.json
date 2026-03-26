@@ -585,6 +585,7 @@
   "channels": {
     "title": "Channel Management",
     "messages": "Messages",
+    "calls": "Calls",
     "patients": "Patients",
     "conversion": "Conversion",
     "revenue": "Revenue",
