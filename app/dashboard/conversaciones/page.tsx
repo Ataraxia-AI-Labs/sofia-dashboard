@@ -159,7 +159,7 @@ export default function ConversacionesPage() {
           to: dateTo || undefined,
           branchId,
         }),
-        fetchPatients(orgId, { limit: 500, branchId }),
+        fetchPatients(orgId, { limit: 100, branchId }),
       ])
 
       if (interactionsData.status === 'fulfilled') {
