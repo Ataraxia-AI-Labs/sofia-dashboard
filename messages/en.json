@@ -114,6 +114,7 @@
     "transactions": "Transactions",
     "voiceCalls": "Voice calls",
     "avgDuration": "Average duration",
+    "appointmentsByVoice": "Appointments by voice",
     "appointmentsByChannel": "Appointments by channel",
     "total": "total",
     "voice": "Voice",

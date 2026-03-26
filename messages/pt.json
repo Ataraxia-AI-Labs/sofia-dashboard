@@ -114,6 +114,7 @@
     "transactions": "Transacoes",
     "voiceCalls": "Chamadas de voz",
     "avgDuration": "Duracao media",
+    "appointmentsByVoice": "Consultas por voz",
     "appointmentsByChannel": "Consultas agendadas por canal",
     "total": "total",
     "voice": "Voz",

@@ -405,10 +405,10 @@ export default function DashboardOverview() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-md bg-status-success/8 border border-status-success/15 flex items-center justify-center text-status-success"><Smartphone size={16} /></div>
+                  <div className="w-8 h-8 rounded-md bg-status-success/8 border border-status-success/15 flex items-center justify-center text-status-success"><CalendarCheck size={16} /></div>
                   <div>
-                    <div className="text-xl font-mono font-bold text-text-primary">{formatNumber(voice.total_whatsapp)}</div>
-                    <div className="text-[9px] font-mono text-text-muted">WhatsApp</div>
+                    <div className="text-xl font-mono font-bold text-text-primary">{formatNumber(voice.appointments_by_voice)}</div>
+                    <div className="text-[9px] font-mono text-text-muted">{t('appointmentsByVoice')}</div>
                   </div>
                 </div>
               </div>

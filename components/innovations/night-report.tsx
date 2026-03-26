@@ -77,7 +77,7 @@ export function NightReport() {
             <span className="text-[10px] font-mono font-bold text-text-dim uppercase tracking-[0.15em]">Night Report</span>
           </div>
           <p className="text-xs font-mono text-text-dim">
-            Tu primer reporte nocturno se genera manana a las 8AM.
+            Tu primer reporte nocturno se genera manana a las 7AM.
           </p>
         </div>
       </div>
@@ -108,7 +108,7 @@ export function NightReport() {
               </span>
             )}
           </div>
-          <p className="text-xs font-mono text-text-muted truncate">{report.summary}</p>
+          <p className={`text-xs font-mono text-text-muted ${expanded ? '' : 'truncate'}`}>{report.summary}</p>
         </div>
         <div className="flex-shrink-0 text-text-dim group-hover:text-text-muted transition-colors">
           {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}

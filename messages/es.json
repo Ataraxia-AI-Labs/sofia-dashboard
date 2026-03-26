@@ -114,6 +114,7 @@
     "transactions": "Transacciones",
     "voiceCalls": "Llamadas de voz",
     "avgDuration": "Duracion promedio",
+    "appointmentsByVoice": "Citas por voz",
     "appointmentsByChannel": "Citas agendadas por canal",
     "total": "total",
     "voice": "Voz",
