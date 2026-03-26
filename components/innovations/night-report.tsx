@@ -48,10 +48,10 @@ export function NightReport() {
   // Show a placeholder when no report exists (new clinic / first day)
   if (loading) {
     return (
-      <div className="glass-card p-3 animate-pulse">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-surface-3" />
-          <div className="h-3 bg-surface-3 rounded w-32" />
+      <div className="glass-card p-4 animate-pulse">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-surface-3" />
+          <div className="h-4 bg-surface-3 rounded w-40" />
         </div>
       </div>
     )
@@ -59,15 +59,15 @@ export function NightReport() {
 
   if (!report) {
     return (
-      <div className="glass-card p-3 flex items-center gap-2.5">
-        <div className="w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
-          <Moon size={12} className="text-brand-purple" />
+      <div className="glass-card p-4 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
+          <Moon size={16} className="text-brand-purple" />
         </div>
         <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[8px] font-mono font-bold text-text-dim uppercase tracking-[0.15em]">Night Report</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono font-bold text-text-dim uppercase tracking-[0.15em]">Night Report</span>
           </div>
-          <p className="text-[9px] font-mono text-text-dim">
+          <p className="text-xs font-mono text-text-dim">
             Tu primer reporte nocturno se genera manana a las 8AM.
           </p>
         </div>
@@ -81,39 +81,39 @@ export function NightReport() {
   })
 
   return (
-    <div className="glass-card p-3">
+    <div className="glass-card p-4">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-2.5 cursor-pointer group"
+        className="w-full flex items-center gap-3 cursor-pointer group"
       >
-        <div className="w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
-          <Moon size={12} className="text-brand-purple" />
+        <div className="w-8 h-8 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center flex-shrink-0">
+          <Moon size={16} className="text-brand-purple" />
         </div>
         <div className="flex-1 min-w-0 text-left">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[8px] font-mono font-bold text-brand-purple uppercase tracking-[0.15em]">Night Report</span>
-            <span className="text-[7px] font-mono text-text-dim">{reportTime}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono font-bold text-brand-purple uppercase tracking-[0.15em]">Night Report</span>
+            <span className="text-[9px] font-mono text-text-dim">{reportTime}</span>
             {report.score_delta !== 0 && (
-              <span className={`text-[8px] font-mono font-bold ${report.score_delta > 0 ? 'text-status-success' : 'text-status-danger'}`}>
+              <span className={`text-[10px] font-mono font-bold ${report.score_delta > 0 ? 'text-status-success' : 'text-status-danger'}`}>
                 {report.score_delta > 0 ? '+' : ''}{report.score_delta}
               </span>
             )}
           </div>
-          <p className="text-[9px] font-mono text-text-muted truncate">{report.summary}</p>
+          <p className="text-xs font-mono text-text-muted truncate">{report.summary}</p>
         </div>
         <div className="flex-shrink-0 text-text-dim group-hover:text-text-muted transition-colors">
-          {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </div>
       </button>
 
       {expanded && (
-        <div className="mt-2.5 pt-2.5 border-t border-border space-y-2 animate-fade-in">
+        <div className="mt-3 pt-3 border-t border-border space-y-3 animate-fade-in">
           {report.highlights.length > 0 && (
             <div>
-              <span className="text-[8px] font-mono font-bold text-text-dim uppercase tracking-wider">Highlights</span>
-              <ul className="mt-1 space-y-0.5">
+              <span className="text-[10px] font-mono font-bold text-text-dim uppercase tracking-wider">Highlights</span>
+              <ul className="mt-1.5 space-y-1">
                 {report.highlights.map((h, i) => (
-                  <li key={i} className="text-[9px] font-mono text-text-secondary flex items-start gap-1.5">
+                  <li key={i} className="text-xs font-mono text-text-secondary flex items-start gap-2">
                     <span className="text-brand-purple mt-0.5">+</span>
                     {h}
                   </li>
@@ -124,10 +124,10 @@ export function NightReport() {
 
           {report.alerts.length > 0 && (
             <div>
-              <span className="text-[8px] font-mono font-bold text-text-dim uppercase tracking-wider">Alertas</span>
-              <ul className="mt-1 space-y-0.5">
+              <span className="text-[10px] font-mono font-bold text-text-dim uppercase tracking-wider">Alertas</span>
+              <ul className="mt-1.5 space-y-1">
                 {report.alerts.map((a, i) => (
-                  <li key={i} className="text-[9px] font-mono text-status-warning flex items-start gap-1.5">
+                  <li key={i} className="text-xs font-mono text-status-warning flex items-start gap-2">
                     <span className="mt-0.5">!</span>
                     {a}
                   </li>

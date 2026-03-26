@@ -134,31 +134,31 @@ export function SofiaSpeaks({ data, voice }: SofiaSpeaksProps) {
   return (
     <button
       onClick={handleClick}
-      className="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-surface-2 border border-border hover:border-brand-purple/20 transition-all cursor-pointer group text-left"
+      className="w-full flex items-center gap-4 px-4 py-3 rounded-lg bg-surface-2 border border-border hover:border-brand-purple/20 transition-all cursor-pointer group text-left"
     >
       {/* Sentient indicator */}
-      <div className="flex-shrink-0 w-5 h-5 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
-        <div className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-sentient-pulse" />
+      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
+        <div className="w-2 h-2 rounded-full bg-brand-purple animate-sentient-pulse" />
       </div>
 
       {/* Narration */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-[8px] font-mono font-bold text-brand-purple uppercase tracking-[0.2em]">SofIA</span>
-          <span className="text-[7px] font-mono text-text-dim">SPEAKS</span>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-[10px] font-mono font-bold text-brand-purple uppercase tracking-[0.2em]">SofIA</span>
+          <span className="text-[9px] font-mono text-text-dim">SPEAKS</span>
         </div>
-        <p className="text-[10px] font-mono text-text-secondary truncate">
+        <p className="text-xs font-mono text-text-secondary truncate">
           {displayText}
-          {isTyping && <span className="inline-block w-px h-3 bg-brand-purple ml-0.5 animate-sentient-pulse" />}
+          {isTyping && <span className="inline-block w-px h-3.5 bg-brand-purple ml-0.5 animate-sentient-pulse" />}
         </p>
       </div>
 
       {/* Progress dots */}
-      <div className="flex-shrink-0 flex gap-0.5">
+      <div className="flex-shrink-0 flex gap-1">
         {insights.slice(0, Math.min(8, insights.length)).map((_, i) => (
           <div
             key={i}
-            className={`w-1 h-1 rounded-full transition-colors ${
+            className={`w-1.5 h-1.5 rounded-full transition-colors ${
               i === currentIndex % insights.length ? 'bg-brand-purple' : 'bg-surface-3'
             }`}
           />
