@@ -65,13 +65,24 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   useEffect(() => { loadData() }, [loadData])
 
   const handleToggleChannel = async (channel: ChannelType, enabled: boolean) => {
+    // Optimistic update
+    setConfig(prev => prev.map(c =>
+      c.channel === channel ? { ...c, is_enabled: enabled } : c
+    ))
     try {
-      await updateChannelConfig(orgId, channel, { is_enabled: enabled })
-      setConfig(prev => prev.map(c =>
-        c.channel === channel ? { ...c, is_enabled: enabled } : c
-      ))
+      const result = await updateChannelConfig(orgId, channel, { is_enabled: enabled })
+      // If backend returned null or error, revert
+      if (!result || ('error' in (result as Record<string, unknown>))) {
+        setConfig(prev => prev.map(c =>
+          c.channel === channel ? { ...c, is_enabled: !enabled } : c
+        ))
+      }
     } catch (err) {
       Sentry.captureException(err)
+      // Revert on failure
+      setConfig(prev => prev.map(c =>
+        c.channel === channel ? { ...c, is_enabled: !enabled } : c
+      ))
     }
   }
 
