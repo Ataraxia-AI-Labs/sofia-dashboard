@@ -92,10 +92,9 @@ describe('SentimentBadge', () => {
     expect(screen.getByText('Frustrado')).toBeInTheDocument()
   })
 
-  it('renders compact mode with aria-label', () => {
+  it('renders compact mode with short indicator', () => {
     render(<SentimentBadge sentiment="NEUTRAL" compact />)
-    const el = screen.getByRole('img', { name: 'Neutral' })
-    expect(el).toBeInTheDocument()
+    expect(screen.getByText('~')).toBeInTheDocument()
     expect(screen.queryByText('Neutral')).not.toBeInTheDocument() // label hidden in compact
   })
 

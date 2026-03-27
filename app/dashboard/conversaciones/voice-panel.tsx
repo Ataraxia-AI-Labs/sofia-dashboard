@@ -101,7 +101,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
 
   // Format duration (null-safe)
   const formatDuration = (seconds?: number | null): string => {
-    if (seconds == null || isNaN(seconds)) return '0:00'
+    if (seconds == null || isNaN(seconds) || seconds === 0) return '\u2014'
     const m = Math.floor(seconds / 60)
     const s = Math.floor(seconds % 60)
     return `${m}:${s.toString().padStart(2, '0')}`
