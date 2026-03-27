@@ -124,6 +124,7 @@ describe('AuditLogsPage', () => {
   })
 
   it('filters by org', async () => {
+    mockPush.mockClear()
     render(<AuditLogsPage />)
     await waitFor(() => screen.getByText('Todas las orgs'))
     fireEvent.change(screen.getByDisplayValue('Todas las orgs'), { target: { value: 'org-1' } })
