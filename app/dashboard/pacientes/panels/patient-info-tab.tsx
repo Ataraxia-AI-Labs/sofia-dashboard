@@ -5,11 +5,13 @@ import { formatCOP, formatPercent } from '@/lib/api'
 import type { PatientDetail, Treatment } from '@/types'
 
 const CHANNELS: Record<string, { label: string; color: string }> = {
-  WHATSAPP: { label: 'WhatsApp', color: 'text-status-success' },
-  INSTAGRAM: { label: 'Instagram', color: 'text-brand-purple' },
-  MESSENGER: { label: 'Messenger', color: 'text-status-info' },
-  WEB: { label: 'Web', color: 'text-status-warning' },
-  VOICE_CALL: { label: 'Llamada', color: 'text-brand-cyan' },
+  WHATSAPP: { label: 'WhatsApp', color: 'text-emerald-400' },
+  INSTAGRAM: { label: 'Instagram', color: 'text-fuchsia-400' },
+  MESSENGER: { label: 'Messenger', color: 'text-sky-400' },
+  WEB: { label: 'Web Chat', color: 'text-blue-400' },
+  WEBCHAT: { label: 'Web Chat', color: 'text-blue-400' },
+  VOICE_CALL: { label: 'Voz', color: 'text-amber-400' },
+  VOICE: { label: 'Voz', color: 'text-amber-400' },
   PRESENCIAL: { label: 'Presencial', color: 'text-brand-gold' },
 }
 

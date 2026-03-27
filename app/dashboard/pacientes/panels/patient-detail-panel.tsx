@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { X, Edit3, Send, Pill } from 'lucide-react'
 import { useOrg } from '@/lib/org-context'
 import { PortalLinkGenerator } from '@/components/portal-link-generator'
@@ -52,6 +53,12 @@ interface PatientDetailPanelProps {
 export function PatientDetailPanel(props: PatientDetailPanelProps) {
   const { patient, onClose, detailLoading, detailTab, onTabChange } = props
   const { orgId } = useOrg()
+
+  // Lock body scroll while panel is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
 
   const tabs = [
     { id: 'info' as const, label: 'Info' },
