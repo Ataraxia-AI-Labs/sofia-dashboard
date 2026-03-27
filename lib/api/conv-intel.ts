@@ -49,14 +49,16 @@ export async function searchPatientMemories(orgId: string, patientId: string, qu
 // ============================================================
 
 export interface PersonalityProfile {
-  openness: number
-  conscientiousness: number
-  extraversion: number
-  agreeableness: number
-  neuroticism: number
-  warmth: number
-  dominant_traits: string[]
-  communication_style: string
+  formality_score: number
+  humor_tolerance: number
+  detail_preference: number
+  emotional_support_need: number
+  pace_preference: number
+  emoji_preference: number
+  inferred_age_range: string
+  inferred_gender: string
+  communication_language: string
+  total_calibration_interactions: number
 }
 
 export async function getPatientPersonality(orgId: string, patientId: string): Promise<PersonalityProfile | null> {

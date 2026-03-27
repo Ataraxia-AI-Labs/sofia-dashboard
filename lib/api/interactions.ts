@@ -95,13 +95,17 @@ export async function fetchInteractions(orgId: string, opts?: {
     const aiResponse = (item.ai_response || '') as string
     const rowDirection = (item.direction || 'INBOUND') as string
 
-    // Human takeover: direction is OUTBOUND and raw_content is the doctor's message
+    // Human takeover or failed outbound: direction is OUTBOUND and raw_content is the doctor's message
     // Don't split — treat raw_content as the outbound message, skip ai_response marker
-    if (rowDirection === 'OUTBOUND' && rawContent && aiResponse?.includes('[Human takeover]')) {
+    const isTakeover = aiResponse?.includes('[Human takeover]')
+    const isFailed = aiResponse?.includes('[MENSAJE FALLIDO')
+    if (rowDirection === 'OUTBOUND' && rawContent && (isTakeover || isFailed)) {
       messages.push({
         ...base,
         direction: 'OUTBOUND',
         message_content: rawContent,
+        is_human_takeover: true,
+        is_failed: !!isFailed,
       })
     } else {
       if (rawContent) {

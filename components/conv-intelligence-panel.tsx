@@ -12,14 +12,14 @@ interface Props {
 }
 
 const EMOTION_COLORS: Record<string, string> = {
-  joy: 'text-yellow-500',
-  trust: 'text-green-500',
-  fear: 'text-purple-500',
-  surprise: 'text-orange-500',
-  sadness: 'text-blue-500',
+  joy: 'text-brand-gold',
+  trust: 'text-emerald-400',
+  fear: 'text-brand-purple',
+  surprise: 'text-amber-400',
+  sadness: 'text-blue-400',
   disgust: 'text-red-400',
-  anger: 'text-red-600',
-  anticipation: 'text-cyan-500',
+  anger: 'text-red-400',
+  anticipation: 'text-brand-cyan',
 }
 
 export function ConvIntelligencePanel({ orgId, patientId, patientName }: Props) {
@@ -109,31 +109,37 @@ export function ConvIntelligencePanel({ orgId, patientId, patientName }: Props) 
           ) : <p className="text-[10px] font-mono text-text-dim">Sin datos emocionales</p>
         )}
 
-        {/* Personality — 6 dimensions */}
+        {/* Personality — SofIA 6D */}
         {activeSection === 'personality' && (
           personality ? (
             <div className="space-y-2">
-              {personality.communication_style && (
+              {personality.communication_language && (
                 <p className="text-[9px] font-mono text-text-dim mb-2">
-                  Estilo: <span className="text-text-secondary font-semibold">{personality.communication_style}</span>
+                  Idioma: <span className="text-text-secondary font-semibold">{personality.communication_language.toUpperCase()}</span>
+                  {personality.inferred_age_range && personality.inferred_age_range !== 'unknown' && (
+                    <> | Rango: <span className="text-text-secondary font-semibold">{personality.inferred_age_range}</span></>
+                  )}
+                  {personality.total_calibration_interactions > 0 && (
+                    <> | Calibrado: <span className="text-text-secondary font-semibold">{personality.total_calibration_interactions} msgs</span></>
+                  )}
                 </p>
               )}
-              {['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism', 'warmth'].map(dim => (
-                <div key={dim} className="flex items-center gap-2">
-                  <span className="text-[9px] font-mono text-text-muted w-28 capitalize">{dim}</span>
+              {([
+                { key: 'formality_score', label: 'Formalidad' },
+                { key: 'humor_tolerance', label: 'Humor' },
+                { key: 'detail_preference', label: 'Detalle' },
+                { key: 'emotional_support_need', label: 'Soporte Emocional' },
+                { key: 'pace_preference', label: 'Ritmo' },
+                { key: 'emoji_preference', label: 'Emojis' },
+              ] as const).map(dim => (
+                <div key={dim.key} className="flex items-center gap-2">
+                  <span className="text-[9px] font-mono text-text-muted w-28">{dim.label}</span>
                   <div className="flex-1 h-1.5 bg-surface-2 rounded-full">
-                    <div className="h-full bg-brand-purple/60 rounded-full transition-all" style={{ width: `${((personality as unknown as Record<string, number>)[dim] || 0) * 100}%` }} />
+                    <div className="h-full bg-brand-purple/60 rounded-full transition-all" style={{ width: `${((personality as unknown as Record<string, number>)[dim.key] || 0) * 100}%` }} />
                   </div>
-                  <span className="text-[9px] font-mono text-text-dim w-8 text-right">{(((personality as unknown as Record<string, number>)[dim] || 0) * 100).toFixed(0)}%</span>
+                  <span className="text-[9px] font-mono text-text-dim w-8 text-right">{(((personality as unknown as Record<string, number>)[dim.key] || 0) * 100).toFixed(0)}%</span>
                 </div>
               ))}
-              {personality.dominant_traits?.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {personality.dominant_traits.map(t => (
-                    <span key={t} className="text-[8px] font-mono bg-brand-purple/8 border border-brand-purple/15 rounded px-1.5 py-0.5 text-brand-purple">{t}</span>
-                  ))}
-                </div>
-              )}
             </div>
           ) : <p className="text-[10px] font-mono text-text-dim">Sin perfil de personalidad</p>
         )}

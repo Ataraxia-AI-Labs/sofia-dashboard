@@ -657,6 +657,8 @@ export interface InteractionLog {
   conversation_id?: string
   created_at: string
   annotation?: InteractionAnnotation | null
+  is_human_takeover?: boolean
+  is_failed?: boolean
   // Joined from patients table (if backend returns it)
   patients?: { full_name: string; phone: string }
 }

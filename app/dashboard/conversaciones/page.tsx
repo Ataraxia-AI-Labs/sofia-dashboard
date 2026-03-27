@@ -930,13 +930,22 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
         {/* Sender label */}
         <div className="flex items-center gap-1.5 mb-1">
           {isOutbound ? (
-            <Bot size={11} className="text-brand-purple" />
+            message.is_human_takeover
+              ? <Shield size={11} className="text-brand-cyan" />
+              : <Bot size={11} className="text-brand-purple" />
           ) : (
             <User size={11} className="text-text-dim" />
           )}
-          <span className={`text-[10px] font-semibold ${isOutbound ? 'text-brand-purple' : 'text-text-dim'}`}>
-            {isOutbound ? 'SofIA' : t('role.patient')}
+          <span className={`text-[10px] font-semibold ${
+            message.is_human_takeover ? 'text-brand-cyan' : isOutbound ? 'text-brand-purple' : 'text-text-dim'
+          }`}>
+            {isOutbound ? (message.is_human_takeover ? 'Doctor' : 'SofIA') : t('role.patient')}
           </span>
+          {message.is_failed && (
+            <span className="text-[8px] font-mono text-red-400 bg-red-500/10 border border-red-500/20 px-1 py-0.5 rounded">
+              No entregado
+            </span>
+          )}
         </div>
 
         {/* Message content */}
@@ -954,8 +963,8 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             {time}
           </span>
 
-          {/* Intent badge */}
-          {message.intent && (
+          {/* Intent badge — hide internal markers */}
+          {message.intent && !['OUTBOUND_FAILED', ''].includes(message.intent) && (
             <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-brand-purple/8 border border-brand-purple/15 text-[9px] font-semibold text-brand-purple-light">
               <Zap size={8} />
               {message.intent}
