@@ -1,6 +1,34 @@
 import { API_URL, authFetch, withBranch } from './helpers'
 import type { InteractionLog, InteractionAnnotation } from '@/types'
 
+// Backend ai_analysis.sentiment can be a number (-1.0 to 1.0) OR a string label
+// ("NEUTRAL", "POSITIVE", "VERY_POSITIVE", "NEGATIVE", "URGENT", etc.)
+const LABEL_TO_SCORE: Record<string, number> = {
+  VERY_POSITIVE: 0.8, POSITIVE: 0.5, NEUTRAL: 0, NEGATIVE: -0.5,
+  WORRIED: -0.3, APOLOGETIC: -0.2, URGENT: -0.6,
+}
+
+function parseSentimentScore(score: unknown, sentiment: unknown): number {
+  if (typeof score === 'number' && !isNaN(score)) return score
+  if (typeof sentiment === 'number' && !isNaN(sentiment)) return sentiment
+  if (typeof sentiment === 'string') {
+    const num = parseFloat(sentiment)
+    if (!isNaN(num)) return num
+    return LABEL_TO_SCORE[sentiment.toUpperCase()] ?? 0
+  }
+  return 0
+}
+
+function parseSentimentLabel(label: unknown, sentiment: unknown): string {
+  if (typeof label === 'string' && label !== '' && label !== 'NEUTRAL') return label
+  // Derive from sentiment value
+  const score = parseSentimentScore(null, sentiment)
+  if (score >= 0.3) return 'POSITIVE'
+  if (score <= -0.3) return 'NEGATIVE'
+  if (typeof sentiment === 'string' && sentiment !== '') return sentiment.toUpperCase()
+  return 'NEUTRAL'
+}
+
 export async function fetchInteractions(orgId: string, opts?: {
   limit?: number
   offset?: number
@@ -40,8 +68,8 @@ export async function fetchInteractions(orgId: string, opts?: {
       patient_id: (item.patient_id || '') as string,
       channel: (item.channel || item.platform || 'WHATSAPP') as string,
       intent: (item.intent || '') as string,
-      sentiment_score: (item.sentiment_score ?? item.sentiment ?? 0) as number,
-      sentiment_label: (item.sentiment_label || 'NEUTRAL') as string,
+      sentiment_score: parseSentimentScore(item.sentiment_score, item.sentiment),
+      sentiment_label: parseSentimentLabel(item.sentiment_label, item.sentiment),
       tools_used: (item.tools_used || []) as string[],
       tokens_used: (item.tokens_used || 0) as number,
       cost_usd: (item.cost_usd || 0) as number,

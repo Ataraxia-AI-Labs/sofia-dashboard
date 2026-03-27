@@ -48,14 +48,21 @@ const PLATFORM_STYLE: Record<string, { icon: typeof MessageCircle; color: string
 }
 
 const SENTIMENT_COLORS: Record<string, string> = {
-  POSITIVE: 'bg-status-success',
-  NEUTRAL:  'bg-status-warning',
-  NEGATIVE: 'bg-status-danger',
+  POSITIVE: 'bg-emerald-400',
+  NEUTRAL:  'bg-brand-cyan',
+  NEGATIVE: 'bg-red-400',
 }
 
 /** Derive sentiment label from numeric score when label is absent */
 function getSentimentLabel(score?: number, label?: string): string {
-  if (label) return label.toUpperCase()
+  if (label) {
+    const upper = label.toUpperCase()
+    // Normalize exotic labels to 3 canonical values
+    if (upper.includes('POSITIVE') || upper === 'ENTHUSIASTIC') return 'POSITIVE'
+    if (upper.includes('NEGATIVE') || upper === 'FRUSTRATED' || upper === 'URGENT' || upper === 'WORRIED') return 'NEGATIVE'
+    if (upper === 'NEUTRAL' || upper === 'APOLOGETIC') return 'NEUTRAL'
+    return 'NEUTRAL'
+  }
   if (score == null) return 'NEUTRAL'
   if (score >= 0.3) return 'POSITIVE'
   if (score <= -0.3) return 'NEGATIVE'
@@ -676,6 +683,24 @@ function ConversationDetail({
   }
 
   const handleSendMessage = async (text: string) => {
+    // Optimistic: show message immediately in the conversation
+    const optimisticMsg: InteractionLog = {
+      id: `temp-${Date.now()}`,
+      organization_id: orgId,
+      patient_id: thread.patientId,
+      channel: thread.channel,
+      direction: 'OUTBOUND',
+      message_content: text,
+      sentiment_score: 0,
+      sentiment_label: 'NEUTRAL',
+      created_at: new Date().toISOString(),
+    }
+    thread.messages.push(optimisticMsg)
+    thread.messageCount += 1
+    // Force scroll after adding message
+    setTimeout(() => {
+      if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }, 50)
     try {
       await sendTakeoverMessage(orgId, thread.patientId, text)
     } catch { /* ignore */ }
