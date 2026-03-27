@@ -195,7 +195,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                     <MessageCircle size={9} /> {channel === 'VOICE' ? t('calls') : t('messages')}
                   </span>
                   <span className="text-xs font-bold font-mono text-text-primary">
-                    {(m?.message_count ?? 0).toLocaleString()}
+                    {channel === 'VOICE' ? (m?.unique_patients ?? 0) : (m?.message_count ?? 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
