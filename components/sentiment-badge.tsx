@@ -33,10 +33,10 @@ const SENTIMENT_CONFIG: Record<SentimentType, {
   NEUTRAL: {
     label: 'Neutral',
     short: '~',
-    color: 'text-text-muted',
-    dot: 'bg-text-muted',
-    bg: 'bg-surface-3',
-    border: 'border-border',
+    color: 'text-brand-cyan',
+    dot: 'bg-brand-cyan',
+    bg: 'bg-brand-cyan/10',
+    border: 'border-brand-cyan/25',
   },
   FRUSTRATED: {
     label: 'Frustrado',
