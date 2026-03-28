@@ -16,9 +16,9 @@ const EMOTION_COLORS: Record<string, string> = {
   trust: 'text-emerald-400',
   fear: 'text-brand-purple',
   surprise: 'text-amber-400',
-  sadness: 'text-blue-400',
-  disgust: 'text-red-400',
-  anger: 'text-red-400',
+  sadness: 'text-status-info',
+  disgust: 'text-status-danger',
+  anger: 'text-status-danger',
   anticipation: 'text-brand-cyan',
 }
 

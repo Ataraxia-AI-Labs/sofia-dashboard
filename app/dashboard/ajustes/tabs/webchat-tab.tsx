@@ -240,7 +240,7 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
         <div className="relative h-32 bg-surface-2 rounded-lg border border-border overflow-hidden">
           <div className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 flex flex-col items-${config.position === 'bottom-right' ? 'end' : 'start'} gap-2`}>
             <div className="bg-white rounded-lg shadow-lg p-3 max-w-[200px] border">
-              <p className="text-[9px] text-gray-700">{config.welcome_message}</p>
+              <p className="text-[9px] text-text-primary">{config.welcome_message}</p>
             </div>
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg cursor-pointer"

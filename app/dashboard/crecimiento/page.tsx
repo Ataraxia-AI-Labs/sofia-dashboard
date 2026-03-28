@@ -47,7 +47,7 @@ export default function CrecimientoPage() {
 
   const funnelSteps = metrics ? [
     { label: t('visitors'), value: metrics.funnel.visitors, color: 'text-text-muted' },
-    { label: t('leads'), value: metrics.funnel.leads, color: 'text-blue-400' },
+    { label: t('leads'), value: metrics.funnel.leads, color: 'text-status-info' },
     { label: t('appointments'), value: metrics.funnel.appointments, color: 'text-brand-purple' },
     { label: t('completed'), value: metrics.funnel.completed, color: 'text-status-success' },
     { label: t('revenue'), value: formatCurrency(metrics.funnel.revenue), color: 'text-status-success' },

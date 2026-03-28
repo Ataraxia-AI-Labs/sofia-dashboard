@@ -7,7 +7,7 @@ import { ChannelBadge, CHANNEL_CONFIG } from '@/components/channel-badge'
 import { timeAgo } from '@/lib/api/helpers'
 import type { InboxConversation, ConversationMessage, ChannelType } from '@/types'
 import {
-  Search, X, ArrowLeft, Inbox, MessageCircle, Bot, User,
+  Search, X, ArrowLeft, Inbox, MessageCircle, Bot, User, Shield,
 } from 'lucide-react'
 import * as Sentry from '@sentry/nextjs'
 
@@ -350,13 +350,22 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                         } px-3 py-2`}>
                           <div className="flex items-center gap-1.5 mb-0.5">
                             {isOutbound ? (
-                              <Bot size={9} className="text-brand-purple" />
+                              msg.is_human_takeover
+                                ? <Shield size={9} className="text-brand-cyan" />
+                                : <Bot size={9} className="text-brand-purple" />
                             ) : (
                               <User size={9} className="text-text-dim" />
                             )}
-                            <span className={`text-[9px] font-semibold ${isOutbound ? 'text-brand-purple' : 'text-text-dim'}`}>
-                              {isOutbound ? 'SofIA' : tConv('role.patient')}
+                            <span className={`text-[9px] font-semibold ${
+                              msg.is_human_takeover ? 'text-brand-cyan' : isOutbound ? 'text-brand-purple' : 'text-text-dim'
+                            }`}>
+                              {isOutbound ? (msg.is_human_takeover ? 'Doctor' : 'SofIA') : tConv('role.patient')}
                             </span>
+                            {msg.is_failed && (
+                              <span className="text-[8px] font-mono text-status-danger bg-status-danger/10 border border-status-danger/20 px-1 py-0.5 rounded">
+                                {tConv('notDelivered')}
+                              </span>
+                            )}
                             <ChannelBadge channel={msg.channel} />
                           </div>
                           <p className={`text-[11px] leading-relaxed whitespace-pre-wrap break-words ${

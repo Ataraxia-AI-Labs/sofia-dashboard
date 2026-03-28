@@ -42,9 +42,9 @@ const CLASSIFICATION_CONFIG: Record<LeadClassification, {
   COLD: {
     icon: Snowflake,
     label: 'COLD',
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/25',
+    color: 'text-status-info',
+    bg: 'bg-status-info/10',
+    border: 'border-status-info/25',
   },
   DEAD: {
     icon: Skull,

@@ -44,13 +44,13 @@ const PLATFORM_STYLE: Record<string, { icon: typeof MessageCircle; color: string
   INSTAGRAM:  { icon: Instagram,     color: 'text-fuchsia-400',  bg: 'bg-fuchsia-500/10 border-fuchsia-500/20' },
   VOICE_CALL: { icon: PhoneCall,     color: 'text-amber-400',    bg: 'bg-amber-500/10 border-amber-500/20' },
   MESSENGER:  { icon: MessageCircle, color: 'text-sky-400',      bg: 'bg-sky-500/10 border-sky-500/20' },
-  WEB:        { icon: Hash,          color: 'text-blue-400',     bg: 'bg-blue-500/10 border-blue-500/20' },
+  WEB:        { icon: Hash,          color: 'text-status-info',  bg: 'bg-status-info/10 border-status-info/20' },
 }
 
 const SENTIMENT_COLORS: Record<string, string> = {
   POSITIVE: 'bg-emerald-400',
   NEUTRAL:  'bg-brand-cyan',
-  NEGATIVE: 'bg-red-400',
+  NEGATIVE: 'bg-status-danger',
 }
 
 /** Derive sentiment label from numeric score when label is absent */
@@ -942,8 +942,8 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             {isOutbound ? (message.is_human_takeover ? 'Doctor' : 'SofIA') : t('role.patient')}
           </span>
           {message.is_failed && (
-            <span className="text-[8px] font-mono text-red-400 bg-red-500/10 border border-red-500/20 px-1 py-0.5 rounded">
-              No entregado
+            <span className="text-[8px] font-mono text-status-danger bg-status-danger/10 border border-status-danger/20 px-1 py-0.5 rounded">
+              {t('notDelivered')}
             </span>
           )}
         </div>

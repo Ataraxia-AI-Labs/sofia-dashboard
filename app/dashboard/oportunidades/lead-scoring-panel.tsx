@@ -23,7 +23,7 @@ interface LeadScoringPanelProps {
 const CLASSIFICATION_ICONS: Record<LeadClassification, { icon: typeof Flame; color: string; bg: string }> = {
   HOT:  { icon: Flame,     color: 'text-orange-400', bg: 'bg-orange-500/10' },
   WARM: { icon: Sun,       color: 'text-amber-400',  bg: 'bg-amber-500/10' },
-  COLD: { icon: Snowflake, color: 'text-blue-400',   bg: 'bg-blue-500/10' },
+  COLD: { icon: Snowflake, color: 'text-status-info',   bg: 'bg-status-info/10' },
   DEAD: { icon: Skull,     color: 'text-text-dim',   bg: 'bg-surface-3' },
 }
 
@@ -151,7 +151,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                       className={`h-full rounded-full transition-all duration-500 ${
                         cls === 'HOT'  ? 'bg-gradient-to-r from-orange-500/80 to-orange-400' :
                         cls === 'WARM' ? 'bg-gradient-to-r from-amber-500/80 to-amber-400' :
-                        cls === 'COLD' ? 'bg-gradient-to-r from-blue-500/80 to-blue-400' :
+                        cls === 'COLD' ? 'bg-gradient-to-r from-status-info/80 to-status-info' :
                                          'bg-surface-3'
                       }`}
                       style={{ width: `${barWidth}%` }}
@@ -190,7 +190,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
             <span className={`text-sm font-bold font-mono ${
               insights.avg_score >= 75 ? 'text-orange-400' :
               insights.avg_score >= 50 ? 'text-amber-400' :
-              insights.avg_score >= 25 ? 'text-blue-400' :
+              insights.avg_score >= 25 ? 'text-status-info' :
               'text-text-dim'
             }`}>
               {insights.avg_score.toFixed(0)}/100
@@ -263,7 +263,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                   <div className={`text-sm font-bold font-mono ${
                     lead.score >= 75 ? 'text-orange-400' :
                     lead.score >= 50 ? 'text-amber-400' :
-                    'text-blue-400'
+                    'text-status-info'
                   }`}>
                     {lead.score}
                   </div>

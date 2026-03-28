@@ -33,7 +33,7 @@ interface GamificationPanelProps {
 
 const TIER_COLORS: Record<GamificationTier, { bg: string; fill: string; text: string }> = {
   BRONZE: { bg: 'bg-orange-500/15', fill: 'bg-orange-500', text: 'text-orange-400' },
-  SILVER: { bg: 'bg-gray-400/15', fill: 'bg-gray-400', text: 'text-gray-300' },
+  SILVER: { bg: 'bg-text-muted/15', fill: 'bg-text-muted', text: 'text-text-dim' },
   GOLD: { bg: 'bg-amber-500/15', fill: 'bg-amber-500', text: 'text-amber-400' },
   PLATINUM: { bg: 'bg-purple-500/15', fill: 'bg-purple-500', text: 'text-purple-300' },
 }

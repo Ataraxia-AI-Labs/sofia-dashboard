@@ -124,9 +124,18 @@ export async function getConversationDetail(
     const aiResponse = msg.ai_response || ''
     const base = { id: msg.id, channel, created_at: msg.created_at || '' }
 
-    // Human takeover: OUTBOUND + raw content is doctor's message
-    if (direction === 'OUTBOUND' && content && aiResponse?.includes('[Human takeover]')) {
-      result.push({ ...base, direction: 'OUTBOUND', message_content: content })
+    const isTakeover = aiResponse?.includes('[Human takeover]')
+    const isFailed = aiResponse?.includes('[MENSAJE FALLIDO')
+
+    // Human takeover or failed message: show raw content as single OUTBOUND
+    if (direction === 'OUTBOUND' && content && (isTakeover || isFailed)) {
+      result.push({
+        ...base,
+        direction: 'OUTBOUND',
+        message_content: content,
+        is_human_takeover: true,
+        is_failed: !!isFailed,
+      })
       continue
     }
 
@@ -134,8 +143,8 @@ export async function getConversationDetail(
     if (content) {
       result.push({ ...base, direction: 'INBOUND', message_content: content })
     }
-    // SofIA response (OUTBOUND)
-    if (aiResponse) {
+    // SofIA response (OUTBOUND) — skip internal markers
+    if (aiResponse && !isTakeover && !isFailed) {
       result.push({ ...base, id: `${msg.id}-ai`, direction: 'OUTBOUND', message_content: aiResponse })
     }
     // Fallback: empty message

@@ -55,12 +55,12 @@ export default function DashboardOverview() {
     setLoading(true)
     if (retryCount > 0) setError(t('connecting'))
 
-    fetchVoiceMetrics(orgId, days, branchId)
-      .then(v => setVoice(v))
-      .catch(() => {})
-
     try {
-      const analytics = await fetchFullAnalytics(orgId, days, branchId)
+      const [analytics, voiceData] = await Promise.all([
+        fetchFullAnalytics(orgId, days, branchId),
+        fetchVoiceMetrics(orgId, days, branchId).catch(() => null),
+      ])
+      setVoice(voiceData)
       setData(analytics)
       setLastUpdate(new Date())
       setError('')

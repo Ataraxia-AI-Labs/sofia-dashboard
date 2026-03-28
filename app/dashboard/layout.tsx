@@ -507,7 +507,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             Sentry.setContext('organization', { id: organization.id, name: organization.name })
           }
         } catch (err) {
-          console.error('[layout] fetchUserOrganization failed:', err)
           Sentry.captureException(err, { tags: { context: 'org_bootstrap' } })
         }
       }

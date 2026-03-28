@@ -35,12 +35,12 @@ interface LearningPanelProps {
 }
 
 const CORRECTION_TYPE_CONFIG: Record<CorrectionType, { emoji: string; label: string; color: string }> = {
-  APPOINTMENT_CHANGE: { emoji: '\uD83D\uDCC5', label: 'Cita', color: 'text-blue-400' },
+  APPOINTMENT_CHANGE: { emoji: '\uD83D\uDCC5', label: 'Cita', color: 'text-status-info' },
   RESPONSE_EDIT: { emoji: '\u270F\uFE0F', label: 'Respuesta', color: 'text-purple-400' },
   PRICE_OVERRIDE: { emoji: '\uD83D\uDCB0', label: 'Precio', color: 'text-amber-400' },
   TREATMENT_CORRECTION: { emoji: '\uD83D\uDC8A', label: 'Tratamiento', color: 'text-emerald-400' },
   SCHEDULE_PREFERENCE: { emoji: '\uD83D\uDD50', label: 'Horario', color: 'text-cyan-400' },
-  REJECTION: { emoji: '\u274C', label: 'Rechazo', color: 'text-red-400' },
+  REJECTION: { emoji: '\u274C', label: 'Rechazo', color: 'text-status-danger' },
 }
 
 export default function LearningPanel({ orgId }: LearningPanelProps) {
@@ -389,8 +389,8 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
 
                   {/* Diff-style original vs corrected */}
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-lg bg-red-500/5 border border-red-500/15 p-2">
-                      <span className="text-[9px] text-red-400 font-semibold uppercase block mb-1">
+                    <div className="rounded-lg bg-status-danger/5 border border-status-danger/15 p-2">
+                      <span className="text-[9px] text-status-danger font-semibold uppercase block mb-1">
                         {t('original')}
                       </span>
                       <pre className="text-[10px] text-text-muted font-mono whitespace-pre-wrap break-all max-h-16 overflow-y-auto">

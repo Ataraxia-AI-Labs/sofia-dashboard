@@ -44,27 +44,25 @@ function saveUsage(usage: UsageMap): void {
  * and reorders them to put highest-usage first.
  * Falls back to default priority if no usage data.
  */
+function sortSections(sections: PhantomSection[]): PhantomSection[] {
+  const usage = getUsage()
+  return [...sections].sort((a, b) => {
+    const usageA = usage[a.id]?.views || 0
+    const usageB = usage[b.id]?.views || 0
+    if (usageA > 0 || usageB > 0) {
+      if (usageA !== usageB) return usageB - usageA
+    }
+    return a.priority - b.priority
+  })
+}
+
 export function PhantomGrid({ sections, className = '' }: PhantomGridProps) {
-  const [orderedSections, setOrderedSections] = useState(sections)
+  // Sort on first render (no useEffect delay) to prevent layout shift
+  const [orderedSections, setOrderedSections] = useState(() => sortSections(sections))
 
+  // Re-sort when sections change (e.g., voice data arrives)
   useEffect(() => {
-    const usage = getUsage()
-
-    // Sort: sections with more interaction come first, fallback to default priority
-    const sorted = [...sections].sort((a, b) => {
-      const usageA = usage[a.id]?.views || 0
-      const usageB = usage[b.id]?.views || 0
-
-      // If both have usage data, sort by usage (desc)
-      if (usageA > 0 || usageB > 0) {
-        if (usageA !== usageB) return usageB - usageA
-      }
-
-      // Fallback to default priority
-      return a.priority - b.priority
-    })
-
-    setOrderedSections(sorted)
+    setOrderedSections(sortSections(sections))
   }, [sections])
 
   // Track views — increment when section becomes visible

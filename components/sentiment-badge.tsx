@@ -41,10 +41,10 @@ const SENTIMENT_CONFIG: Record<SentimentType, {
   FRUSTRATED: {
     label: 'Frustrado',
     short: '!',
-    color: 'text-red-400',
-    dot: 'bg-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/25',
+    color: 'text-status-danger',
+    dot: 'bg-status-danger',
+    bg: 'bg-status-danger/10',
+    border: 'border-status-danger/25',
   },
   CONFUSED: {
     label: 'Confundido',

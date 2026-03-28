@@ -353,8 +353,8 @@ export function CheckoutModal({
               </>
             ) : (
               <>
-                <div className="w-12 h-12 rounded-lg bg-red-500/10 border border-red-500/15 flex items-center justify-center">
-                  <AlertCircle size={28} className="text-red-400" />
+                <div className="w-12 h-12 rounded-lg bg-status-danger/10 border border-status-danger/15 flex items-center justify-center">
+                  <AlertCircle size={28} className="text-status-danger" />
                 </div>
                 <div>
                   <p className="text-text-primary font-mono font-semibold text-xs">Error en el pago</p>

@@ -66,7 +66,7 @@ export default function ContenidoPage() {
   const statusBadge = (s: string) => {
     switch (s) {
       case 'PUBLISHED': return 'bg-status-success/8 text-status-success'
-      case 'SCHEDULED': return 'bg-blue-500/8 text-blue-400'
+      case 'SCHEDULED': return 'bg-status-info/8 text-status-info'
       case 'DRAFT': return 'bg-surface-2 text-text-dim'
       default: return 'bg-surface-2 text-text-dim'
     }

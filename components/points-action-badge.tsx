@@ -31,9 +31,9 @@ const ACTION_CONFIG: Record<GamificationAction, {
   REFERRAL: {
     emoji: '\uD83D\uDC65',
     label: 'Referido',
-    textColor: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/25',
+    textColor: 'text-status-info',
+    bg: 'bg-status-info/10',
+    border: 'border-status-info/25',
   },
   GOOGLE_REVIEW: {
     emoji: '\u2B50',

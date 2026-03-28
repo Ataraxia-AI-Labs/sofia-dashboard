@@ -21,9 +21,9 @@ const STATUS_CONFIG: Record<CallStatus, {
 }> = {
   IN_PROGRESS: {
     label: 'En curso',
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/25',
+    color: 'text-status-danger',
+    bg: 'bg-status-danger/10',
+    border: 'border-status-danger/25',
     pulse: true,
   },
   COMPLETED: {
@@ -34,15 +34,15 @@ const STATUS_CONFIG: Record<CallStatus, {
   },
   TRANSFERRED: {
     label: 'Transferida',
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/25',
+    color: 'text-status-info',
+    bg: 'bg-status-info/10',
+    border: 'border-status-info/25',
   },
   MISSED: {
     label: 'Perdida',
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/25',
+    color: 'text-status-danger',
+    bg: 'bg-status-danger/10',
+    border: 'border-status-danger/25',
   },
   FAILED: {
     label: 'Fallida',
@@ -61,14 +61,14 @@ export function CallStatusBadge({ status, className = '' }: CallStatusBadgeProps
     >
       {cfg.pulse ? (
         <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-danger opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-status-danger" />
         </span>
       ) : (
         <span className={`w-1.5 h-1.5 rounded-full ${
           status === 'COMPLETED' ? 'bg-emerald-400' :
-          status === 'TRANSFERRED' ? 'bg-blue-400' :
-          status === 'MISSED' ? 'bg-red-400' :
+          status === 'TRANSFERRED' ? 'bg-status-info' :
+          status === 'MISSED' ? 'bg-status-danger' :
           'bg-orange-400'
         }`} />
       )}

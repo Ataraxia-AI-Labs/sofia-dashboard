@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import { useOrg } from '@/lib/org-context'
 import { downloadReportPdf, fetchFullAnalytics } from '@/lib/api'
 import { FileDown, TrendingUp, Users, Calendar, DollarSign, Bot, Loader2, CheckCircle } from 'lucide-react'
@@ -41,7 +42,7 @@ export default function ReportesPage() {
       setDownloaded(true)
       setTimeout(() => setDownloaded(false), 3000)
     } catch (err) {
-      console.error('Download failed:', err)
+      Sentry.captureException(err, { tags: { context: 'report_download' } })
     } finally {
       setDownloading(false)
     }

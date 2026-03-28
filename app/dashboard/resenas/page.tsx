@@ -94,7 +94,7 @@ export default function ResenasPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="border border-border rounded-lg p-3">
             <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{t('avgRating')}</p>
-            <p className="text-sm font-mono font-bold text-yellow-500 mt-0.5">{stars(Math.round(stats.average_rating))} {stats.average_rating.toFixed(1)}</p>
+            <p className="text-sm font-mono font-bold text-brand-gold mt-0.5">{stars(Math.round(stats.average_rating))} {stats.average_rating.toFixed(1)}</p>
           </div>
           <div className="border border-border rounded-lg p-3">
             <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{t('totalReviews')}</p>
@@ -139,10 +139,10 @@ export default function ResenasPage() {
             <div key={review.id} className="border border-border rounded-lg p-3 hover:bg-surface-2/30 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-yellow-500">{stars(review.rating)}</span>
+                  <span className="text-[10px] font-mono text-brand-gold">{stars(review.rating)}</span>
                   <span className="text-[11px] font-mono font-semibold text-text-primary">{review.author_name}</span>
                   <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded ${
-                    review.status === 'NEW' ? 'bg-blue-500/8 text-blue-400'
+                    review.status === 'NEW' ? 'bg-status-info/8 text-status-info'
                     : review.status === 'REPLIED' ? 'bg-status-success/8 text-status-success'
                     : 'bg-status-danger/8 text-status-danger'
                   }`}>{t(review.status.toLowerCase() as 'new')}</span>
@@ -193,9 +193,9 @@ export default function ResenasPage() {
               const pct = stats.total_reviews > 0 ? (count / stats.total_reviews) * 100 : 0
               return (
                 <div key={rating} className="flex items-center gap-3">
-                  <span className="text-[10px] font-mono text-yellow-500 w-12">{stars(rating)}</span>
+                  <span className="text-[10px] font-mono text-brand-gold w-12">{stars(rating)}</span>
                   <div className="flex-1 h-2 bg-surface-2 rounded-full">
-                    <div className="h-full bg-yellow-500/60 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                    <div className="h-full bg-brand-gold/60 rounded-full transition-all" style={{ width: `${pct}%` }} />
                   </div>
                   <span className="text-[10px] font-mono text-text-muted w-8 text-right">{count}</span>
                 </div>

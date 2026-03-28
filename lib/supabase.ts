@@ -1,4 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
+import * as Sentry from '@sentry/nextjs'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -42,7 +43,7 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
   const headers = new Headers(options?.headers)
 
   if (!session?.access_token) {
-    console.warn('[authFetch] No session token available for:', url)
+    Sentry.captureMessage(`[authFetch] No session token for: ${url}`, 'warning')
     throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')
   }
 
@@ -63,12 +64,12 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
     })
 
     if (!res.ok) {
-      console.warn(`[authFetch] ${res.status} ${options?.method || 'GET'} ${url}`)
+      Sentry.captureMessage(`[authFetch] ${res.status} ${options?.method || 'GET'} ${url}`, 'warning')
     }
 
     return res
   } catch (err) {
-    console.error(`[authFetch] Network error for ${url}:`, err)
+    Sentry.captureException(err, { tags: { context: 'authFetch', url } })
     throw err
   } finally {
     clearTimeout(timer)

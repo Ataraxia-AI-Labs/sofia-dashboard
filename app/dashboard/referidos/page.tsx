@@ -122,7 +122,7 @@ export default function ReferidosPage() {
                 <div key={entry.patient_id} className="flex items-center justify-between border border-border rounded-lg px-3 py-2 hover:bg-surface-2/30 transition-colors">
                   <div className="flex items-center gap-3">
                     <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
-                      i === 0 ? 'bg-yellow-500/15 text-yellow-500' : i === 1 ? 'bg-gray-400/15 text-gray-400' : i === 2 ? 'bg-orange-500/15 text-orange-500' : 'bg-surface-2 text-text-dim'
+                      i === 0 ? 'bg-brand-gold/15 text-brand-gold' : i === 1 ? 'bg-text-muted/15 text-text-muted' : i === 2 ? 'bg-status-warning/15 text-status-warning' : 'bg-surface-2 text-text-dim'
                     }`}>{i + 1}</span>
                     <div>
                       <p className="text-[11px] font-mono font-semibold text-text-primary">{entry.patient_name}</p>
