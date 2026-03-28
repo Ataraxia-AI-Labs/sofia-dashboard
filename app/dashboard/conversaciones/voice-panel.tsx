@@ -164,19 +164,19 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
           icon={<Clock size={16} />}
           label={t('avgDuration')}
           value={formatDuration(analytics?.avg_duration_seconds ?? 0)}
-          gradient="from-brand-cyan to-emerald-500"
+          gradient="from-brand-cyan to-brand-cyan"
         />
         <AnalyticsCard
           icon={<ArrowRightLeft size={16} />}
           label={t('handoffRate')}
           value={`${((analytics?.handoff_rate ?? 0) * 100).toFixed(1)}%`}
-          gradient="from-status-warning to-amber-600"
+          gradient="from-status-warning to-brand-gold"
         />
         <AnalyticsCard
           icon={<Calendar size={16} />}
           label={t('appointmentsBooked')}
           value={(analytics?.appointments_booked ?? 0).toString()}
-          gradient="from-status-success to-emerald-600"
+          gradient="from-status-success to-status-success"
         />
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">

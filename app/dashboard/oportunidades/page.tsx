@@ -215,25 +215,25 @@ export default function OportunidadesPage() {
         />
         <SummaryCard
           icon={<Zap size={18} />}
-          gradient="from-status-warning to-amber-600"
+          gradient="from-status-warning to-brand-gold"
           value={detected.toString()}
           label={t('pendingAction')}
         />
         <SummaryCard
           icon={<Check size={18} />}
-          gradient="from-status-success to-emerald-600"
+          gradient="from-status-success to-status-success"
           value={converted.toString()}
           label={t('converted')}
         />
         <SummaryCard
           icon={<DollarSign size={18} />}
-          gradient="from-brand-gold to-amber-500"
+          gradient="from-brand-gold to-brand-gold"
           value={formatCOP(totalValue)}
           label={t('estimatedValue')}
         />
         <SummaryCard
           icon={<TrendingUp size={18} />}
-          gradient="from-brand-cyan to-emerald-500"
+          gradient="from-brand-cyan to-brand-cyan"
           value={formatCOP(convertedValue)}
           label="Revenue convertido"
         />

@@ -152,7 +152,7 @@ export default function MarketplacePage() {
                     <p className="text-[10px] font-mono text-text-muted mt-2 line-clamp-2">{c.description}</p>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-mono text-yellow-500 flex items-center gap-0.5"><Star size={10} /> {c.avg_rating.toFixed(1)}</span>
+                        <span className="text-[9px] font-mono text-brand-gold flex items-center gap-0.5"><Star size={10} /> {c.avg_rating.toFixed(1)}</span>
                         <span className="text-[9px] font-mono text-text-dim flex items-center gap-0.5"><Download size={10} /> {c.install_count}</span>
                       </div>
                       {!isReadOnly && (

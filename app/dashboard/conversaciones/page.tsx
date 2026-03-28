@@ -40,15 +40,15 @@ const VoicePanel = dynamic(() => import('./voice-panel'), {
 // ============================================================
 
 const PLATFORM_STYLE: Record<string, { icon: typeof MessageCircle; color: string; bg: string }> = {
-  WHATSAPP:   { icon: MessageCircle, color: 'text-emerald-400',  bg: 'bg-emerald-500/10 border-emerald-500/20' },
-  INSTAGRAM:  { icon: Instagram,     color: 'text-fuchsia-400',  bg: 'bg-fuchsia-500/10 border-fuchsia-500/20' },
-  VOICE_CALL: { icon: PhoneCall,     color: 'text-amber-400',    bg: 'bg-amber-500/10 border-amber-500/20' },
-  MESSENGER:  { icon: MessageCircle, color: 'text-sky-400',      bg: 'bg-sky-500/10 border-sky-500/20' },
-  WEB:        { icon: Hash,          color: 'text-status-info',  bg: 'bg-status-info/10 border-status-info/20' },
+  WHATSAPP:   { icon: MessageCircle, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/25' },
+  INSTAGRAM:  { icon: Instagram,     color: 'text-brand-purple',  bg: 'bg-brand-purple/10 border-brand-purple/25' },
+  VOICE_CALL: { icon: PhoneCall,     color: 'text-brand-gold',    bg: 'bg-brand-gold/10 border-brand-gold/25' },
+  MESSENGER:  { icon: MessageCircle, color: 'text-brand-cyan',    bg: 'bg-brand-cyan/10 border-brand-cyan/25' },
+  WEB:        { icon: Hash,          color: 'text-status-info',   bg: 'bg-status-info/10 border-status-info/25' },
 }
 
 const SENTIMENT_COLORS: Record<string, string> = {
-  POSITIVE: 'bg-emerald-400',
+  POSITIVE: 'bg-status-success',
   NEUTRAL:  'bg-brand-cyan',
   NEGATIVE: 'bg-status-danger',
 }

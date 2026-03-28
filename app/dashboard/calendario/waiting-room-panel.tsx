@@ -160,19 +160,19 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
             icon={<AlertTriangle size={16} />}
             value={stats.late_count.toString()}
             label={t('statsLate')}
-            gradient="from-status-warning to-amber-600"
+            gradient="from-status-warning to-brand-gold"
           />
           <StatCard
             icon={<TrendingDown size={16} />}
             value={`${(stats.no_show_rate * 100).toFixed(0)}%`}
             label={t('statsNoShowRate')}
-            gradient="from-status-danger to-red-600"
+            gradient="from-status-danger to-status-danger"
           />
           <StatCard
             icon={<CheckCircle size={16} />}
             value={stats.completed_today.toString()}
             label={t('statsCompleted')}
-            gradient="from-status-success to-emerald-600"
+            gradient="from-status-success to-status-success"
           />
         </div>
       )}

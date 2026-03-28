@@ -28,7 +28,7 @@ export default function GlobalError({
             </p>
             <button
               onClick={() => reset()}
-              className="px-4 py-2 rounded-lg bg-purple-600/15 text-purple-400 text-sm font-semibold hover:bg-purple-600/25 transition-colors"
+              className="px-4 py-2 rounded-lg bg-brand-purple/15 text-brand-purple text-sm font-semibold hover:bg-brand-purple/25 transition-colors"
             >
               Intentar de nuevo
             </button>

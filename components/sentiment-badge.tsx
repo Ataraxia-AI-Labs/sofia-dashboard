@@ -25,10 +25,10 @@ const SENTIMENT_CONFIG: Record<SentimentType, {
   POSITIVE: {
     label: 'Positivo',
     short: '+',
-    color: 'text-emerald-400',
-    dot: 'bg-emerald-400',
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/25',
+    color: 'text-status-success',
+    dot: 'bg-status-success',
+    bg: 'bg-status-success/10',
+    border: 'border-status-success/25',
   },
   NEUTRAL: {
     label: 'Neutral',
@@ -49,18 +49,18 @@ const SENTIMENT_CONFIG: Record<SentimentType, {
   CONFUSED: {
     label: 'Confundido',
     short: '?',
-    color: 'text-orange-400',
-    dot: 'bg-orange-400',
-    bg: 'bg-orange-500/10',
-    border: 'border-orange-500/25',
+    color: 'text-status-warning',
+    dot: 'bg-status-warning',
+    bg: 'bg-status-warning/10',
+    border: 'border-status-warning/25',
   },
   ENTHUSIASTIC: {
     label: 'Entusiasta',
     short: '++',
-    color: 'text-purple-400',
-    dot: 'bg-purple-400',
-    bg: 'bg-purple-500/10',
-    border: 'border-purple-500/25',
+    color: 'text-brand-purple',
+    dot: 'bg-brand-purple',
+    bg: 'bg-brand-purple/10',
+    border: 'border-brand-purple/25',
   },
 }
 

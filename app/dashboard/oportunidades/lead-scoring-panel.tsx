@@ -21,8 +21,8 @@ interface LeadScoringPanelProps {
 }
 
 const CLASSIFICATION_ICONS: Record<LeadClassification, { icon: typeof Flame; color: string; bg: string }> = {
-  HOT:  { icon: Flame,     color: 'text-orange-400', bg: 'bg-orange-500/10' },
-  WARM: { icon: Sun,       color: 'text-amber-400',  bg: 'bg-amber-500/10' },
+  HOT:  { icon: Flame,     color: 'text-status-danger', bg: 'bg-status-danger/10' },
+  WARM: { icon: Sun,       color: 'text-brand-gold',  bg: 'bg-brand-gold/10' },
   COLD: { icon: Snowflake, color: 'text-status-info',   bg: 'bg-status-info/10' },
   DEAD: { icon: Skull,     color: 'text-text-dim',   bg: 'bg-surface-3' },
 }
@@ -149,8 +149,8 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                   <div className="h-2 bg-void rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
-                        cls === 'HOT'  ? 'bg-gradient-to-r from-orange-500/80 to-orange-400' :
-                        cls === 'WARM' ? 'bg-gradient-to-r from-amber-500/80 to-amber-400' :
+                        cls === 'HOT'  ? 'bg-gradient-to-r from-status-danger/80 to-status-danger' :
+                        cls === 'WARM' ? 'bg-gradient-to-r from-brand-gold/80 to-brand-gold' :
                         cls === 'COLD' ? 'bg-gradient-to-r from-status-info/80 to-status-info' :
                                          'bg-surface-3'
                       }`}
@@ -188,8 +188,8 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
           <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
             <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('avgScore')}</span>
             <span className={`text-sm font-bold font-mono ${
-              insights.avg_score >= 75 ? 'text-orange-400' :
-              insights.avg_score >= 50 ? 'text-amber-400' :
+              insights.avg_score >= 75 ? 'text-status-danger' :
+              insights.avg_score >= 50 ? 'text-brand-gold' :
               insights.avg_score >= 25 ? 'text-status-info' :
               'text-text-dim'
             }`}>
@@ -202,7 +202,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
       {/* Top 10 Hottest Leads */}
       <div className="glass-card p-4">
         <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
-          <Flame size={14} className="text-orange-400" />
+          <Flame size={14} className="text-status-danger" />
           {t('topLeads')}
         </h3>
 
@@ -229,7 +229,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                 <span className={`text-xs font-bold font-mono w-5 text-center ${
                   index === 0 ? 'text-brand-gold' :
                   index === 1 ? 'text-text-muted' :
-                  index === 2 ? 'text-orange-700' :
+                  index === 2 ? 'text-brand-gold' :
                   'text-text-dim'
                 }`}>
                   {index + 1}
@@ -261,8 +261,8 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                 {/* Score */}
                 <div className="text-right">
                   <div className={`text-sm font-bold font-mono ${
-                    lead.score >= 75 ? 'text-orange-400' :
-                    lead.score >= 50 ? 'text-amber-400' :
+                    lead.score >= 75 ? 'text-status-danger' :
+                    lead.score >= 50 ? 'text-brand-gold' :
                     'text-status-info'
                   }`}>
                     {lead.score}

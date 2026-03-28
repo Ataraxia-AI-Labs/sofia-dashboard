@@ -313,7 +313,7 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
               <span className={`text-xs font-bold font-mono w-5 text-center ${
                 index === 0 ? 'text-brand-gold' :
                 index === 1 ? 'text-text-muted' :
-                index === 2 ? 'text-orange-700' :
+                index === 2 ? 'text-brand-gold' :
                 'text-text-dim'
               }`}>
                 {index + 1}

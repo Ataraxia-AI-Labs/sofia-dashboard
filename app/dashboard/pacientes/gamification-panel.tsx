@@ -32,10 +32,10 @@ interface GamificationPanelProps {
 }
 
 const TIER_COLORS: Record<GamificationTier, { bg: string; fill: string; text: string }> = {
-  BRONZE: { bg: 'bg-orange-500/15', fill: 'bg-orange-500', text: 'text-orange-400' },
+  BRONZE: { bg: 'bg-brand-gold/15', fill: 'bg-brand-gold', text: 'text-brand-gold' },
   SILVER: { bg: 'bg-text-muted/15', fill: 'bg-text-muted', text: 'text-text-dim' },
-  GOLD: { bg: 'bg-amber-500/15', fill: 'bg-amber-500', text: 'text-amber-400' },
-  PLATINUM: { bg: 'bg-purple-500/15', fill: 'bg-purple-500', text: 'text-purple-300' },
+  GOLD: { bg: 'bg-status-warning/15', fill: 'bg-status-warning', text: 'text-status-warning' },
+  PLATINUM: { bg: 'bg-brand-purple/15', fill: 'bg-brand-purple', text: 'text-brand-purple' },
 }
 
 const TIER_ORDER: GamificationTier[] = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']
@@ -111,7 +111,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-amber-400">
+          <div className="w-10 h-10 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-gold">
             <Trophy size={20} />
           </div>
           <div>
@@ -134,11 +134,11 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
           <div className="glass-card p-3">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center">
-                <Star size={16} className="text-amber-400" />
+                <Star size={16} className="text-brand-gold" />
               </div>
               <span className="text-[10px] text-text-dim uppercase font-mono font-semibold">{t('totalPoints')}</span>
             </div>
-            <div className="text-xl font-bold text-amber-400 font-mono">
+            <div className="text-xl font-bold text-brand-gold font-mono">
               {insights.total_points_awarded.toLocaleString()}
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
         {/* Leaderboard */}
         <div className="glass-card p-4">
           <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Trophy size={14} className="text-amber-400" />
+            <Trophy size={14} className="text-brand-gold" />
             {t('leaderboard')}
           </h4>
 
@@ -266,7 +266,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                     <div className="flex items-center gap-2 mt-0.5">
                       <GamificationTierInline tier={entry.tier} />
                       {entry.streak_months > 0 && (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-orange-400 font-semibold">
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-status-warning font-semibold">
                           <Flame size={10} /> {entry.streak_months}m
                         </span>
                       )}
@@ -275,7 +275,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
 
                   {/* Points */}
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold font-mono text-amber-400">
+                    <span className="text-sm font-bold font-mono text-brand-gold">
                       {entry.total_points.toLocaleString()}
                     </span>
                     <p className="text-[9px] text-text-dim">pts</p>
@@ -367,7 +367,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                     )}
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold font-mono text-amber-400">
+                    <span className="text-sm font-bold font-mono text-brand-gold">
                       {reward.points_cost.toLocaleString()}
                     </span>
                     <p className="text-[9px] text-text-dim">pts</p>

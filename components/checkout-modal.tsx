@@ -335,8 +335,8 @@ export function CheckoutModal({
           <div className="flex flex-col items-center text-center py-4 space-y-4">
             {success ? (
               <>
-                <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center animate-[scale-in_0.3s_ease-out]">
-                  <Check size={28} className="text-emerald-400" />
+                <div className="w-12 h-12 rounded-lg bg-status-success/10 border border-status-success/15 flex items-center justify-center animate-[scale-in_0.3s_ease-out]">
+                  <Check size={28} className="text-status-success" />
                 </div>
                 <div>
                   <p className="text-text-primary font-mono font-semibold text-xs">Plan activado</p>

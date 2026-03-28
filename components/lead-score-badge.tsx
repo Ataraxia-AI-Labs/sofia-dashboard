@@ -28,16 +28,16 @@ const CLASSIFICATION_CONFIG: Record<LeadClassification, {
   HOT: {
     icon: Flame,
     label: 'HOT',
-    color: 'text-orange-400',
-    bg: 'bg-orange-500/10',
-    border: 'border-orange-500/25',
+    color: 'text-status-danger',
+    bg: 'bg-status-danger/10',
+    border: 'border-status-danger/25',
   },
   WARM: {
     icon: Sun,
     label: 'WARM',
-    color: 'text-amber-400',
-    bg: 'bg-amber-500/10',
-    border: 'border-amber-500/25',
+    color: 'text-brand-gold',
+    bg: 'bg-brand-gold/10',
+    border: 'border-brand-gold/25',
   },
   COLD: {
     icon: Snowflake,

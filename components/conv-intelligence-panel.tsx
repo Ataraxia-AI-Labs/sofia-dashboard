@@ -13,9 +13,9 @@ interface Props {
 
 const EMOTION_COLORS: Record<string, string> = {
   joy: 'text-brand-gold',
-  trust: 'text-emerald-400',
+  trust: 'text-status-success',
   fear: 'text-brand-purple',
-  surprise: 'text-amber-400',
+  surprise: 'text-brand-gold',
   sadness: 'text-status-info',
   disgust: 'text-status-danger',
   anger: 'text-status-danger',

@@ -28,9 +28,9 @@ const STATUS_CONFIG: Record<CallStatus, {
   },
   COMPLETED: {
     label: 'Completada',
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/25',
+    color: 'text-status-success',
+    bg: 'bg-status-success/10',
+    border: 'border-status-success/25',
   },
   TRANSFERRED: {
     label: 'Transferida',
@@ -46,9 +46,9 @@ const STATUS_CONFIG: Record<CallStatus, {
   },
   FAILED: {
     label: 'Fallida',
-    color: 'text-orange-400',
-    bg: 'bg-orange-500/10',
-    border: 'border-orange-500/25',
+    color: 'text-status-warning',
+    bg: 'bg-status-warning/10',
+    border: 'border-status-warning/25',
   },
 }
 
@@ -66,10 +66,10 @@ export function CallStatusBadge({ status, className = '' }: CallStatusBadgeProps
         </span>
       ) : (
         <span className={`w-1.5 h-1.5 rounded-full ${
-          status === 'COMPLETED' ? 'bg-emerald-400' :
+          status === 'COMPLETED' ? 'bg-status-success' :
           status === 'TRANSFERRED' ? 'bg-status-info' :
           status === 'MISSED' ? 'bg-status-danger' :
-          'bg-orange-400'
+          'bg-status-warning'
         }`} />
       )}
       {cfg.label}

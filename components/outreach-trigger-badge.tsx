@@ -32,9 +32,9 @@ const TRIGGER_CONFIG: Record<OutreachTriggerType, {
   BIRTHDAY: {
     icon: Cake,
     label: 'Cumpleanos',
-    color: 'text-pink-400',
-    bg: 'bg-pink-500/10',
-    border: 'border-pink-500/25',
+    color: 'text-brand-purple',
+    bg: 'bg-brand-purple/10',
+    border: 'border-brand-purple/25',
   },
   PREVENTIVE: {
     icon: Hospital,

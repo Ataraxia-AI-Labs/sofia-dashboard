@@ -213,7 +213,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
                   idx === 0 ? 'bg-brand-gold/15 text-brand-gold border border-brand-gold/25' :
                   idx === 1 ? 'bg-text-muted/10 text-text-muted border border-text-muted/20' :
-                  idx === 2 ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
+                  idx === 2 ? 'bg-brand-gold/10 text-brand-gold border border-brand-gold/20' :
                   'bg-surface-3 text-text-dim border border-border'
                 }`}>
                   #{idx + 1}

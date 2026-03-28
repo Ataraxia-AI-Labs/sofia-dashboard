@@ -34,7 +34,7 @@ const SEGMENT_COLORS = [
   { bg: 'bg-brand-gold/10', border: 'border-brand-gold/25', text: 'text-brand-gold', dot: 'bg-brand-gold' },
   { bg: 'bg-status-info/10', border: 'border-status-info/25', text: 'text-status-info', dot: 'bg-status-info' },
   { bg: 'bg-status-danger/10', border: 'border-status-danger/25', text: 'text-status-danger', dot: 'bg-status-danger' },
-  { bg: 'bg-pink-500/10', border: 'border-pink-500/25', text: 'text-pink-400', dot: 'bg-pink-400' },
+  { bg: 'bg-brand-purple/10', border: 'border-brand-purple/25', text: 'text-brand-purple', dot: 'bg-brand-purple' },
 ]
 
 function getSegmentColor(index: number) {

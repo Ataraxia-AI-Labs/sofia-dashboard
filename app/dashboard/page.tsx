@@ -315,7 +315,7 @@ export default function DashboardOverview() {
         />
         <MetricCard
           icon={<DollarSign size={16} />}
-          iconColor="from-brand-gold to-amber-500"
+          iconColor="from-brand-gold to-brand-gold"
           value={formatCOP(r?.revenue_total || 0)}
           label={t('revenue')}
           sub={`${t('pipeline')}: ${formatCOP(r?.revenue_pipeline || 0)}`}
@@ -323,7 +323,7 @@ export default function DashboardOverview() {
         />
         <MetricCard
           icon={<Cpu size={16} />}
-          iconColor="from-status-success to-emerald-400"
+          iconColor="from-status-success to-status-success"
           value={formatUSD(p?.total_costo_usd || 0)}
           label={t('totalAICost')}
           sub={`~${formatUSD(p?.costo_promedio_por_interaccion_usd || 0)}/msg`}
@@ -489,8 +489,8 @@ export default function DashboardOverview() {
               <SectionTitle icon={<Bot size={14} />} title={t('subBots')} className="mb-3" />
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <BotCard emoji="" name="Reminder Bot" value={b?.reminder_bot?.mensajes_enviados || 0} label={t('remindersSent')} desc={b?.reminder_bot?.descripcion} gradient="from-brand-purple to-brand-purple-dark" formatNumber={formatNumber} icon={<CalendarCheck size={14} className="text-brand-purple" />} />
-                <BotCard emoji="" name="Hunter Bot" value={b?.hunter_bot?.followups_enviados || 0} label={t('followupsSent')} extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`} desc={b?.hunter_bot?.descripcion} gradient="from-brand-gold to-amber-600" formatNumber={formatNumber} icon={<Target size={14} className="text-brand-gold" />} />
-                <BotCard emoji="" name="Nurse Bot" value={b?.nurse_bot?.recordatorios_enviados || 0} label={t('medicationReminders')} desc={b?.nurse_bot?.descripcion} gradient="from-brand-cyan to-emerald-500" formatNumber={formatNumber} icon={<Cpu size={14} className="text-brand-cyan" />} />
+                <BotCard emoji="" name="Hunter Bot" value={b?.hunter_bot?.followups_enviados || 0} label={t('followupsSent')} extra={`${b?.hunter_bot?.conversiones_post_followup || 0} ${t('conversions')}`} desc={b?.hunter_bot?.descripcion} gradient="from-brand-gold to-brand-gold" formatNumber={formatNumber} icon={<Target size={14} className="text-brand-gold" />} />
+                <BotCard emoji="" name="Nurse Bot" value={b?.nurse_bot?.recordatorios_enviados || 0} label={t('medicationReminders')} desc={b?.nurse_bot?.descripcion} gradient="from-brand-cyan to-brand-cyan" formatNumber={formatNumber} icon={<Cpu size={14} className="text-brand-cyan" />} />
               </div>
             </div>
           ),

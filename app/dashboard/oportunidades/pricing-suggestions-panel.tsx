@@ -84,25 +84,25 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
             icon={<Check size={16} />}
             label={t('applied')}
             value={insights.applied_count.toString()}
-            gradient="from-status-success to-emerald-600"
+            gradient="from-status-success to-status-success"
           />
           <InsightCard
             icon={<X size={16} />}
             label={t('rejected')}
             value={insights.rejected_count.toString()}
-            gradient="from-status-danger to-red-600"
+            gradient="from-status-danger to-status-danger"
           />
           <InsightCard
             icon={<TrendingDown size={16} />}
             label={t('avgDiscount')}
             value={`${insights.avg_discount_pct.toFixed(1)}%`}
-            gradient="from-status-warning to-amber-600"
+            gradient="from-status-warning to-brand-gold"
           />
           <InsightCard
             icon={<DollarSign size={16} />}
             label={t('revenueImpact')}
             value={formatCurrency(insights.revenue_impact)}
-            gradient="from-brand-cyan to-emerald-500"
+            gradient="from-brand-cyan to-brand-cyan"
           />
         </div>
       )}

@@ -36,10 +36,10 @@ interface LearningPanelProps {
 
 const CORRECTION_TYPE_CONFIG: Record<CorrectionType, { emoji: string; label: string; color: string }> = {
   APPOINTMENT_CHANGE: { emoji: '\uD83D\uDCC5', label: 'Cita', color: 'text-status-info' },
-  RESPONSE_EDIT: { emoji: '\u270F\uFE0F', label: 'Respuesta', color: 'text-purple-400' },
-  PRICE_OVERRIDE: { emoji: '\uD83D\uDCB0', label: 'Precio', color: 'text-amber-400' },
-  TREATMENT_CORRECTION: { emoji: '\uD83D\uDC8A', label: 'Tratamiento', color: 'text-emerald-400' },
-  SCHEDULE_PREFERENCE: { emoji: '\uD83D\uDD50', label: 'Horario', color: 'text-cyan-400' },
+  RESPONSE_EDIT: { emoji: '\u270F\uFE0F', label: 'Respuesta', color: 'text-brand-purple' },
+  PRICE_OVERRIDE: { emoji: '\uD83D\uDCB0', label: 'Precio', color: 'text-brand-gold' },
+  TREATMENT_CORRECTION: { emoji: '\uD83D\uDC8A', label: 'Tratamiento', color: 'text-status-success' },
+  SCHEDULE_PREFERENCE: { emoji: '\uD83D\uDD50', label: 'Horario', color: 'text-brand-cyan' },
   REJECTION: { emoji: '\u274C', label: 'Rechazo', color: 'text-status-danger' },
 }
 
