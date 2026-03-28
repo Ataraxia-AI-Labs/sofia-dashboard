@@ -416,9 +416,9 @@ describe('Conv Intelligence API', () => {
 
   // D2 — Personality
   it('getPatientPersonality returns profile', async () => {
-    ok({ openness: 0.7, warmth: 0.8, dominant_traits: ['friendly'] })
+    ok({ profile: { formality_score: 0.7, humor_tolerance: 0.8, communication_language: 'es', total_calibration_interactions: 5 } })
     const result = await getPatientPersonality('org-1', 'p-1')
-    expect(result?.openness).toBe(0.7)
+    expect(result?.formality_score).toBe(0.7)
   })
 
   it('getPatientPersonality returns null on error', async () => {

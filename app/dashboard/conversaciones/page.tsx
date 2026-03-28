@@ -71,6 +71,7 @@ function getSentimentLabel(score?: number, label?: string): string {
 
 /** Group interactions by patient to build a conversation list */
 interface ConversationThread {
+  threadId: string  // composite: patientId::CHANNEL
   patientId: string
   patientName: string
   patientPhone: string
@@ -106,6 +107,7 @@ function groupByPatient(interactions: InteractionLog[], patientsMap: Map<string,
     const patientFromInteraction = lastMsg.patients
 
     threads.push({
+      threadId: compositeKey,
       patientId,
       patientName: patient?.full_name || patientFromInteraction?.full_name || '',
       patientPhone: patient?.phone || patientFromInteraction?.phone || patientId.slice(0, 8),
@@ -245,7 +247,7 @@ export default function ConversacionesPage() {
 
   // Selected thread
   const selectedThread = useMemo(
-    () => filteredThreads.find((t) => t.patientId === selectedThreadId) || null,
+    () => filteredThreads.find((t) => t.threadId === selectedThreadId) || null,
     [filteredThreads, selectedThreadId]
   )
 
@@ -487,10 +489,10 @@ export default function ConversacionesPage() {
               <div className="p-1.5 space-y-0.5">
                 {filteredThreads.map((thread) => (
                   <ThreadCard
-                    key={thread.patientId}
+                    key={thread.threadId}
                     thread={thread}
-                    isSelected={selectedThreadId === thread.patientId}
-                    onSelect={() => setSelectedThreadId(thread.patientId)}
+                    isSelected={selectedThreadId === thread.threadId}
+                    onSelect={() => setSelectedThreadId(thread.threadId)}
                   />
                 ))}
               </div>
@@ -990,8 +992,8 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             </span>
           )}
 
-          {/* Annotation buttons -- only on AI responses */}
-          {isOutbound && (
+          {/* Annotation buttons -- only on SofIA AI responses, not doctor messages */}
+          {isOutbound && !message.is_human_takeover && (
             <div className="ml-auto opacity-60 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
               <AnnotationButton
                 orgId={orgId}

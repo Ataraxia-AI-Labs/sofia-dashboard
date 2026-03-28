@@ -95,8 +95,9 @@ export async function fetchInteractions(orgId: string, opts?: {
     const aiResponse = (item.ai_response || '') as string
     const rowDirection = (item.direction || 'INBOUND') as string
 
-    // Human takeover or failed outbound: direction is OUTBOUND and raw_content is the doctor's message
-    // Don't split — treat raw_content as the outbound message, skip ai_response marker
+    // Human takeover: direction is OUTBOUND and ai_response marks [Human takeover]
+    // Failed outbound: direction is OUTBOUND and ai_response marks [MENSAJE FALLIDO]
+    // Only takeover messages are labeled as "Doctor"; failed bot messages stay as "SofIA"
     const isTakeover = aiResponse?.includes('[Human takeover]')
     const isFailed = aiResponse?.includes('[MENSAJE FALLIDO')
     if (rowDirection === 'OUTBOUND' && rawContent && (isTakeover || isFailed)) {
@@ -104,7 +105,7 @@ export async function fetchInteractions(orgId: string, opts?: {
         ...base,
         direction: 'OUTBOUND',
         message_content: rawContent,
-        is_human_takeover: true,
+        is_human_takeover: !!isTakeover,
         is_failed: !!isFailed,
       })
     } else {
