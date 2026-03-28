@@ -207,17 +207,51 @@ export default function ConversacionesPage() {
           filter: `organization_id=eq.${orgId}`,
         },
         (payload) => {
-          const newLog = payload.new as InteractionLog
+          const row = payload.new as Record<string, unknown>
+
+          // Parse the raw DB row the same way fetchInteractions does
+          const rawContent = (row.raw_content || '') as string
+          const aiResponse = (row.ai_response || '') as string
+          const direction = (row.direction || 'INBOUND') as string
+          const ai = (row.ai_analysis || {}) as Record<string, unknown>
+          const isTakeover = aiResponse.includes('[Human takeover]')
+          const isFailed = aiResponse.includes('[MENSAJE FALLIDO')
+
+          const parsed: InteractionLog[] = []
+          const base: Partial<InteractionLog> = {
+            id: row.id as string,
+            organization_id: (row.organization_id || '') as string,
+            patient_id: (row.patient_id || '') as string,
+            channel: (row.platform || 'WHATSAPP') as string,
+            intent: (ai.intent || '') as string,
+            sentiment_score: typeof ai.sentiment === 'number' ? ai.sentiment : 0,
+            sentiment_label: (ai.sentiment_label || 'NEUTRAL') as string,
+            tools_used: (ai.tools_called || []) as string[],
+            tokens_used: (ai.tokens_used || 0) as number,
+            cost_usd: (ai.estimated_cost_usd || 0) as number,
+            response_time_ms: (ai.response_time_ms || 0) as number,
+            created_at: (row.created_at || '') as string,
+          }
+
+          if (direction === 'OUTBOUND' && rawContent && (isTakeover || isFailed)) {
+            parsed.push({ ...base, direction: 'OUTBOUND', message_content: rawContent, is_human_takeover: isTakeover, is_failed: isFailed } as InteractionLog)
+          } else {
+            if (rawContent) parsed.push({ ...base, direction: 'INBOUND', message_content: rawContent } as InteractionLog)
+            if (aiResponse) parsed.push({ ...base, id: `${row.id}-ai`, direction: 'OUTBOUND', message_content: aiResponse } as InteractionLog)
+            if (!rawContent && !aiResponse) parsed.push({ ...base, direction: direction as 'INBOUND' | 'OUTBOUND', message_content: '' } as InteractionLog)
+          }
+
           // Attach patient info from the already-loaded patients list
-          // so the thread card shows the correct name/phone
           setPatients(currentPatients => {
-            const patient = currentPatients.find(p => p.id === newLog.patient_id)
-            if (patient && !newLog.patients) {
-              newLog.patients = { full_name: patient.full_name, phone: patient.phone }
+            for (const msg of parsed) {
+              const patient = currentPatients.find(p => p.id === msg.patient_id)
+              if (patient && !msg.patients) {
+                msg.patients = { full_name: patient.full_name, phone: patient.phone }
+              }
             }
             return currentPatients
           })
-          setInteractions(prev => [newLog, ...prev])
+          setInteractions(prev => [...parsed, ...prev])
         }
       )
       .subscribe()
