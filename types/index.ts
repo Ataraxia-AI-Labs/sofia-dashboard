@@ -1222,6 +1222,8 @@ export interface ConversationMessage {
   message_content: string
   created_at: string
   channel_switch?: string | null
+  is_human_takeover?: boolean
+  is_failed?: boolean
 }
 
 // ============================================================
@@ -1244,6 +1246,7 @@ export interface CallRecord {
     action_items?: string[]
     follow_ups?: string[]
     sentiment_overall?: string
+    summary_text?: string
   }
   started_at: string
   ended_at: string | null

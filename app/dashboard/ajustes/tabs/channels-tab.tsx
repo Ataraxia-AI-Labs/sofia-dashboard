@@ -3,12 +3,16 @@
 import { useEffect, useState, useCallback } from 'react'
 import Script from 'next/script'
 import { fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded } from '@/lib/api/channels'
-import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp } from 'lucide-react'
+import { updateOrganization } from '@/lib/api'
+import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save } from 'lucide-react'
+import type { Organization } from '@/types'
 
 interface ChannelsTabProps {
   orgId: string
+  org: Organization | null
   isReadOnly: boolean
   onMessage: (msg: string) => void
+  onRefresh: () => void
 }
 
 const FB_CONFIG_ID = process.env.NEXT_PUBLIC_FB_CONFIG_ID || ''
@@ -30,7 +34,7 @@ declare global {
   }
 }
 
-export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) {
+export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: ChannelsTabProps) {
   const [status, setStatus] = useState<Record<string, { connected: boolean; phone_id?: string }>>({})
   const [loading, setLoading] = useState(true)
   const [phoneId, setPhoneId] = useState('')
@@ -39,6 +43,38 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
   const [embeddedConnecting, setEmbeddedConnecting] = useState(false)
   const [showManualForm, setShowManualForm] = useState(false)
   const [fbSdkLoaded, setFbSdkLoaded] = useState(false)
+
+  // Voice transfer number from config_settings
+  const configSettings = (org?.config_settings || {}) as Record<string, Record<string, string>>
+  const currentTransferNumber = configSettings?.twilio?.transfer_number || ''
+  const [transferNumber, setTransferNumber] = useState(currentTransferNumber)
+  const [savingTransfer, setSavingTransfer] = useState(false)
+
+  useEffect(() => {
+    setTransferNumber(currentTransferNumber)
+  }, [currentTransferNumber])
+
+  const handleSaveTransferNumber = async () => {
+    if (isReadOnly || !orgId) return
+    setSavingTransfer(true)
+    try {
+      const existingConfig = (org?.config_settings || {}) as Record<string, unknown>
+      const existingTwilio = (existingConfig.twilio || {}) as Record<string, unknown>
+      const merged = {
+        ...existingConfig,
+        twilio: {
+          ...existingTwilio,
+          transfer_number: transferNumber.trim(),
+        },
+      }
+      await updateOrganization(orgId, { config_settings: merged })
+      onMessage('Numero de transferencia guardado')
+      onRefresh()
+    } catch {
+      onMessage('Error guardando numero de transferencia')
+    }
+    setSavingTransfer(false)
+  }
 
   useEffect(() => {
     fetchChannelStatus(orgId).then((s) => {
@@ -245,6 +281,41 @@ export function ChannelsTab({ orgId, isReadOnly, onMessage }: ChannelsTabProps) 
           </div>
         )
       })}
+
+      {/* Voice AI — Transfer Number Configuration */}
+      {status['voice']?.connected && !isReadOnly && (
+        <div className="glass-card p-4 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <PhoneCall size={14} className="text-brand-cyan" />
+            <h3 className="text-xs font-mono font-semibold text-text-primary">Configuracion Voice AI</h3>
+          </div>
+          <div>
+            <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">
+              Numero de transferencia de llamadas
+            </label>
+            <p className="text-[9px] font-mono text-text-dim mb-2">
+              Cuando SofIA detecta que el paciente necesita hablar con un humano, la llamada se transfiere a este numero.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="tel"
+                value={transferNumber}
+                onChange={(e) => setTransferNumber(e.target.value)}
+                placeholder="+573001234567"
+                className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+              />
+              <button
+                onClick={handleSaveTransferNumber}
+                disabled={savingTransfer || transferNumber.trim() === currentTransferNumber}
+                className="px-3 py-2 rounded-md bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-[10px] font-mono font-semibold hover:bg-brand-cyan/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {savingTransfer ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -409,49 +409,75 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                     </div>
 
                     {selectedCall.summary?.topics?.length ? (
-                      <div className="space-y-3">
+                      <div className="space-y-4">
+                        {/* Narrative summary + Sentiment */}
+                        <div className="glass-card p-3 space-y-2.5">
+                          {selectedCall.summary.summary_text && (
+                            <p className="text-[11px] leading-relaxed text-text-secondary font-mono">
+                              {selectedCall.summary.summary_text}
+                            </p>
+                          )}
+                          {selectedCall.summary.sentiment_overall && (
+                            <div className="flex items-center gap-2 pt-1">
+                              <SentimentBadge sentiment={selectedCall.summary.sentiment_overall as SentimentType} />
+                            </div>
+                          )}
+                        </div>
+
                         {/* Topics */}
                         <div>
-                          <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">{t('topics')}</span>
-                          <div className="flex flex-wrap gap-1.5 mt-1">
+                          <span className="text-[10px] text-text-dim font-mono font-semibold uppercase tracking-wider">{t('topics')}</span>
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
                             {selectedCall.summary.topics.map((topic, i) => (
-                              <span key={i} className="px-2 py-0.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-[10px] text-brand-purple font-medium">
+                              <span key={i} className="px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-[10px] text-brand-purple font-mono font-medium">
                                 {topic}
                               </span>
                             ))}
                           </div>
                         </div>
-                        {/* Action items */}
-                        {selectedCall.summary.action_items && selectedCall.summary.action_items.length > 0 && (
-                          <div>
-                            <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">{t('actionItems')}</span>
-                            <ul className="mt-1 space-y-1">
-                              {selectedCall.summary.action_items.map((item, i) => (
-                                <li key={i} className="text-[11px] text-text-muted flex items-start gap-1.5">
-                                  <span className="w-1 h-1 rounded-full bg-brand-cyan mt-1.5 flex-shrink-0" />
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        {/* Follow-ups */}
-                        {selectedCall.summary.follow_ups && selectedCall.summary.follow_ups.length > 0 && (
-                          <div>
-                            <span className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">{t('followUps')}</span>
-                            <ul className="mt-1 space-y-1">
-                              {selectedCall.summary.follow_ups.map((fu, i) => (
-                                <li key={i} className="text-[11px] text-text-muted flex items-start gap-1.5">
-                                  <span className="w-1 h-1 rounded-full bg-brand-gold mt-1.5 flex-shrink-0" />
-                                  {fu}
-                                </li>
-                              ))}
-                            </ul>
+
+                        {/* Action items + Follow-ups side by side */}
+                        {((selectedCall.summary.action_items?.length ?? 0) > 0 || (selectedCall.summary.follow_ups?.length ?? 0) > 0) && (
+                          <div className="grid grid-cols-2 gap-3">
+                            {/* Action items */}
+                            {selectedCall.summary.action_items && selectedCall.summary.action_items.length > 0 && (
+                              <div className="glass-card p-3">
+                                <span className="text-[10px] text-brand-cyan font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-brand-cyan" />
+                                  {t('actionItems')}
+                                </span>
+                                <ul className="space-y-1.5">
+                                  {selectedCall.summary.action_items.map((item, i) => (
+                                    <li key={i} className="text-[10px] text-text-muted font-mono flex items-start gap-1.5">
+                                      <span className="text-brand-cyan text-[8px] mt-0.5">&#9654;</span>
+                                      {item}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {/* Follow-ups */}
+                            {selectedCall.summary.follow_ups && selectedCall.summary.follow_ups.length > 0 && (
+                              <div className="glass-card p-3">
+                                <span className="text-[10px] text-brand-gold font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-brand-gold" />
+                                  {t('followUps')}
+                                </span>
+                                <ul className="space-y-1.5">
+                                  {selectedCall.summary.follow_ups.map((fu, i) => (
+                                    <li key={i} className="text-[10px] text-text-muted font-mono flex items-start gap-1.5">
+                                      <span className="text-brand-gold text-[8px] mt-0.5">&#9654;</span>
+                                      {fu}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p className="text-[10px] text-text-dim">
+                      <p className="text-[10px] text-text-dim font-mono">
                         {summaryLoading ? tCommon('loading') : t('noSummary')}
                       </p>
                     )}

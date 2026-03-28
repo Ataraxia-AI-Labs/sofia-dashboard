@@ -7,11 +7,11 @@ import {
   updateChannelConfig, getChannelInsights,
 } from '@/lib/api/channels'
 import { ChannelBadge, CHANNEL_CONFIG } from '@/components/channel-badge'
-import { formatCurrency, timeAgo } from '@/lib/api/helpers'
+import { timeAgo } from '@/lib/api/helpers'
 import type { ChannelMetrics, ChannelComparison, ChannelConfig, ChannelInsight, ChannelType } from '@/types'
 import {
   RefreshCw, Sparkles, Trophy, MessageCircle, Users, TrendingUp,
-  DollarSign, Clock, Settings2, Loader2,
+  Clock, Settings2, Loader2, Phone,
 } from 'lucide-react'
 import * as Sentry from '@sentry/nextjs'
 
@@ -25,7 +25,6 @@ interface ChannelsPanelProps {
 
 export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const t = useTranslations('channels')
-  const tCommon = useTranslations('common')
 
   const [metrics, setMetrics] = useState<ChannelMetrics[]>([])
   const [comparison, setComparison] = useState<ChannelComparison | null>(null)
@@ -128,17 +127,29 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const configMap: Record<string, ChannelConfig> = {}
   for (const c of config) configMap[c.channel] = c
 
-  // Max values for bar chart
-  const maxMessages = Math.max(1, ...metrics.map(m => m.message_count))
+  // Filter: only show channels that are configured OR have actual activity
+  const activeChannels = CHANNEL_ORDER.filter(ch => {
+    const m = metricsMap[ch]
+    const cfg = configMap[ch]
+    const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
+    const hasActivity = m && (m.message_count > 0 || m.unique_patients > 0)
+    return hasConfig || hasActivity
+  })
+
+  // Messaging channels only (exclude VOICE for message-based comparisons)
+  const messagingMetrics = metrics.filter(m => m.channel !== 'VOICE')
+  const voiceMetrics = metrics.filter(m => m.channel === 'VOICE')
+
+  // Max values for bar chart (messaging only for messages)
+  const maxMessages = Math.max(1, ...messagingMetrics.map(m => m.message_count))
   const maxConversion = Math.max(1, ...metrics.map(m => m.conversion_rate))
-  const maxRevenue = Math.max(1, ...metrics.map(m => m.revenue || 0))
   const maxResponseTime = Math.max(1, ...metrics.map(m => m.avg_response_time_sec))
 
   return (
     <div className="space-y-4">
       {/* CHANNEL OVERVIEW CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {CHANNEL_ORDER.map(channel => {
+        {activeChannels.map(channel => {
           const m = metricsMap[channel]
           const cfg = configMap[channel]
           const channelCfg = CHANNEL_CONFIG[channel]
@@ -158,21 +169,21 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
               {/* Status indicator */}
               <div className="absolute top-3 right-3 flex items-center gap-2">
                 {isEnabled && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title={t('active')} />
+                  <span className="w-2 h-2 rounded-full bg-status-success animate-pulse" title={t('active')} />
                 )}
                 <button
                   onClick={() => hasConfig && handleToggleChannel(channel, !isEnabled)}
                   disabled={!hasConfig}
                   className={`w-8 h-4 rounded-full transition-colors relative ${
                     !hasConfig ? 'bg-surface-3 opacity-40 cursor-not-allowed' :
-                    isEnabled ? 'bg-emerald-500/30' : 'bg-surface-3'
+                    isEnabled ? 'bg-status-success/30' : 'bg-surface-3'
                   }`}
                   aria-label={!hasConfig ? t('notConfigured') : isEnabled ? t('disable') : t('enable')}
                   title={!hasConfig ? t('notConfigured') : undefined}
                 >
                   <span className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${
                     isEnabled && hasConfig
-                      ? 'right-0.5 bg-emerald-400'
+                      ? 'right-0.5 bg-status-success'
                       : 'left-0.5 bg-text-dim'
                   }`} />
                 </button>
@@ -195,7 +206,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                     <MessageCircle size={9} /> {channel === 'VOICE' ? t('calls') : t('messages')}
                   </span>
                   <span className="text-xs font-bold font-mono text-text-primary">
-                    {channel === 'VOICE' ? (m?.unique_patients ?? 0) : (m?.message_count ?? 0).toLocaleString()}
+                    {(m?.message_count ?? 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -238,46 +249,54 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           </h3>
 
           <div className="space-y-4">
-            {/* Messages comparison */}
-            <ComparisonRow
-              label={t('messages')}
-              icon={<MessageCircle size={12} />}
-              metrics={metrics}
-              getValue={m => m.message_count}
-              max={maxMessages}
-              winner={comparison.best_by_messages}
-              format={v => v.toLocaleString()}
-            />
-            {/* Conversion comparison */}
-            <ComparisonRow
-              label={t('conversion')}
-              icon={<TrendingUp size={12} />}
-              metrics={metrics}
-              getValue={m => m.conversion_rate * 100}
-              max={maxConversion * 100}
-              winner={comparison.best_by_conversion}
-              format={v => `${v.toFixed(1)}%`}
-            />
-            {/* Revenue comparison */}
-            <ComparisonRow
-              label={t('revenue')}
-              icon={<DollarSign size={12} />}
-              metrics={metrics}
-              getValue={m => m.revenue}
-              max={maxRevenue}
-              winner={comparison.best_by_revenue}
-              format={v => formatCurrency(v)}
-            />
-            {/* Response time comparison */}
-            <ComparisonRow
-              label={t('responseTime')}
-              icon={<Clock size={12} />}
-              metrics={metrics}
-              getValue={m => m.avg_response_time_sec}
-              max={maxResponseTime}
-              winner={null}
-              format={v => `${v.toFixed(0)}s`}
-            />
+            {/* Messages comparison (messaging channels only — Voice excluded) */}
+            {messagingMetrics.length > 0 && (
+              <ComparisonRow
+                label={t('messages')}
+                icon={<MessageCircle size={12} />}
+                metrics={messagingMetrics}
+                getValue={m => m.message_count}
+                max={maxMessages}
+                winner={comparison.best_by_messages}
+                format={v => v.toLocaleString()}
+              />
+            )}
+            {/* Voice calls comparison (separate from messages) */}
+            {voiceMetrics.length > 0 && voiceMetrics.some(m => m.message_count > 0) && (
+              <ComparisonRow
+                label={t('calls')}
+                icon={<Phone size={12} />}
+                metrics={voiceMetrics}
+                getValue={m => m.message_count}
+                max={Math.max(1, ...voiceMetrics.map(m => m.message_count))}
+                winner={null}
+                format={v => v.toLocaleString()}
+              />
+            )}
+            {/* Conversion comparison (only channels with activity) */}
+            {metrics.some(m => (m.message_count > 0 || m.unique_patients > 0) && m.conversion_rate > 0) && (
+              <ComparisonRow
+                label={t('conversion')}
+                icon={<TrendingUp size={12} />}
+                metrics={metrics.filter(m => m.message_count > 0 || m.unique_patients > 0)}
+                getValue={m => m.conversion_rate * 100}
+                max={maxConversion * 100}
+                winner={comparison.best_by_conversion}
+                format={v => `${v.toFixed(1)}%`}
+              />
+            )}
+            {/* Response time comparison (only channels with data) */}
+            {metrics.some(m => m.avg_response_time_sec > 0) && (
+              <ComparisonRow
+                label={t('responseTime')}
+                icon={<Clock size={12} />}
+                metrics={metrics.filter(m => m.avg_response_time_sec > 0)}
+                getValue={m => m.avg_response_time_sec}
+                max={maxResponseTime}
+                winner={null}
+                format={v => `${v.toFixed(0)}s`}
+              />
+            )}
           </div>
         </div>
       )}
@@ -335,57 +354,26 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
         )}
       </div>
 
-      {/* CHANNEL CONFIG */}
-      <div className="glass-card p-4">
-        <h3 className="text-sm font-semibold font-mono text-text-primary mb-3 flex items-center gap-2">
-          <Settings2 size={14} className="text-text-muted" />
-          {t('configuration')}
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {CHANNEL_ORDER.map(channel => {
-            const cfg = configMap[channel]
-            const m = metricsMap[channel]
-            const channelCfg = CHANNEL_CONFIG[channel]
-            const isEnabled = cfg?.is_enabled ?? false
-            const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
-
-            return (
-              <div
-                key={channel}
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-2 border border-border"
-              >
-                <div className="flex items-center gap-2.5">
-                  <ChannelBadge channel={channel} compact />
-                  <span className="text-xs font-semibold font-mono text-text-primary">{channelCfg.label}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={`text-[10px] font-semibold font-mono ${
-                    !hasConfig ? 'text-amber-400' : isEnabled ? 'text-emerald-400' : 'text-text-dim'
-                  }`}>
-                    {!hasConfig ? t('notConfigured') : isEnabled ? tCommon('enabled') : tCommon('disabled')}
-                  </span>
-                  <button
-                    onClick={() => hasConfig && handleToggleChannel(channel, !isEnabled)}
-                    disabled={!hasConfig}
-                    className={`w-9 h-5 rounded-full transition-colors relative ${
-                      !hasConfig ? 'bg-surface-3 opacity-40 cursor-not-allowed' :
-                      isEnabled ? 'bg-emerald-500/30' : 'bg-surface-3'
-                    }`}
-                    aria-label={`${!hasConfig ? t('notConfigured') : isEnabled ? t('disable') : t('enable')} ${channelCfg.label}`}
-                    title={!hasConfig ? t('notConfigured') : undefined}
-                  >
-                    <span className={`absolute top-0.5 w-4 h-4 rounded-full transition-all ${
-                      isEnabled && hasConfig
-                        ? 'right-0.5 bg-emerald-400'
-                        : 'left-0.5 bg-text-dim'
-                    }`} />
-                  </button>
-                </div>
-              </div>
-            )
-          })}
+      {/* LINK TO CHANNEL SETTINGS (if unconfigured channels exist) */}
+      {CHANNEL_ORDER.some(ch => {
+        const cfg = configMap[ch]
+        return !cfg?.config || typeof cfg.config !== 'object' || Object.keys(cfg.config).length === 0
+      }) && (
+        <div className="glass-card p-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <Settings2 size={14} className="text-text-muted" />
+            <span className="text-[11px] font-mono text-text-muted">
+              {t('unconfiguredChannelsHint')}
+            </span>
+          </div>
+          <a
+            href="/dashboard/ajustes?tab=channels"
+            className="text-[10px] font-mono font-semibold text-brand-purple hover:text-brand-purple-light transition-colors"
+          >
+            {t('goToSettings')} →
+          </a>
         </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -438,7 +426,14 @@ function ComparisonRow({
                   }`}
                   style={{
                     width: `${Math.max(2, pct)}%`,
-                    backgroundColor: isWinner ? undefined : `color-mix(in srgb, ${channelCfg.color === 'text-emerald-400' ? '#34d399' : channelCfg.color === 'text-fuchsia-400' ? '#e879f9' : channelCfg.color === 'text-blue-400' ? '#60a5fa' : '#fbbf24'} 60%, transparent)`,
+                    backgroundColor: isWinner ? undefined : `color-mix(in srgb, ${
+                      channelCfg.color === 'text-status-success' ? '#06d6a0' :
+                      channelCfg.color === 'text-brand-purple' ? '#8b5cf6' :
+                      channelCfg.color === 'text-brand-cyan' ? '#06d6a0' :
+                      channelCfg.color === 'text-status-info' ? '#3b82f6' :
+                      channelCfg.color === 'text-brand-gold' ? '#f5c842' :
+                      '#8b5cf6'
+                    } 60%, transparent)`,
                   }}
                 />
               </div>
