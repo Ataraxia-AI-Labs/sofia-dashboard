@@ -685,7 +685,7 @@ function ConversationDetail({
   }
 
   const handleSendMessage = async (text: string) => {
-    // Optimistic: show message immediately in the conversation
+    // Optimistic: show message immediately as Doctor
     const optimisticMsg: InteractionLog = {
       id: `temp-${Date.now()}`,
       organization_id: orgId,
@@ -696,6 +696,7 @@ function ConversationDetail({
       sentiment_score: 0,
       sentiment_label: 'NEUTRAL',
       created_at: new Date().toISOString(),
+      is_human_takeover: true,
     }
     thread.messages.push(optimisticMsg)
     thread.messageCount += 1
@@ -705,7 +706,10 @@ function ConversationDetail({
     }, 50)
     try {
       await sendTakeoverMessage(orgId, thread.patientId, text)
-    } catch { /* ignore */ }
+    } catch (e) {
+      // Mark as failed if send fails
+      optimisticMsg.is_failed = true
+    }
   }
 
   // Auto-scroll to bottom on mount and when messages change
