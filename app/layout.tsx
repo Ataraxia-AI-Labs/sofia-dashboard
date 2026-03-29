@@ -54,6 +54,9 @@ export const metadata: Metadata = {
     title: 'SofIA — Tu clinica nunca duerme.',
     description: 'IA autonoma para tu clinica. 24/7, sin humanos.',
   },
+  other: {
+    'facebook-domain-verification': 'l321wmcuefen0vbdkhj2fbflsdwqff',
+  },
 }
 
 export const viewport: Viewport = {
