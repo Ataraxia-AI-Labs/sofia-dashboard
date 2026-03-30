@@ -257,7 +257,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (360dialog / Meta)</label>
+                      <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (Meta Cloud API)</label>
                       <input
                         type="password"
                         value={apiKey}
