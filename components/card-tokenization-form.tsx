@@ -158,6 +158,10 @@ export default function CardTokenizationForm({
         throw new Error(json.error?.message || 'Error al tokenizar la tarjeta')
       }
 
+      // S92-CT2: Null check before accessing token ID
+      if (!json.data?.id) {
+        throw new Error('Token invalido recibido del procesador de pagos')
+      }
       onTokenized(json.data.id)
     } catch (err) {
       onError(err instanceof Error ? err.message : 'Error inesperado al tokenizar')

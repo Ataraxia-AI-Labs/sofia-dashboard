@@ -16,6 +16,7 @@ interface ChannelsTabProps {
 }
 
 const FB_CONFIG_ID = process.env.NEXT_PUBLIC_FB_CONFIG_ID || ''
+const FB_APP_ID = process.env.NEXT_PUBLIC_FB_APP_ID || FB_CONFIG_ID
 
 const CHANNELS = [
   { key: 'whatsapp', label: 'WhatsApp Business', icon: MessageCircle, color: 'text-status-success', configurable: true },
@@ -166,7 +167,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
           onLoad={() => {
             window.fbAsyncInit = () => {
               window.FB?.init({
-                appId: FB_CONFIG_ID,
+                appId: FB_APP_ID,
                 cookie: true,
                 xfbml: true,
                 version: 'v21.0',
@@ -231,7 +232,8 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
                   Conectar WhatsApp con un clic
                 </button>
                 <p className="text-[10px] font-mono text-text-dim text-center">
-                  Vincula tu cuenta de WhatsApp Business directamente desde Meta
+                  Vincula tu cuenta de WhatsApp Business directamente desde Meta.
+                  Pendiente aprobacion de Meta Technology Provider — usa configuracion manual mientras tanto.
                 </p>
 
                 {/* Manual form toggle */}

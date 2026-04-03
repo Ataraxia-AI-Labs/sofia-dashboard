@@ -65,7 +65,7 @@ export async function getAnnotations(
   if (filters?.to) params.set('to', filters.to)
 
   const qs = params.toString()
-  const res = await authFetch(`${API_URL}/interactions/${orgId}/annotations${qs ? `?${qs}` : ''}`)
+  const res = await authFetch(`${API_URL}/annotations/${orgId}${qs ? `?${qs}` : ''}`)
   if (!res.ok) return []
   const data = await res.json()
   return Array.isArray(data) ? data : (data.annotations || [])
@@ -75,7 +75,7 @@ export async function getAnnotations(
  * Get annotation statistics for an organization.
  */
 export async function getAnnotationStats(orgId: string): Promise<AnnotationStats> {
-  const res = await authFetch(`${API_URL}/interactions/${orgId}/annotations/stats`)
+  const res = await authFetch(`${API_URL}/annotations/${orgId}/stats`)
   if (!res.ok) return { total: 0, thumbs_up: 0, thumbs_down: 0, approval_rate: 0 }
   return res.json()
 }

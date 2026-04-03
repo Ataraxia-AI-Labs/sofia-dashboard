@@ -323,7 +323,7 @@ describe('Portal API', () => {
 // ===================================================================
 import {
   generateEmbeddings, runClustering, getSegments, getPatientSegment,
-  getSegmentPatients, findSimilarPatients, getCampaignSuggestion,
+  findSimilarPatients, getCampaignSuggestion,
 } from '@/lib/api/segments'
 
 describe('Segments API', () => {
@@ -375,17 +375,6 @@ describe('Segments API', () => {
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
       expect(await getPatientSegment('org-1', 'p1')).toBeNull()
-    })
-  })
-
-  describe('getSegmentPatients', () => {
-    it('returns patients in segment', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve([{ id: 'p1' }]) })
-      expect(await getSegmentPatients('org-1', 's1')).toHaveLength(1)
-    })
-    it('returns empty on error', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: false })
-      expect(await getSegmentPatients('org-1', 's1')).toEqual([])
     })
   })
 

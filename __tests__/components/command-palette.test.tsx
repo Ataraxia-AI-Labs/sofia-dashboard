@@ -8,6 +8,18 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
 }))
 
+// Mock next-intl
+jest.mock('next-intl', () => ({
+  useTranslations: () => {
+    const t = (key: string, params?: Record<string, unknown>) => {
+      if (params) return `${key}:${JSON.stringify(params)}`
+      return key
+    }
+    t.has = () => true
+    return t
+  },
+}))
+
 describe('CommandPalette', () => {
   beforeEach(() => {
     mockPush.mockClear()
@@ -21,29 +33,30 @@ describe('CommandPalette', () => {
   it('renders the search input when open', () => {
     render(<CommandPalette open={true} onClose={() => {}} />)
     expect(screen.getByRole('dialog')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('Buscar páginas...')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('searchPages')).toBeInTheDocument()
   })
 
   it('displays all navigation items by default', () => {
     render(<CommandPalette open={true} onClose={() => {}} />)
-    expect(screen.getByText('Pacientes')).toBeInTheDocument()
-    expect(screen.getByText('Calendario')).toBeInTheDocument()
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    // Labels come from nav keys via useTranslations mock — may appear as both label and description
+    expect(screen.getAllByText('patients').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('calendar').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('overview').length).toBeGreaterThan(0)
   })
 
   it('filters items based on search query', () => {
     render(<CommandPalette open={true} onClose={() => {}} />)
-    const input = screen.getByPlaceholderText('Buscar páginas...')
-    fireEvent.change(input, { target: { value: 'paci' } })
-    expect(screen.getByText('Pacientes')).toBeInTheDocument()
-    expect(screen.queryByText('Calendario')).not.toBeInTheDocument()
+    const input = screen.getByPlaceholderText('searchPages')
+    fireEvent.change(input, { target: { value: 'pati' } })
+    expect(screen.getAllByText('patients').length).toBeGreaterThan(0)
+    expect(screen.queryByText('calendar')).not.toBeInTheDocument()
   })
 
   it('shows empty state when no results match', () => {
     render(<CommandPalette open={true} onClose={() => {}} />)
-    const input = screen.getByPlaceholderText('Buscar páginas...')
+    const input = screen.getByPlaceholderText('searchPages')
     fireEvent.change(input, { target: { value: 'zzz_nonexistent' } })
-    expect(screen.getByText(/Sin resultados/)).toBeInTheDocument()
+    expect(screen.getByText(/noResults/)).toBeInTheDocument()
   })
 
   it('calls onClose when backdrop is clicked', () => {
@@ -73,7 +86,7 @@ describe('CommandPalette', () => {
   it('navigates when clicking an item', () => {
     const onClose = jest.fn()
     render(<CommandPalette open={true} onClose={onClose} />)
-    fireEvent.click(screen.getByText('Pacientes'))
+    fireEvent.click(screen.getAllByText('patients')[0])
     expect(mockPush).toHaveBeenCalledWith('/dashboard/pacientes')
     expect(onClose).toHaveBeenCalled()
   })
@@ -89,16 +102,16 @@ describe('CommandPalette', () => {
 
   it('shows clear button when query is non-empty', () => {
     render(<CommandPalette open={true} onClose={() => {}} />)
-    const input = screen.getByPlaceholderText('Buscar páginas...')
+    const input = screen.getByPlaceholderText('searchPages')
     fireEvent.change(input, { target: { value: 'test' } })
-    expect(screen.getByLabelText('Limpiar búsqueda')).toBeInTheDocument()
+    expect(screen.getByLabelText('close')).toBeInTheDocument()
   })
 
   it('clears query when clear button is clicked', () => {
     render(<CommandPalette open={true} onClose={() => {}} />)
-    const input = screen.getByPlaceholderText('Buscar páginas...')
+    const input = screen.getByPlaceholderText('searchPages')
     fireEvent.change(input, { target: { value: 'test' } })
-    fireEvent.click(screen.getByLabelText('Limpiar búsqueda'))
+    fireEvent.click(screen.getByLabelText('close'))
     expect(input).toHaveValue('')
   })
 })

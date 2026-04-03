@@ -19,7 +19,7 @@ export default function GlobalError({
       <body className="bg-[#07070D] text-[#F0EEF5]">
         <div className="min-h-screen flex items-center justify-center p-8">
           <div className="max-w-md text-center space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-[#ef4444]/10 border border-[#ef4444]/20 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-lg bg-[#ef4444]/10 border border-[#ef4444]/20 flex items-center justify-center mx-auto">
               <span className="text-[#ef4444] text-xl">!</span>
             </div>
             <h2 className="text-lg font-semibold">Algo salio mal</h2>

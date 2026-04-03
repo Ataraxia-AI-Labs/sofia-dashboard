@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { fetchPayments as apiFetchPayments, fetchRevenueAttribution } from '@/lib/api/payments'
 import { formatCOP, timeAgo } from '@/lib/api'
 import type { Payment, RevenueAttribution } from '@/types'
@@ -22,6 +24,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export default function PagosPage() {
   const { orgId, branchId } = useOrg()
+  const toast = useToast()
   const t = useTranslations('payments')
   const tCommon = useTranslations('common')
   const [payments, setPayments] = useState<Payment[]>([])
@@ -39,8 +42,9 @@ export default function PagosPage() {
       ])
       setPayments(paymentsData)
       setAttribution(attrData)
-    } catch {
-      // Payments load failed — UI will show empty state
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
     }
     setLoading(false)
   }, [orgId, statusFilter, branchId])
@@ -191,8 +195,8 @@ export default function PagosPage() {
               <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Revenue por Canal</h3>
               {Object.keys(attr.por_canal || {}).length > 0 ? (
                 <div className="space-y-3">
-                  {Object.entries(attr.por_canal).sort(([, a], [, b]) => (b as number) - (a as number)).map(([canal, amount]) => {
-                    const max = Math.max(...Object.values(attr.por_canal) as number[])
+                  {Object.entries(attr.por_canal || {}).sort(([, a], [, b]) => (b as number) - (a as number)).map(([canal, amount]) => {
+                    const max = Math.max(...Object.values(attr.por_canal || {}) as number[])
                     const pct = max > 0 ? (amount / max) * 100 : 0
                     return (
                       <div key={canal}>
@@ -216,8 +220,8 @@ export default function PagosPage() {
               <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Revenue por Servicio</h3>
               {Object.keys(attr.por_servicio || {}).length > 0 ? (
                 <div className="space-y-3">
-                  {Object.entries(attr.por_servicio).sort(([, a], [, b]) => (b as number) - (a as number)).map(([svc, amount]) => {
-                    const max = Math.max(...Object.values(attr.por_servicio) as number[])
+                  {Object.entries(attr.por_servicio || {}).sort(([, a], [, b]) => (b as number) - (a as number)).map(([svc, amount]) => {
+                    const max = Math.max(...Object.values(attr.por_servicio || {}) as number[])
                     const pct = max > 0 ? (amount / max) * 100 : 0
                     return (
                       <div key={svc}>

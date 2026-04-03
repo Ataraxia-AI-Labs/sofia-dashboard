@@ -461,19 +461,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      // AUTH-002: Use getUser() for server-validated session
+      const { data: { user: validatedUser }, error: userError } = await supabase.auth.getUser()
 
-      if (!session) {
+      if (userError || !validatedUser) {
         router.replace('/login')
         return
       }
 
-      setUser(session.user)
-      Sentry.setUser({ id: session.user.id, email: session.user.email ?? undefined })
+      setUser(validatedUser)
+      Sentry.setUser({ id: validatedUser.id, email: validatedUser.email ?? undefined })
 
       const impersonatedOrgId = getImpersonatedOrgId()
       const impersonatedOrgName = getImpersonatedOrgName()
-      const isAdmin = isSuperAdmin(session.user)
+      const isAdmin = isSuperAdmin(validatedUser)
 
       if (isAdmin && impersonatedOrgId) {
         setGodMode(true)
@@ -500,7 +501,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         return
       } else {
         try {
-          const { organization, role: userRole } = await fetchUserOrganization(session.user.id)
+          const { organization, role: userRole } = await fetchUserOrganization(validatedUser.id)
           setOrg(organization)
           setRole(userRole)
           if (organization) {
@@ -518,7 +519,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') router.replace('/login')
-      if (event === 'TOKEN_REFRESHED' && session) {
+      if ((event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN' || event === 'USER_UPDATED') && session) {
         setUser(session.user)
       }
     })
@@ -589,7 +590,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     pathname,
     orgName: org?.name || 'Nucleus',
     navGroups: FILTERED_NAV_GROUPS,
-    plan: org?.plan || ('STARTER' as Organization['plan']),
+    plan: org?.plan || ('TRIAL' as Organization['plan']),
     onNavigate: navigateTo,
     onLogout: handleLogout,
     godMode,
@@ -726,6 +727,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="glass-card p-6 text-center">
                 <p className="text-text-muted text-xs font-mono">No se encontro organizacion asociada a tu cuenta.</p>
                 <p className="text-text-dim text-[10px] font-mono mt-1">Contacta al administrador de Ataraxia.</p>
+                <button
+                  onClick={handleLogout}
+                  className="mt-4 px-4 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-[10px] font-mono hover:text-status-danger hover:border-status-danger/30 transition-all inline-flex items-center gap-1.5"
+                >
+                  <LogOut size={12} />
+                  {t('logout')}
+                </button>
               </div>
             )}
           </main>

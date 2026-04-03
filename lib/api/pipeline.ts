@@ -6,5 +6,6 @@ export async function fetchPipelineData(orgId: string, branchId?: string | null)
   url = withBranch(url, branchId)
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  const d = await res.json()
+  return d.data ?? []
 }

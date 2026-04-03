@@ -249,7 +249,7 @@ export default function ConversacionesPage() {
                 msg.patients = { full_name: patient.full_name, phone: patient.phone }
               }
             }
-            return currentPatients
+            return [...currentPatients]
           })
           setInteractions(prev => [...parsed, ...prev])
         }

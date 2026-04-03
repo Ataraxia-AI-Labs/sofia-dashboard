@@ -11,7 +11,7 @@
     "payments": "Revenue",
     "admin": "Intelligence",
     "team": "Team",
-    "reports": "Reports",
+    "reports": "Intelligence",
     "datalake": "Data Lake",
     "network": "Neural Net",
     "campaigns": "Impulses",
@@ -74,7 +74,23 @@
     "email": "Email",
     "role": "Role",
     "date": "Date",
-    "errorUnknown": "Unknown error"
+    "errorUnknown": "Unknown error",
+    "searchPages": "Search pages..."
+  },
+  "commandPalette": {
+    "overview": "Main dashboard with metrics",
+    "patients": "Patient management",
+    "calendar": "Appointments and agenda",
+    "conversations": "WhatsApp and messages",
+    "pipeline": "Lead CRM",
+    "opportunities": "Sales opportunities",
+    "payments": "Transactions and history",
+    "team": "Members and roles management",
+    "datalake": "Statistics and exports",
+    "health": "System status and bots",
+    "plans": "Subscription management",
+    "billing": "Invoices and billing",
+    "settings": "Organization settings"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -726,6 +742,24 @@
     "noName": "No name",
     "noResultsSearch": "No patients found matching that criteria",
     "noPatients": "No patients registered yet",
+    "sendWhatsApp": "Send WhatsApp to {name}",
+    "writeMessage": "Write a message...",
+    "sending": "Sending...",
+    "send": "Send",
+    "newTreatment": "New Treatment",
+    "treatmentLabel": "Treatment",
+    "medication": "Medication",
+    "dosage": "Dosage",
+    "everyHours": "Every (hours)",
+    "start": "Start",
+    "end": "End",
+    "additionalNotes": "Additional notes...",
+    "cancel": "Cancel",
+    "createTreatment": "Create Treatment",
+    "editPatient": "Edit Patient",
+    "name": "Name",
+    "email": "Email",
+    "save": "Save",
     "ofTotal": "of",
     "channels": {
       "CALL": "Call",
@@ -842,7 +876,7 @@
     "down": "Down"
   },
   "reports": {
-    "title": "Reports",
+    "title": "Intelligence",
     "subtitle": "Generate and download PDF performance reports",
     "days": "{count} days",
     "downloadPDF": "Download PDF",
@@ -1164,7 +1198,10 @@
       "totalPredicted": "Total Predicted Revenue",
       "bestChannel": "Best Channel",
       "totalPredictions": "Total Predictions"
-    }
+    },
+    "trendRising": "Rising",
+    "trendStable": "Stable",
+    "trendDeclining": "Declining"
   },
   "outreach": {
     "statsPending": "Pending",
@@ -1316,7 +1353,11 @@
     "noCompetitorsHint": "Add competitors to compare prices and market position.",
     "servicesRegistered": "services registered",
     "emptyTitle": "No competitive data",
-    "emptyHint": "Add your first competitor to start the market analysis."
+    "emptyHint": "Add your first competitor to start the market analysis.",
+    "swotStrengths": "Strengths",
+    "swotWeaknesses": "Weaknesses",
+    "swotOpportunities": "Opportunities",
+    "swotThreats": "Threats"
   },
   "portal": {
     "generateLink": "Patient Portal",

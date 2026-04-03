@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import * as Sentry from '@sentry/nextjs'
 import { fetchTeamMembers, inviteTeamMember, updateMemberRole, deactivateMember } from '@/lib/api'
 import type { TeamMember } from '@/lib/api/team'
 import { Button, Badge, Modal, Input, Select } from '@/components/ui'
@@ -54,15 +55,20 @@ export default function EquipoPage() {
   const handleInvite = async () => {
     if (!inviteEmail.trim()) return
     setInviting(true)
-    const result = await inviteTeamMember(orgId, inviteEmail.trim(), inviteRole)
-    if (result.success) {
-      toast.success(t('inviteSent'))
-      setShowInvite(false)
-      setInviteEmail('')
-      setInviteRole('STAFF')
-      loadMembers()
-    } else {
-      toast.error(result.message || t('inviteError'))
+    try {
+      const result = await inviteTeamMember(orgId, inviteEmail.trim(), inviteRole)
+      if (result.success) {
+        toast.success(t('inviteSent'))
+        setShowInvite(false)
+        setInviteEmail('')
+        setInviteRole('STAFF')
+        loadMembers()
+      } else {
+        toast.error(result.message || t('inviteError'))
+      }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('inviteError'))
     }
     setInviting(false)
   }

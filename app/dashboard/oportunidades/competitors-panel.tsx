@@ -222,20 +222,21 @@ function ReportModal({ report, onClose }: { report: CompetitorReport; onClose: (
 // ============================================================
 
 const SWOT_CONFIG = {
-  strength: { icon: Shield, color: 'text-status-success', bg: 'bg-status-success/10', border: 'border-status-success/20', label: 'Fortalezas' },
-  weakness: { icon: AlertTriangle, color: 'text-status-danger', bg: 'bg-status-danger/10', border: 'border-status-danger/20', label: 'Debilidades' },
-  opportunity: { icon: Lightbulb, color: 'text-status-info', bg: 'bg-status-info/10', border: 'border-status-info/20', label: 'Oportunidades' },
-  threat: { icon: Target, color: 'text-status-warning', bg: 'bg-status-warning/10', border: 'border-status-warning/20', label: 'Amenazas' },
+  strength: { icon: Shield, color: 'text-status-success', bg: 'bg-status-success/10', border: 'border-status-success/20', labelKey: 'swotStrengths' },
+  weakness: { icon: AlertTriangle, color: 'text-status-danger', bg: 'bg-status-danger/10', border: 'border-status-danger/20', labelKey: 'swotWeaknesses' },
+  opportunity: { icon: Lightbulb, color: 'text-status-info', bg: 'bg-status-info/10', border: 'border-status-info/20', labelKey: 'swotOpportunities' },
+  threat: { icon: Target, color: 'text-status-warning', bg: 'bg-status-warning/10', border: 'border-status-warning/20', labelKey: 'swotThreats' },
 } as const
 
 function SwotCard({ type, items }: { type: keyof typeof SWOT_CONFIG; items: string[] }) {
   const cfg = SWOT_CONFIG[type]
   const Icon = cfg.icon
+  const t = useTranslations('competitors')
   return (
     <div className={`p-3 rounded-lg ${cfg.bg} border ${cfg.border}`}>
       <div className="flex items-center gap-1.5 mb-2">
         <Icon size={12} className={cfg.color} />
-        <span className={`text-[10px] font-bold font-mono uppercase tracking-wider ${cfg.color}`}>{cfg.label}</span>
+        <span className={`text-[10px] font-bold font-mono uppercase tracking-wider ${cfg.color}`}>{t(cfg.labelKey)}</span>
       </div>
       {items.length > 0 ? (
         <ul className="space-y-1">

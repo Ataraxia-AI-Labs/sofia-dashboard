@@ -29,7 +29,8 @@ export async function fetchUserOrganization(userId: string): Promise<{ organizat
   const rawRole = data.role as string
   const role: 'OWNER' | 'ADMIN' | 'STAFF' =
     rawRole === 'OWNER' ? 'OWNER' :
-    rawRole === 'ADMIN' ? 'ADMIN' : 'STAFF'
+    (rawRole === 'ADMIN' || rawRole === 'DOCTOR') ? 'ADMIN' :
+    (rawRole === 'STAFF' || rawRole === 'RECEPTIONIST') ? 'STAFF' : 'STAFF'
   return { organization: (data.organizations as unknown as Organization | null) || null, role }
 }
 

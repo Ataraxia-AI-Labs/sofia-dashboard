@@ -17,10 +17,10 @@ import type { PortalData } from '@/types'
 // ============================================================
 
 const TIER_CONFIG: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  PLATINUM: { bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300', icon: '\u2B50' },
-  GOLD: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-300', icon: '\uD83C\uDFC6' },
-  SILVER: { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-300', icon: '\uD83E\uDD48' },
-  BRONZE: { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-300', icon: '\uD83E\uDD49' },
+  PLATINUM: { bg: 'bg-brand-purple/10', text: 'text-brand-purple', border: 'border-brand-purple/30', icon: '\u2B50' },
+  GOLD: { bg: 'bg-brand-gold/10', text: 'text-brand-gold', border: 'border-brand-gold/30', icon: '\uD83C\uDFC6' },
+  SILVER: { bg: 'bg-text-muted/10', text: 'text-text-muted', border: 'border-text-muted/30', icon: '\uD83E\uDD48' },
+  BRONZE: { bg: 'bg-brand-gold/5', text: 'text-brand-gold', border: 'border-brand-gold/20', icon: '\uD83E\uDD49' },
 }
 
 function getTierCfg(tier: string) {

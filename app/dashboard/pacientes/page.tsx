@@ -117,7 +117,6 @@ export default function PacientesPage() {
       setTotal(count)
     } catch (err) {
       Sentry.captureException(err)
-      Sentry.captureException(err)
       toast.error(t('loadError'))
     }
     setLoading(false)
@@ -153,7 +152,6 @@ export default function PacientesPage() {
       if (media.status === 'fulfilled') setPatientMedia(media.value)
     } catch (err) {
       Sentry.captureException(err)
-      Sentry.captureException(err)
       toast.error(t('detailError'))
     }
     setDetailLoading(false)
@@ -168,7 +166,6 @@ export default function PacientesPage() {
       loadPatients()
     } catch (err) {
       Sentry.captureException(err)
-      Sentry.captureException(err)
       toast.error(t('createError'))
     }
   }
@@ -181,7 +178,6 @@ export default function PacientesPage() {
       openDetail(selectedPatient)
       loadPatients()
     } catch (err) {
-      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error(t('saveError'))
     }
@@ -197,7 +193,6 @@ export default function PacientesPage() {
       setStaffNotes(notes)
     } catch (err) {
       Sentry.captureException(err)
-      Sentry.captureException(err)
       toast.error(t('noteError'))
     }
     setSavingNote(false)
@@ -211,7 +206,6 @@ export default function PacientesPage() {
       setWaMessage('')
       setShowWhatsApp(false)
     } catch (err) {
-      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error(t('whatsappError'))
     }
@@ -228,7 +222,6 @@ export default function PacientesPage() {
       setTreatments(treats)
     } catch (err) {
       Sentry.captureException(err)
-      Sentry.captureException(err)
       toast.error(t('treatmentError'))
     }
   }
@@ -238,7 +231,6 @@ export default function PacientesPage() {
     try {
       await exportPatientsCSV(orgId)
     } catch (err) {
-      Sentry.captureException(err)
       Sentry.captureException(err)
       toast.error(t('exportError'))
     }

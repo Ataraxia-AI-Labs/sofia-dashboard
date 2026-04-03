@@ -35,20 +35,20 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "Calendario",
-      "short_name": "Calendario",
+      "name": "Agenda Viva",
+      "short_name": "Agenda",
       "url": "/dashboard/calendario",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Conversaciones",
+      "name": "Transmisiones",
       "short_name": "Chat",
       "url": "/dashboard/conversaciones",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Pacientes",
-      "short_name": "Pacientes",
+      "name": "Personas",
+      "short_name": "Personas",
       "url": "/dashboard/pacientes",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }

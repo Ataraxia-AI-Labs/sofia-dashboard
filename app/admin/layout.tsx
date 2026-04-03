@@ -38,13 +38,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.replace('/login'); return }
+      // AUTH-003: Use getUser() for server-validated session
+      const { data: { user: validatedUser }, error: userError } = await supabase.auth.getUser()
+      if (userError || !validatedUser) { router.replace('/login'); return }
 
-      setUser(session.user)
+      setUser(validatedUser)
 
       // Only super admin can access /admin — no OWNER fallback
-      setAuthorized(isSuperAdmin(session.user))
+      setAuthorized(isSuperAdmin(validatedUser))
 
       setLoading(false)
     }

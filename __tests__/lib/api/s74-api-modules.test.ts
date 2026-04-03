@@ -115,7 +115,9 @@ describe('Webhooks API', () => {
   it('listWebhookEndpoints returns array', async () => {
     ok([{ id: 'ep-1', name: 'Test' }])
     const result = await listWebhookEndpoints('org-1')
-    expect(result).toEqual([{ id: 'ep-1', name: 'Test' }])
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe('ep-1')
+    expect(result[0].name).toBe('Test')
   })
 
   it('listWebhookEndpoints returns empty on error', async () => {

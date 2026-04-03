@@ -39,11 +39,18 @@ export async function parseAPIError(res: Response): Promise<string> {
 // ============================================================
 
 export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
+  // AUTH-001: Validate user server-side first, then get session token
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    Sentry.captureMessage(`[authFetch] User validation failed for: ${url}`, 'warning')
+    throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')
+  }
+
   const { data: { session } } = await supabase.auth.getSession()
   const headers = new Headers(options?.headers)
 
   if (!session?.access_token) {
-    Sentry.captureMessage(`[authFetch] No session token for: ${url}`, 'warning')
+    Sentry.captureMessage(`[authFetch] No session token after user validation for: ${url}`, 'warning')
     throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')
   }
 

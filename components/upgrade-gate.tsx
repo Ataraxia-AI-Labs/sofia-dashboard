@@ -24,7 +24,7 @@ export function UpgradeGate({ minPlan, featureName }: UpgradeGateProps) {
   return (
     <div className="flex-1 flex items-center justify-center p-8">
       <div className="max-w-md text-center space-y-6">
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-purple/10 flex items-center justify-center">
+        <div className="mx-auto w-16 h-16 rounded-lg bg-brand-purple/10 flex items-center justify-center">
           <Lock size={28} className="text-brand-purple" strokeWidth={1.5} />
         </div>
 

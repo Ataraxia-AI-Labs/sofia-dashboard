@@ -50,11 +50,28 @@ export async function generateReferralLink(orgId: string, patientId: string): Pr
 export async function getReferralLeaderboard(orgId: string): Promise<ReferralLeaderEntry[]> {
   const res = await authFetch(`${API_URL}/api/growth/engagement/${orgId}/referrals/leaderboard`)
   if (!res.ok) return []
-  return res.json()
+  const d = await res.json()
+  const raw = Array.isArray(d) ? d : (d.leaderboard ?? [])
+  return raw.map((r: Record<string, unknown>) => ({
+    patient_id: (r.patient_id ?? '') as string,
+    patient_name: (r.patient_name ?? r.full_name ?? '') as string,
+    referral_count: (r.referral_count ?? r.conversions ?? 0) as number,
+    converted_count: (r.converted_count ?? r.conversions ?? 0) as number,
+    reward_earned: (r.reward_earned ?? r.revenue_cop ?? 0) as number,
+  }))
 }
 
 export async function getReferralAnalytics(orgId: string): Promise<ReferralAnalytics> {
   const res = await authFetch(`${API_URL}/api/growth/engagement/${orgId}/referrals/analytics`)
   if (!res.ok) return { total_referrals: 0, total_converted: 0, conversion_rate: 0, total_rewards_given: 0, top_channels: {} }
-  return res.json()
+  const d = await res.json()
+  // Backend returns conversion_rate_pct (already a percentage, e.g. 25.5)
+  // Do NOT multiply by 100 again
+  return {
+    total_referrals: (d.total_referrals ?? d.total_links ?? 0) as number,
+    total_converted: (d.total_converted ?? d.total_conversions ?? 0) as number,
+    conversion_rate: (d.conversion_rate ?? d.conversion_rate_pct ?? 0) as number,
+    total_rewards_given: (d.total_rewards_given ?? d.total_revenue_cop ?? 0) as number,
+    top_channels: (d.top_channels ?? {}) as Record<string, number>,
+  }
 }

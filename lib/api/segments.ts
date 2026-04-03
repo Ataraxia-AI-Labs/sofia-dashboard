@@ -1,7 +1,6 @@
 import { API_URL, authFetch } from './helpers'
 import type {
   PatientSegment,
-  SegmentPatient,
   CampaignSuggestion,
   ClusteringResult,
   EmbeddingsResult,
@@ -30,7 +29,7 @@ export async function runClustering(orgId: string, nClusters?: number): Promise<
 }
 
 export async function getSegments(orgId: string): Promise<PatientSegment[]> {
-  const res = await authFetch(`${API_URL}/segments/${orgId}`)
+  const res = await authFetch(`${API_URL}/segments/${orgId}/segments`)
   if (!res.ok) return []
   return res.json()
 }
@@ -38,12 +37,6 @@ export async function getSegments(orgId: string): Promise<PatientSegment[]> {
 export async function getPatientSegment(orgId: string, patientId: string): Promise<PatientSegment | null> {
   const res = await authFetch(`${API_URL}/segments/${orgId}/patient/${patientId}`)
   if (!res.ok) return null
-  return res.json()
-}
-
-export async function getSegmentPatients(orgId: string, segmentId: string): Promise<SegmentPatient[]> {
-  const res = await authFetch(`${API_URL}/segments/${orgId}/${segmentId}/patients`)
-  if (!res.ok) return []
   return res.json()
 }
 

@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { listWorkflows, activateWorkflow, pauseWorkflow, archiveWorkflow, listTemplates, createFromTemplate, listEnrollments, getWorkflowAnalytics } from '@/lib/api/workflows'
 import type { Workflow, WorkflowTemplate, WorkflowEnrollment } from '@/lib/api/workflows'
 import { useTranslations } from 'next-intl'
@@ -11,6 +13,7 @@ type Tab = 'workflows' | 'templates'
 
 export default function AutomatizacionesPage() {
   const { orgId, role } = useOrg()
+  const toast = useToast()
   const t = useTranslations('workflows')
   const isReadOnly = role === 'STAFF'
 
@@ -32,7 +35,10 @@ export default function AutomatizacionesPage() {
       ])
       setWorkflows(wfs)
       setTemplates(tmps)
-    } catch { /* */ }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
+    }
     setLoading(false)
   }, [orgId])
 
@@ -40,12 +46,17 @@ export default function AutomatizacionesPage() {
 
   const selectWorkflow = async (wf: Workflow) => {
     setSelected(wf)
-    const [en, an] = await Promise.all([
-      listEnrollments(orgId, wf.id),
-      getWorkflowAnalytics(orgId, wf.id),
-    ])
-    setEnrollments(en)
-    setAnalytics(an)
+    try {
+      const [en, an] = await Promise.all([
+        listEnrollments(orgId, wf.id),
+        getWorkflowAnalytics(orgId, wf.id),
+      ])
+      setEnrollments(en)
+      setAnalytics(an)
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
+    }
   }
 
   const handleAction = async (wf: Workflow, action: 'activate' | 'pause' | 'archive') => {
@@ -55,7 +66,10 @@ export default function AutomatizacionesPage() {
       else await archiveWorkflow(orgId, wf.id)
       load()
       setMsg(`Workflow ${action}d`)
-    } catch { setMsg('Error') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('actionError'))
+    }
     setTimeout(() => setMsg(''), 2000)
   }
 
@@ -65,7 +79,10 @@ export default function AutomatizacionesPage() {
       setTab('workflows')
       load()
       setMsg('Automatizacion creada desde plantilla')
-    } catch { setMsg('Error al crear') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('createError'))
+    }
     setTimeout(() => setMsg(''), 2000)
   }
 

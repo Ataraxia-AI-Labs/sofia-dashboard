@@ -11,7 +11,7 @@
     "payments": "Revenue",
     "admin": "Inteligencia",
     "team": "Equipo",
-    "reports": "Reportes",
+    "reports": "Inteligencia",
     "datalake": "Data Lake",
     "network": "Red Neuronal",
     "campaigns": "Impulsos",
@@ -74,7 +74,23 @@
     "email": "Email",
     "role": "Rol",
     "date": "Fecha",
-    "errorUnknown": "Error desconocido"
+    "errorUnknown": "Error desconocido",
+    "searchPages": "Buscar paginas..."
+  },
+  "commandPalette": {
+    "overview": "Panel principal con metricas",
+    "patients": "Gestion de pacientes",
+    "calendar": "Citas y agenda",
+    "conversations": "WhatsApp y mensajes",
+    "pipeline": "CRM de leads",
+    "opportunities": "Oportunidades de venta",
+    "payments": "Transacciones e historial",
+    "team": "Gestion de miembros y roles",
+    "datalake": "Estadisticas y exportaciones",
+    "health": "Estado del sistema y bots",
+    "plans": "Gestion de suscripcion",
+    "billing": "Facturas e invoices",
+    "settings": "Configuracion de la organizacion"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -726,6 +742,24 @@
     "noName": "Sin nombre",
     "noResultsSearch": "No se encontraron pacientes con ese criterio",
     "noPatients": "Aun no hay pacientes registrados",
+    "sendWhatsApp": "Enviar WhatsApp a {name}",
+    "writeMessage": "Escribe un mensaje...",
+    "sending": "Enviando...",
+    "send": "Enviar",
+    "newTreatment": "Nuevo Tratamiento",
+    "treatmentLabel": "Tratamiento",
+    "medication": "Medicamento",
+    "dosage": "Dosis",
+    "everyHours": "Cada (horas)",
+    "start": "Inicio",
+    "end": "Fin",
+    "additionalNotes": "Notas adicionales...",
+    "cancel": "Cancelar",
+    "createTreatment": "Crear Tratamiento",
+    "editPatient": "Editar Paciente",
+    "name": "Nombre",
+    "email": "Email",
+    "save": "Guardar",
     "ofTotal": "de",
     "channels": {
       "CALL": "Llamada",
@@ -842,7 +876,7 @@
     "down": "Caido"
   },
   "reports": {
-    "title": "Reportes",
+    "title": "Inteligencia",
     "subtitle": "Genera y descarga reportes PDF de rendimiento",
     "days": "{count} dias",
     "downloadPDF": "Descargar PDF",
@@ -1164,7 +1198,10 @@
       "totalPredicted": "Revenue Predicho Total",
       "bestChannel": "Mejor Canal",
       "totalPredictions": "Total Predicciones"
-    }
+    },
+    "trendRising": "Subiendo",
+    "trendStable": "Estable",
+    "trendDeclining": "Bajando"
   },
   "outreach": {
     "statsPending": "Pendientes",
@@ -1316,7 +1353,11 @@
     "noCompetitorsHint": "Agrega competidores para comparar precios y posicion de mercado.",
     "servicesRegistered": "servicios registrados",
     "emptyTitle": "Sin datos competitivos",
-    "emptyHint": "Agrega tu primer competidor para comenzar el analisis de mercado."
+    "emptyHint": "Agrega tu primer competidor para comenzar el analisis de mercado.",
+    "swotStrengths": "Fortalezas",
+    "swotWeaknesses": "Debilidades",
+    "swotOpportunities": "Oportunidades",
+    "swotThreats": "Amenazas"
   },
   "portal": {
     "generateLink": "Portal Paciente",

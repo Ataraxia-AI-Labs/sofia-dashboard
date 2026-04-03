@@ -112,6 +112,14 @@ const PLANS: PlanDef[] = [
   },
 ]
 
+/** Static Tailwind class map — dynamic `bg-${color}` won't survive purge */
+const PLAN_COLOR_CLASSES: Record<string, { bg: string; border: string; text: string }> = {
+  'brand-cyan': { bg: 'bg-brand-cyan/10', border: 'border-brand-cyan/20', text: 'text-brand-cyan' },
+  'brand-purple': { bg: 'bg-brand-purple/10', border: 'border-brand-purple/20', text: 'text-brand-purple' },
+  'status-success': { bg: 'bg-status-success/10', border: 'border-status-success/20', text: 'text-status-success' },
+  'status-warning': { bg: 'bg-status-warning/10', border: 'border-status-warning/20', text: 'text-status-warning' },
+}
+
 /* ------------------------------------------------------------------ */
 /*  Page component                                                     */
 /* ------------------------------------------------------------------ */
@@ -319,8 +327,8 @@ export default function PlanesPage() {
                 )}
 
                 <div className="text-center mb-4">
-                  <div className={`w-10 h-10 rounded-md bg-${plan.color}/10 border border-${plan.color}/20 flex items-center justify-center mx-auto mb-2`}>
-                    <Icon size={20} className={`text-${plan.color}`} />
+                  <div className={`w-10 h-10 rounded-md ${PLAN_COLOR_CLASSES[plan.color]?.bg ?? ''} border ${PLAN_COLOR_CLASSES[plan.color]?.border ?? ''} flex items-center justify-center mx-auto mb-2`}>
+                    <Icon size={20} className={PLAN_COLOR_CLASSES[plan.color]?.text ?? ''} />
                   </div>
                   <h3 className="text-sm font-mono font-bold text-text-primary">{plan.name}</h3>
                   <p className="text-[9px] font-mono text-text-muted mt-0.5">{t(`descriptions.${plan.id}`)}</p>

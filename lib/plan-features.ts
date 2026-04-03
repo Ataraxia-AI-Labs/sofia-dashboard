@@ -12,10 +12,9 @@ export type PlanTier = Organization['plan']
 const PLAN_FEATURES: Record<PlanTier, Set<string>> = {
   TRIAL: new Set([
     'whatsapp', 'agendamiento', 'dashboard_basico',
-    'links_pago', 'followup_bots', 'pipeline_crm',
+    'links_pago', 'followup_bots',
     'context_optimizer', 'patient_memory_basic',
     'conversation_summaries',
-    'growth_referrals', 'growth_reputation',
   ]),
   STARTER: new Set([
     'whatsapp', 'agendamiento', 'dashboard_basico',

@@ -37,7 +37,7 @@ module.exports = {
           success: 'rgb(6 214 160 / <alpha-value>)',
           warning: 'rgb(245 200 66 / <alpha-value>)',
           danger: 'rgb(239 68 68 / <alpha-value>)',
-          info: 'rgb(59 130 246 / <alpha-value>)',
+          info: 'rgb(139 92 246 / <alpha-value>)',
         },
       },
       fontFamily: {

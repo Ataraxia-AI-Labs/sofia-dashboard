@@ -397,8 +397,8 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
                         {JSON.stringify(correction.original_value, null, 1)}
                       </pre>
                     </div>
-                    <div className="rounded-lg bg-green-500/5 border border-green-500/15 p-2">
-                      <span className="text-[9px] text-green-400 font-semibold uppercase block mb-1">
+                    <div className="rounded-lg bg-status-success/5 border border-status-success/15 p-2">
+                      <span className="text-[9px] text-status-success font-semibold uppercase block mb-1">
                         {t('corrected')}
                       </span>
                       <pre className="text-[10px] text-text-muted font-mono whitespace-pre-wrap break-all max-h-16 overflow-y-auto">

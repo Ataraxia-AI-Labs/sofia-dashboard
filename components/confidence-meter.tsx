@@ -16,15 +16,15 @@ interface ConfidenceMeterProps {
 }
 
 function getColor(value: number): string {
-  if (value < 30) return '#ef4444'  // red-500
-  if (value < 60) return '#f97316'  // orange-500
-  return '#22c55e'                   // green-500
+  if (value < 30) return '#ef4444'  // status-danger
+  if (value < 60) return '#F5C842'  // brand-gold
+  return '#06D6A0'                   // brand-cyan / status-success
 }
 
 function getTrailColor(value: number): string {
   if (value < 30) return 'rgba(239, 68, 68, 0.15)'
-  if (value < 60) return 'rgba(249, 115, 22, 0.15)'
-  return 'rgba(34, 197, 94, 0.15)'
+  if (value < 60) return 'rgba(245, 200, 66, 0.15)'
+  return 'rgba(6, 214, 160, 0.15)'
 }
 
 export function ConfidenceMeter({

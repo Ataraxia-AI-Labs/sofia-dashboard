@@ -115,7 +115,9 @@ export function CheckoutModal({
   }, [])
 
   const handleTokenError = useCallback((msg: string) => {
-    setError(msg)
+    // S92-CM2: Sanitize/truncate error messages from server
+    const safeError = (msg || 'Error al procesar tarjeta').slice(0, 200)
+    setError(safeError)
     setStep('result')
   }, [])
 
@@ -137,7 +139,9 @@ export function CheckoutModal({
         setStep('result')
         onSuccess()
       } else {
-        setError(res.error || 'No se pudo activar la suscripcion. Intenta de nuevo.')
+        // S92-CM2: Sanitize server error
+        const safeMsg = (res.error || 'No se pudo activar la suscripcion. Intenta de nuevo.').slice(0, 200)
+        setError(safeMsg)
         setStep('result')
       }
     } catch {

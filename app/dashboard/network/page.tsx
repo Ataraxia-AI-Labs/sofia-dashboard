@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import {
   getNetworkBenchmarks, getServiceTrends, getConversionPatterns,
   getOptimalHours, getNetworkAlerts, getNetworkNarrative, getNetworkStats, publishMetrics,
@@ -22,6 +24,7 @@ import { timeAgo } from '@/lib/api/helpers'
 
 export default function NetworkPage() {
   const { orgId } = useOrg()
+  const toast = useToast()
   const t = useTranslations('network')
   const tCommon = useTranslations('common')
 
@@ -54,8 +57,9 @@ export default function NetworkPage() {
       setAlerts(al)
       setNarrative(nar)
       setStats(st)
-    } catch {
-      // Non-critical — page renders empty state
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
     }
     setLoading(false)
   }, [orgId])
@@ -64,8 +68,14 @@ export default function NetworkPage() {
 
   const handlePublish = async () => {
     setPublishing(true)
-    await publishMetrics(orgId, 30)
-    setPublishing(false)
+    try {
+      await publishMetrics(orgId, 30)
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('publishError'))
+    } finally {
+      setPublishing(false)
+    }
   }
 
   if (loading) {

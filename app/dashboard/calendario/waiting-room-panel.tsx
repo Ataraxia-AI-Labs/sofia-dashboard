@@ -148,7 +148,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
             icon={<Users size={16} />}
             value={stats.currently_waiting.toString()}
             label={t('statsWaiting')}
-            gradient="from-status-info to-blue-600"
+            gradient="from-brand-purple to-brand-purple-dark"
           />
           <StatCard
             icon={<Timer size={16} />}

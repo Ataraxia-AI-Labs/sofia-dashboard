@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { getReferralProgram, updateReferralProgram, getReferralLeaderboard, getReferralAnalytics } from '@/lib/api/referrals'
 import type { ReferralProgram, ReferralLeaderEntry, ReferralAnalytics } from '@/lib/api/referrals'
 import { useTranslations } from 'next-intl'
@@ -12,6 +14,7 @@ type Tab = 'overview' | 'leaderboard' | 'settings'
 
 export default function ReferidosPage() {
   const { orgId, role } = useOrg()
+  const toast = useToast()
   const t = useTranslations('referralsPage')
   const isReadOnly = role === 'STAFF'
 
@@ -33,7 +36,10 @@ export default function ReferidosPage() {
       setProgram(p)
       setLeaderboard(l)
       setAnalytics(a)
-    } catch { /* */ }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
+    }
     setLoading(false)
   }, [orgId])
 
@@ -44,7 +50,10 @@ export default function ReferidosPage() {
     try {
       await updateReferralProgram(orgId, { is_active: !program.is_active })
       load()
-    } catch { setMsg('Error') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('toggleError'))
+    }
   }
 
   return (

@@ -11,7 +11,7 @@
     "payments": "Revenue",
     "admin": "Inteligencia",
     "team": "Equipe",
-    "reports": "Relatorios",
+    "reports": "Inteligencia",
     "datalake": "Data Lake",
     "network": "Rede Neural",
     "campaigns": "Impulsos",
@@ -74,7 +74,23 @@
     "email": "Email",
     "role": "Função",
     "date": "Data",
-    "errorUnknown": "Erro desconhecido"
+    "errorUnknown": "Erro desconhecido",
+    "searchPages": "Buscar paginas..."
+  },
+  "commandPalette": {
+    "overview": "Painel principal com metricas",
+    "patients": "Gestao de pacientes",
+    "calendar": "Consultas e agenda",
+    "conversations": "WhatsApp e mensagens",
+    "pipeline": "CRM de leads",
+    "opportunities": "Oportunidades de venda",
+    "payments": "Transacoes e historico",
+    "team": "Gestao de membros e funcoes",
+    "datalake": "Estatisticas e exportacoes",
+    "health": "Status do sistema e bots",
+    "plans": "Gestao de assinatura",
+    "billing": "Faturas e cobrancas",
+    "settings": "Configuracao da organizacao"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -706,6 +722,24 @@
     "noName": "Sem nome",
     "noResultsSearch": "Nenhum paciente encontrado com esse criterio",
     "noPatients": "Ainda nao ha pacientes registrados",
+    "sendWhatsApp": "Enviar WhatsApp para {name}",
+    "writeMessage": "Escreva uma mensagem...",
+    "sending": "Enviando...",
+    "send": "Enviar",
+    "newTreatment": "Novo Tratamento",
+    "treatmentLabel": "Tratamento",
+    "medication": "Medicamento",
+    "dosage": "Dosagem",
+    "everyHours": "A cada (horas)",
+    "start": "Inicio",
+    "end": "Fim",
+    "additionalNotes": "Notas adicionais...",
+    "cancel": "Cancelar",
+    "createTreatment": "Criar Tratamento",
+    "editPatient": "Editar Paciente",
+    "name": "Nome",
+    "email": "Email",
+    "save": "Salvar",
     "ofTotal": "de",
     "channels": {
       "CALL": "Ligacao",
@@ -822,7 +856,7 @@
     "down": "Fora do ar"
   },
   "reports": {
-    "title": "Relatorios",
+    "title": "Inteligencia",
     "subtitle": "Gere e baixe relatorios PDF de desempenho",
     "days": "{count} dias",
     "downloadPDF": "Baixar PDF",
@@ -1144,7 +1178,10 @@
       "totalPredicted": "Receita Prevista Total",
       "bestChannel": "Melhor Canal",
       "totalPredictions": "Total Predicoes"
-    }
+    },
+    "trendRising": "Subindo",
+    "trendStable": "Estavel",
+    "trendDeclining": "Caindo"
   },
   "outreach": {
     "statsPending": "Pendentes",
@@ -1296,7 +1333,11 @@
     "noCompetitorsHint": "Adicione concorrentes para comparar precos e posicao de mercado.",
     "servicesRegistered": "servicos registrados",
     "emptyTitle": "Sem dados competitivos",
-    "emptyHint": "Adicione seu primeiro concorrente para iniciar a analise de mercado."
+    "emptyHint": "Adicione seu primeiro concorrente para iniciar a analise de mercado.",
+    "swotStrengths": "Forcas",
+    "swotWeaknesses": "Fraquezas",
+    "swotOpportunities": "Oportunidades",
+    "swotThreats": "Ameacas"
   },
   "portal": {
     "generateLink": "Portal Paciente",

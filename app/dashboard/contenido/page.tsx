@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { listContent, createContent, suggestTopics, getContentAnalytics, getContentCalendar } from '@/lib/api/content'
 import type { ContentItem } from '@/lib/api/content'
 import { useTranslations } from 'next-intl'
@@ -11,6 +13,7 @@ type Tab = 'list' | 'analytics' | 'calendar'
 
 export default function ContenidoPage() {
   const { orgId, role } = useOrg()
+  const toast = useToast()
   const t = useTranslations('contentPage')
   const isReadOnly = role === 'STAFF'
 
@@ -33,15 +36,23 @@ export default function ContenidoPage() {
       const [c, a] = await Promise.all([listContent(orgId), getContentAnalytics(orgId)])
       setItems(c)
       setAnalytics(a)
-    } catch { /* */ }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
+    }
     setLoading(false)
   }, [orgId])
 
   useEffect(() => { load() }, [load])
 
   const handleSuggest = async () => {
-    const t = await suggestTopics(orgId)
-    setTopics(t)
+    try {
+      const suggestions = await suggestTopics(orgId)
+      setTopics(suggestions)
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('suggestError'))
+    }
   }
 
   const handleGenerateCalendar = async () => {
@@ -49,7 +60,10 @@ export default function ContenidoPage() {
     try {
       const cal = await getContentCalendar(orgId)
       setCalendar(cal)
-    } catch { /* */ }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('calendarError'))
+    }
     setCalendarLoading(false)
   }
 
@@ -59,7 +73,10 @@ export default function ContenidoPage() {
       await createContent(orgId, { platform: newPlatform, content_type: 'POST', title: newTitle, body: newBody })
       setShowCreate(false); setNewTitle(''); setNewBody('')
       load()
-    } catch { setMsg('Error al crear') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('createError'))
+    }
     setTimeout(() => setMsg(''), 2000)
   }
 

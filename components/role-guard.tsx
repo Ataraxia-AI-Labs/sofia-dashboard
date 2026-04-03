@@ -19,21 +19,28 @@ export function RoleGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
 
-  const roleAllowed = canAccessRoute(role, pathname)
-  const planAllowed = canAccessByPlan(org.plan, pathname)
+  // S92-RG1: Compute access only when role/org are available
+  const roleAllowed = role && org ? canAccessRoute(role, pathname) : false
+  const planAllowed = role && org ? canAccessByPlan(org.plan, pathname) : false
 
   useEffect(() => {
-    if (!roleAllowed) {
+    if (role && org && !roleAllowed) {
       router.replace('/403')
     }
-  }, [roleAllowed, router])
+  }, [role, org, roleAllowed, router])
 
+  if (!role || !org) return null
   if (!roleAllowed) return null
 
   if (!planAllowed) {
     const pageNames: Record<string, string> = {
       '/dashboard/datalake': 'Data Lake',
       '/dashboard/network': 'Red Inter-Clinica',
+      '/dashboard/crecimiento': 'Centro de Crecimiento',
+      '/dashboard/contenido': 'Estudio de Contenido',
+      '/dashboard/automatizaciones': 'Automatizaciones',
+      '/dashboard/webhooks': 'Webhooks',
+      '/dashboard/marketplace': 'Marketplace',
     }
     const featureName = pageNames[pathname] || 'Esta funcionalidad'
     return <UpgradeGate minPlan={getMinPlanForRoute(pathname)} featureName={featureName} />

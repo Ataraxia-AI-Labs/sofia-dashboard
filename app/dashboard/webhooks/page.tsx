@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { listWebhookEndpoints, createWebhookEndpoint, updateWebhookEndpoint, deleteWebhookEndpoint, testWebhookEndpoint, listWebhookDeliveries, retryWebhookDelivery, getWebhookEventCatalog } from '@/lib/api/webhooks'
 import type { WebhookEndpoint, WebhookDelivery } from '@/lib/api/webhooks'
 import { useTranslations } from 'next-intl'
@@ -11,6 +13,7 @@ type Tab = 'endpoints' | 'deliveries'
 
 export default function WebhooksPage() {
   const { orgId, role } = useOrg()
+  const toast = useToast()
   const t = useTranslations('webhooksPage')
   const isReadOnly = role === 'STAFF'
 
@@ -35,7 +38,10 @@ export default function WebhooksPage() {
       ])
       setEndpoints(eps)
       setEventCatalog(evts)
-    } catch { /* */ }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
+    }
     setLoading(false)
   }, [orgId])
 
@@ -53,31 +59,52 @@ export default function WebhooksPage() {
       await createWebhookEndpoint(orgId, { name: newName, url: newUrl, event_types: newEvents })
       setShowCreate(false); setNewName(''); setNewUrl(''); setNewEvents([])
       load()
-    } catch { setMsg('Error al crear webhook') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('createError'))
+    }
   }
 
   const handleToggle = async (ep: WebhookEndpoint) => {
-    await updateWebhookEndpoint(orgId, ep.id, { is_active: !ep.is_active })
-    load()
+    try {
+      await updateWebhookEndpoint(orgId, ep.id, { is_active: !ep.is_active })
+      load()
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('toggleError'))
+    }
   }
 
   const handleDelete = async (ep: WebhookEndpoint) => {
     if (!confirm(t('deleteConfirm'))) return
-    await deleteWebhookEndpoint(orgId, ep.id)
-    load()
+    try {
+      await deleteWebhookEndpoint(orgId, ep.id)
+      load()
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('deleteError'))
+    }
   }
 
   const handleTest = async (ep: WebhookEndpoint) => {
     try {
       const r = await testWebhookEndpoint(orgId, ep.id)
       setMsg(r.success ? t('testSuccess') : t('testFail'))
-    } catch { setMsg(t('testFail')) }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('testFail'))
+    }
     setTimeout(() => setMsg(''), 3000)
   }
 
   const handleRetry = async (d: WebhookDelivery) => {
-    await retryWebhookDelivery(orgId, d.id)
-    loadDeliveries()
+    try {
+      await retryWebhookDelivery(orgId, d.id)
+      loadDeliveries()
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('retryError'))
+    }
   }
 
   return (

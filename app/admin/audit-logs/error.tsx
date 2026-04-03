@@ -23,11 +23,11 @@ export default function AuditLogsError({
           Error al cargar Audit Log
         </h2>
         <p className="text-text-dim text-xs mb-6">
-          {error.message || 'Ocurrió un error inesperado.'}
+          Error cargando datos. Intenta de nuevo o contacta soporte.
         </p>
         <button
           onClick={reset}
-          className="flex items-center gap-2 mx-auto px-5 py-2 rounded-xl bg-brand-purple/15 text-brand-purple font-semibold text-sm hover:bg-brand-purple/25 transition-colors"
+          className="flex items-center gap-2 mx-auto px-5 py-2 rounded-lg bg-brand-purple/15 text-brand-purple font-semibold text-sm hover:bg-brand-purple/25 transition-colors"
         >
           <RefreshCw size={14} />
           Reintentar

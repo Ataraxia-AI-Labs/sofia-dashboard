@@ -131,7 +131,8 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
 
   const handleDeleteService = async (id: string) => {
     try {
-      await supabase.from('services_catalog').update({ is_active: false }).eq('id', id)
+      // S92-OW3: Add org_id filter to prevent IDOR
+      await supabase.from('services_catalog').update({ is_active: false }).eq('id', id).eq('organization_id', orgId)
       await loadExistingData()
     } catch (e) {
       Sentry.captureException(e)

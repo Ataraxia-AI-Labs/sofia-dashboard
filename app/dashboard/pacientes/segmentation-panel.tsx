@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import {
   getSegments, runClustering, generateEmbeddings,
-  getSegmentPatients, getCampaignSuggestion, findSimilarPatients,
+  getCampaignSuggestion, findSimilarPatients,
 } from '@/lib/api/segments'
 import { formatCOP } from '@/lib/api/helpers'
 import type {
@@ -112,12 +112,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
     setCampaign(null)
     setSimilarPatients([])
     setSimilarForPatient(null)
-    try {
-      const patients = await getSegmentPatients(orgId, segment.id)
-      setSegmentPatients(patients)
-    } catch {
-      setSegmentPatients([])
-    }
+    setSegmentPatients([])
     setDetailLoading(false)
   }
 

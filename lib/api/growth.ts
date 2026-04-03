@@ -46,7 +46,7 @@ export interface GrowthMetrics {
 
 export async function getGrowthDashboard(orgId: string, days?: number): Promise<GrowthMetrics> {
   const q = days ? `?days=${days}` : ''
-  const res = await authFetch(`${API_URL}/api/growth/analytics/${orgId}/dashboard${q}`)
+  const res = await authFetch(`${API_URL}/api/growth/analytics/${orgId}/command-center${q}`)
   if (!res.ok) throw new Error(`Growth dashboard error: ${res.status}`)
   return res.json()
 }
@@ -100,7 +100,7 @@ export async function generateKeywords(orgId: string): Promise<string[]> {
 // ============================================================
 
 export async function getSEOHealth(orgId: string): Promise<Record<string, unknown>> {
-  const res = await authFetch(`${API_URL}/api/growth/analytics/${orgId}/seo-health`)
+  const res = await authFetch(`${API_URL}/api/growth/ads/${orgId}/seo/health`)
   if (!res.ok) return {}
   return res.json()
 }

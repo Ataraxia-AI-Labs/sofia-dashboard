@@ -34,6 +34,7 @@ jobs:
 
             const repo = context.repo.repo;
             const event = context.eventName;
+            const workflow = context.workflow;
             let msg = '';
 
             // Helper to escape HTML
@@ -104,6 +105,7 @@ jobs:
               if (cs.conclusion === 'failure') {
                 const branch = cs.head_branch;
                 msg = `❌ <b>CI Failed</b> | <code>${esc(repo)}</code>\n`;
+                msg += `Workflow: <code>${esc(workflow)}</code>\n`;
                 msg += `Branch: <code>${esc(branch)}</code>\n`;
                 msg += `Conclusion: <code>${cs.conclusion}</code>`;
               }

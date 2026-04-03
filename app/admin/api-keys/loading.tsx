@@ -7,7 +7,7 @@ export default function APIKeysLoading() {
           <div className="h-6 w-32 bg-surface-3 rounded-lg" />
           <div className="h-3.5 w-56 bg-surface-3 rounded" />
         </div>
-        <div className="h-9 w-32 bg-surface-3 rounded-xl" />
+        <div className="h-9 w-32 bg-surface-3 rounded-lg" />
       </div>
       {/* Filter skeleton */}
       <div className="h-8 w-56 bg-surface-3 rounded-lg" />

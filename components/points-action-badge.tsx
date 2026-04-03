@@ -24,9 +24,9 @@ const ACTION_CONFIG: Record<GamificationAction, {
   VISIT_COMPLETED: {
     emoji: '\u2705',
     label: 'Visita completada',
-    textColor: 'text-green-400',
-    bg: 'bg-green-500/10',
-    border: 'border-green-500/25',
+    textColor: 'text-status-success',
+    bg: 'bg-status-success/10',
+    border: 'border-status-success/25',
   },
   REFERRAL: {
     emoji: '\uD83D\uDC65',

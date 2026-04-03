@@ -1,6 +1,7 @@
 'use client'
 
 import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { LTVTier, LTVTrend } from '@/types'
 import { formatCurrency } from '@/lib/api/helpers'
 
@@ -29,20 +30,20 @@ const TIER_CONFIG: Record<LTVTier, {
   DIAMOND: {
     emoji: '\uD83D\uDC8E',
     label: 'Diamond',
-    gradient: 'from-indigo-500 via-purple-500 to-blue-500',
+    gradient: 'from-brand-purple-dark via-brand-purple to-brand-purple-light',
     textColor: 'text-brand-purple',
     bg: 'bg-brand-purple/10',
     border: 'border-brand-purple/30',
-    glowColor: 'shadow-indigo-500/20',
+    glowColor: 'shadow-brand-purple/20',
   },
   PLATINUM: {
     emoji: '\u2B50',
     label: 'Platinum',
     gradient: 'from-text-muted via-text-primary to-text-muted',
-    textColor: 'text-slate-300',
-    bg: 'bg-slate-400/10',
-    border: 'border-slate-400/30',
-    glowColor: 'shadow-slate-400/20',
+    textColor: 'text-text-muted',
+    bg: 'bg-text-muted/10',
+    border: 'border-text-muted/30',
+    glowColor: 'shadow-text-muted/20',
   },
   GOLD: {
     emoji: '\uD83C\uDFC6',
@@ -76,11 +77,11 @@ const TIER_CONFIG: Record<LTVTier, {
 const TREND_CONFIG: Record<LTVTrend, {
   icon: typeof TrendingUp
   color: string
-  label: string
+  labelKey: string
 }> = {
-  RISING: { icon: TrendingUp, color: 'text-status-success', label: 'Subiendo' },
-  STABLE: { icon: ArrowRight, color: 'text-status-info', label: 'Estable' },
-  DECLINING: { icon: TrendingDown, color: 'text-status-danger', label: 'Bajando' },
+  RISING: { icon: TrendingUp, color: 'text-status-success', labelKey: 'trendRising' },
+  STABLE: { icon: ArrowRight, color: 'text-status-info', labelKey: 'trendStable' },
+  DECLINING: { icon: TrendingDown, color: 'text-status-danger', labelKey: 'trendDeclining' },
 }
 
 export function LTVTierBadge({
@@ -90,6 +91,7 @@ export function LTVTierBadge({
   compact = false,
   className = '',
 }: LTVTierBadgeProps) {
+  const t = useTranslations('ltv')
   const cfg = TIER_CONFIG[tier]
   const trendCfg = trend ? TREND_CONFIG[trend] : null
 
@@ -127,7 +129,7 @@ export function LTVTierBadge({
       {trendCfg && (
         <div className="flex items-center gap-0.5">
           <trendCfg.icon size={11} className={trendCfg.color} />
-          <span className={`text-[9px] font-mono font-semibold ${trendCfg.color}`}>{trendCfg.label}</span>
+          <span className={`text-[9px] font-mono font-semibold ${trendCfg.color}`}>{t(trendCfg.labelKey)}</span>
         </div>
       )}
     </div>

@@ -47,10 +47,11 @@ export interface AdminOrgRow {
 }
 
 export async function fetchAllOrganizations(): Promise<AdminOrgRow[]> {
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return []
+  // AUTH-004: Use getUser() for server-validated session
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) return []
 
-  if (isSuperAdmin(session.user)) {
+  if (isSuperAdmin(user)) {
     // Route through backend — no direct Supabase queries
     const result = await adminFetch<{ data: AdminOrgRow[] }>('/organizations?limit=200')
     return result.data || []
@@ -60,7 +61,7 @@ export async function fetchAllOrganizations(): Promise<AdminOrgRow[]> {
   const { data: memberships, error } = await supabase
     .from('org_members')
     .select('organization_id, role, organizations(id, name, status, created_at, whatsapp_phone_id, config_settings)')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .eq('is_active', true)
 
   if (error) return []
@@ -468,10 +469,11 @@ export async function fetchLatencyMetrics(): Promise<LatencyMetricRow[]> {
 // ============================================================
 
 export async function ensureSuperAdminMembership(orgId: string): Promise<void> {
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return
+  // AUTH-004: Use getUser() for server-validated session
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) return
 
-  const userId = session.user.id
+  const userId = user.id
 
   // Check if already a member
   const { data: existing } = await supabase

@@ -38,7 +38,7 @@ const STAGES: {
     key: 'CONTACTADO',
     label: 'Contactado',
     icon: <UserCheck size={14} />,
-    gradient: 'from-status-info to-blue-600',
+    gradient: 'from-brand-purple to-brand-purple-dark',
     border: 'border-status-info/30',
     bg: 'bg-status-info/5',
     text: 'text-status-info',

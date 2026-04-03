@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
+import * as Sentry from '@sentry/nextjs'
 import { browseConnectors, getCategories, installConnector, listInstalled, uninstallConnector, listPlugins, createPlugin, updatePlugin, deletePlugin, testPlugin } from '@/lib/api/marketplace'
 import type { Connector, InstalledConnector, Plugin } from '@/lib/api/marketplace'
 import { useTranslations } from 'next-intl'
@@ -11,6 +13,7 @@ type Tab = 'browse' | 'installed' | 'plugins'
 
 export default function MarketplacePage() {
   const { orgId, role } = useOrg()
+  const toast = useToast()
   const t = useTranslations('marketplacePage')
   const isReadOnly = role === 'STAFF'
 
@@ -41,7 +44,10 @@ export default function MarketplacePage() {
       setCategories(cats)
       setInstalled(inst)
       setPlugins(pl)
-    } catch { /* */ }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('loadError'))
+    }
     setLoading(false)
   }, [orgId, selectedCat, searchQ])
 
@@ -52,13 +58,21 @@ export default function MarketplacePage() {
       await installConnector(orgId, slug)
       setMsg('Instalado')
       load()
-    } catch { setMsg('Error') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('installError'))
+    }
     setTimeout(() => setMsg(''), 2000)
   }
 
   const handleUninstall = async (installId: string) => {
-    await uninstallConnector(orgId, installId)
-    load()
+    try {
+      await uninstallConnector(orgId, installId)
+      load()
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('uninstallError'))
+    }
   }
 
   const handleCreatePlugin = async () => {
@@ -67,19 +81,30 @@ export default function MarketplacePage() {
       await createPlugin(orgId, { name: pName, hook_point: pHook, webhook_url: pUrl })
       setShowPluginForm(false); setPName(''); setPUrl('')
       load()
-    } catch { setMsg('Error al crear plugin') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('createPluginError'))
+    }
   }
 
   const handleTogglePlugin = async (p: Plugin) => {
-    await updatePlugin(orgId, p.id, { is_active: !p.is_active })
-    load()
+    try {
+      await updatePlugin(orgId, p.id, { is_active: !p.is_active })
+      load()
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('toggleError'))
+    }
   }
 
   const handleTestPlugin = async (p: Plugin) => {
     try {
       const r = await testPlugin(orgId, p.id)
       setMsg(r.success ? `OK (${r.response_time_ms}ms)` : 'Fallo')
-    } catch { setMsg('Error') }
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error(t('testError'))
+    }
     setTimeout(() => setMsg(''), 2000)
   }
 
@@ -248,7 +273,7 @@ export default function MarketplacePage() {
                     {p.is_active ? <ToggleRight size={14} className="text-status-success" /> : <ToggleLeft size={14} />}
                   </button>
                   {!isReadOnly && (
-                    <button onClick={async () => { await deletePlugin(orgId, p.id); load() }}
+                    <button onClick={async () => { try { await deletePlugin(orgId, p.id); load() } catch (err) { Sentry.captureException(err); toast.error(t('deleteError')) } }}
                       className="p-1 rounded hover:bg-status-danger/10 text-text-dim hover:text-status-danger transition-colors">
                       <Trash2 size={12} />
                     </button>

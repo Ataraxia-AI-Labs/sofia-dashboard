@@ -2,35 +2,36 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import {
   Search, LayoutDashboard, Users, Calendar, MessageSquare, Kanban, Target,
   CreditCard, Database, Activity, UserCog, Settings, Gem, Receipt, X,
 } from 'lucide-react'
 import clsx from 'clsx'
 
-interface CommandItem {
+interface CommandDef {
   id: string
-  label: string
-  description: string
+  navKey: string
+  descKey: string
   icon: React.ElementType
   href: string
   shortcut?: string
 }
 
-const COMMANDS: CommandItem[] = [
-  { id: 'overview', label: 'Overview', description: 'Panel principal con métricas', icon: LayoutDashboard, href: '/dashboard' },
-  { id: 'pacientes', label: 'Pacientes', description: 'Gestión de pacientes', icon: Users, href: '/dashboard/pacientes', shortcut: 'Ctrl+N' },
-  { id: 'calendario', label: 'Calendario', description: 'Citas y agenda', icon: Calendar, href: '/dashboard/calendario', shortcut: 'Ctrl+Shift+A' },
-  { id: 'conversaciones', label: 'Conversaciones', description: 'WhatsApp y mensajes', icon: MessageSquare, href: '/dashboard/conversaciones' },
-  { id: 'pipeline', label: 'Pipeline', description: 'CRM de leads', icon: Kanban, href: '/dashboard/pipeline' },
-  { id: 'oportunidades', label: 'Oportunidades', description: 'Oportunidades de venta', icon: Target, href: '/dashboard/oportunidades' },
-  { id: 'pagos', label: 'Pagos', description: 'Transacciones e historial', icon: CreditCard, href: '/dashboard/pagos' },
-  { id: 'equipo', label: 'Equipo', description: 'Gestión de miembros y roles', icon: UserCog, href: '/dashboard/equipo' },
-  { id: 'datalake', label: 'Data Lake', description: 'Estadísticas y exportaciones', icon: Database, href: '/dashboard/datalake' },
-  { id: 'health', label: 'System Health', description: 'Estado del sistema y bots', icon: Activity, href: '/dashboard/health' },
-  { id: 'planes', label: 'Planes', description: 'Gestión de suscripción', icon: Gem, href: '/dashboard/planes' },
-  { id: 'facturacion', label: 'Facturación', description: 'Facturas e invoices', icon: Receipt, href: '/dashboard/facturacion' },
-  { id: 'ajustes', label: 'Ajustes', description: 'Configuración de la organización', icon: Settings, href: '/dashboard/ajustes' },
+const COMMAND_DEFS: CommandDef[] = [
+  { id: 'overview', navKey: 'overview', descKey: 'overview', icon: LayoutDashboard, href: '/dashboard' },
+  { id: 'pacientes', navKey: 'patients', descKey: 'patients', icon: Users, href: '/dashboard/pacientes', shortcut: 'Ctrl+N' },
+  { id: 'calendario', navKey: 'calendar', descKey: 'calendar', icon: Calendar, href: '/dashboard/calendario', shortcut: 'Ctrl+Shift+A' },
+  { id: 'conversaciones', navKey: 'conversations', descKey: 'conversations', icon: MessageSquare, href: '/dashboard/conversaciones' },
+  { id: 'pipeline', navKey: 'pipeline', descKey: 'pipeline', icon: Kanban, href: '/dashboard/pipeline' },
+  { id: 'oportunidades', navKey: 'opportunities', descKey: 'opportunities', icon: Target, href: '/dashboard/oportunidades' },
+  { id: 'pagos', navKey: 'payments', descKey: 'payments', icon: CreditCard, href: '/dashboard/pagos' },
+  { id: 'equipo', navKey: 'team', descKey: 'team', icon: UserCog, href: '/dashboard/equipo' },
+  { id: 'datalake', navKey: 'datalake', descKey: 'datalake', icon: Database, href: '/dashboard/datalake' },
+  { id: 'health', navKey: 'systemHealth', descKey: 'health', icon: Activity, href: '/dashboard/health' },
+  { id: 'planes', navKey: 'plans', descKey: 'plans', icon: Gem, href: '/dashboard/planes' },
+  { id: 'facturacion', navKey: 'billing', descKey: 'billing', icon: Receipt, href: '/dashboard/facturacion' },
+  { id: 'ajustes', navKey: 'config', descKey: 'settings', icon: Settings, href: '/dashboard/ajustes' },
 ]
 
 interface CommandPaletteProps {
@@ -40,16 +41,25 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const router = useRouter()
+  const tNav = useTranslations('nav')
+  const tCmd = useTranslations('commandPalette')
+  const tCommon = useTranslations('common')
   const [query, setQuery] = useState('')
   const [highlighted, setHighlighted] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const commands = COMMAND_DEFS.map(def => ({
+    ...def,
+    label: tNav(def.navKey),
+    description: tCmd(def.descKey),
+  }))
+
   const filtered = query.trim()
-    ? COMMANDS.filter(c =>
+    ? commands.filter(c =>
         c.label.toLowerCase().includes(query.toLowerCase()) ||
         c.description.toLowerCase().includes(query.toLowerCase())
       )
-    : COMMANDS
+    : commands
 
   const navigate = useCallback((href: string) => {
     router.push(href)
@@ -101,7 +111,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Buscador de páginas"
+      aria-label={tCommon('searchPages')}
     >
       {/* Backdrop */}
       <div
@@ -118,16 +128,16 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Buscar páginas..."
+            placeholder={tCommon('searchPages')}
             className="flex-1 bg-transparent text-text-primary text-xs font-mono placeholder:text-text-dim outline-none"
             autoComplete="off"
-            aria-label="Buscar páginas"
+            aria-label={tCommon('searchPages')}
           />
           {query && (
             <button
               onClick={() => setQuery('')}
               className="text-text-dim hover:text-text-primary transition-colors"
-              aria-label="Limpiar búsqueda"
+              aria-label={tCommon('close')}
             >
               <X size={14} />
             </button>
@@ -138,10 +148,10 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         </div>
 
         {/* Results list */}
-        <ul className="max-h-80 overflow-y-auto py-2" role="listbox" aria-label="Resultados">
+        <ul className="max-h-80 overflow-y-auto py-2" role="listbox">
           {filtered.length === 0 ? (
             <li className="px-4 py-8 text-center text-text-dim text-[10px] font-mono">
-              Sin resultados para &quot;{query}&quot;
+              {tCommon('noResults')} &quot;{query}&quot;
             </li>
           ) : (
             filtered.map((item, idx) => {
@@ -187,16 +197,16 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           <div className="flex items-center gap-3 text-[10px] text-text-dim">
             <span className="flex items-center gap-1">
               <kbd className="px-1 rounded bg-surface-2 border border-border font-mono">↑↓</kbd>
-              navegar
+              nav
             </span>
             <span className="flex items-center gap-1">
               <kbd className="px-1 rounded bg-surface-2 border border-border font-mono">↵</kbd>
-              abrir
+              go
             </span>
           </div>
           <span className="flex items-center gap-1 text-[10px] text-text-dim">
             <kbd className="px-1 rounded bg-surface-2 border border-border font-mono">Ctrl+?</kbd>
-            ver atajos
+            shortcuts
           </span>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { authFetch, API_URL } from '../supabase'
+import { API_URL, authFetch } from './helpers'
 
 export interface TeamMember {
   id: string

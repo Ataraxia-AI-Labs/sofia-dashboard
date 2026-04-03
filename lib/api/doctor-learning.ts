@@ -20,7 +20,7 @@ export async function recordCorrection(
     context?: Record<string, unknown>
   }
 ): Promise<{ id: string } | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/corrections`, {
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/correction`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -33,7 +33,7 @@ export async function extractPatterns(
   orgId: string,
   doctorId: string
 ): Promise<{ rules_created: number; message: string } | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/extract/${doctorId}`, {
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/extract-patterns/${doctorId}`, {
     method: 'POST',
   })
   if (!res.ok) return null
@@ -44,7 +44,7 @@ export async function getLearnedRules(
   orgId: string,
   doctorId: string
 ): Promise<LearnedRule[]> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/rules/${doctorId}`)
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/rules/${doctorId}`)
   if (!res.ok) return []
   return res.json()
 }
@@ -53,7 +53,7 @@ export async function getLearningStats(
   orgId: string,
   doctorId: string
 ): Promise<LearningStats | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/stats/${doctorId}`)
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/stats/${doctorId}`)
   if (!res.ok) return null
   return res.json()
 }
@@ -62,7 +62,7 @@ export async function applyRules(
   orgId: string,
   data: { doctor_id: string; context: Record<string, unknown> }
 ): Promise<{ applied_rules: string[] } | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/apply`, {
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/apply-rules`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -75,7 +75,7 @@ export async function deactivateRule(
   orgId: string,
   ruleId: string
 ): Promise<{ success: boolean } | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/rules/${ruleId}/deactivate`, {
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/rules/${ruleId}/deactivate`, {
     method: 'PATCH',
   })
   if (!res.ok) return null
@@ -86,7 +86,7 @@ export async function getCorrectionHistory(
   orgId: string,
   doctorId: string
 ): Promise<DoctorCorrection[]> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/corrections/${doctorId}`)
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/corrections/${doctorId}`)
   if (!res.ok) return []
   return res.json()
 }
@@ -94,7 +94,7 @@ export async function getCorrectionHistory(
 export async function getLearningProgress(
   orgId: string
 ): Promise<LearningProgress | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/progress`)
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/progress`)
   if (!res.ok) return null
   return res.json()
 }
@@ -103,7 +103,7 @@ export async function suggestRule(
   orgId: string,
   doctorId: string
 ): Promise<{ rule_description: string; rule_type: string; confidence: number } | null> {
-  const res = await authFetch(`${API_URL}/learning/${orgId}/suggest/${doctorId}`, {
+  const res = await authFetch(`${API_URL}/api/learning/${orgId}/suggest-rule/${doctorId}`, {
     method: 'POST',
   })
   if (!res.ok) return null

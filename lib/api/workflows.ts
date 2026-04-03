@@ -42,17 +42,27 @@ export interface WorkflowEnrollment {
   completed_at: string | null
 }
 
+function ensureSteps(w: Record<string, unknown>): Workflow {
+  return {
+    ...w,
+    steps: Array.isArray(w.steps) ? w.steps : [],
+  } as Workflow
+}
+
 export async function listWorkflows(orgId: string, status?: string): Promise<Workflow[]> {
   const q = status ? `?status=${status}` : ''
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}${q}`)
   if (!res.ok) return []
-  return res.json()
+  const d = await res.json()
+  const raw = Array.isArray(d) ? d : (d.workflows ?? [])
+  return raw.map(ensureSteps)
 }
 
 export async function getWorkflow(orgId: string, workflowId: string): Promise<Workflow> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/${workflowId}`)
   if (!res.ok) throw new Error(`Workflow error: ${res.status}`)
-  return res.json()
+  const d = await res.json()
+  return ensureSteps(d.workflow ?? d)
 }
 
 export async function createWorkflow(orgId: string, data: {
@@ -60,7 +70,8 @@ export async function createWorkflow(orgId: string, data: {
 }): Promise<Workflow> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}`, { method: 'POST', body: JSON.stringify(data) })
   if (!res.ok) throw new Error(`Create workflow error: ${res.status}`)
-  return res.json()
+  const d = await res.json()
+  return ensureSteps(d.workflow ?? d)
 }
 
 export async function updateWorkflow(orgId: string, workflowId: string, data: Partial<{
@@ -68,7 +79,8 @@ export async function updateWorkflow(orgId: string, workflowId: string, data: Pa
 }>): Promise<Workflow> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/${workflowId}`, { method: 'PATCH', body: JSON.stringify(data) })
   if (!res.ok) throw new Error(`Update workflow error: ${res.status}`)
-  return res.json()
+  const d = await res.json()
+  return ensureSteps(d.workflow ?? d)
 }
 
 export async function activateWorkflow(orgId: string, workflowId: string): Promise<void> {
@@ -90,7 +102,9 @@ export async function listTemplates(orgId: string, category?: string): Promise<W
   const q = category ? `?category=${category}` : ''
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/templates${q}`)
   if (!res.ok) return []
-  return res.json()
+  const d = await res.json()
+  const raw = Array.isArray(d) ? d : (d.templates ?? [])
+  return raw.map((t: Record<string, unknown>) => ({ ...t, steps: Array.isArray(t.steps) ? t.steps : [] })) as WorkflowTemplate[]
 }
 
 export async function createFromTemplate(orgId: string, templateId: string, nameOverride?: string): Promise<Workflow> {
@@ -98,7 +112,8 @@ export async function createFromTemplate(orgId: string, templateId: string, name
     method: 'POST', body: JSON.stringify({ template_id: templateId, name_override: nameOverride }),
   })
   if (!res.ok) throw new Error(`Template error: ${res.status}`)
-  return res.json()
+  const d = await res.json()
+  return ensureSteps(d.workflow ?? d)
 }
 
 export async function enrollPatients(orgId: string, workflowId: string, patientIds: string[]): Promise<void> {
@@ -111,17 +126,20 @@ export async function enrollPatients(orgId: string, workflowId: string, patientI
 export async function listEnrollments(orgId: string, workflowId: string): Promise<WorkflowEnrollment[]> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/${workflowId}/enrollments`)
   if (!res.ok) return []
-  return res.json()
+  const d = await res.json()
+  return Array.isArray(d) ? d : (d.enrollments ?? [])
 }
 
 export async function getWorkflowAnalytics(orgId: string, workflowId: string): Promise<Record<string, unknown>> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/${workflowId}/analytics`)
   if (!res.ok) return {}
-  return res.json()
+  const d = await res.json()
+  return d.analytics ?? d
 }
 
 export async function getWorkflowComparison(orgId: string): Promise<Record<string, unknown>[]> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/comparison`)
   if (!res.ok) return []
-  return res.json()
+  const d = await res.json()
+  return Array.isArray(d) ? d : (d.comparison ?? [])
 }

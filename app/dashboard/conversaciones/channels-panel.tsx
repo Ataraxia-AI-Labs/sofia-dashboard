@@ -430,7 +430,7 @@ function ComparisonRow({
                       channelCfg.color === 'text-status-success' ? '#06d6a0' :
                       channelCfg.color === 'text-brand-purple' ? '#8b5cf6' :
                       channelCfg.color === 'text-brand-cyan' ? '#06d6a0' :
-                      channelCfg.color === 'text-status-info' ? '#3b82f6' :
+                      channelCfg.color === 'text-status-info' ? '#8b5cf6' :
                       channelCfg.color === 'text-brand-gold' ? '#f5c842' :
                       '#8b5cf6'
                     } 60%, transparent)`,
