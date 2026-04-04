@@ -141,7 +141,7 @@ export default function OnboardingWizard({ org, orgId, onComplete }: Props) {
 
   const handleToggleDay = async (hour: BusinessHour) => {
     try {
-      await updateBusinessHour(hour.id, { is_open: !hour.is_open })
+      await updateBusinessHour(hour.id, { is_active: !hour.is_active })
       await loadExistingData()
     } catch (e) {
       Sentry.captureException(e)
@@ -362,7 +362,7 @@ FLUJO TÍPICO:
                   <div
                     key={h.id}
                     className={`p-2.5 rounded-md border transition-all ${
-                      h.is_open
+                      h.is_active
                         ? 'bg-surface-2 border-border'
                         : 'bg-surface-3/30 border-border/50'
                     }`}
@@ -372,31 +372,31 @@ FLUJO TÍPICO:
                         <button
                           onClick={() => handleToggleDay(h)}
                           className={`w-9 h-5 rounded-full transition-all relative flex-shrink-0 ${
-                            h.is_open ? 'bg-status-success' : 'bg-surface-3'
+                            h.is_active ? 'bg-status-success' : 'bg-surface-3'
                           }`}
-                          aria-label={`${h.is_open ? 'Desactivar' : 'Activar'} ${DAY_NAMES[h.day_of_week]}`}
+                          aria-label={`${h.is_active ? 'Desactivar' : 'Activar'} ${DAY_NAMES[h.day_of_week]}`}
                         >
                           <div
                             className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
-                              h.is_open ? 'left-4' : 'left-0.5'
+                              h.is_active ? 'left-4' : 'left-0.5'
                             }`}
                           />
                         </button>
                         <span
                           className={`text-xs font-mono font-medium w-24 ${
-                            h.is_open ? 'text-text-primary' : 'text-text-dim'
+                            h.is_active ? 'text-text-primary' : 'text-text-dim'
                           }`}
                         >
                           {DAY_NAMES[h.day_of_week]}
                         </span>
                       </div>
-                      {!h.is_open && (
+                      {!h.is_active && (
                         <span className="text-[10px] font-mono text-text-dim">Cerrado</span>
                       )}
                     </div>
 
                     {/* Time pickers — shown only when day is open */}
-                    {h.is_open && (
+                    {h.is_active && (
                       <div className="flex items-center gap-2 mt-3 ml-12 animate-fade-in">
                         <div className="flex items-center gap-1.5">
                           <label className="text-[9px] font-mono text-text-dim uppercase tracking-wider font-medium w-10">Abre</label>
