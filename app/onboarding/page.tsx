@@ -195,7 +195,7 @@ export default function OnboardingPage() {
       turnstileWidgetId.current = window.turnstile.render(turnstileRef.current, {
         sitekey: TURNSTILE_SITE_KEY,
         theme: 'dark',
-        size: 'invisible',
+        size: 'compact',
         callback: (token: string) => setTurnstileToken(token),
         'expired-callback': () => setTurnstileToken(''),
         'error-callback': () => setTurnstileToken(''),
