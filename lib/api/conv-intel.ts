@@ -180,13 +180,17 @@ export interface StaffMetric {
 export async function getCoachingPatterns(orgId: string): Promise<Record<string, unknown>[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/patterns`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  // Backend wraps: { patterns: [...], count: N }
+  return Array.isArray(data) ? data : (data?.patterns || [])
 }
 
 export async function getCoachingTips(orgId: string): Promise<CoachingTip[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/tips`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  // Backend wraps: { tips: [...], count: N }
+  return Array.isArray(data) ? data : (data?.tips || [])
 }
 
 export async function markTipRead(orgId: string, tipId: string): Promise<void> {
@@ -196,13 +200,18 @@ export async function markTipRead(orgId: string, tipId: string): Promise<void> {
 export async function getStaffMetrics(orgId: string): Promise<StaffMetric[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/staff-metrics`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  // Backend may return { metrics: [...] } or raw list or object
+  if (Array.isArray(data)) return data
+  if (data?.metrics && Array.isArray(data.metrics)) return data.metrics
+  return []
 }
 
 export async function getCoachingDashboard(orgId: string): Promise<Record<string, unknown>> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/dashboard`)
   if (!res.ok) return {}
-  return res.json()
+  const data = await res.json()
+  return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {}
 }
 
 // ============================================================

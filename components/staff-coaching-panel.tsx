@@ -24,9 +24,9 @@ export function StaffCoachingPanel({ orgId }: Props) {
         getStaffMetrics(orgId),
         getCoachingDashboard(orgId),
       ])
-      setTips(t)
-      setMetrics(m)
-      setDashboard(d)
+      setTips(Array.isArray(t) ? t : [])
+      setMetrics(Array.isArray(m) ? m : [])
+      setDashboard(d && typeof d === 'object' && !Array.isArray(d) ? d : {})
     } catch { /* */ }
     setLoading(false)
   }, [orgId])

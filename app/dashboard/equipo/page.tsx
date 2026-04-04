@@ -42,7 +42,7 @@ export default function EquipoPage() {
     setLoading(true)
     try {
       const data = await fetchTeamMembers(orgId)
-      setMembers(data)
+      setMembers(Array.isArray(data) ? data : [])
     } catch {
       // Load error — user sees empty state
     }

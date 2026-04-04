@@ -25,13 +25,13 @@ export async function fetchAuditLogs(
   params?: { action?: string; from?: string; to?: string; limit?: number; offset?: number }
 ): Promise<AuditLogResponse> {
   const q = new URLSearchParams()
-  q.set('org_id', orgId)
   if (params?.action) q.set('action', params.action)
   if (params?.from) q.set('from', params.from)
   if (params?.to) q.set('to', params.to)
   if (params?.limit) q.set('limit', String(params.limit))
   if (params?.offset) q.set('offset', String(params.offset))
-  const res = await authFetch(`${API_URL}/admin/audit-logs?${q}`)
+  const qs = q.toString()
+  const res = await authFetch(`${API_URL}/audit-logs/${orgId}${qs ? `?${qs}` : ''}`)
   if (!res.ok) throw new Error(`Audit logs error: ${res.status}`)
   return res.json()
 }
