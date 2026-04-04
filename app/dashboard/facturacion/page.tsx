@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrg } from '@/lib/org-context'
+import { isSuperAdmin } from '@/lib/admin-api'
 import {
   fetchSubscription,
   fetchInvoices,
@@ -56,10 +57,11 @@ const INVOICE_STYLE: Record<string, string> = {
 /* -- Component -- */
 
 export default function FacturacionPage() {
-  const { orgId } = useOrg()
+  const { orgId, user } = useOrg()
   const router = useRouter()
   const t = useTranslations('billing')
   const tCommon = useTranslations('common')
+  const isAdmin = isSuperAdmin(user)
 
   const [sub, setSub] = useState<Subscription | null>(null)
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -91,23 +93,25 @@ export default function FacturacionPage() {
       setInvoices(inv)
       setUsage(u)
       setWompiCfg(w)
-      // Revenue metrics (optional — may fail for non-admin users)
-      try {
-        const [mrr, churn, coh, fun, fore] = await Promise.all([
-          getMRR(), getChurn(), getCohorts(6), getRevenueFunnel(30), getRevenueForecast(3),
-        ])
-        setRevenueData(mrr)
-        setChurnData(churn)
-        setCohorts(coh)
-        setFunnel(fun)
-        setForecast(fore)
-        setShowRevenue(true)
-      } catch { /* revenue endpoints require admin — ok to fail */ }
+      // Revenue metrics — only for super admins (endpoints require is_super_admin)
+      if (isAdmin) {
+        try {
+          const [mrr, churn, coh, fun, fore] = await Promise.all([
+            getMRR(), getChurn(), getCohorts(6), getRevenueFunnel(30), getRevenueForecast(3),
+          ])
+          setRevenueData(mrr)
+          setChurnData(churn)
+          setCohorts(coh)
+          setFunnel(fun)
+          setForecast(fore)
+          setShowRevenue(true)
+        } catch { /* revenue endpoints failed — degrade gracefully */ }
+      }
     } catch {
       /* silently degrade — sections show empty states */
     }
     setLoading(false)
-  }, [orgId])
+  }, [orgId, isAdmin])
 
   useEffect(() => { load() }, [load])
 
