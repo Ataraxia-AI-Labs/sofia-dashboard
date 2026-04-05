@@ -89,8 +89,8 @@ describe('Audit API', () => {
   it('fetchAuditLogs sends correct URL with params', async () => {
     ok({ data: [], total: 0, limit: 50, offset: 0 })
     const result = await fetchAuditLogs('org-1', { action: 'LOGIN', limit: 10 })
-    expect(mockAuthFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/audit-logs?'))
-    expect(mockAuthFetch.mock.calls[0][0]).toContain('org_id=org-1')
+    expect(mockAuthFetch).toHaveBeenCalledWith(expect.stringContaining('/audit-logs/org-1'))
+    expect(mockAuthFetch.mock.calls[0][0]).toContain('/audit-logs/org-1')
     expect(mockAuthFetch.mock.calls[0][0]).toContain('action=LOGIN')
     expect(mockAuthFetch.mock.calls[0][0]).toContain('limit=10')
     expect(result.data).toEqual([])

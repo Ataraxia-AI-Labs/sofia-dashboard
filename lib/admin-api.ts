@@ -7,10 +7,10 @@ import type { User } from '@supabase/supabase-js'
 // SUPER ADMIN CHECK
 // ============================================================
 
-export function isSuperAdmin(user: User): boolean {
+export function isSuperAdmin(user: User | null | undefined): boolean {
   // C-02: Only trust server-side app_metadata (set via Supabase dashboard or admin API)
   // NEXT_PUBLIC_ADMIN_EMAILS was removed — it was exposed in the client bundle
-  return user.app_metadata?.is_super_admin === true
+  return user?.app_metadata?.is_super_admin === true
 }
 
 // ============================================================
