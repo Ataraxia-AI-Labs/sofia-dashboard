@@ -296,7 +296,7 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
             <div key={svc} className="flex items-center justify-between text-[10px] font-mono px-3 py-2 rounded-md bg-surface-2 border border-border">
               <span className="text-text-muted">{svc}</span>
               <div className="flex items-center gap-2">
-                <span className="text-text-primary">${price.toLocaleString()}</span>
+                <span className="text-text-primary">${Number(price).toLocaleString()}</span>
                 {!isReadOnly && (
                   <button onClick={() => setRules(r => {
                     const newMin = { ...r.min_prices }
@@ -323,7 +323,7 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
             <div key={svc} className="flex items-center justify-between text-[10px] font-mono px-3 py-2 rounded-md bg-surface-2 border border-border">
               <span className="text-text-muted">{svc}</span>
               <div className="flex items-center gap-2">
-                <span className="text-text-primary">${price.toLocaleString()}</span>
+                <span className="text-text-primary">${Number(price).toLocaleString()}</span>
                 {!isReadOnly && (
                   <button onClick={() => setRules(r => {
                     const newMax = { ...r.max_prices }

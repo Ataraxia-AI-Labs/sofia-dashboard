@@ -131,7 +131,7 @@ export default function CalendarioPage() {
     if (orgId && patients.length === 0) {
       try {
         const [pats, svcs] = await Promise.all([
-          fetchPatients(orgId, { limit: 500 }),
+          fetchPatients(orgId, { limit: 100 }),
           fetchServicesCatalog(orgId),
         ])
         setPatients(pats.patients || [])
@@ -248,7 +248,9 @@ export default function CalendarioPage() {
   }, [fromDate, viewMode, currentDate])
 
   const headerLabel = viewMode === 'week'
-    ? `${fromDate.getDate()} – ${toDate.getDate()} ${t(`months.${fromDate.getMonth()}`)} ${fromDate.getFullYear()}`
+    ? fromDate.getMonth() === toDate.getMonth()
+      ? `${fromDate.getDate()} – ${toDate.getDate()} ${t(`months.${fromDate.getMonth()}`)} ${fromDate.getFullYear()}`
+      : `${fromDate.getDate()} ${t(`months.${fromDate.getMonth()}`)} – ${toDate.getDate()} ${t(`months.${toDate.getMonth()}`)} ${toDate.getFullYear()}`
     : `${t(`months.${currentDate.getMonth()}`)} ${currentDate.getFullYear()}`
 
   return (

@@ -67,8 +67,8 @@ export default function CampanasPage() {
         listCampaigns(orgId),
         getCampaignAnalytics(orgId),
       ])
-      setCampaigns(list)
-      setAnalytics(anal)
+      setCampaigns(list ?? [])
+      setAnalytics(anal ?? null)
     } catch (err) {
       Sentry.captureException(err)
     }
@@ -212,10 +212,10 @@ export default function CampanasPage() {
       {/* ANALYTICS */}
       {analytics && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <AnalyticCard icon={<Megaphone size={16} />} value={analytics.total_campaigns.toString()} label={t('totalCampaigns')} />
-          <AnalyticCard icon={<Send size={16} />} value={analytics.total_sent.toLocaleString()} label={t('totalSent')} />
-          <AnalyticCard icon={<TrendingUp size={16} />} value={`${(analytics.avg_conversion_rate * 100).toFixed(1)}%`} label={t('avgConversion')} />
-          <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(analytics.total_revenue)} label={t('totalRevenue')} />
+          <AnalyticCard icon={<Megaphone size={16} />} value={(analytics.total_campaigns ?? 0).toString()} label={t('totalCampaigns')} />
+          <AnalyticCard icon={<Send size={16} />} value={(analytics.total_sent ?? 0).toLocaleString()} label={t('totalSent')} />
+          <AnalyticCard icon={<TrendingUp size={16} />} value={`${((analytics.avg_conversion_rate ?? 0) * 100).toFixed(1)}%`} label={t('avgConversion')} />
+          <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(analytics.total_revenue ?? 0)} label={t('totalRevenue')} />
         </div>
       )}
 

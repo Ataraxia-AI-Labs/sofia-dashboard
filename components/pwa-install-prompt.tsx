@@ -19,6 +19,9 @@ export function PWAInstallPrompt() {
       return
     }
 
+    // Check session-level dismiss first (prevents reappearing on every navigation)
+    if (sessionStorage.getItem('pwa-dismissed-session')) return
+
     const dismissed = localStorage.getItem('pwa-install-dismissed')
     if (dismissed) {
       const dismissedAt = parseInt(dismissed, 10)
@@ -50,6 +53,7 @@ export function PWAInstallPrompt() {
   const handleDismiss = useCallback(() => {
     setShowBanner(false)
     localStorage.setItem('pwa-install-dismissed', Date.now().toString())
+    sessionStorage.setItem('pwa-dismissed-session', '1')
   }, [])
 
   if (!showBanner || isInstalled) return null
