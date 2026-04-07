@@ -10,7 +10,7 @@
 
   const SCRIPT = document.currentScript;
   const ORG_ID = SCRIPT?.getAttribute('data-org');
-  const API_BASE = SCRIPT?.getAttribute('data-api') || 'https://sofia-backend-core.onrender.com';
+  const API_BASE = SCRIPT?.getAttribute('data-api') || 'https://ataraxia-api-core.onrender.com';
 
   if (!ORG_ID) {
     console.warn('[SofIA Widget] Missing data-org attribute');
