@@ -197,6 +197,31 @@
       config = { bot_name: 'SofIA', greeting: 'Hola! ¿En que te puedo ayudar?', primary_color: '#7c3aed', enabled: true };
     }
     render();
+    startPolling();
+  }
+
+  // ---------------------------------------------------------------
+  // Polling for doctor messages (takeover mode)
+  // ---------------------------------------------------------------
+  let pollInterval = null;
+  let lastPollTimestamp = new Date().toISOString();
+
+  function startPolling() {
+    if (pollInterval) return;
+    pollInterval = setInterval(async () => {
+      if (!isOpen) return;
+      try {
+        const res = await fetch(`${API_BASE}/webchat/${ORG_ID}/poll?session_id=${sessionId}&after=${encodeURIComponent(lastPollTimestamp)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.messages && data.messages.length > 0) {
+          for (const msg of data.messages) {
+            addMessage(msg.content, 'bot');
+            if (msg.timestamp) lastPollTimestamp = msg.timestamp;
+          }
+        }
+      } catch (e) { /* silent */ }
+    }, 5000);
   }
 
   if (document.readyState === 'loading') {
