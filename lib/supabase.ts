@@ -38,9 +38,47 @@ export async function parseAPIError(res: Response): Promise<string> {
 // Global handling for 401, 403, 429 per backend security spec
 // ============================================================
 
+// Cache getUser() result to avoid hammering Supabase Auth on every authFetch.
+// Supabase Auth rate-limits aggressive polling → ERR_CONNECTION_CLOSED.
+// User identity changes at most on sign-in/sign-out — cache for 60s is safe.
+let _userCache: { user: any; ts: number } | null = null
+let _inflightGetUser: Promise<any> | null = null
+const USER_CACHE_TTL_MS = 60000
+
+async function getCachedUser() {
+  const now = Date.now()
+  if (_userCache && (now - _userCache.ts) < USER_CACHE_TTL_MS) {
+    return { user: _userCache.user, error: null }
+  }
+  if (_inflightGetUser) {
+    return _inflightGetUser
+  }
+  _inflightGetUser = (async () => {
+    try {
+      const res = await supabase.auth.getUser()
+      if (res.data?.user && !res.error) {
+        _userCache = { user: res.data.user, ts: Date.now() }
+      }
+      return { user: res.data?.user ?? null, error: res.error }
+    } finally {
+      _inflightGetUser = null
+    }
+  })()
+  return _inflightGetUser
+}
+
+export function invalidateUserCache() {
+  _userCache = null
+}
+
+// Invalidate cache on auth state changes (sign-in / sign-out / token refresh)
+if (typeof window !== 'undefined') {
+  supabase.auth.onAuthStateChange(() => { _userCache = null })
+}
+
 export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
-  // AUTH-001: Validate user server-side first, then get session token
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  // AUTH-001: Validate user server-side first (cached 60s), then get session token
+  const { user, error: userError } = await getCachedUser()
   if (userError || !user) {
     Sentry.captureMessage(`[authFetch] User validation failed for: ${url}`, 'warning')
     throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')

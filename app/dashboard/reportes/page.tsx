@@ -15,14 +15,37 @@ export default function ReportesPage() {
   const [downloaded, setDownloaded] = useState(false)
   const [analytics, setAnalytics] = useState<Record<string, any> | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!orgId) return
+    if (!orgId) {
+      setIsLoading(false)
+      return
+    }
+    let cancelled = false
     setIsLoading(true)
+    setLoadError(null)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
     fetchFullAnalytics(orgId, dias)
-      .then(setAnalytics)
-      .catch(() => setAnalytics(null))
-      .finally(() => setIsLoading(false))
+      .then((data) => { if (!cancelled) setAnalytics(data) })
+      .catch((err) => {
+        if (cancelled) return
+        Sentry.captureException(err, { tags: { context: 'reportes_load' } })
+        setAnalytics(null)
+        setLoadError(err?.message || 'No se pudieron cargar los reportes')
+      })
+      .finally(() => {
+        clearTimeout(timeoutId)
+        if (!cancelled) setIsLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+      controller.abort()
+      clearTimeout(timeoutId)
+    }
   }, [orgId, dias])
 
   const handleDownload = async () => {
@@ -93,6 +116,20 @@ export default function ReportesPage() {
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-brand-purple" />
+        </div>
+      ) : !orgId ? (
+        <div className="glass-card p-8 text-center">
+          <p className="text-[10px] font-mono text-text-dim">No hay organizacion activa. Vuelve a iniciar sesion.</p>
+        </div>
+      ) : loadError ? (
+        <div className="glass-card p-8 text-center">
+          <p className="text-[10px] font-mono text-status-danger mb-2">{loadError}</p>
+          <button
+            onClick={() => setDias(dias)}
+            className="text-[9px] font-mono text-brand-purple hover:underline uppercase tracking-wider"
+          >
+            Reintentar
+          </button>
         </div>
       ) : (
         <>

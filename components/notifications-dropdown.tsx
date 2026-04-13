@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { usePathname } from 'next/navigation'
 import { Bell, Calendar, MessageSquare, AlertTriangle, CreditCard, X } from 'lucide-react'
 import { authFetch, API_URL } from '@/lib/supabase'
 import { timeAgo } from '@/lib/api'
@@ -25,6 +26,20 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
   const [open, setOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
+  const pathname = usePathname()
+
+  // Close panel automatically on route change
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open])
 
   const loadNotifications = useCallback(async () => {
     if (!orgId) return
