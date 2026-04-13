@@ -134,7 +134,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
       } flex-col w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 glass-card overflow-hidden`}>
         {/* Channel filter tabs */}
         <div className="px-3 pt-3 pb-2 border-b border-border flex-shrink-0">
-          <div className="flex gap-1.5 mb-2.5 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="flex gap-1 mb-2.5 flex-wrap">
             {CHANNELS.map(ch => {
               const isActive = channelFilter === ch
               if (ch === '') {
@@ -142,7 +142,8 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                   <button
                     key="all"
                     onClick={() => handleFilterChange('')}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all whitespace-nowrap ${
+                    title={t('allChannels')}
+                    className={`px-2 py-1 rounded-md text-[9px] font-mono font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
                       isActive
                         ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                         : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
@@ -158,14 +159,16 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                 <button
                   key={ch}
                   onClick={() => handleFilterChange(channelFilter === ch ? '' : ch)}
-                  className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                  title={cfg.label}
+                  aria-label={cfg.label}
+                  className={`px-2 py-1 rounded-md text-[9px] font-mono font-semibold uppercase tracking-wider transition-all flex items-center gap-1 whitespace-nowrap ${
                     isActive
                       ? `${cfg.bg} ${cfg.color} border ${cfg.border}`
                       : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
                   }`}
                 >
-                  <Icon size={11} />
-                  <span>{cfg.label}</span>
+                  <Icon size={10} />
+                  <span className={isActive ? '' : 'hidden xl:inline'}>{cfg.label}</span>
                 </button>
               )
             })}

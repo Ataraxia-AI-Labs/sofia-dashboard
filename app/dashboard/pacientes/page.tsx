@@ -376,7 +376,7 @@ export default function PacientesPage() {
       {/* TABLE */}
       <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[760px]">
             <thead>
               <tr className="border-b border-border">
                 {[
@@ -450,7 +450,7 @@ export default function PacientesPage() {
                     <td className="px-4 py-3">
                       <span className="text-[10px] font-mono text-text-muted">{p.city || '\u2014'}</span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <span className="text-[9px] font-mono text-text-dim">{timeAgo(p.created_at)}</span>
                     </td>
                   </tr>

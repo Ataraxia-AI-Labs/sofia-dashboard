@@ -30,7 +30,9 @@ export interface ReferralAnalytics {
 export async function getReferralProgram(orgId: string): Promise<ReferralProgram | null> {
   const res = await authFetch(`${API_URL}/api/growth/engagement/${orgId}/referrals/program`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  if (data && typeof data === 'object' && 'program' in data) return data.program
+  return data
 }
 
 export async function updateReferralProgram(orgId: string, data: Partial<ReferralProgram>): Promise<ReferralProgram> {

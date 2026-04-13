@@ -13,6 +13,12 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      // Browsers auto-request /favicon.ico — alias to our SVG to avoid 404s
+      { source: '/favicon.ico', destination: '/favicon.svg' },
+    ]
+  },
   async headers() {
     return [
       {

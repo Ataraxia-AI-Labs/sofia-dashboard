@@ -1003,8 +1003,8 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             {time}
           </span>
 
-          {/* Intent badge — hide internal markers */}
-          {message.intent && !['OUTBOUND_FAILED', ''].includes(message.intent) && (
+          {/* Intent badge — hide internal markers + UNKNOWN (no signal value) */}
+          {message.intent && !['OUTBOUND_FAILED', '', 'UNKNOWN', 'OTRO', 'SYSTEM_ERROR'].includes(message.intent) && (
             <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-brand-purple/8 border border-brand-purple/15 text-[9px] font-semibold text-brand-purple-light">
               <Zap size={8} />
               {message.intent}
