@@ -29,7 +29,7 @@ const DEFAULT_CONFIG: WebchatConfig = {
 
 async function getWebchatConfig(orgId: string): Promise<WebchatConfig> {
   try {
-    const res = await authFetch(`${API_URL}/api/webchat/${orgId}/config`)
+    const res = await authFetch(`${API_URL}/webchat/${orgId}/config`)
     if (!res.ok) return DEFAULT_CONFIG
     return res.json()
   } catch { return DEFAULT_CONFIG }
@@ -37,7 +37,7 @@ async function getWebchatConfig(orgId: string): Promise<WebchatConfig> {
 
 async function updateWebchatConfig(orgId: string, data: Partial<WebchatConfig>): Promise<boolean> {
   try {
-    const res = await authFetch(`${API_URL}/api/webchat/${orgId}/config`, {
+    const res = await authFetch(`${API_URL}/webchat/${orgId}/config`, {
       method: 'PATCH', body: JSON.stringify(data),
     })
     return res.ok
@@ -81,7 +81,10 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
     setSaving(false)
   }
 
-  const embedCode = `<script src="https://sofia-widget.vercel.app/widget.js" data-org-id="${orgId}" data-color="${config.primary_color}" data-position="${config.position}" async></script>`
+  const widgetOrigin = typeof window !== 'undefined'
+    ? window.location.origin
+    : (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://sofia-dashboard-mu.vercel.app')
+  const embedCode = `<script src="${widgetOrigin}/widget.js" data-org-id="${orgId}" data-color="${config.primary_color}" data-position="${config.position}" async></script>`
 
   const handleCopy = () => {
     navigator.clipboard.writeText(embedCode)
@@ -237,19 +240,72 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
       {/* Preview */}
       <div className="glass-card p-4">
         <h4 className="text-[10px] font-mono font-semibold text-text-primary mb-3">{t('webchat.preview') || 'Vista previa'}</h4>
-        <div className="relative h-32 bg-surface-2 rounded-lg border border-border overflow-hidden">
-          <div className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 flex flex-col items-${config.position === 'bottom-right' ? 'end' : 'start'} gap-2`}>
-            <div className="bg-white rounded-lg shadow-lg p-3 max-w-[200px] border">
-              <p className="text-[9px] text-text-primary">{config.welcome_message}</p>
+        <div className="relative h-[440px] bg-gradient-to-br from-surface-2 to-surface rounded-lg border border-border overflow-hidden">
+          {/* Fake webpage backdrop */}
+          <div className="absolute inset-0 p-4">
+            <div className="h-2 w-24 bg-surface-3 rounded mb-2" />
+            <div className="h-1.5 w-full bg-surface-3/60 rounded mb-1" />
+            <div className="h-1.5 w-3/4 bg-surface-3/60 rounded mb-1" />
+            <div className="h-1.5 w-5/6 bg-surface-3/60 rounded" />
+          </div>
+
+          {/* Opened widget window */}
+          <div
+            className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 w-[280px]`}
+            style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
+          >
+            <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-black/5 flex flex-col" style={{ height: 360 }}>
+              {/* Header */}
+              <div className="flex items-center gap-2 px-3 py-2.5" style={{ background: config.primary_color, color: '#fff' }}>
+                <div className="w-6 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[8px] font-semibold">
+                  {(config.bubble_text || 'SofIA').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[9px] font-semibold uppercase tracking-wide truncate">SofIA</div>
+                  <div className="text-[7px] opacity-75 uppercase tracking-wider flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-green-400" /> EN LINEA
+                  </div>
+                </div>
+                <span className="text-[14px] opacity-80 leading-none">&times;</span>
+              </div>
+              {/* Messages */}
+              <div className="flex-1 p-3 flex flex-col gap-1.5 bg-gray-50 overflow-hidden">
+                <div className="self-start max-w-[78%] bg-white border border-gray-200 rounded-[10px] rounded-bl-[3px] px-2.5 py-1.5 text-[9px] text-gray-900 leading-snug">
+                  {config.welcome_message}
+                </div>
+                <div className="self-end max-w-[78%] rounded-[10px] rounded-br-[3px] px-2.5 py-1.5 text-[9px] text-white leading-snug" style={{ background: config.primary_color }}>
+                  Hola, quiero agendar una cita
+                </div>
+                <div className="self-start max-w-[78%] bg-white border border-gray-200 rounded-[10px] rounded-bl-[3px] px-2.5 py-1.5 text-[9px] text-gray-900 leading-snug">
+                  ¡Claro! Puedo ayudarte. ¿Que procedimiento te interesa?
+                </div>
+              </div>
+              {/* Input */}
+              <div className="flex items-center gap-1.5 px-2 py-2 border-t border-gray-200 bg-white">
+                <div className="flex-1 h-6 rounded-md border border-gray-300 bg-gray-50 px-2 flex items-center text-[8px] text-gray-400">
+                  Escribe un mensaje...
+                </div>
+                <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: config.primary_color }}>
+                  <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                </div>
+              </div>
+              <div className="text-center py-1 text-[6px] tracking-[1.5px] text-gray-400 uppercase bg-white border-t border-gray-100">
+                POWERED BY <span style={{ color: config.primary_color }} className="font-semibold">SOFIA</span>
+              </div>
             </div>
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
-              style={{ backgroundColor: config.primary_color }}
-            >
-              <MessageCircle size={20} className="text-white" />
+          </div>
+
+          {/* Bubble (closed state indicator) */}
+          <div
+            className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 opacity-0 pointer-events-none`}
+            aria-hidden
+          >
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: config.primary_color }}>
+              <MessageCircle size={18} className="text-white" />
             </div>
           </div>
         </div>
+        <p className="mt-2 text-[8px] font-mono text-text-dim uppercase tracking-wider">Asi se vera en el sitio web del cliente</p>
       </div>
 
       {/* Save */}
