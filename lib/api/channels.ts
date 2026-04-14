@@ -150,6 +150,9 @@ export async function getConversationDetail(
     const direction = msg.direction || 'INBOUND'
     const content = msg.content || msg.raw_content || ''
     const aiResponse = msg.ai_response || ''
+    const senderType = msg.sender_type || ''
+    const aiAnalysis = msg.ai_analysis || {}
+    const isAutomatedBot = senderType === 'BOT' || aiAnalysis?.is_automated === true || !!aiAnalysis?.bot
     const base = { id: msg.id, channel, created_at: msg.created_at || '' }
 
     const isTakeover = aiResponse?.includes('[Human takeover]')
@@ -167,13 +170,27 @@ export async function getConversationDetail(
       continue
     }
 
-    // Patient message (INBOUND)
-    if (content) {
+    // Bot-initiated OUTBOUND (reminder, hunter, nurse, birthday): show as single OUTBOUND.
+    // These messages have direction=OUTBOUND with no preceding patient input.
+    if (direction === 'OUTBOUND' && isAutomatedBot) {
+      const text = aiResponse || content
+      if (text) {
+        result.push({ ...base, direction: 'OUTBOUND', message_content: text })
+      }
+      continue
+    }
+
+    // Patient message (INBOUND) — only push if direction is INBOUND OR direction missing
+    if (content && direction !== 'OUTBOUND') {
       result.push({ ...base, direction: 'INBOUND', message_content: content })
     }
     // SofIA response (OUTBOUND) — skip internal markers
     if (aiResponse && !isTakeover && !isFailed) {
       result.push({ ...base, id: `${msg.id}-ai`, direction: 'OUTBOUND', message_content: aiResponse })
+    }
+    // Edge case: OUTBOUND with content but no aiResponse (legacy bot logs that wrote raw_content)
+    if (direction === 'OUTBOUND' && content && !aiResponse) {
+      result.push({ ...base, direction: 'OUTBOUND', message_content: content })
     }
     // Fallback: empty message
     if (!content && !aiResponse) {
