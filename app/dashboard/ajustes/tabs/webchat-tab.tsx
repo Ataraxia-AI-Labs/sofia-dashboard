@@ -249,47 +249,47 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
             <div className="h-1.5 w-5/6 bg-surface-3/60 rounded" />
           </div>
 
-          {/* Opened widget window */}
+          {/* Opened widget window — matches live widget 1:1 */}
           <div
-            className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 w-[280px]`}
-            style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}
+            className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 w-[300px]`}
+            style={{ fontFamily: "'Inter', -apple-system, system-ui, sans-serif" }}
           >
-            <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-black/5 flex flex-col" style={{ height: 360 }}>
+            <div className="bg-white rounded-2xl overflow-hidden flex flex-col" style={{ height: 380, boxShadow: '0 20px 60px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.06)' }}>
               {/* Header */}
-              <div className="flex items-center gap-2 px-3 py-2.5" style={{ background: config.primary_color, color: '#fff' }}>
-                <div className="w-6 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-[8px] font-semibold">
+              <div className="flex items-center gap-2.5 px-3 py-2.5" style={{ background: config.primary_color, color: '#fff' }}>
+                <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-semibold">
                   {(config.bubble_text || 'SofIA').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[9px] font-semibold uppercase tracking-wide truncate">SofIA</div>
-                  <div className="text-[7px] opacity-75 uppercase tracking-wider flex items-center gap-1">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider truncate" style={{ fontFamily: "'JetBrains Mono', monospace" }}>SofIA</div>
+                  <div className="text-[7px] opacity-80 uppercase tracking-[1px] flex items-center gap-1 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     <span className="w-1 h-1 rounded-full bg-green-400" /> EN LINEA
                   </div>
                 </div>
-                <span className="text-[14px] opacity-80 leading-none">&times;</span>
+                <span className="text-[16px] opacity-80 leading-none font-light">&times;</span>
               </div>
               {/* Messages */}
-              <div className="flex-1 p-3 flex flex-col gap-1.5 bg-gray-50 overflow-hidden">
-                <div className="self-start max-w-[78%] bg-white border border-gray-200 rounded-[10px] rounded-bl-[3px] px-2.5 py-1.5 text-[9px] text-gray-900 leading-snug">
+              <div className="flex-1 px-3 py-3 flex flex-col gap-2 overflow-hidden" style={{ background: '#f8f8fa' }}>
+                <div className="self-start max-w-[80%] bg-white rounded-[14px] px-2.5 py-1.5 text-[10px] text-gray-800 leading-snug" style={{ boxShadow: '0 1px 2px rgba(0,0,0,.04)', border: '1px solid rgba(0,0,0,.04)' }}>
                   {config.welcome_message}
                 </div>
-                <div className="self-end max-w-[78%] rounded-[10px] rounded-br-[3px] px-2.5 py-1.5 text-[9px] text-white leading-snug" style={{ background: config.primary_color }}>
+                <div className="self-end max-w-[80%] rounded-[14px] px-2.5 py-1.5 text-[10px] text-white leading-snug" style={{ background: config.primary_color, boxShadow: `0 2px 6px ${config.primary_color}33` }}>
                   Hola, quiero agendar una cita
                 </div>
-                <div className="self-start max-w-[78%] bg-white border border-gray-200 rounded-[10px] rounded-bl-[3px] px-2.5 py-1.5 text-[9px] text-gray-900 leading-snug">
-                  ¡Claro! Puedo ayudarte. ¿Que procedimiento te interesa?
+                <div className="self-start max-w-[80%] bg-white rounded-[14px] px-2.5 py-1.5 text-[10px] text-gray-800 leading-snug" style={{ boxShadow: '0 1px 2px rgba(0,0,0,.04)', border: '1px solid rgba(0,0,0,.04)' }}>
+                  ¡Claro! ¿Que procedimiento te interesa?
                 </div>
               </div>
               {/* Input */}
-              <div className="flex items-center gap-1.5 px-2 py-2 border-t border-gray-200 bg-white">
-                <div className="flex-1 h-6 rounded-md border border-gray-300 bg-gray-50 px-2 flex items-center text-[8px] text-gray-400">
+              <div className="flex items-center gap-2 px-3 py-2 bg-white" style={{ borderTop: '1px solid #f0f0f3' }}>
+                <div className="flex-1 h-7 rounded-full border border-gray-200 bg-[#f8f8fa] px-3 flex items-center text-[9px] text-gray-400">
                   Escribe un mensaje...
                 </div>
-                <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: config.primary_color }}>
-                  <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: config.primary_color }}>
+                  <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
                 </div>
               </div>
-              <div className="text-center py-1 text-[6px] tracking-[1.5px] text-gray-400 uppercase bg-white border-t border-gray-100">
+              <div className="text-center py-1 text-[6px] tracking-[1.5px] text-gray-400 uppercase bg-white" style={{ fontFamily: "'JetBrains Mono', monospace", borderTop: '1px solid #f3f4f6' }}>
                 POWERED BY <span style={{ color: config.primary_color }} className="font-semibold">SOFIA</span>
               </div>
             </div>
