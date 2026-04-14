@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from 'react'
 import Script from 'next/script'
 import { fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded, connectVoice, disconnectVoice } from '@/lib/api/channels'
 import { updateOrganization } from '@/lib/api'
-import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff } from 'lucide-react'
+import { API_URL, authFetch } from '@/lib/api/helpers'
+import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff, Globe, ArrowRight } from 'lucide-react'
 import type { Organization } from '@/types'
 
 interface ChannelsTabProps {
@@ -13,6 +14,7 @@ interface ChannelsTabProps {
   isReadOnly: boolean
   onMessage: (msg: string) => void
   onRefresh: () => void
+  onNavigateToTab?: (tab: string) => void
 }
 
 const FB_CONFIG_ID = process.env.NEXT_PUBLIC_FB_CONFIG_ID || ''
@@ -35,7 +37,7 @@ declare global {
   }
 }
 
-export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: ChannelsTabProps) {
+export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNavigateToTab }: ChannelsTabProps) {
   const [status, setStatus] = useState<Record<string, { connected: boolean; phone_id?: string }>>({})
   const [loading, setLoading] = useState(true)
   const [phoneId, setPhoneId] = useState('')
@@ -63,6 +65,24 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
   const voiceConnected = !!status['voice']?.connected
   const voicePerClinic = !!(status['voice'] as { per_clinic?: boolean } | undefined)?.per_clinic
   const voicePhoneConnected = (status['voice'] as { phone_number?: string } | undefined)?.phone_number || ''
+
+  // Web Chat status — fetched separately since it has its own config endpoint
+  const [webchatCfg, setWebchatCfg] = useState<{ enabled: boolean; allowed_domains: string[]; primary_color: string } | null>(null)
+
+  useEffect(() => {
+    if (!orgId) return
+    authFetch(`${API_URL}/webchat/${orgId}/config`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data) return
+        setWebchatCfg({
+          enabled: !!data.enabled,
+          allowed_domains: Array.isArray(data.allowed_domains) ? data.allowed_domains : [],
+          primary_color: data.primary_color || '#7C3AED',
+        })
+      })
+      .catch(() => {})
+  }, [orgId])
 
   useEffect(() => {
     setTransferNumber(currentTransferNumber)
@@ -236,10 +256,75 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
         />
       )}
 
+      {/* Web Chat card — links to its own dedicated tab */}
+      <div className="glass-card p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              style={{
+                background: webchatCfg?.enabled ? `${webchatCfg.primary_color}15` : 'rgb(40 40 50 / .4)',
+              }}
+            >
+              <Globe size={20} style={{ color: webchatCfg?.enabled ? webchatCfg.primary_color : undefined }} className={webchatCfg?.enabled ? '' : 'text-text-dim'} />
+            </div>
+            <div>
+              <h3 className="text-xs font-mono font-semibold text-text-primary">Web Chat Widget</h3>
+              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                {webchatCfg === null ? (
+                  <span className="text-[10px] font-mono text-text-dim">Cargando...</span>
+                ) : webchatCfg.enabled ? (
+                  <>
+                    <CheckCircle size={11} className="text-status-success" />
+                    <span className="text-[10px] font-mono text-status-success font-medium">Activo</span>
+                    {webchatCfg.allowed_domains.length > 0 ? (
+                      <span className="text-[10px] font-mono text-text-dim">· {webchatCfg.allowed_domains.length} dominio{webchatCfg.allowed_domains.length === 1 ? '' : 's'}</span>
+                    ) : (
+                      <span className="text-[10px] font-mono text-status-warning">· sin restriccion de dominios</span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <XCircle size={11} className="text-text-dim" />
+                    <span className="text-[10px] font-mono text-text-dim font-medium">Desactivado</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => onNavigateToTab?.('webchat')}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-surface-3 border border-border hover:border-brand-purple/30 text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider transition-colors"
+          >
+            Configurar
+            <ArrowRight size={11} />
+          </button>
+        </div>
+      </div>
+
       {CHANNELS.map((ch) => {
         const Icon = ch.icon
         const channelStatus = status[ch.key]
         const connected = channelStatus?.connected || false
+
+        // Build status detail per channel
+        let statusDetail = ''
+        if (connected) {
+          if (ch.key === 'whatsapp' && channelStatus?.phone_id) statusDetail = `Phone ID: ${channelStatus.phone_id}`
+          else if (ch.key === 'voice') {
+            const v = channelStatus as { phone_number?: string; per_clinic?: boolean }
+            if (v.phone_number) statusDetail = v.per_clinic ? v.phone_number : `${v.phone_number} (modo demo)`
+            else statusDetail = '(modo demo · env global)'
+          }
+          else if (ch.key === 'instagram') {
+            const ig = channelStatus as { page_id?: string }
+            if (ig.page_id) statusDetail = `Page ID: ${ig.page_id}`
+          }
+          else if (ch.key === 'messenger') {
+            const fb = channelStatus as { page_id?: string }
+            if (fb.page_id) statusDetail = `Page ID: ${fb.page_id}`
+          }
+        }
 
         return (
           <div key={ch.key} className="glass-card p-4">
@@ -250,13 +335,13 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
                 </div>
                 <div>
                   <h3 className="text-xs font-mono font-semibold text-text-primary">{ch.label}</h3>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     {connected ? (
                       <>
                         <CheckCircle size={11} className="text-status-success" />
                         <span className="text-[10px] font-mono text-status-success font-medium">Conectado</span>
-                        {channelStatus?.phone_id && (
-                          <span className="text-[10px] font-mono text-text-dim ml-1">ID: {channelStatus.phone_id}</span>
+                        {statusDetail && (
+                          <span className="text-[10px] font-mono text-text-dim ml-1">· {statusDetail}</span>
                         )}
                       </>
                     ) : (

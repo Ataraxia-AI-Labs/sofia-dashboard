@@ -140,7 +140,7 @@ export default function AjustesPage() {
         <BotsTab orgId={orgId} />
       )}
       {activeTab === 'channels' && (
-        <ChannelsTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} />
+        <ChannelsTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} onNavigateToTab={setActiveTab} />
       )}
       {activeTab === 'security' && (
         <SecurityTab />
