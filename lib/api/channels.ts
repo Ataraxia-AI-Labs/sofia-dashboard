@@ -12,7 +12,35 @@ export interface ChannelStatus {
   whatsapp: { connected: boolean; phone_id?: string }
   instagram: { connected: boolean }
   messenger: { connected: boolean }
-  voice: { connected: boolean }
+  voice: { connected: boolean; phone_number?: string | null; per_clinic?: boolean }
+}
+
+export interface ConnectVoiceData {
+  account_sid: string
+  auth_token: string
+  phone_number: string
+  transfer_number?: string
+}
+
+export async function connectVoice(orgId: string, data: ConnectVoiceData) {
+  const res = await authFetch(`${API_URL}/channels/${orgId}/voice`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }))
+    throw new Error(err.detail || `Connect Voice failed: ${res.status}`)
+  }
+  return res.json()
+}
+
+export async function disconnectVoice(orgId: string) {
+  const res = await authFetch(`${API_URL}/channels/${orgId}/voice`, { method: 'DELETE' })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }))
+    throw new Error(err.detail || `Disconnect Voice failed: ${res.status}`)
+  }
+  return res.json()
 }
 
 export async function fetchChannelStatus(orgId: string): Promise<ChannelStatus> {

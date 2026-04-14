@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Script from 'next/script'
-import { fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded } from '@/lib/api/channels'
+import { fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded, connectVoice, disconnectVoice } from '@/lib/api/channels'
 import { updateOrganization } from '@/lib/api'
-import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save } from 'lucide-react'
+import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff } from 'lucide-react'
 import type { Organization } from '@/types'
 
 interface ChannelsTabProps {
@@ -22,7 +22,7 @@ const CHANNELS = [
   { key: 'whatsapp', label: 'WhatsApp Business', icon: MessageCircle, color: 'text-status-success', configurable: true },
   { key: 'instagram', label: 'Instagram DM', icon: Instagram, color: 'text-brand-purple', configurable: false },
   { key: 'messenger', label: 'Messenger', icon: MessageCircle, color: 'text-status-info', configurable: false },
-  { key: 'voice', label: 'Voice AI', icon: PhoneCall, color: 'text-brand-cyan', configurable: false },
+  { key: 'voice', label: 'Voice AI', icon: PhoneCall, color: 'text-brand-cyan', configurable: true },
 ] as const
 
 declare global {
@@ -51,9 +51,66 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
   const [transferNumber, setTransferNumber] = useState(currentTransferNumber)
   const [savingTransfer, setSavingTransfer] = useState(false)
 
+  // Voice (Twilio) per-clinic credentials
+  const [voiceAccountSid, setVoiceAccountSid] = useState('')
+  const [voiceAuthToken, setVoiceAuthToken] = useState('')
+  const [voicePhoneNumber, setVoicePhoneNumber] = useState('')
+  const [showAuthToken, setShowAuthToken] = useState(false)
+  const [voiceConnecting, setVoiceConnecting] = useState(false)
+  const [voiceDisconnecting, setVoiceDisconnecting] = useState(false)
+  const [showVoiceForm, setShowVoiceForm] = useState(false)
+
+  const voiceConnected = !!status['voice']?.connected
+  const voicePerClinic = !!(status['voice'] as { per_clinic?: boolean } | undefined)?.per_clinic
+  const voicePhoneConnected = (status['voice'] as { phone_number?: string } | undefined)?.phone_number || ''
+
   useEffect(() => {
     setTransferNumber(currentTransferNumber)
   }, [currentTransferNumber])
+
+  const handleConnectVoice = async () => {
+    if (isReadOnly) return
+    if (!voiceAccountSid.trim() || !voiceAuthToken.trim() || !voicePhoneNumber.trim()) {
+      onMessage('Completa Account SID, Auth Token y numero')
+      return
+    }
+    setVoiceConnecting(true)
+    try {
+      await connectVoice(orgId, {
+        account_sid: voiceAccountSid.trim(),
+        auth_token: voiceAuthToken.trim(),
+        phone_number: voicePhoneNumber.trim(),
+        transfer_number: transferNumber.trim() || undefined,
+      })
+      onMessage('Voice AI conectado — webhook configurado en Twilio')
+      setStatus(prev => ({ ...prev, voice: { connected: true, phone_number: voicePhoneNumber.trim(), per_clinic: true } as { connected: boolean; phone_id?: string } }))
+      setVoiceAccountSid('')
+      setVoiceAuthToken('')
+      setVoicePhoneNumber('')
+      setShowVoiceForm(false)
+      onRefresh()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error conectando Voice AI'
+      onMessage(msg)
+    }
+    setVoiceConnecting(false)
+  }
+
+  const handleDisconnectVoice = async () => {
+    if (isReadOnly) return
+    if (!confirm('Desconectar Voice AI? Las credenciales Twilio se eliminaran de la clinica.')) return
+    setVoiceDisconnecting(true)
+    try {
+      await disconnectVoice(orgId)
+      onMessage('Voice AI desconectado')
+      setStatus(prev => ({ ...prev, voice: { connected: false } as { connected: boolean; phone_id?: string } }))
+      onRefresh()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error desconectando Voice AI'
+      onMessage(msg)
+    }
+    setVoiceDisconnecting(false)
+  }
 
   const handleSaveTransferNumber = async () => {
     if (isReadOnly || !orgId) return
@@ -284,38 +341,144 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Ch
         )
       })}
 
-      {/* Voice AI — Transfer Number Configuration */}
-      {status['voice']?.connected && !isReadOnly && (
-        <div className="glass-card p-4 space-y-3">
-          <div className="flex items-center gap-2.5">
-            <PhoneCall size={14} className="text-brand-cyan" />
-            <h3 className="text-xs font-mono font-semibold text-text-primary">Configuracion Voice AI</h3>
-          </div>
-          <div>
-            <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">
-              Numero de transferencia de llamadas
-            </label>
-            <p className="text-[9px] font-mono text-text-dim mb-2">
-              Cuando SofIA detecta que el paciente necesita hablar con un humano, la llamada se transfiere a este numero.
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="tel"
-                value={transferNumber}
-                onChange={(e) => setTransferNumber(e.target.value)}
-                placeholder="+573001234567"
-                className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
-              />
-              <button
-                onClick={handleSaveTransferNumber}
-                disabled={savingTransfer || transferNumber.trim() === currentTransferNumber}
-                className="px-3 py-2 rounded-md bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-[10px] font-mono font-semibold hover:bg-brand-cyan/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
-              >
-                {savingTransfer ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
-                Guardar
-              </button>
+      {/* Voice AI — Twilio per-clinic credentials + transfer number */}
+      {!isReadOnly && (
+        <div className="glass-card p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <PhoneCall size={14} className="text-brand-cyan" />
+              <h3 className="text-xs font-mono font-semibold text-text-primary">Voice AI (Twilio)</h3>
+              {voicePerClinic ? (
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-status-success/10 border border-status-success/20 text-status-success uppercase tracking-wider">Conectado</span>
+              ) : voiceConnected ? (
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-status-warning/10 border border-status-warning/20 text-status-warning uppercase tracking-wider">Modo demo (env global)</span>
+              ) : (
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface-3 border border-border text-text-dim uppercase tracking-wider">Desconectado</span>
+              )}
             </div>
+            {voicePerClinic && (
+              <button
+                onClick={handleDisconnectVoice}
+                disabled={voiceDisconnecting}
+                className="text-[9px] font-mono text-status-danger hover:underline uppercase tracking-wider disabled:opacity-50"
+              >
+                {voiceDisconnecting ? 'Desconectando...' : 'Desconectar'}
+              </button>
+            )}
           </div>
+
+          {voicePerClinic && voicePhoneConnected && (
+            <div className="text-[10px] font-mono text-text-muted px-3 py-2 bg-surface-2 border border-border rounded-md">
+              Numero activo: <span className="text-brand-cyan font-semibold">{voicePhoneConnected}</span>
+            </div>
+          )}
+
+          {!voicePerClinic && (
+            <>
+              <button
+                onClick={() => setShowVoiceForm(v => !v)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-surface-3 border border-border hover:border-brand-cyan/30 transition-colors"
+              >
+                <span className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider">Conectar mi cuenta Twilio</span>
+                {showVoiceForm ? <ChevronUp size={12} className="text-text-dim" /> : <ChevronDown size={12} className="text-text-dim" />}
+              </button>
+
+              {showVoiceForm && (
+                <div className="space-y-3 p-3 rounded-md bg-surface-2 border border-border">
+                  <p className="text-[9px] font-mono text-text-dim leading-relaxed">
+                    Conecta tu cuenta Twilio para que SofIA atienda tu numero. Encuentra Account SID y Auth Token en console.twilio.com.
+                  </p>
+
+                  <div>
+                    <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Account SID</label>
+                    <input
+                      type="text"
+                      value={voiceAccountSid}
+                      onChange={(e) => setVoiceAccountSid(e.target.value)}
+                      placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Auth Token</label>
+                    <div className="relative">
+                      <input
+                        type={showAuthToken ? 'text' : 'password'}
+                        value={voiceAuthToken}
+                        onChange={(e) => setVoiceAuthToken(e.target.value)}
+                        placeholder="********************************"
+                        className="w-full px-3 py-2 pr-9 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowAuthToken(v => !v)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary"
+                        aria-label={showAuthToken ? 'Ocultar' : 'Mostrar'}
+                      >
+                        {showAuthToken ? <EyeOff size={12} /> : <Eye size={12} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Numero Twilio (E.164)</label>
+                    <input
+                      type="tel"
+                      value={voicePhoneNumber}
+                      onChange={(e) => setVoicePhoneNumber(e.target.value)}
+                      placeholder="+573001234567"
+                      className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleConnectVoice}
+                    disabled={voiceConnecting || !voiceAccountSid || !voiceAuthToken || !voicePhoneNumber}
+                    className="w-full px-3 py-2 rounded-md bg-brand-cyan text-void text-[10px] font-mono font-semibold uppercase tracking-wider hover:bg-brand-cyan/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  >
+                    {voiceConnecting ? (
+                      <><Loader2 size={12} className="animate-spin" /> Validando con Twilio...</>
+                    ) : (
+                      <><Zap size={12} /> Conectar Voice AI</>
+                    )}
+                  </button>
+
+                  <p className="text-[8px] font-mono text-text-dim/70 leading-relaxed">
+                    Validamos las credenciales y configuramos automaticamente los webhooks de tu numero (Voice + Status Callback).
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {voiceConnected && (
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block">
+                Numero de transferencia
+              </label>
+              <p className="text-[9px] font-mono text-text-dim">
+                Cuando un paciente pide hablar con humano, la llamada se transfiere a este numero.
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="tel"
+                  value={transferNumber}
+                  onChange={(e) => setTransferNumber(e.target.value)}
+                  placeholder="+573001234567"
+                  className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                />
+                <button
+                  onClick={handleSaveTransferNumber}
+                  disabled={savingTransfer || transferNumber.trim() === currentTransferNumber}
+                  className="px-3 py-2 rounded-md bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-[10px] font-mono font-semibold hover:bg-brand-cyan/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                >
+                  {savingTransfer ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+                  Guardar
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
