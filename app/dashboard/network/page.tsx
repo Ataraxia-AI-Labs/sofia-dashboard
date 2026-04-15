@@ -146,10 +146,10 @@ export default function NetworkPage() {
       {/* NETWORK STATS — Social Proof */}
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatsCard icon={<Building2 size={14} />} value={stats.total_clinics.toLocaleString()} label={t('totalClinics')} />
-          <StatsCard icon={<Globe size={14} />} value={stats.total_countries.toLocaleString()} label={t('totalCountries')} />
-          <StatsCard icon={<MessageSquare size={14} />} value={formatCompact(stats.total_interactions)} label={t('totalInteractions')} />
-          <StatsCard icon={<Users size={14} />} value={formatCompact(stats.total_patients)} label={t('totalPatients')} />
+          <StatsCard icon={<Building2 size={14} />} value={(stats.total_clinics ?? 0).toLocaleString()} label={t('totalClinics')} />
+          <StatsCard icon={<Globe size={14} />} value={(stats.total_countries ?? 0).toLocaleString()} label={t('totalCountries')} />
+          <StatsCard icon={<MessageSquare size={14} />} value={formatCompact(stats.total_interactions ?? 0)} label={t('totalInteractions')} />
+          <StatsCard icon={<Users size={14} />} value={formatCompact(stats.total_patients ?? 0)} label={t('totalPatients')} />
         </div>
       )}
 
