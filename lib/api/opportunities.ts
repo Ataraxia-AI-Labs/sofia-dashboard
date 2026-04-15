@@ -1,12 +1,5 @@
 import { API_URL, authFetch, withBranch } from './helpers'
-
-// Backend → Frontend type mapping
-const TYPE_MAP: Record<string, string> = {
-  WINBACK: 'REACTIVATION',
-  REFERRAL_POTENTIAL: 'REFERRAL',
-  PRICE_OBJECTION: 'PRICE_SENSITIVE',
-  EMERGENCY_MEDICAL: 'HIGH_VALUE',
-}
+import { normalizeOpportunity } from '@/lib/label-maps'
 
 // Backend → Frontend status mapping
 const STATUS_MAP: Record<string, string> = {
@@ -25,7 +18,7 @@ function mapOpportunity(opp: Record<string, unknown>): Record<string, unknown> {
   const rawStatus = (opp.status ?? '') as string
   return {
     ...opp,
-    opportunity_type: TYPE_MAP[rawType] ?? rawType,
+    opportunity_type: normalizeOpportunity(rawType),
     status: STATUS_MAP[rawStatus] ?? rawStatus,
   }
 }

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { supabase } from '@/lib/supabase'
 import { fetchInteractions, fetchPatients, timeAgo, fetchActiveTakeovers, startTakeover, endTakeover, sendTakeoverMessage } from '@/lib/api'
+import { intentLabel, normalizeIntent } from '@/lib/label-maps'
 import type { InteractionLog, ActiveTakeover } from '@/lib/api'
 import type { Patient } from '@/types'
 import { ChatInput } from '@/components/chat-input'
@@ -1003,13 +1004,18 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             {time}
           </span>
 
-          {/* Intent badge — hide internal markers + UNKNOWN (no signal value) */}
-          {message.intent && !['OUTBOUND_FAILED', '', 'UNKNOWN', 'OTRO', 'SYSTEM_ERROR'].includes(message.intent) && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-brand-purple/8 border border-brand-purple/15 text-[9px] font-semibold text-brand-purple-light">
-              <Zap size={8} />
-              {message.intent}
-            </span>
-          )}
+          {/* Intent badge — normalize + hide UNKNOWN / internal markers */}
+          {(() => {
+            if (!message.intent || message.intent === 'OUTBOUND_FAILED') return null
+            const canon = normalizeIntent(message.intent)
+            if (canon === 'UNKNOWN') return null
+            return (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-brand-purple/8 border border-brand-purple/15 text-[9px] font-semibold text-brand-purple-light">
+                <Zap size={8} />
+                {intentLabel(message.intent)}
+              </span>
+            )
+          })()}
 
           {/* Sentiment dot */}
           {sentimentLabel && (

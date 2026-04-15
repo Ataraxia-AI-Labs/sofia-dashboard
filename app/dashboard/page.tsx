@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { fetchFullAnalytics, fetchVoiceMetrics, formatCOP, formatUSD, formatNumber, formatPercent } from '@/lib/api'
+import { intentLabel, mergeIntentDistribution, opportunityLabel, mergeOpportunityDistribution } from '@/lib/label-maps'
 import type { FullAnalytics, VoiceMetrics } from '@/types'
 import { MetricCard, SectionTitle, StatusPill, PerfItem, RevenueItem, BotCard, EmptyState } from '@/components/ui'
 import { AtaraxiaScore, SofiaSpeaks, NightReport, PhantomGrid } from '@/components/innovations'
@@ -231,13 +232,19 @@ export default function DashboardOverview() {
   const o = data?.oportunidades
   const b = data?.sub_bots
 
-  const intentData = Object.entries(p?.distribucion_intents || {}).map(([k, v]) => ({
-    name: k.replace('_', ' '),
-    value: v,
-  })).slice(0, 8)
+  // Merge duplicate intent keys (UNKNOWN+OTRO, AGENDAR+SCHEDULEAPPOINTMENT, etc.)
+  // then show Spanish labels. Filters out UNKNOWN/OTRO which don't add signal to the chart.
+  const mergedIntents = mergeIntentDistribution(p?.distribucion_intents as Record<string, number> | undefined)
+  const intentData = Object.entries(mergedIntents)
+    .filter(([k]) => k !== 'UNKNOWN')
+    .sort(([, a], [, b]) => (b as number) - (a as number))
+    .slice(0, 8)
+    .map(([k, v]) => ({ name: intentLabel(k), value: v }))
 
-  const oppData = Object.entries(o?.por_tipo || {}).map(([k, v]) => ({
-    name: tOpp.has(k) ? tOpp(k) : k,
+  // Merge duplicate opportunity types (WINBACK+REACTIVATION, REFERRAL_POTENTIAL+REFERRAL, etc.)
+  const mergedOpps = mergeOpportunityDistribution(o?.por_tipo as Record<string, number> | undefined)
+  const oppData = Object.entries(mergedOpps).map(([k, v]) => ({
+    name: tOpp.has(k) ? tOpp(k) : opportunityLabel(k),
     value: v,
     color: OPP_COLORS[k] || '#8B5CF6',
   }))
