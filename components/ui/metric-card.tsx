@@ -8,11 +8,17 @@ export interface MetricCardProps {
   sub?: string
   subColor?: string
   delay?: number
+  /** Optional hover tooltip explaining the metric */
+  tooltip?: string
 }
 
-export function MetricCard({ icon, iconColor, value, label, sub, subColor, delay = 0 }: MetricCardProps) {
+export function MetricCard({ icon, iconColor, value, label, sub, subColor, delay = 0, tooltip }: MetricCardProps) {
   return (
-    <div className="glass-card metric-glow p-4 animate-fade-up" style={{ animationDelay: `${delay * 60}ms` }}>
+    <div
+      className="glass-card metric-glow p-4 animate-fade-up"
+      style={{ animationDelay: `${delay * 60}ms` }}
+      title={tooltip}
+    >
       <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
         {icon}
       </div>

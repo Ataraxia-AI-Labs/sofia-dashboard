@@ -302,6 +302,7 @@ export default function DashboardOverview() {
           value={formatNumber(c?.total_mensajes_inbound || 0)}
           label={t('messagesReceived')}
           sub={t('newPatients', { count: formatNumber(c?.pacientes_nuevos || 0) })}
+          tooltip="Mensajes INBOUND (del paciente hacia la clinica) recibidos en el periodo. 'Nuevos registrados' = pacientes creados en el periodo, ya sea por SofIA o agregados manualmente desde el dashboard."
           delay={0}
         />
         <MetricCard
@@ -309,6 +310,7 @@ export default function DashboardOverview() {
           iconColor="from-brand-cyan to-brand-cyan-light"
           value={formatNumber(c?.pacientes_unicos || 0)}
           label={t('uniquePatients')}
+          tooltip="Pacientes distintos que enviaron al menos un mensaje en el periodo. Puede ser MENOR que 'nuevos registrados' si se crearon pacientes manualmente sin conversacion."
           delay={1}
         />
         <MetricCard
