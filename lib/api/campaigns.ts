@@ -21,7 +21,9 @@ export async function createCampaign(
 export async function listCampaigns(orgId: string): Promise<Campaign[]> {
   const res = await authFetch(`${API_URL}/api/campaigns/${orgId}`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  if (Array.isArray(data)) return data
+  return Array.isArray(data?.campaigns) ? data.campaigns : []
 }
 
 export async function getCampaign(orgId: string, campaignId: string): Promise<Campaign | null> {
