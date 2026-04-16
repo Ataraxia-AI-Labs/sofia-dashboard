@@ -41,7 +41,7 @@ export default function TerminosPage() {
           </p>
         </div>
 
-        <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5 space-y-6 text-text-secondary text-xs font-mono leading-relaxed">
+        <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5 space-y-6 text-text-secondary text-sm font-body leading-relaxed">
 
           <section>
             <h2 className="text-text-primary font-semibold text-sm mb-2">1. Aceptacion de los Terminos</h2>

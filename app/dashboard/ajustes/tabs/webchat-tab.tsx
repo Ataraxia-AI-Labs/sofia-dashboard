@@ -252,7 +252,7 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
           {/* Opened widget window — matches live widget 1:1 */}
           <div
             className={`absolute ${config.position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4 w-[300px]`}
-            style={{ fontFamily: "'Inter', -apple-system, system-ui, sans-serif" }}
+            style={{ fontFamily: "'Geist', -apple-system, system-ui, sans-serif" }}
           >
             <div className="bg-white rounded-2xl overflow-hidden flex flex-col" style={{ height: 380, boxShadow: '0 20px 60px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.06)' }}>
               {/* Header */}
