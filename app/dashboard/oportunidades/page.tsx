@@ -60,6 +60,7 @@ export default function OportunidadesPage() {
     PRICE_SENSITIVE: { label: t('types.PRICE_SENSITIVE'), icon: DollarSign, color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20' },
     MULTI_PROCEDURE: { label: t('types.MULTI_PROCEDURE'), icon: ShoppingBag, color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20' },
     HIGH_VALUE:      { label: t('types.HIGH_VALUE'), icon: Heart, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
+    CROSS_SELL:      { label: t('types.CROSS_SELL'), icon: ShoppingBag, color: 'text-brand-purple-light', bg: 'bg-brand-purple/10 border-brand-purple/20' },
   }
 
   const STATUS_OPTIONS: Record<string, { label: string; color: string }> = {

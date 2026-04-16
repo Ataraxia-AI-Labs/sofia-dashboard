@@ -137,8 +137,12 @@ export default function PlanesPage() {
   // Checkout modal state
   const [checkoutPlan, setCheckoutPlan] = useState<PlanId | null>(null)
 
-  const currentPlan = org?.plan || 'TRIAL'
+  // Subscription is the billing source of truth. Fall back to org.plan only when
+  // there is no subscription yet (e.g. fresh trial). This prevents the mismatch
+  // where Facturacion (reads sub.plan) showed BUSINESS while Planes (read org.plan)
+  // showed ENTERPRISE for the same organization.
   const isActive = subscription?.status === 'ACTIVE'
+  const currentPlan = (isActive && subscription?.plan) || org?.plan || 'TRIAL'
 
   // Trial days calculation
   let trialDaysLeft: number | null = null

@@ -56,9 +56,11 @@ export function formatPercent(n: number): string {
   return `${(n || 0).toFixed(1)}%`
 }
 
-export function timeAgo(dateStr: string): string {
-  const now = new Date()
+export function timeAgo(dateStr: string | null | undefined): string {
+  if (!dateStr) return ''
   const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return ''
+  const now = new Date()
   const diff = Math.floor((now.getTime() - date.getTime()) / 1000)
 
   if (diff < 60) return 'ahora'

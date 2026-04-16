@@ -60,7 +60,14 @@ export default function PagosPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')} & Revenue</h2>
-          <p className="text-[9px] font-mono text-text-dim">{payments.length} transacciones</p>
+          <p className="text-[9px] font-mono text-text-dim">
+            {(() => {
+              const paid = payments.filter(p => p.status === 'PAID' || p.status === 'Pagado').length
+              const pending = payments.filter(p => p.status === 'PENDING' || p.status === 'Pendiente').length
+              const rejected = payments.filter(p => p.status === 'FAILED' || p.status === 'REJECTED' || p.status === 'Rechazado').length
+              return `${payments.length} transacciones · ${paid} pagadas · ${pending} pendientes${rejected > 0 ? ` · ${rejected} rechazadas` : ''}`
+            })()}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">

@@ -209,15 +209,41 @@ export default function CampanasPage() {
         </div>
       </div>
 
-      {/* ANALYTICS */}
-      {analytics && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <AnalyticCard icon={<Megaphone size={16} />} value={(analytics.total_campaigns ?? 0).toString()} label={t('totalCampaigns')} />
-          <AnalyticCard icon={<Send size={16} />} value={(analytics.total_sent ?? 0).toLocaleString()} label={t('totalSent')} />
-          <AnalyticCard icon={<TrendingUp size={16} />} value={`${((analytics.avg_conversion_rate ?? 0) * 100).toFixed(1)}%`} label={t('avgConversion')} />
-          <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(analytics.total_revenue ?? 0)} label={t('totalRevenue')} />
-        </div>
-      )}
+      {/* ANALYTICS — fall back to aggregating from the campaigns list when the
+          backend analytics endpoint reports zero but individual campaigns have data */}
+      {(() => {
+        const listTotals = campaigns.reduce(
+          (acc, camp) => {
+            const c = camp as unknown as Record<string, unknown>
+            const sent = Number(c.sent_count ?? c.total_sent ?? 0) || 0
+            const converted = Number(c.converted_count ?? c.total_converted ?? 0) || 0
+            const revenue = Number(c.revenue ?? c.revenue_cop ?? 0) || 0
+            return {
+              campaigns: acc.campaigns + 1,
+              sent: acc.sent + sent,
+              converted: acc.converted + converted,
+              revenue: acc.revenue + revenue,
+            }
+          },
+          { campaigns: 0, sent: 0, converted: 0, revenue: 0 },
+        )
+        const backend = analytics || { total_campaigns: 0, total_sent: 0, avg_conversion_rate: 0, total_revenue: 0 }
+        const useFallback = (backend.total_campaigns ?? 0) === 0 && listTotals.campaigns > 0
+        const totalCampaigns = useFallback ? listTotals.campaigns : (backend.total_campaigns ?? 0)
+        const totalSent = useFallback ? listTotals.sent : (backend.total_sent ?? 0)
+        const avgConv = useFallback
+          ? (listTotals.sent > 0 ? listTotals.converted / listTotals.sent : 0)
+          : (backend.avg_conversion_rate ?? 0)
+        const totalRevenue = useFallback ? listTotals.revenue : (backend.total_revenue ?? 0)
+        return (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <AnalyticCard icon={<Megaphone size={16} />} value={totalCampaigns.toString()} label={t('totalCampaigns')} />
+            <AnalyticCard icon={<Send size={16} />} value={totalSent.toLocaleString()} label={t('totalSent')} />
+            <AnalyticCard icon={<TrendingUp size={16} />} value={`${(avgConv * 100).toFixed(1)}%`} label={t('avgConversion')} />
+            <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(totalRevenue)} label={t('totalRevenue')} />
+          </div>
+        )
+      })()}
 
       {/* CAMPAIGN LIST */}
       <div className="space-y-2">

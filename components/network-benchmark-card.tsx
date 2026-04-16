@@ -22,16 +22,23 @@ export function NetworkBenchmarkCard({
 }: NetworkBenchmarkCardProps) {
   const t = useTranslations('network')
 
-  const isAbove = higherIsBetter ? yours >= marketAvg : yours <= marketAvg
-  const isClose = Math.abs(yours - marketAvg) / (marketAvg || 1) < 0.05
+  // If both values are zero / missing, don't claim "above average" — there's
+  // no comparison to make. Show a neutral "sin datos" state instead.
+  const noData = (!yours || yours === 0) && (!marketAvg || marketAvg === 0)
+  const isAbove = !noData && (higherIsBetter ? yours >= marketAvg : yours <= marketAvg)
+  const isClose = !noData && Math.abs(yours - marketAvg) / (marketAvg || 1) < 0.05
 
-  const colorClass = isClose
+  const colorClass = noData
+    ? 'text-text-dim'
+    : isClose
     ? 'text-status-warning'
     : isAbove
     ? 'text-status-success'
     : 'text-status-danger'
 
-  const bgClass = isClose
+  const bgClass = noData
+    ? 'bg-surface-3 border-border'
+    : isClose
     ? 'bg-status-warning/10 border-status-warning/20'
     : isAbove
     ? 'bg-status-success/10 border-status-success/20'
@@ -55,14 +62,16 @@ export function NetworkBenchmarkCard({
       <div className="flex items-start justify-between mb-3">
         <h4 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">{metricName}</h4>
         <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${bgClass} ${colorClass}`}>
-          P{percentile}
+          {noData ? '—' : `P${percentile}`}
         </span>
       </div>
 
       <div className="flex items-end gap-3 mb-3">
         <div className="text-xl font-bold font-mono text-text-primary">{formatValue(yours)}</div>
         <div className="flex items-center gap-1 pb-0.5">
-          {isClose ? (
+          {noData ? (
+            <Minus size={14} className={colorClass} />
+          ) : isClose ? (
             <Minus size={14} className={colorClass} />
           ) : isAbove ? (
             <TrendingUp size={14} className={colorClass} />
@@ -70,7 +79,7 @@ export function NetworkBenchmarkCard({
             <TrendingDown size={14} className={colorClass} />
           )}
           <span className={`text-[10px] font-mono font-semibold ${colorClass}`}>
-            {isAbove ? t('aboveAvg') : isClose ? '~' : t('belowAvg')}
+            {noData ? 'Sin datos' : isAbove ? t('aboveAvg') : isClose ? '~' : t('belowAvg')}
           </span>
         </div>
       </div>
