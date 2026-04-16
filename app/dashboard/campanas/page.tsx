@@ -214,10 +214,11 @@ export default function CampanasPage() {
       {(() => {
         const listTotals = campaigns.reduce(
           (acc, camp) => {
+            const stats = (camp?.stats || {}) as Record<string, number | undefined>
             const c = camp as unknown as Record<string, unknown>
-            const sent = Number(c.sent_count ?? c.total_sent ?? 0) || 0
-            const converted = Number(c.converted_count ?? c.total_converted ?? 0) || 0
-            const revenue = Number(c.revenue ?? c.revenue_cop ?? 0) || 0
+            const sent = Number(stats.sent ?? c.sent_count ?? c.total_sent ?? 0) || 0
+            const converted = Number(stats.converted ?? c.converted_count ?? c.total_converted ?? 0) || 0
+            const revenue = Number(stats.revenue ?? c.revenue ?? c.revenue_cop ?? 0) || 0
             return {
               campaigns: acc.campaigns + 1,
               sent: acc.sent + sent,
