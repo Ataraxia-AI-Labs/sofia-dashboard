@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Outfit, JetBrains_Mono, Playfair_Display } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
+import { JetBrains_Mono, Playfair_Display } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import { Providers } from '@/components/providers'
@@ -8,11 +9,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
-const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-})
+// GeistSans from geist package — auto-configured, exposes .variable as --font-geist-sans
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -70,7 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className={`${outfit.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${GeistSans.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`} suppressHydrationWarning>
       <body className="min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <Providers>

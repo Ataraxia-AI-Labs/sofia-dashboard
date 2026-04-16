@@ -42,7 +42,7 @@ module.exports = {
       },
       fontFamily: {
         display: ['var(--font-playfair)', 'Georgia', 'serif'],
-        body: ['var(--font-outfit)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'monospace'],
       },
       spacing: {

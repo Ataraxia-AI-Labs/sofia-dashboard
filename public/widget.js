@@ -36,9 +36,9 @@
   // Styles
   // ---------------------------------------------------------------
   const STYLES = `
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
     #sofia-widget-root { --sofia-color: #7c3aed; --sofia-color-soft: rgba(124,58,237,.08); }
-    #sofia-widget-root * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    #sofia-widget-root * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     .sofia-mono { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace !important; }
 
     #sofia-bubble { position: fixed; bottom: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--sofia-color); color: #fff; border: none; cursor: pointer; box-shadow: 0 8px 28px rgba(0,0,0,.16), 0 2px 6px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; z-index: 99999; transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s; }
