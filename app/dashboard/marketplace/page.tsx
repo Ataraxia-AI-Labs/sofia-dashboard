@@ -11,6 +11,26 @@ import { Store, Puzzle, Plus, Trash2, Play, Download, CheckCircle, Search, Star,
 
 type Tab = 'browse' | 'installed' | 'plugins'
 
+// Display Spanish label for backend category codes (which come as ENUM-style UPPERCASE).
+const CATEGORY_LABELS: Record<string, string> = {
+  ACCOUNTING: 'Contabilidad',
+  ANALYTICS: 'Analitica',
+  CALENDAR: 'Calendario',
+  COMMUNICATION: 'Comunicacion',
+  CRM: 'CRM',
+  CUSTOM: 'Personalizado',
+  ERP: 'ERP',
+  HEALTH: 'Salud',
+  MARKETING: 'Marketing',
+  PAYMENT: 'Pagos',
+  AUTOMATION: 'Automatizacion',
+  STORAGE: 'Almacenamiento',
+  AI: 'IA',
+}
+
+const categoryLabel = (c: string | undefined | null) =>
+  c ? (CATEGORY_LABELS[String(c).toUpperCase()] ?? c) : ''
+
 export default function MarketplacePage() {
   const { orgId, role } = useOrg()
   const toast = useToast()
@@ -150,7 +170,7 @@ export default function MarketplacePage() {
             <select value={selectedCat} onChange={e => setSelectedCat(e.target.value)}
               className="text-[10px] font-mono bg-surface-2 border border-border rounded px-2 py-1 text-text-secondary">
               <option value="">{t('allCategories')}</option>
-              {categories.map(c => <option key={c} value={c}>{c}</option>)}
+              {categories.map(c => <option key={c} value={c}>{categoryLabel(c)}</option>)}
             </select>
           </div>
 
@@ -172,7 +192,7 @@ export default function MarketplacePage() {
                         </div>
                         <p className="text-[9px] font-mono text-text-dim mt-0.5">{c.author}</p>
                       </div>
-                      <span className="text-[8px] font-mono bg-surface-2 border border-border rounded px-1.5 py-0.5 text-text-dim">{c.category}</span>
+                      <span className="text-[8px] font-mono bg-surface-2 border border-border rounded px-1.5 py-0.5 text-text-dim uppercase tracking-wider">{categoryLabel(c.category)}</span>
                     </div>
                     <p className="text-[10px] font-mono text-text-muted mt-2 line-clamp-2">{c.description}</p>
                     <div className="flex items-center justify-between mt-3">

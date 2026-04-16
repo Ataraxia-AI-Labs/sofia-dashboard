@@ -110,7 +110,11 @@ export default function EquipoPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[9px] font-mono mt-0.5">{activeMembers.length} {t('subtitle')}</p>
+          <p className="text-text-dim text-[9px] font-mono mt-0.5">
+            <span className="text-text-primary font-semibold">{activeMembers.length}</span>
+            <span className="mx-1.5 text-text-dim/60">·</span>
+            {t('subtitle')}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={loadMembers} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">

@@ -222,7 +222,11 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                 const convKey = `${conv.patient_id}-${conv.channel}`
                 const isSelected = selectedPatientId === conv.patient_id && selectedChannel === conv.channel
                 const msgPrefix = conv.direction === 'OUTBOUND' ? 'SofIA: ' : ''
-                const msgText = conv.last_message || ''
+                const rawText = conv.last_message || ''
+                // Hide internal bot markers (e.g. [Confirm2h], [Reminder24h], [Human takeover]) — they shouldn't surface as previews
+                const msgText = /^\[[A-Za-z0-9_ ]+\]$/.test(rawText.trim())
+                  ? '(recordatorio enviado)'
+                  : rawText
                 const fullPreview = msgPrefix + msgText
                 const preview = fullPreview.length > 60
                   ? fullPreview.slice(0, 60) + '...'

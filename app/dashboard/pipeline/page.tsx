@@ -134,7 +134,7 @@ export default function PipelinePage() {
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
           <p className="text-text-dim text-[9px] font-mono mt-0.5">
-            {totalPatients} pacientes en {STAGES.filter(s => grouped[s.key].length > 0).length} etapas
+            {totalPatients} pacientes · {STAGES.filter(s => grouped[s.key].length > 0).length} de {STAGES.length} etapas activas
           </p>
         </div>
         <button

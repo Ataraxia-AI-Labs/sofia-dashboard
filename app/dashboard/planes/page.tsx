@@ -344,11 +344,13 @@ export default function PlanesPage() {
                   {plan.features.map((feat) => (
                     <div key={feat.key} className="flex items-center gap-2">
                       {feat.included ? (
-                        <Check size={12} className="text-status-success flex-shrink-0" />
+                        <Check size={12} className="text-status-success flex-shrink-0" strokeWidth={2.5} />
                       ) : (
-                        <X size={12} className="text-text-dim flex-shrink-0" />
+                        <X size={12} className="text-status-danger/60 flex-shrink-0" strokeWidth={2.5} />
                       )}
-                      <span className={`text-[10px] font-mono ${feat.included ? 'text-text-secondary' : 'text-text-dim'}`}>
+                      <span className={`text-[10px] font-mono ${
+                        feat.included ? 'text-text-secondary' : 'text-text-dim line-through opacity-60'
+                      }`}>
                         {t(`features.${feat.key}`)}
                       </span>
                     </div>
