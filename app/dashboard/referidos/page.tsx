@@ -26,6 +26,7 @@ export default function ReferidosPage() {
   const [msg, setMsg] = useState('')
 
   const load = useCallback(async () => {
+    if (!orgId) return
     setLoading(true)
     try {
       const [p, l, a] = await Promise.all([
@@ -33,17 +34,21 @@ export default function ReferidosPage() {
         getReferralLeaderboard(orgId),
         getReferralAnalytics(orgId),
       ])
-      setProgram(p)
-      setLeaderboard(l)
-      setAnalytics(a)
+      setProgram(p && typeof p === 'object' ? p : null)
+      setLeaderboard(Array.isArray(l) ? l : [])
+      setAnalytics(a && typeof a === 'object' ? a : null)
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('loadError'))
     }
     setLoading(false)
-  }, [orgId])
+  }, [orgId, toast, t])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    let cancelled = false
+    load().then(() => { if (cancelled) return })
+    return () => { cancelled = true }
+  }, [load])
 
   const handleToggle = async () => {
     if (!program) return
