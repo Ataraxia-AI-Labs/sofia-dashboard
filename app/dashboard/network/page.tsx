@@ -378,8 +378,9 @@ function StatsCard({ icon, value, label }: { icon: React.ReactNode; value: strin
   )
 }
 
-function formatCompact(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
-  return n.toLocaleString()
+function formatCompact(n: number | null | undefined): string {
+  const v = typeof n === 'number' && isFinite(n) ? n : 0
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`
+  if (v >= 1_000) return `${(v / 1_000).toFixed(1)}K`
+  return v.toLocaleString()
 }

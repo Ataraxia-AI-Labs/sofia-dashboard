@@ -38,7 +38,15 @@ export function PricingTab({ orgId, isReadOnly, onMessage }: PricingTabProps) {
   const loadRules = useCallback(async () => {
     setLoading(true)
     const data = await getPricingRules(orgId)
-    if (data) setRules(data)
+    if (data) {
+      setRules(prev => ({
+        ...prev,
+        ...data,
+        excluded_services: Array.isArray(data.excluded_services) ? data.excluded_services : [],
+        min_prices: data.min_prices && typeof data.min_prices === 'object' ? data.min_prices : {},
+        max_prices: data.max_prices && typeof data.max_prices === 'object' ? data.max_prices : {},
+      }))
+    }
     setLoading(false)
   }, [orgId])
 

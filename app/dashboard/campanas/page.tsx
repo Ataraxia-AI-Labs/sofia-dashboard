@@ -67,8 +67,8 @@ export default function CampanasPage() {
         listCampaigns(orgId),
         getCampaignAnalytics(orgId),
       ])
-      setCampaigns(list ?? [])
-      setAnalytics(anal ?? null)
+      setCampaigns(Array.isArray(list) ? list : [])
+      setAnalytics(anal && typeof anal === 'object' ? anal : null)
     } catch (err) {
       Sentry.captureException(err)
     }
@@ -238,8 +238,8 @@ export default function CampanasPage() {
         const totalRevenue = useFallback ? listTotals.revenue : (backend.total_revenue ?? 0)
         return (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <AnalyticCard icon={<Megaphone size={16} />} value={totalCampaigns.toString()} label={t('totalCampaigns')} />
-            <AnalyticCard icon={<Send size={16} />} value={totalSent.toLocaleString()} label={t('totalSent')} />
+            <AnalyticCard icon={<Megaphone size={16} />} value={String(totalCampaigns ?? 0)} label={t('totalCampaigns')} />
+            <AnalyticCard icon={<Send size={16} />} value={Number(totalSent ?? 0).toLocaleString()} label={t('totalSent')} />
             <AnalyticCard icon={<TrendingUp size={16} />} value={`${(avgConv * 100).toFixed(1)}%`} label={t('avgConversion')} />
             <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(totalRevenue)} label={t('totalRevenue')} />
           </div>
