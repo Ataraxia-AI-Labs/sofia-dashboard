@@ -98,29 +98,48 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
   }
 
   const timeoutMs = options?.timeoutMs ?? 45000
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  const method = (options?.method || 'GET').toUpperCase()
+  // Only retry idempotent methods. Retrying POST/PUT/DELETE could duplicate side effects.
+  const isRetriable = method === 'GET' || method === 'HEAD'
+  const maxAttempts = isRetriable ? 3 : 1
 
-  try {
-    const res = await fetch(url, {
-      ...options,
-      headers,
-      signal: options?.signal ?? controller.signal,
-    })
+  let lastErr: unknown
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), timeoutMs)
 
-    if (!res.ok) {
-      // 404: legit empty state (caller handles null). 401: auth flow handles redirect.
-      const silent = res.status === 404 || res.status === 401
-      if (!silent) {
-        Sentry.captureMessage(`[authFetch] ${res.status} ${options?.method || 'GET'} ${url}`, 'warning')
+    try {
+      const res = await fetch(url, {
+        ...options,
+        headers,
+        signal: options?.signal ?? controller.signal,
+      })
+
+      if (!res.ok) {
+        // 404: legit empty state (caller handles null). 401: auth flow handles redirect.
+        const silent = res.status === 404 || res.status === 401
+        if (!silent) {
+          Sentry.captureMessage(`[authFetch] ${res.status} ${method} ${url}`, 'warning')
+        }
       }
-    }
 
-    return res
-  } catch (err) {
-    Sentry.captureException(err, { tags: { context: 'authFetch', url } })
-    throw err
-  } finally {
-    clearTimeout(timer)
+      return res
+    } catch (err) {
+      lastErr = err
+      // Retry only on genuine network errors (TypeError from fetch), not on HTTP errors
+      // or user-provided AbortSignal cancellations. Fall through to throw on last attempt.
+      const isNetworkError = err instanceof TypeError
+      const isLastAttempt = attempt === maxAttempts
+      if (!isRetriable || !isNetworkError || isLastAttempt) {
+        Sentry.captureException(err, { tags: { context: 'authFetch', url, attempts: String(attempt) } })
+        throw err
+      }
+      // Exponential backoff — covers Render cold start warmup (~20-40s typical)
+      await new Promise(r => setTimeout(r, 500 * Math.pow(3, attempt - 1)))
+    } finally {
+      clearTimeout(timer)
+    }
   }
+  // Unreachable — the loop either returns on success or throws on last attempt
+  throw lastErr ?? new Error('authFetch: unexpected loop exit')
 }
