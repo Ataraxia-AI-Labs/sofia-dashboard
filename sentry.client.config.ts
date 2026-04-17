@@ -17,4 +17,14 @@ Sentry.init({
     "localhost",
     /^https:\/\/ataraxia-api-core\.onrender\.com/,
   ],
+  // Known upstream issues / expected user states — not actionable for us.
+  ignoreErrors: [
+    // @supabase/auth-js multi-tab LockManager contention. The lock itself
+    // is an internal auth-js implementation detail; a timeout here does
+    // not break functionality (other tab wins the lock).
+    /Acquiring an exclusive Navigator LockManager lock/,
+    // User-facing message we throw when session is missing — UI shows a
+    // "reload/relogin" prompt and middleware redirects. Not a bug.
+    /No hay sesi.n activa/,
+  ],
 })

@@ -77,10 +77,11 @@ if (typeof window !== 'undefined') {
 }
 
 export async function authFetch(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<Response> {
-  // AUTH-001: Validate user server-side first (cached 60s), then get session token
+  // AUTH-001: Validate user server-side first (cached 60s), then get session token.
+  // Expired-session throws are expected flow (middleware redirects to /login),
+  // so they are ignoreErrors-filtered in sentry.client.config.ts.
   const { user, error: userError } = await getCachedUser()
   if (userError || !user) {
-    Sentry.captureMessage(`[authFetch] User validation failed for: ${url}`, 'warning')
     throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')
   }
 
@@ -88,7 +89,6 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
   const headers = new Headers(options?.headers)
 
   if (!session?.access_token) {
-    Sentry.captureMessage(`[authFetch] No session token after user validation for: ${url}`, 'warning')
     throw new Error('No hay sesión activa. Recarga la página o inicia sesión de nuevo.')
   }
 
