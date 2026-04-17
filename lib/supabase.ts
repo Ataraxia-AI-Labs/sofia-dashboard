@@ -109,7 +109,11 @@ export async function authFetch(url: string, options?: RequestInit & { timeoutMs
     })
 
     if (!res.ok) {
-      Sentry.captureMessage(`[authFetch] ${res.status} ${options?.method || 'GET'} ${url}`, 'warning')
+      // 404: legit empty state (caller handles null). 401: auth flow handles redirect.
+      const silent = res.status === 404 || res.status === 401
+      if (!silent) {
+        Sentry.captureMessage(`[authFetch] ${res.status} ${options?.method || 'GET'} ${url}`, 'warning')
+      }
     }
 
     return res
