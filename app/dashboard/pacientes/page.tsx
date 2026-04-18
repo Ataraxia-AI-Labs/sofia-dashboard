@@ -64,7 +64,7 @@ export default function PacientesPage() {
   const [mlFeatures, setMlFeatures] = useState<PatientMLFeatures | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [showNewPatient, setShowNewPatient] = useState(false)
-  const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
+  const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', national_id: '', date_of_birth: '', city: '', service_interest: '' })
   const [staffNotes, setStaffNotes] = useState<StaffNote[]>([])
   const [treatments, setTreatments] = useState<Treatment[]>([])
   const [newNote, setNewNote] = useState('')
@@ -162,7 +162,7 @@ export default function PacientesPage() {
     try {
       await createPatient(orgId, newPatient)
       setShowNewPatient(false)
-      setNewPatient({ full_name: '', phone: '', email: '', city: '', service_interest: '' })
+      setNewPatient({ full_name: '', phone: '', email: '', national_id: '', date_of_birth: '', city: '', service_interest: '' })
       loadPatients()
     } catch (err) {
       Sentry.captureException(err)

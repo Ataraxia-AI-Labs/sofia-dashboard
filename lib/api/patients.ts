@@ -38,6 +38,8 @@ export async function createPatient(orgId: string, data: {
   full_name: string
   phone: string
   email?: string
+  national_id?: string
+  date_of_birth?: string
   city?: string
   service_interest?: string
   acquisition_channel?: string
@@ -48,6 +50,8 @@ export async function createPatient(orgId: string, data: {
       full_name: data.full_name || 'Por identificar',
       phone: data.phone,
       email: data.email || null,
+      national_id: data.national_id || null,
+      date_of_birth: data.date_of_birth || null,
       city: data.city || 'Por identificar',
       service_interest: data.service_interest || 'Por identificar',
       acquisition_channel: data.acquisition_channel || 'PRESENCIAL',

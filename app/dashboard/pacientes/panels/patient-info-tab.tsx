@@ -1,8 +1,23 @@
 'use client'
 
-import { Phone, Mail, MapPin, Calendar, MessageSquare, Star } from 'lucide-react'
+import { Phone, Mail, MapPin, Calendar, MessageSquare, Star, CreditCard, Cake } from 'lucide-react'
 import { formatCOP, formatPercent } from '@/lib/api'
 import type { PatientDetail, Treatment } from '@/types'
+
+function computeAge(dob?: string | null): string {
+  if (!dob) return '—'
+  try {
+    const birth = new Date(dob)
+    if (isNaN(birth.getTime())) return '—'
+    const today = new Date()
+    let age = today.getFullYear() - birth.getFullYear()
+    const m = today.getMonth() - birth.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+    return `${age} años (${birth.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })})`
+  } catch {
+    return '—'
+  }
+}
 
 const CHANNELS: Record<string, { label: string; color: string }> = {
   WHATSAPP: { label: 'WhatsApp', color: 'text-status-success' },
@@ -28,6 +43,8 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
         <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">Informacion</h4>
         <DetailRow icon={<Phone size={14} />} label="Telefono" value={patient.phone} />
         <DetailRow icon={<Mail size={14} />} label="Email" value={patient.email || '\u2014'} />
+        <DetailRow icon={<CreditCard size={14} />} label="Cedula" value={patient.national_id || '\u2014'} />
+        <DetailRow icon={<Cake size={14} />} label="Nacimiento" value={computeAge(patient.date_of_birth)} />
         <DetailRow icon={<MapPin size={14} />} label="Ciudad" value={patient.city || 'Por identificar'} />
         <DetailRow icon={<Star size={14} />} label="Interes" value={patient.service_interest || 'Por identificar'} />
         <DetailRow icon={<MessageSquare size={14} />} label="Canal" value={CHANNELS[patient.acquisition_channel]?.label || patient.acquisition_channel} />

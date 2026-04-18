@@ -132,9 +132,13 @@ export interface Patient {
   full_name: string
   phone: string
   email?: string
+  national_id?: string | null
+  date_of_birth?: string | null
   acquisition_channel: string
   service_interest?: string
   city?: string
+  branch_id?: string | null
+  preferred_branch_id?: string | null
   created_at: string
   updated_at?: string
 }

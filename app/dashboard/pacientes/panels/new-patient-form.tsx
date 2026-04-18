@@ -4,6 +4,8 @@ interface NewPatientData {
   full_name: string
   phone: string
   email: string
+  national_id: string
+  date_of_birth: string
   city: string
   service_interest: string
 }
@@ -31,6 +33,14 @@ export function NewPatientForm({ data, onChange, onSubmit, onCancel }: NewPatien
         <div>
           <label htmlFor="np-email" className="block text-[10px] font-mono font-semibold text-text-dim uppercase mb-1">Email</label>
           <input id="np-email" type="email" value={data.email} onChange={(e) => onChange({ ...data, email: e.target.value })} placeholder="maria@email.com" className="w-full px-3 py-2 rounded-md bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40" />
+        </div>
+        <div>
+          <label htmlFor="np-cedula" className="block text-[10px] font-mono font-semibold text-text-dim uppercase mb-1">Cedula</label>
+          <input id="np-cedula" type="text" value={data.national_id} onChange={(e) => onChange({ ...data, national_id: e.target.value })} placeholder="1020304050" className="w-full px-3 py-2 rounded-md bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40" />
+        </div>
+        <div>
+          <label htmlFor="np-dob" className="block text-[10px] font-mono font-semibold text-text-dim uppercase mb-1">Fecha nacimiento</label>
+          <input id="np-dob" type="date" value={data.date_of_birth} onChange={(e) => onChange({ ...data, date_of_birth: e.target.value })} className="w-full px-3 py-2 rounded-md bg-void border border-border text-text-primary text-sm font-mono outline-none focus:border-brand-purple/40" />
         </div>
         <div>
           <label htmlFor="np-city" className="block text-[10px] font-mono font-semibold text-text-dim uppercase mb-1">Ciudad</label>
