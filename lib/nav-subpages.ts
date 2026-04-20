@@ -1,9 +1,8 @@
 /**
  * Subpages map per nav item.
- * Used by the sidebar to render a floating mini-panel on hover
- * for items that have internal sub-routes.
- *
- * Items NOT in this map just show a simple tooltip chip with the label.
+ * Used by the sidebar to render a floating mini-panel on hover.
+ * Keys MUST match the actual state values inside each page's tab/view hook,
+ * and pages read `?tab=` / `?view=` / `?panel=` on mount to sync.
  */
 
 export interface Subpage {
@@ -13,37 +12,43 @@ export interface Subpage {
 }
 
 export const NAV_SUBPAGES: Record<string, Subpage[]> = {
+  // Conversaciones — activeTab: 'conversations' | 'inbox' | 'channels' | 'voice'
   '/dashboard/conversaciones': [
-    { label: 'Chat unificado', href: '/dashboard/conversaciones?tab=chat', description: 'Todos los canales en un solo hilo' },
-    { label: 'Bandeja', href: '/dashboard/conversaciones?tab=bandeja', description: 'Por atender' },
-    { label: 'Canales', href: '/dashboard/conversaciones?tab=canales', description: 'WhatsApp · IG · Web · Voz' },
-    { label: 'Voz en vivo', href: '/dashboard/conversaciones?tab=voz', description: 'Llamadas activas' },
+    { label: 'Chat unificado', href: '/dashboard/conversaciones?tab=conversations', description: 'Todos los canales' },
+    { label: 'Bandeja', href: '/dashboard/conversaciones?tab=inbox', description: 'Por atender' },
+    { label: 'Canales', href: '/dashboard/conversaciones?tab=channels', description: 'WhatsApp · IG · Web · Voz' },
+    { label: 'Voz en vivo', href: '/dashboard/conversaciones?tab=voice', description: 'Llamadas activas' },
   ],
+
+  // Pacientes — activeView: 'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification'
   '/dashboard/pacientes': [
-    { label: 'Lista completa', href: '/dashboard/pacientes?view=lista' },
-    { label: 'Segmentos', href: '/dashboard/pacientes?view=segmentos', description: 'ML-powered' },
-    { label: 'Duplicados', href: '/dashboard/pacientes?view=duplicados', description: 'Detección automática' },
+    { label: 'Lista completa', href: '/dashboard/pacientes?view=list' },
+    { label: 'Segmentos', href: '/dashboard/pacientes?view=segments', description: 'ML-powered' },
+    { label: 'Duplicados', href: '/dashboard/pacientes?view=duplicates', description: 'Detección automática' },
     { label: 'LTV', href: '/dashboard/pacientes?view=ltv', description: 'Valor vida del paciente' },
-    { label: 'Gamificación', href: '/dashboard/pacientes?view=gamificacion' },
+    { label: 'Gamificación', href: '/dashboard/pacientes?view=gamification' },
   ],
+
+  // Oportunidades — activeView: 'list' | 'scoring' | 'predictions' | 'queue' | 'pricing' | 'outreach' | 'competitors'
   '/dashboard/oportunidades': [
-    { label: 'Lead scoring', href: '/dashboard/oportunidades?panel=lead-scoring' },
-    { label: 'Conversión', href: '/dashboard/oportunidades?panel=conversion' },
-    { label: 'Competidores', href: '/dashboard/oportunidades?panel=competitors' },
-    { label: 'Pricing sugerido', href: '/dashboard/oportunidades?panel=pricing' },
-    { label: 'Outreach', href: '/dashboard/oportunidades?panel=outreach' },
+    { label: 'Todas', href: '/dashboard/oportunidades?view=list' },
+    { label: 'Lead scoring', href: '/dashboard/oportunidades?view=scoring', description: 'IA prioriza leads' },
+    { label: 'Predicciones', href: '/dashboard/oportunidades?view=predictions', description: 'Probabilidad de conversión' },
+    { label: 'Cola de trabajo', href: '/dashboard/oportunidades?view=queue', description: 'Próximas acciones' },
+    { label: 'Pricing sugerido', href: '/dashboard/oportunidades?view=pricing' },
+    { label: 'Outreach', href: '/dashboard/oportunidades?view=outreach', description: 'Campañas automáticas' },
+    { label: 'Competidores', href: '/dashboard/oportunidades?view=competitors' },
   ],
+
+  // Crecimiento — tab: 'funnel' | 'attribution' | 'ads' | 'seo'
   '/dashboard/crecimiento': [
-    { label: 'Ads', href: '/dashboard/crecimiento?tab=ads' },
-    { label: 'Engagement', href: '/dashboard/crecimiento?tab=engagement' },
-    { label: 'Analytics', href: '/dashboard/crecimiento?tab=analytics' },
+    { label: 'Funnel', href: '/dashboard/crecimiento?tab=funnel', description: 'Conversión end-to-end' },
+    { label: 'Atribución', href: '/dashboard/crecimiento?tab=attribution', description: 'Modelos multi-touch' },
+    { label: 'Campañas de Ads', href: '/dashboard/crecimiento?tab=ads' },
+    { label: 'Salud SEO', href: '/dashboard/crecimiento?tab=seo' },
   ],
-  '/dashboard/datalake': [
-    { label: 'Raw events', href: '/dashboard/datalake?tab=raw' },
-    { label: 'Learning', href: '/dashboard/datalake?tab=learning' },
-    { label: 'Models', href: '/dashboard/datalake?tab=models' },
-    { label: 'Prompt Optimizer', href: '/dashboard/datalake?tab=optimizer' },
-  ],
+
+  // Ajustes — activeTab: 'prompt' | 'services' | 'hours' | 'notifications' | 'templates' | 'bots' | 'channels' | 'security' | 'branding' | 'pricing' | 'apikeys' | 'webchat'
   '/dashboard/ajustes': [
     { label: 'System prompt', href: '/dashboard/ajustes?tab=prompt' },
     { label: 'Catálogo', href: '/dashboard/ajustes?tab=services' },
@@ -52,8 +57,9 @@ export const NAV_SUBPAGES: Record<string, Subpage[]> = {
     { label: 'Plantillas WA', href: '/dashboard/ajustes?tab=templates' },
     { label: 'Bots', href: '/dashboard/ajustes?tab=bots' },
     { label: 'Canales', href: '/dashboard/ajustes?tab=channels' },
+    { label: 'Web Chat', href: '/dashboard/ajustes?tab=webchat' },
     { label: 'Pricing', href: '/dashboard/ajustes?tab=pricing' },
-    { label: 'API Keys', href: '/dashboard/ajustes?tab=api-keys' },
+    { label: 'API Keys', href: '/dashboard/ajustes?tab=apikeys' },
     { label: 'Branding', href: '/dashboard/ajustes?tab=branding' },
     { label: 'Seguridad', href: '/dashboard/ajustes?tab=security' },
   ],

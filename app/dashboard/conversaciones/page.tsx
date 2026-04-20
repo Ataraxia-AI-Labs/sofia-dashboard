@@ -13,6 +13,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
+import { useSearchParams } from 'next/navigation'
 import { ConvIntelligencePanel } from '@/components/conv-intelligence-panel'
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
@@ -136,8 +137,14 @@ export default function ConversacionesPage() {
   const t = useTranslations('conversations')
   const tCommon = useTranslations('common')
 
-  // Tab state
-  const [activeTab, setActiveTab] = useState<'conversations' | 'inbox' | 'channels' | 'voice'>('conversations')
+  // Tab state — read initial from URL (?tab=inbox|channels|voice|conversations)
+  const searchParams = useSearchParams()
+  const initialTab = ((): 'conversations' | 'inbox' | 'channels' | 'voice' => {
+    const t = searchParams.get('tab')
+    if (t === 'inbox' || t === 'channels' || t === 'voice' || t === 'conversations') return t
+    return 'conversations'
+  })()
+  const [activeTab, setActiveTab] = useState<'conversations' | 'inbox' | 'channels' | 'voice'>(initialTab)
 
   // Data state
   const [interactions, setInteractions] = useState<InteractionLog[]>([])

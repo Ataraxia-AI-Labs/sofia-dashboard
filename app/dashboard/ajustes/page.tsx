@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useOrg } from '@/lib/org-context'
 import { fetchOrganization, fetchServicesCatalog, fetchBusinessHours, updateOrganization } from '@/lib/api'
 import { Tabs } from '@/components/ui'
@@ -39,7 +40,12 @@ export default function AjustesPage() {
     icon: TAB_ICONS[id],
   }))
   const isReadOnly = role === 'STAFF'
-  const [activeTab, setActiveTab] = useState('prompt')
+  const searchParams = useSearchParams()
+  const initialAjustesTab = ((): string => {
+    const t = searchParams.get('tab')
+    return t && TAB_IDS.includes(t) ? t : 'prompt'
+  })()
+  const [activeTab, setActiveTab] = useState(initialAjustesTab)
   const [org, setOrg] = useState<Organization | null>(null)
   const [services, setServices] = useState<ServiceCatalog[]>([])
   const [hours, setHours] = useState<BusinessHour[]>([])

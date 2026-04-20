@@ -12,6 +12,7 @@ import {
   X, RefreshCw, Download, UserPlus, Layers, GitMerge, TrendingUp, Trophy,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { useSearchParams } from 'next/navigation'
 import { NewPatientForm } from './panels/new-patient-form'
 import { PatientDetailPanel } from './panels/patient-detail-panel'
 
@@ -78,7 +79,13 @@ export default function PacientesPage() {
   const [showTreatmentForm, setShowTreatmentForm] = useState(false)
   const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
-  const [activeView, setActiveView] = useState<'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification'>('list')
+  const searchParams = useSearchParams()
+  const initialView = ((): 'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification' => {
+    const v = searchParams.get('view')
+    if (v === 'segments' || v === 'duplicates' || v === 'ltv' || v === 'gamification' || v === 'list') return v
+    return 'list'
+  })()
+  const [activeView, setActiveView] = useState<'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification'>(initialView)
 
   // Escape key closes panels
   useEffect(() => {

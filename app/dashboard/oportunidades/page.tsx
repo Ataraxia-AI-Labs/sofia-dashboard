@@ -12,6 +12,7 @@ import {
   BarChart3, DollarSign as DollarSignIcon, Radar, Swords
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { useSearchParams } from 'next/navigation'
 import { LeadScoreBadge } from '@/components/lead-score-badge'
 import { getLeadScores } from '@/lib/api/leads'
 import type { LeadScore } from '@/types'
@@ -75,7 +76,13 @@ export default function OportunidadesPage() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
-  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue' | 'pricing' | 'outreach' | 'competitors'>('list')
+  const searchParams = useSearchParams()
+  const initialOppView = ((): 'list' | 'scoring' | 'predictions' | 'queue' | 'pricing' | 'outreach' | 'competitors' => {
+    const v = searchParams.get('view')
+    if (v === 'scoring' || v === 'predictions' || v === 'queue' || v === 'pricing' || v === 'outreach' || v === 'competitors' || v === 'list') return v
+    return 'list'
+  })()
+  const [activeView, setActiveView] = useState<'list' | 'scoring' | 'predictions' | 'queue' | 'pricing' | 'outreach' | 'competitors'>(initialOppView)
 
   const loadData = useCallback(async () => {
     setLoading(true)

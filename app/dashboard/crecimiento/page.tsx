@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useOrg } from '@/lib/org-context'
 import { getGrowthDashboard, getAttribution, getChannelROI, listAdCampaigns, getSEOHealth } from '@/lib/api/growth'
 import type { GrowthMetrics, AttributionData, AdCampaign } from '@/lib/api/growth'
@@ -248,7 +249,13 @@ export default function CrecimientoPage() {
   const { orgId } = useOrg()
   const t = useTranslations('growthPage')
 
-  const [tab, setTab] = useState<Tab>('funnel')
+  const searchParams = useSearchParams()
+  const initialCreTab = ((): Tab => {
+    const t = searchParams.get('tab')
+    if (t === 'attribution' || t === 'ads' || t === 'seo' || t === 'funnel') return t
+    return 'funnel'
+  })()
+  const [tab, setTab] = useState<Tab>(initialCreTab)
   const [metrics, setMetrics] = useState<GrowthMetrics | null>(null)
   const [attribution, setAttribution] = useState<AttributionData | null>(null)
   const [channelROI, setChannelROI] = useState<Record<string, unknown>>({})
