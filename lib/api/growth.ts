@@ -44,11 +44,35 @@ export interface GrowthMetrics {
   kpis: Record<string, number>
 }
 
+interface BackendFunnelStage { stage: string; count: number; conversion_rate: number | null }
+interface BackendGrowthCommandCenter {
+  funnel?: { stages?: BackendFunnelStage[]; overall_conversion_rate?: number }
+  anomalies?: { anomalies?: Record<string, unknown>[] }
+  growth_velocity?: Record<string, unknown>
+  ltv_cac_ratio?: { avg_ltv?: number }
+}
+
 export async function getGrowthDashboard(orgId: string, days?: number): Promise<GrowthMetrics> {
   const q = days ? `?days=${days}` : ''
   const res = await authFetch(`${API_URL}/api/growth/analytics/${orgId}/command-center${q}`)
   if (!res.ok) throw new Error(`Growth dashboard error: ${res.status}`)
-  return res.json()
+  const raw = (await res.json()) as BackendGrowthCommandCenter
+
+  // Backend shape: funnel.stages[] with {stage, count}. Frontend expects named steps.
+  const stages = raw.funnel?.stages ?? []
+  const byStage = Object.fromEntries(stages.map(s => [s.stage, s.count])) as Record<string, number>
+  return {
+    funnel: {
+      visitors: byStage.messages ?? 0,
+      leads: byStage.patients ?? 0,
+      appointments: byStage.appointments ?? 0,
+      completed: byStage.payments ?? 0,
+      revenue: Math.round((raw.ltv_cac_ratio?.avg_ltv ?? 0) * (byStage.payments ?? 0)),
+    },
+    anomalies: raw.anomalies?.anomalies ?? [],
+    trends: (raw.growth_velocity ?? {}) as Record<string, unknown>,
+    kpis: { overall_conversion_rate: raw.funnel?.overall_conversion_rate ?? 0 },
+  }
 }
 
 // ============================================================
