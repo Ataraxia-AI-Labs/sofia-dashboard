@@ -111,7 +111,7 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
       {/* Training Readiness */}
       <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider flex items-center gap-2">
             <Sparkles size={14} className="text-brand-cyan" />
             {t('trainingReadiness')}
           </h3>
@@ -150,7 +150,7 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
       {/* Models List */}
       <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider flex items-center gap-2">
             <Brain size={14} className="text-brand-purple" />
             {t('registeredModels')}
           </h3>
@@ -239,20 +239,20 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
                   {/* Model Metadata */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div>
-                      <span className="text-text-dim font-mono">{t('baseModel')}</span>
-                      <div className="text-text-muted font-mono mt-0.5">{model.base_model}</div>
+                      <span className="text-text-dim font-body">{t('baseModel')}</span>
+                      <div className="text-text-muted font-body mt-0.5">{model.base_model}</div>
                     </div>
                     <div>
-                      <span className="text-text-dim font-mono">{t('trainingSamples')}</span>
-                      <div className="text-text-muted font-mono mt-0.5">{model.training_samples}</div>
+                      <span className="text-text-dim font-body">{t('trainingSamples')}</span>
+                      <div className="text-text-muted font-body mt-0.5">{model.training_samples}</div>
                     </div>
                     <div>
-                      <span className="text-text-dim font-mono">{t('trainingLoss')}</span>
-                      <div className="text-text-muted font-mono mt-0.5">{model.training_loss?.toFixed(4) ?? 'N/A'}</div>
+                      <span className="text-text-dim font-body">{t('trainingLoss')}</span>
+                      <div className="text-text-muted font-body mt-0.5">{model.training_loss?.toFixed(4) ?? 'N/A'}</div>
                     </div>
                     <div>
-                      <span className="text-text-dim font-mono">{t('createdAt')}</span>
-                      <div className="text-text-muted font-mono mt-0.5">
+                      <span className="text-text-dim font-body">{t('createdAt')}</span>
+                      <div className="text-text-muted font-body mt-0.5">
                         {new Date(model.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}
                       </div>
                     </div>
@@ -305,14 +305,14 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
       {/* Comparison View */}
       {models.length >= 2 && (
         <div className="glass-card p-4">
-          <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
+          <h3 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
             <ArrowLeftRight size={14} className="text-brand-gold" />
             {t('compareModels')}
           </h3>
 
           <div className="flex items-end gap-3 mb-3">
             <div className="flex-1">
-              <label className="text-[10px] font-mono text-text-dim uppercase font-semibold mb-1 block">{t('modelA')}</label>
+              <label className="text-[12px] font-body text-text-dim uppercase font-semibold mb-1 block">{t('modelA')}</label>
               <select
                 value={compareA}
                 onChange={e => setCompareA(e.target.value)}
@@ -325,7 +325,7 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
               </select>
             </div>
             <div className="flex-1">
-              <label className="text-[10px] font-mono text-text-dim uppercase font-semibold mb-1 block">{t('modelB')}</label>
+              <label className="text-[12px] font-body text-text-dim uppercase font-semibold mb-1 block">{t('modelB')}</label>
               <select
                 value={compareB}
                 onChange={e => setCompareB(e.target.value)}
@@ -340,7 +340,7 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
             <button
               onClick={handleCompare}
               disabled={!compareA || !compareB || comparing}
-              className="px-4 py-2 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold disabled:opacity-40 flex items-center gap-1.5 hover:bg-brand-purple-dark transition-colors"
+              className="px-4 py-2 rounded-md bg-brand-purple text-white text-xs font-body font-semibold disabled:opacity-40 flex items-center gap-1.5 hover:bg-brand-purple-dark transition-colors"
             >
               {comparing ? <Loader2 size={12} className="animate-spin" /> : <ArrowLeftRight size={12} />}
               {t('compare')}
@@ -385,7 +385,7 @@ function EvalMetric({ label, value, good, highlight }: {
       }`}>
         {value}
       </div>
-      <div className="text-[9px] font-mono text-text-dim mt-0.5">{label}</div>
+      <div className="text-[11px] font-body text-text-dim mt-0.5">{label}</div>
     </div>
   )
 }
@@ -418,8 +418,8 @@ function ComparisonColumn({ label, evaluation, t }: {
 function CompRow({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[10px] font-mono text-text-dim">{label}</span>
-      <span className={`text-xs font-mono ${bold ? 'font-bold text-brand-purple' : 'text-text-muted'}`}>{value}</span>
+      <span className="text-[12px] font-body text-text-dim">{label}</span>
+      <span className={`text-xs font-body ${bold ? 'font-bold text-brand-purple' : 'text-text-muted'}`}>{value}</span>
     </div>
   )
 }

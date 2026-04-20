@@ -32,8 +32,8 @@ export function BotsTab({ orgId }: BotsTabProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xs font-mono font-semibold text-text-primary">Sub-Bot Monitor</h3>
-          <p className="text-[10px] font-mono text-text-dim mt-0.5">{t('subTitle')}</p>
+          <h3 className="text-xs font-body font-semibold text-text-primary">Sub-Bot Monitor</h3>
+          <p className="text-[12px] font-body text-text-dim mt-0.5">{t('subTitle')}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={loadMetrics} disabled={loading} icon={<RefreshCw size={12} className={loading ? 'animate-spin' : ''} />}>
           {loading ? tCommon('loading') : t('update')}
@@ -43,7 +43,7 @@ export function BotsTab({ orgId }: BotsTabProps) {
       {!metrics && !loading && (
         <div className="glass-card p-6 text-center">
           <Activity size={24} className="mx-auto text-text-dim mb-2" />
-          <p className="text-text-muted text-[10px] font-mono">{t('clickToLoad')}</p>
+          <p className="text-text-muted text-[12px] font-body">{t('clickToLoad')}</p>
         </div>
       )}
 
@@ -51,7 +51,7 @@ export function BotsTab({ orgId }: BotsTabProps) {
         <div className="space-y-3">
           <div className="glass-card p-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-text-muted font-semibold">{t('totalAutoMessages')}</span>
+              <span className="text-[12px] font-body text-text-muted font-semibold">{t('totalAutoMessages')}</span>
               <span className="text-lg font-mono font-bold text-brand-purple">{metrics.total_mensajes_automaticos.toLocaleString()}</span>
             </div>
           </div>
@@ -90,14 +90,14 @@ function BotCard({ name, description, stats, color }: {
     <div className="glass-card p-4">
       <div className="flex items-center gap-2 mb-1.5">
         <Activity size={14} className={color} />
-        <span className="text-xs font-mono font-semibold text-text-primary">{name}</span>
+        <span className="text-xs font-body font-semibold text-text-primary">{name}</span>
       </div>
-      <p className="text-[10px] font-mono text-text-dim mb-2">{description}</p>
+      <p className="text-[12px] font-body text-text-dim mb-2">{description}</p>
       <div className="flex gap-3">
         {stats.map(s => (
           <div key={s.label} className="flex-1 px-3 py-2 rounded-md bg-surface-2">
             <div className="text-lg font-mono font-bold text-text-primary">{s.value.toLocaleString()}</div>
-            <div className="text-[10px] font-mono text-text-dim">{s.label}</div>
+            <div className="text-[12px] font-body text-text-dim">{s.label}</div>
           </div>
         ))}
       </div>

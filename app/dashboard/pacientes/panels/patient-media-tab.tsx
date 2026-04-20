@@ -11,7 +11,7 @@ interface PatientMediaTabProps {
 export function PatientMediaTab({ media }: PatientMediaTabProps) {
   return (
     <div className="glass-card p-4 space-y-3">
-      <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">Archivos Multimedia</h4>
+      <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Archivos Multimedia</h4>
       {media.length > 0 ? (
         <div className="space-y-2 max-h-80 overflow-y-auto">
           {media.map((m) => (
@@ -27,8 +27,8 @@ export function PatientMediaTab({ media }: PatientMediaTabProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-semibold text-text-primary">{m.content_type}</span>
-                  <span className="text-[9px] font-mono text-text-dim">{timeAgo(m.created_at)}</span>
+                  <span className="text-[12px] font-body font-semibold text-text-primary">{m.content_type}</span>
+                  <span className="text-[11px] font-body text-text-dim">{timeAgo(m.created_at)}</span>
                 </div>
                 {m.transcription && (
                   <p className="text-[11px] text-text-muted mt-1 line-clamp-3">&quot;{m.transcription}&quot;</p>
@@ -44,7 +44,7 @@ export function PatientMediaTab({ media }: PatientMediaTabProps) {
           ))}
         </div>
       ) : (
-        <p className="text-[11px] font-mono text-text-dim">Este paciente no ha enviado audios, fotos ni documentos.</p>
+        <p className="text-[13px] font-body text-text-dim">Este paciente no ha enviado audios, fotos ni documentos.</p>
       )}
     </div>
   )

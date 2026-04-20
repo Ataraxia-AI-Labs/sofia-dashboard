@@ -344,11 +344,11 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-white font-mono mb-2 tracking-tight">Portal activado</h1>
-          <p className="text-text-muted text-xs font-mono mb-1 leading-relaxed">
+          <h1 className="text-2xl font-bold text-white font-body mb-2 tracking-tight">Portal activado</h1>
+          <p className="text-text-muted text-xs font-body mb-1 leading-relaxed">
             Enviamos un link de verificacion a
           </p>
-          <p className="text-brand-purple font-semibold text-sm font-mono mb-8 break-all">
+          <p className="text-brand-purple font-semibold text-sm font-body mb-8 break-all">
             {form.owner_email}
           </p>
 
@@ -360,8 +360,8 @@ export default function OnboardingPage() {
                 <Mail size={12} className="text-brand-purple" />
               </div>
               <div>
-                <p className="text-xs text-white font-mono font-medium mb-0.5">Verifica tu email para continuar</p>
-                <p className="text-[10px] text-text-muted font-mono leading-relaxed">
+                <p className="text-xs text-white font-body font-medium mb-0.5">Verifica tu email para continuar</p>
+                <p className="text-[10px] text-text-muted font-body leading-relaxed">
                   Revisa tu bandeja de entrada (y la carpeta de spam).
                   Haz clic en el link para activar tu cuenta.
                 </p>
@@ -369,7 +369,7 @@ export default function OnboardingPage() {
             </div>
 
             <div className="border-t border-border pt-3">
-              <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2 font-medium">Estado del portal</p>
+              <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2 font-medium">Estado del portal</p>
               <div className="space-y-1.5">
                 <SetupItem done={true} label="Organizacion creada" />
                 <SetupItem done={true} label="Horarios configurados (Lun-Sab)" />
@@ -383,7 +383,7 @@ export default function OnboardingPage() {
           <button
             onClick={handleResend}
             disabled={resendCooldown > 0 || resendLoading}
-            className="w-full py-2.5 rounded-lg bg-surface border border-border text-text-muted font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:border-brand-purple/30 hover:text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-2"
+            className="w-full py-2.5 rounded-lg bg-surface border border-border text-text-muted font-semibold text-xs font-body flex items-center justify-center gap-2 hover:border-brand-purple/30 hover:text-text-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-2"
           >
             {resendLoading ? (
               <div className="w-3.5 h-3.5 border-2 border-text-dim/30 border-t-text-muted rounded-full animate-spin" />
@@ -399,14 +399,14 @@ export default function OnboardingPage() {
           </button>
 
           {resendSuccess && resendCooldown > 0 && (
-            <p className="text-[10px] text-status-success font-mono mb-2 flex items-center justify-center gap-1">
+            <p className="text-[10px] text-status-success font-body mb-2 flex items-center justify-center gap-1">
               <Check size={10} /> Email de verificacion reenviado exitosamente
             </p>
           )}
 
           <button
             onClick={() => router.push('/login')}
-            className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:brightness-110 transition-all"
+            className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-body flex items-center justify-center gap-2 hover:brightness-110 transition-all"
           >
             Ya verifique mi email <ArrowRight size={14} />
           </button>
@@ -465,18 +465,18 @@ export default function OnboardingPage() {
 
           {/* Step counter */}
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-[10px] font-mono text-brand-purple uppercase tracking-widest">
+            <span className="text-[12px] font-body text-brand-purple uppercase tracking-widest">
               Paso {step} de 4
             </span>
             <div className="flex-1 h-px bg-border" />
-            <span className="text-[10px] font-mono text-text-dim">
+            <span className="text-[12px] font-body text-text-dim">
               {Math.round(depthPercent)}%
             </span>
           </div>
 
           {/* Narrative title — changes per step */}
           <h1
-            className="font-mono text-3xl font-bold text-white leading-tight mb-3 transition-all duration-500"
+            className="font-body text-3xl font-bold text-white leading-tight mb-3 transition-all duration-500"
             key={`title-${step}`}
             style={{ animation: 'fadeUp 0.4s ease-out' }}
           >
@@ -484,7 +484,7 @@ export default function OnboardingPage() {
           </h1>
 
           <p
-            className="text-text-secondary text-sm font-mono leading-relaxed mb-8"
+            className="text-text-secondary text-sm font-body leading-relaxed mb-8"
             key={`sub-${step}`}
             style={{ animation: 'fadeUp 0.5s ease-out' }}
           >
@@ -503,7 +503,7 @@ export default function OnboardingPage() {
                 <div className={`h-px flex-1 transition-all duration-500 ${
                   i + 1 <= step ? 'bg-brand-purple/40' : 'bg-border'
                 }`} />
-                <span className={`text-[10px] font-mono transition-colors duration-500 ${
+                <span className={`text-[12px] font-body transition-colors duration-500 ${
                   i + 1 === step ? 'text-brand-purple' : i + 1 < step ? 'text-text-muted' : 'text-text-dim'
                 }`}>
                   {s.title}
@@ -521,7 +521,7 @@ export default function OnboardingPage() {
                 { icon: <CreditCard size={13} />, text: 'Cobros integrados' },
                 { icon: <Zap size={13} />, text: 'Deteccion de oportunidades' },
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-xs font-mono text-text-muted">
+                <div key={i} className="flex items-center gap-3 text-xs font-body text-text-muted">
                   <div className="w-7 h-7 rounded-md flex items-center justify-center text-brand-purple"
                     style={{ background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.12)' }}>
                     {item.icon}
@@ -545,12 +545,12 @@ export default function OnboardingPage() {
                 <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8" />
                 <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
               </svg>
-              <span className="text-[10px] font-mono text-text-dim uppercase tracking-widest">
+              <span className="text-[12px] font-body text-text-dim uppercase tracking-widest">
                 Paso {step}/4
               </span>
             </div>
             <h2 className="text-lg font-mono font-bold text-white">{narrative.title}</h2>
-            <p className="text-text-muted text-xs font-mono">{narrative.sub}</p>
+            <p className="text-text-muted text-xs font-body">{narrative.sub}</p>
           </div>
 
           {/* Progress pipeline */}
@@ -575,26 +575,26 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="space-y-4" key="step1" style={{ animation: 'fadeUp 0.3s ease-out' }}>
               <div>
-                <label htmlFor="ob-clinic-name" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre de la clinica *</label>
+                <label htmlFor="ob-clinic-name" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre de la clinica *</label>
                 <input
                   id="ob-clinic-name"
                   type="text"
                   value={form.clinic_name}
                   onChange={(e) => updateForm('clinic_name', e.target.value)}
                   placeholder="Ej: Sonrisa Perfect"
-                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-body outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Especialidad *</label>
+                <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Especialidad *</label>
                 <div className="grid grid-cols-2 gap-1.5">
                   {SPECIALTIES.map((s) => (
                     <button
                       key={s.value}
                       onClick={() => updateForm('specialty', s.value)}
-                      className={`px-2.5 py-2.5 rounded-md border text-left text-xs font-mono transition-all ${
+                      className={`px-2.5 py-2.5 rounded-md border text-left text-xs font-body transition-all ${
                         form.specialty === s.value
                           ? 'border-brand-purple text-brand-purple'
                           : 'border-border bg-surface text-text-muted hover:border-border-2'
@@ -609,12 +609,12 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label htmlFor="ob-city" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Ciudad</label>
+                <label htmlFor="ob-city" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Ciudad</label>
                 <select
                   id="ob-city"
                   value={form.city}
                   onChange={(e) => updateForm('city', e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-body outline-none"
                 >
                   <option value="">Seleccionar...</option>
                   {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -627,32 +627,32 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div className="space-y-4" key="step2" style={{ animation: 'fadeUp 0.3s ease-out' }}>
               <div>
-                <label htmlFor="ob-owner-name" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre completo *</label>
+                <label htmlFor="ob-owner-name" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre completo *</label>
                 <input
                   id="ob-owner-name"
                   type="text"
                   value={form.owner_name}
                   onChange={(e) => updateForm('owner_name', e.target.value)}
                   placeholder="Dr. Juan Perez"
-                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-body outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label htmlFor="ob-email" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Email *</label>
+                <label htmlFor="ob-email" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Email *</label>
                 <input
                   id="ob-email"
                   type="email"
                   value={form.owner_email}
                   onChange={(e) => updateForm('owner_email', e.target.value)}
                   placeholder="juan@clinica.com"
-                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-body outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
                 />
               </div>
 
               <div>
-                <label htmlFor="ob-password" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Contrasena del Dashboard *</label>
+                <label htmlFor="ob-password" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Contrasena del Dashboard *</label>
                 <div className="relative">
                   <input
                     id="ob-password"
@@ -660,7 +660,7 @@ export default function OnboardingPage() {
                     value={form.password}
                     onChange={(e) => updateForm('password', e.target.value)}
                     placeholder="Minimo 8 caracteres"
-                    className={`w-full px-3 py-2.5 pr-10 rounded-md bg-surface border text-white text-xs font-mono outline-none transition-colors placeholder:text-text-dim ${
+                    className={`w-full px-3 py-2.5 pr-10 rounded-md bg-surface border text-white text-xs font-body outline-none transition-colors placeholder:text-text-dim ${
                       form.password && !passwordValid ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
                     }`}
                   />
@@ -674,46 +674,46 @@ export default function OnboardingPage() {
                   </button>
                 </div>
                 {form.password && !passwordValid && (
-                  <p className="text-[10px] font-mono text-status-danger mt-0.5">Minimo 8 caracteres</p>
+                  <p className="text-[12px] font-body text-status-danger mt-0.5">Minimo 8 caracteres</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="ob-pw-confirm" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Confirmar contrasena *</label>
+                <label htmlFor="ob-pw-confirm" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Confirmar contrasena *</label>
                 <input
                   id="ob-pw-confirm"
                   type={showPw ? 'text' : 'password'}
                   value={form.password_confirm}
                   onChange={(e) => updateForm('password_confirm', e.target.value)}
                   placeholder="Repite la contrasena"
-                  className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-mono outline-none transition-colors placeholder:text-text-dim ${
+                  className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-body outline-none transition-colors placeholder:text-text-dim ${
                     form.password_confirm && !passwordsMatch ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
                   }`}
                 />
                 {form.password_confirm && !passwordsMatch && (
-                  <p className="text-[10px] font-mono text-status-danger mt-0.5">Las contrasenas no coinciden</p>
+                  <p className="text-[12px] font-body text-status-danger mt-0.5">Las contrasenas no coinciden</p>
                 )}
                 {form.password_confirm && passwordsMatch && passwordValid && (
-                  <p className="text-[10px] font-mono text-status-success mt-0.5 flex items-center gap-1"><Check size={10} /> Contrasenas coinciden</p>
+                  <p className="text-[12px] font-body text-status-success mt-0.5 flex items-center gap-1"><Check size={10} /> Contrasenas coinciden</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="ob-phone" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">WhatsApp del doctor *</label>
+                <label htmlFor="ob-phone" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">WhatsApp del doctor *</label>
                 <input
                   id="ob-phone"
                   type="tel"
                   value={form.phone}
                   onChange={(e) => updateForm('phone', e.target.value)}
                   placeholder="+573001234567"
-                  className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-mono outline-none transition-colors placeholder:text-text-dim ${
+                  className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-body outline-none transition-colors placeholder:text-text-dim ${
                     form.phone && !phoneValid ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
                   }`}
                 />
                 {form.phone && !phoneValid ? (
-                  <p className="text-[10px] font-mono text-status-danger mt-0.5">Formato: codigo de pais + numero (ej: +573001234567)</p>
+                  <p className="text-[12px] font-body text-status-danger mt-0.5">Formato: codigo de pais + numero (ej: +573001234567)</p>
                 ) : (
-                  <p className="text-[10px] font-mono text-text-dim mt-0.5">SofIA enviara alertas de emergencia aqui</p>
+                  <p className="text-[12px] font-body text-text-dim mt-0.5">SofIA enviara alertas de emergencia aqui</p>
                 )}
               </div>
             </div>
@@ -730,11 +730,11 @@ export default function OnboardingPage() {
                     <Zap size={14} className="text-brand-purple" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-mono font-semibold text-white">Conexion con un clic</h3>
-                    <p className="text-[10px] font-mono text-text-dim">Disponible en Ajustes &rarr; Canales</p>
+                    <h3 className="text-xs font-body font-semibold text-white">Conexion con un clic</h3>
+                    <p className="text-[12px] font-body text-text-dim">Disponible en Ajustes &rarr; Canales</p>
                   </div>
                 </div>
-                <p className="text-[10px] font-mono text-text-muted leading-relaxed">
+                <p className="text-[12px] font-body text-text-muted leading-relaxed">
                   Despues de crear tu cuenta, podras conectar WhatsApp, Instagram y Messenger
                   con un solo clic desde el dashboard.
                 </p>
@@ -742,16 +742,16 @@ export default function OnboardingPage() {
 
               {/* Manual phone ID */}
               <div>
-                <label htmlFor="ob-phone-id" className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">Phone Number ID (opcional)</label>
+                <label htmlFor="ob-phone-id" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Phone Number ID (opcional)</label>
                 <input
                   id="ob-phone-id"
                   type="text"
                   value={form.whatsapp_phone_id}
                   onChange={(e) => updateForm('whatsapp_phone_id', e.target.value)}
                   placeholder="Ej: 123456789012345"
-                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
+                  className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-body outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
                 />
-                <p className="text-[10px] font-mono text-text-dim mt-0.5 flex items-center gap-1">
+                <p className="text-[12px] font-body text-text-dim mt-0.5 flex items-center gap-1">
                   Si ya tienes el Phone ID de Meta Business
                   <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:brightness-125 inline-flex items-center gap-0.5">
                     Ir a Meta <ExternalLink size={9} />
@@ -762,7 +762,7 @@ export default function OnboardingPage() {
               <div className="bg-surface border border-border rounded-md p-4">
                 <div className="flex items-start gap-2">
                   <Shield size={12} className="text-brand-purple mt-0.5 flex-shrink-0" />
-                  <p className="text-[10px] font-mono text-text-muted leading-relaxed">
+                  <p className="text-[12px] font-body text-text-muted leading-relaxed">
                     Puedes configurar WhatsApp en cualquier momento desde
                     <strong className="text-text-primary"> Control &rarr; Canales</strong>.
                     SofIA estara lista cuando tu lo estes.
@@ -787,7 +787,7 @@ export default function OnboardingPage() {
               </div>
 
               <div className="bg-surface border border-border rounded-md p-4">
-                <p className="text-[10px] font-mono text-text-muted leading-relaxed">
+                <p className="text-[12px] font-body text-text-muted leading-relaxed">
                   Al confirmar se creara: organizacion, horarios (Lun-Sab 8AM-6PM),
                   servicios de ejemplo, y el prompt personalizado para <strong className="text-white">{form.clinic_name}</strong>.
                 </p>
@@ -808,7 +808,7 @@ export default function OnboardingPage() {
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   className="mt-0.5 w-4 h-4 rounded border-border accent-brand-purple"
                 />
-                <span className="text-[10px] font-mono text-text-muted leading-relaxed group-hover:text-text-primary transition-colors">
+                <span className="text-[12px] font-body text-text-muted leading-relaxed group-hover:text-text-primary transition-colors">
                   Acepto los terminos de servicio y la politica de privacidad.
                   Datos procesados conforme a Ley 1581 de 2012.
                 </span>
@@ -817,13 +817,13 @@ export default function OnboardingPage() {
           )}
 
           {/* Hint text */}
-          <p className="text-[10px] font-mono text-text-dim mt-4 leading-relaxed italic">
+          <p className="text-[12px] font-body text-text-dim mt-4 leading-relaxed italic">
             {narrative.hint}
           </p>
 
           {/* Error */}
           {error && (
-            <div className="mt-3 px-3 py-2.5 rounded-md bg-surface border border-status-danger/20 text-status-danger text-xs font-mono"
+            <div className="mt-3 px-3 py-2.5 rounded-md bg-surface border border-status-danger/20 text-status-danger text-xs font-body"
               style={{ background: 'rgba(239, 68, 68, 0.06)' }}>
               {error}
             </div>
@@ -834,7 +834,7 @@ export default function OnboardingPage() {
             {step > 1 && (
               <button
                 onClick={() => setStep((step - 1) as Step)}
-                className="px-4 py-2.5 rounded-md bg-surface border border-border text-text-muted text-xs font-mono font-semibold flex items-center gap-2 hover:border-brand-purple/20 transition-colors"
+                className="px-4 py-2.5 rounded-md bg-surface border border-border text-text-muted text-xs font-body font-semibold flex items-center gap-2 hover:border-brand-purple/20 transition-colors"
               >
                 <ArrowLeft size={14} /> Atras
               </button>
@@ -842,7 +842,7 @@ export default function OnboardingPage() {
             <button
               onClick={() => step < 4 ? setStep((step + 1) as Step) : handleSubmit()}
               disabled={!canProceed() || loading}
-              className="flex-1 py-2.5 rounded-md bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-50"
+              className="flex-1 py-2.5 rounded-md bg-brand-purple text-white font-semibold text-xs font-body flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -855,7 +855,7 @@ export default function OnboardingPage() {
           </div>
 
           {/* Footer */}
-          <p className="text-[9px] font-mono text-text-dim text-center mt-8">
+          <p className="text-[11px] font-body text-text-dim text-center mt-8">
             Ya tienes cuenta?{' '}
             <a href="/login" className="text-brand-purple hover:brightness-125 transition-colors">
               Iniciar sesion
@@ -875,7 +875,7 @@ function SetupItem({ done, label }: { done: boolean; label: string }) {
       }`} style={done ? { background: 'rgba(6, 214, 160, 0.1)' } : {}}>
         {done ? <Check size={10} /> : <span className="text-[8px]">—</span>}
       </div>
-      <span className={`text-xs font-mono ${done ? 'text-white' : 'text-text-dim'}`}>{label}</span>
+      <span className={`text-xs font-body ${done ? 'text-white' : 'text-text-dim'}`}>{label}</span>
     </div>
   )
 }
@@ -883,8 +883,8 @@ function SetupItem({ done, label }: { done: boolean; label: string }) {
 function ConfirmRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-[10px] font-mono text-text-dim uppercase tracking-wider">{label}</span>
-      <span className="text-xs font-mono text-white font-medium">{value}</span>
+      <span className="text-[12px] font-body text-text-dim uppercase tracking-wider">{label}</span>
+      <span className="text-xs font-body text-white font-medium">{value}</span>
     </div>
   )
 }

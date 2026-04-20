@@ -30,7 +30,7 @@ function CodeInput({
       onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
       disabled={disabled}
       placeholder="000000"
-      className="w-40 text-center text-2xl font-mono tracking-[0.4em] px-4 py-3 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all disabled:opacity-50"
+      className="w-40 text-center text-2xl font-body tracking-[0.4em] px-4 py-3 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all disabled:opacity-50"
       autoComplete="one-time-code"
     />
   )
@@ -171,7 +171,7 @@ export function SecurityTab() {
     return (
       <div className="glass-card p-5 flex items-center gap-3 animate-sentient-breathe">
         <Loader2 size={16} className="animate-spin text-brand-purple" />
-        <span className="text-text-muted text-[10px] font-mono">Cargando estado de seguridad...</span>
+        <span className="text-text-muted text-[12px] font-body">Cargando estado de seguridad...</span>
       </div>
     )
   }
@@ -189,23 +189,23 @@ export function SecurityTab() {
               }
             </div>
             <div>
-              <h3 className="text-xs font-mono font-semibold text-text-primary">
+              <h3 className="text-xs font-body font-semibold text-text-primary">
                 Autenticacion en dos pasos (2FA)
               </h3>
-              <p className="text-[10px] font-mono text-text-muted mt-0.5">
+              <p className="text-[12px] font-body text-text-muted mt-0.5">
                 {mfaEnabled
                   ? 'Tu cuenta esta protegida con un autenticador TOTP'
                   : 'Agrega una capa extra de seguridad a tu cuenta'}
               </p>
             </div>
           </div>
-          <span className={`text-[10px] font-mono font-semibold px-2.5 py-1 rounded-md ${mfaEnabled ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>
+          <span className={`text-[12px] font-body font-semibold px-2.5 py-1 rounded-md ${mfaEnabled ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>
             {mfaEnabled ? 'Activo' : 'Inactivo'}
           </span>
         </div>
 
         {error && (
-          <div className="mt-3 px-3 py-2 rounded-md bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-mono flex items-center gap-2">
+          <div className="mt-3 px-3 py-2 rounded-md bg-status-danger/10 border border-status-danger/20 text-status-danger text-[12px] font-body flex items-center gap-2">
             <AlertTriangle size={14} />
             {error}
           </div>
@@ -213,7 +213,7 @@ export function SecurityTab() {
 
         {/* ── Success confirmation ───────────────────────────── */}
         {enrollSuccess && (
-          <div className="mt-3 px-3 py-2 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[10px] font-mono flex items-center gap-2">
+          <div className="mt-3 px-3 py-2 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[12px] font-body flex items-center gap-2">
             <ShieldCheck size={14} />
             2FA activado correctamente. Tu cuenta ya esta protegida.
           </div>
@@ -223,7 +223,7 @@ export function SecurityTab() {
         {!mfaEnabled && !enrolling && (
           <button
             onClick={handleStartEnroll}
-            className="mt-4 px-4 py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold flex items-center gap-2 hover:bg-brand-purple-dark transition-colors"
+            className="mt-4 px-4 py-2 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold flex items-center gap-2 hover:bg-brand-purple-dark transition-colors"
           >
             <KeyRound size={14} />
             Activar 2FA
@@ -232,7 +232,7 @@ export function SecurityTab() {
 
         {enrolling && qrCode && (
           <div className="mt-4 space-y-4">
-            <p className="text-[10px] font-mono text-text-muted leading-relaxed">
+            <p className="text-[12px] font-body text-text-muted leading-relaxed">
               Escanea el codigo QR con tu app autenticadora (Google Authenticator, Authy, etc.) y luego ingresa el codigo de 6 digitos para confirmar.
             </p>
 
@@ -245,9 +245,9 @@ export function SecurityTab() {
 
               {secret && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-mono text-text-dim mb-1.5">O ingresa el codigo manual:</p>
+                  <p className="text-[12px] font-body text-text-dim mb-1.5">O ingresa el codigo manual:</p>
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 min-w-0 px-3 py-2 rounded-md bg-surface-3 text-text-muted text-[10px] font-mono break-all">
+                    <code className="flex-1 min-w-0 px-3 py-2 rounded-md bg-surface-3 text-text-muted text-[12px] font-body break-all">
                       {secret}
                     </code>
                     <button
@@ -270,7 +270,7 @@ export function SecurityTab() {
                 <button
                   onClick={handleVerifyEnroll}
                   disabled={verifyCode.length !== 6 || verifying}
-                  className="px-4 py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold flex items-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold flex items-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {verifying ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                   Verificar
@@ -278,7 +278,7 @@ export function SecurityTab() {
                 <button
                   onClick={handleCancelEnroll}
                   disabled={verifying}
-                  className="px-4 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-[10px] font-mono font-medium hover:text-text-primary transition-colors disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-[12px] font-body font-medium hover:text-text-primary transition-colors disabled:opacity-50"
                 >
                   Cancelar
                 </button>
@@ -291,7 +291,7 @@ export function SecurityTab() {
         {mfaEnabled && !enrolling && (
           <button
             onClick={() => { setDisableModalOpen(true); setDisableError(''); setDisablePassword('') }}
-            className="mt-4 px-4 py-2 rounded-lg bg-surface-2 border border-status-danger/30 text-status-danger text-[10px] font-mono font-semibold flex items-center gap-2 hover:bg-status-danger/10 transition-colors"
+            className="mt-4 px-4 py-2 rounded-lg bg-surface-2 border border-status-danger/30 text-status-danger text-[12px] font-body font-semibold flex items-center gap-2 hover:bg-status-danger/10 transition-colors"
           >
             <ShieldOff size={14} />
             Desactivar 2FA
@@ -301,7 +301,7 @@ export function SecurityTab() {
 
       {/* Info card */}
       <div className="glass-card p-4">
-        <p className="text-[10px] font-mono text-text-dim leading-relaxed">
+        <p className="text-[12px] font-body text-text-dim leading-relaxed">
           <span className="text-text-muted font-medium">Que es 2FA?</span>{' '}
           La autenticacion en dos pasos requiere que ingreses un codigo de 6 digitos generado por tu app autenticadora cada vez que inicias sesion, ademas de tu contrasena habitual.
           Esto protege tu cuenta incluso si alguien obtiene tu contrasena.
@@ -318,7 +318,7 @@ export function SecurityTab() {
       >
         <div className="space-y-3 pt-2">
           <div>
-            <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">
+            <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">
               Contrasena actual
             </label>
             <input
@@ -326,13 +326,13 @@ export function SecurityTab() {
               value={disablePassword}
               onChange={(e) => setDisablePassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+              className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
               autoComplete="current-password"
             />
           </div>
 
           {disableError && (
-            <div className="px-3 py-2 rounded-md bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-mono">
+            <div className="px-3 py-2 rounded-md bg-status-danger/10 border border-status-danger/20 text-status-danger text-[12px] font-body">
               {disableError}
             </div>
           )}
@@ -341,7 +341,7 @@ export function SecurityTab() {
             <button
               onClick={handleDisable}
               disabled={!disablePassword || disabling}
-              className="flex-1 py-2 rounded-lg bg-status-danger text-white text-[10px] font-mono font-semibold flex items-center justify-center gap-2 hover:bg-status-danger/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-2 rounded-lg bg-status-danger text-white text-[12px] font-body font-semibold flex items-center justify-center gap-2 hover:bg-status-danger/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {disabling ? <Loader2 size={14} className="animate-spin" /> : <ShieldOff size={14} />}
               Desactivar
@@ -349,7 +349,7 @@ export function SecurityTab() {
             <button
               onClick={() => setDisableModalOpen(false)}
               disabled={disabling}
-              className="flex-1 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-[10px] font-mono font-medium hover:text-text-primary transition-colors disabled:opacity-50"
+              className="flex-1 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-[12px] font-body font-medium hover:text-text-primary transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>

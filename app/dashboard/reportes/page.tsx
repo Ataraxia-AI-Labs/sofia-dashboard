@@ -82,13 +82,13 @@ export default function ReportesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h1>
-          <p className="text-[9px] font-mono text-text-dim">{t('subtitle')}</p>
+          <p className="text-[11px] font-body text-text-dim">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <select
             value={dias}
             onChange={(e) => setDias(Number(e.target.value))}
-            className="rounded-md bg-void border border-border px-3 py-1.5 text-[10px] font-mono text-text-primary"
+            className="rounded-md bg-void border border-border px-3 py-1.5 text-[12px] font-body text-text-primary"
           >
             <option value={7}>{t('days', { count: 7 })}</option>
             <option value={15}>{t('days', { count: 15 })}</option>
@@ -99,7 +99,7 @@ export default function ReportesPage() {
           <button
             onClick={handleDownload}
             disabled={downloading || !orgId}
-            className="flex items-center gap-2 rounded-md bg-brand-purple hover:bg-brand-purple-dark disabled:opacity-50 px-4 py-1.5 text-[10px] font-mono font-medium text-white transition-colors"
+            className="flex items-center gap-2 rounded-md bg-brand-purple hover:bg-brand-purple-dark disabled:opacity-50 px-4 py-1.5 text-[12px] font-body font-medium text-white transition-colors"
           >
             {downloading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -119,14 +119,14 @@ export default function ReportesPage() {
         </div>
       ) : !orgId ? (
         <div className="glass-card p-8 text-center">
-          <p className="text-[10px] font-mono text-text-dim">No hay organizacion activa. Vuelve a iniciar sesion.</p>
+          <p className="text-[12px] font-body text-text-dim">No hay organizacion activa. Vuelve a iniciar sesion.</p>
         </div>
       ) : loadError ? (
         <div className="glass-card p-8 text-center">
-          <p className="text-[10px] font-mono text-status-danger mb-2">{loadError}</p>
+          <p className="text-[12px] font-body text-status-danger mb-2">{loadError}</p>
           <button
             onClick={() => setDias(dias)}
-            className="text-[9px] font-mono text-brand-purple hover:underline uppercase tracking-wider"
+            className="text-[11px] font-body text-brand-purple hover:underline uppercase tracking-wider"
           >
             Reintentar
           </button>
@@ -165,7 +165,7 @@ export default function ReportesPage() {
           <div className="grid md:grid-cols-2 gap-3">
             {/* Conversions Funnel */}
             <div className="glass-card p-4">
-              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h2 className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-brand-purple" />
                 {t('conversionFunnel')}
               </h2>
@@ -173,7 +173,7 @@ export default function ReportesPage() {
               <FunnelBar label={t('patients')} value={conv.funnel?.pacientes ?? 0} max={conv.funnel?.mensajes ?? 1} />
               <FunnelBar label={t('appointments')} value={conv.funnel?.citas ?? 0} max={conv.funnel?.mensajes ?? 1} />
               <FunnelBar label={t('completed')} value={conv.funnel?.completadas ?? 0} max={conv.funnel?.mensajes ?? 1} />
-              <div className="mt-3 grid grid-cols-2 gap-3 text-[10px] font-mono">
+              <div className="mt-3 grid grid-cols-2 gap-3 text-[12px] font-body">
                 <Rate label={t('conversion')} value={conv.tasa_conversion_pct} />
                 <Rate label={t('attendance')} value={conv.tasa_asistencia_pct} />
                 <Rate label={t('cancellation')} value={conv.tasa_cancelacion_pct} color="text-status-danger" />
@@ -183,7 +183,7 @@ export default function ReportesPage() {
 
             {/* Revenue */}
             <div className="glass-card p-4">
-              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h2 className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-status-success" />
                 Revenue ({rev.moneda ?? 'COP'})
               </h2>
@@ -201,7 +201,7 @@ export default function ReportesPage() {
 
             {/* AI Performance */}
             <div className="glass-card p-4">
-              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h2 className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Bot className="h-5 w-5 text-brand-cyan" />
                 {t('aiPerformance')}
               </h2>
@@ -214,9 +214,9 @@ export default function ReportesPage() {
               </div>
               {perf.distribucion_intents && Object.keys(perf.distribucion_intents).length > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-[9px] font-mono text-text-dim uppercase mb-2">{t('topIntents')}</h3>
+                  <h3 className="text-[11px] font-body text-text-dim uppercase mb-2">{t('topIntents')}</h3>
                   {Object.entries(perf.distribucion_intents as Record<string, number>).slice(0, 5).map(([intent, count]) => (
-                    <div key={intent} className="flex justify-between text-[10px] font-mono text-text-muted py-0.5">
+                    <div key={intent} className="flex justify-between text-[12px] font-body text-text-muted py-0.5">
                       <span>{intent}</span>
                       <span className="text-text-dim">{count}</span>
                     </div>
@@ -227,7 +227,7 @@ export default function ReportesPage() {
 
             {/* Sub-Bots */}
             <div className="glass-card p-4">
-              <h2 className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+              <h2 className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
                 <Bot className="h-5 w-5 text-brand-purple" />
                 {t('subBotsAutomatic')}
               </h2>
@@ -236,7 +236,7 @@ export default function ReportesPage() {
                 <BotCard name="Hunter" count={bots.hunter_bot?.followups_enviados ?? 0} desc={t('leadFollowups')} extra={bots.hunter_bot?.conversiones_post_followup ? `${bots.hunter_bot.conversiones_post_followup} ${t('converted')}` : undefined} />
                 <BotCard name="Nurse" count={bots.nurse_bot?.recordatorios_enviados ?? 0} desc={t('medicationReminders')} />
                 <div className="border-t border-border pt-3">
-                  <div className="flex justify-between text-[10px] font-mono">
+                  <div className="flex justify-between text-[12px] font-body">
                     <span className="text-text-muted">{t('totalAutomatic')}</span>
                     <span className="font-bold text-text-primary">{bots.total_mensajes_automaticos ?? 0}</span>
                   </div>
@@ -247,12 +247,12 @@ export default function ReportesPage() {
 
           {/* Download CTA */}
           <div className="glass-card p-5 text-center">
-            <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-2">{t('downloadFullReport')}</h3>
-            <p className="text-[9px] font-mono text-text-dim mb-3">{t('fullReportDesc')}</p>
+            <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary mb-2">{t('downloadFullReport')}</h3>
+            <p className="text-[11px] font-body text-text-dim mb-3">{t('fullReportDesc')}</p>
             <button
               onClick={handleDownload}
               disabled={downloading || !orgId}
-              className="inline-flex items-center gap-2 rounded-md bg-brand-purple hover:bg-brand-purple-dark disabled:opacity-50 px-5 py-2 text-[10px] font-mono font-medium text-white transition-colors"
+              className="inline-flex items-center gap-2 rounded-md bg-brand-purple hover:bg-brand-purple-dark disabled:opacity-50 px-5 py-2 text-[12px] font-body font-medium text-white transition-colors"
             >
               {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
               {downloading ? t('generatingPDF') : t('downloadComplete')}
@@ -270,9 +270,9 @@ export default function ReportesPage() {
 function SummaryCard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string | number; sub: string }) {
   return (
     <div className="glass-card p-4">
-      <div className="flex items-center gap-2 text-brand-purple mb-2">{icon}<span className="text-[10px] font-mono text-text-dim">{label}</span></div>
+      <div className="flex items-center gap-2 text-brand-purple mb-2">{icon}<span className="text-[12px] font-body text-text-dim">{label}</span></div>
       <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[9px] font-mono text-text-dim mt-1">{sub}</div>
+      <div className="text-[11px] font-body text-text-dim mt-1">{sub}</div>
     </div>
   )
 }
@@ -281,11 +281,11 @@ function FunnelBar({ label, value, max }: { label: string; value: number; max: n
   const pct = max > 0 ? Math.max((value / max) * 100, 2) : 2
   return (
     <div className="flex items-center gap-3 mb-2">
-      <span className="text-[10px] font-mono text-text-muted w-24">{label}</span>
+      <span className="text-[12px] font-body text-text-muted w-24">{label}</span>
       <div className="flex-1 h-3 bg-void rounded-full overflow-hidden">
         <div className="h-full bg-brand-purple rounded-full transition-all" style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[10px] font-mono font-bold text-text-primary w-12 text-right">{value}</span>
+      <span className="text-[12px] font-body font-bold text-text-primary w-12 text-right">{value}</span>
     </div>
   )
 }
@@ -293,15 +293,15 @@ function FunnelBar({ label, value, max }: { label: string; value: number; max: n
 function Rate({ label, value, color = 'text-status-success' }: { label: string; value?: number; color?: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-text-muted font-mono text-[10px]">{label}</span>
-      <span className={`font-mono font-semibold ${color}`}>{value ?? 0}%</span>
+      <span className="text-text-muted font-body text-[10px]">{label}</span>
+      <span className={`font-body font-semibold ${color}`}>{value ?? 0}%</span>
     </div>
   )
 }
 
 function RevenueRow({ label, value, bold }: { label: string; value?: number; bold?: boolean }) {
   return (
-    <div className="flex justify-between text-[10px] font-mono">
+    <div className="flex justify-between text-[12px] font-body">
       <span className="text-text-muted">{label}</span>
       <span className={bold ? 'font-bold text-status-success' : 'text-text-primary'}>{formatMoney(value ?? 0)}</span>
     </div>
@@ -311,8 +311,8 @@ function RevenueRow({ label, value, bold }: { label: string; value?: number; bol
 function MetricRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-text-muted font-mono text-[10px]">{label}</span>
-      <span className="text-text-primary font-mono font-medium text-[10px]">{value}</span>
+      <span className="text-text-muted font-body text-[10px]">{label}</span>
+      <span className="text-text-primary font-body font-medium text-[10px]">{value}</span>
     </div>
   )
 }
@@ -321,12 +321,12 @@ function BotCard({ name, count, desc, extra }: { name: string; count: number; de
   return (
     <div className="flex items-center justify-between">
       <div>
-        <span className="text-xs font-mono font-medium text-text-primary">{name} Bot</span>
-        <p className="text-[9px] font-mono text-text-dim">{desc}</p>
+        <span className="text-xs font-body font-medium text-text-primary">{name} Bot</span>
+        <p className="text-[11px] font-body text-text-dim">{desc}</p>
       </div>
       <div className="text-right">
         <span className="text-sm font-bold font-mono text-text-primary">{count}</span>
-        {extra && <p className="text-[9px] font-mono text-status-success">{extra}</p>}
+        {extra && <p className="text-[11px] font-body text-status-success">{extra}</p>}
       </div>
     </div>
   )

@@ -108,7 +108,7 @@ function CompetitorFormModal({
 
           {/* Service prices */}
           <div>
-            <p className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider mb-2">{t('servicePrices')}</p>
+            <p className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider mb-2">{t('servicePrices')}</p>
             <div className="space-y-2">
               {services.map((s, i) => (
                 <div key={i} className="flex items-center gap-2">
@@ -236,7 +236,7 @@ function SwotCard({ type, items }: { type: keyof typeof SWOT_CONFIG; items: stri
     <div className={`p-3 rounded-lg ${cfg.bg} border ${cfg.border}`}>
       <div className="flex items-center gap-1.5 mb-2">
         <Icon size={12} className={cfg.color} />
-        <span className={`text-[10px] font-bold font-mono uppercase tracking-wider ${cfg.color}`}>{t(cfg.labelKey)}</span>
+        <span className={`text-[10px] font-bold font-body uppercase tracking-wider ${cfg.color}`}>{t(cfg.labelKey)}</span>
       </div>
       {items.length > 0 ? (
         <ul className="space-y-1">
@@ -385,7 +385,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
           </div>
           <div>
             <h3 className="text-sm font-bold font-mono text-text-primary">{t('title')}</h3>
-            <p className="text-[10px] font-mono text-text-dim">{t('subtitle')}</p>
+            <p className="text-[12px] font-body text-text-dim">{t('subtitle')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -425,7 +425,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
               <div className="text-right flex-shrink-0">
                 <span className="text-[10px] text-text-dim line-through">{formatCurrency(pc.old_price)}</span>
                 <span className="text-xs font-bold text-text-primary ml-1.5">{formatCurrency(pc.new_price)}</span>
-                <span className={`text-[10px] font-mono font-semibold ml-1 ${pc.change_pct > 0 ? 'text-status-danger' : 'text-status-success'}`}>
+                <span className={`text-[12px] font-body font-semibold ml-1 ${pc.change_pct > 0 ? 'text-status-danger' : 'text-status-success'}`}>
                   {pc.change_pct > 0 ? '+' : ''}{pc.change_pct.toFixed(1)}%
                 </span>
               </div>
@@ -457,7 +457,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                 />
               </div>
               <p className="text-[10px] text-text-dim mt-1.5">
-                Score: <span className="font-mono font-semibold text-text-muted">{position.overall_score.toFixed(0)}</span>/100
+                Score: <span className="font-body font-semibold text-text-muted">{position.overall_score.toFixed(0)}</span>/100
               </p>
             </div>
             <div className="w-px h-16 bg-border" />
@@ -499,11 +499,11 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                 {pricingToShow.map((p, i) => (
                   <tr key={i} className="border-b border-border/50 hover:bg-surface-2/50 transition-colors">
                     <td className="py-2.5 font-medium text-text-primary">{p.service}</td>
-                    <td className="py-2.5 text-right font-mono text-text-primary">{formatCurrency(p.your_price)}</td>
-                    <td className="py-2.5 text-right font-mono text-text-muted">{formatCurrency(p.competitor_avg)}</td>
-                    <td className="py-2.5 text-right font-mono text-text-muted">{formatCurrency(p.market_avg)}</td>
+                    <td className="py-2.5 text-right font-body text-text-primary">{formatCurrency(p.your_price)}</td>
+                    <td className="py-2.5 text-right font-body text-text-muted">{formatCurrency(p.competitor_avg)}</td>
+                    <td className="py-2.5 text-right font-body text-text-muted">{formatCurrency(p.market_avg)}</td>
                     <td className="py-2.5 text-right">
-                      <span className={`font-mono font-semibold ${
+                      <span className={`font-body font-semibold ${
                         p.difference_pct > 5 ? 'text-status-danger' : p.difference_pct < -5 ? 'text-status-success' : 'text-status-warning'
                       }`}>
                         {p.difference_pct > 0 ? '+' : ''}{p.difference_pct.toFixed(1)}%
@@ -550,7 +550,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                     vs {typeof bm.market_avg === 'number' && bm.market_avg < 100 ? `${bm.market_avg.toFixed(1)}%` : formatCurrency(bm.market_avg)}
                   </span>
                 </div>
-                <span className={`text-[10px] font-mono font-semibold ${bm.is_better ? 'text-status-success' : 'text-status-danger'}`}>
+                <span className={`text-[12px] font-body font-semibold ${bm.is_better ? 'text-status-success' : 'text-status-danger'}`}>
                   {bm.difference_pct > 0 ? '+' : ''}{bm.difference_pct.toFixed(1)}%
                 </span>
               </div>

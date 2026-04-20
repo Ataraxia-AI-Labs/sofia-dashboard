@@ -148,6 +148,3 @@ export type { Connector, InstalledConnector, Plugin } from './marketplace'
 export { listApiKeys, createApiKey, revokeApiKey } from './api-keys'
 export type { ApiKey } from './api-keys'
 
-// Revenue Dashboard (P6-B)
-export { getRevenueDashboard, getMRR, getChurn, getCohorts, getRevenueFunnel, getRevenueForecast } from './revenue'
-export type { RevenueDashboard, CohortData } from './revenue'

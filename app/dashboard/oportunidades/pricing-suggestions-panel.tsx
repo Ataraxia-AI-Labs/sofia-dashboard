@@ -114,7 +114,7 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
           <div className="flex flex-wrap gap-2">
             {insights.most_adjusted_services.map((s, i) => (
               <span key={i} className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-xs text-text-muted">
-                {s.service} <span className="font-mono text-brand-purple ml-1">{s.adjustments}</span>
+                {s.service} <span className="font-body text-brand-purple ml-1">{s.adjustments}</span>
               </span>
             ))}
           </div>
@@ -196,16 +196,16 @@ export default function PricingSuggestionsPanel({ orgId }: PricingSuggestionsPan
                     <div className="flex items-center gap-4 text-xs">
                       <div>
                         <span className="text-text-dim">{t('basePriceLabel')}: </span>
-                        <span className="font-mono text-text-muted">{formatCurrency(s.base_price)}</span>
+                        <span className="font-body text-text-muted">{formatCurrency(s.base_price)}</span>
                       </div>
                       <span className="text-text-dim">→</span>
                       <div>
                         <span className="text-text-dim">{t('suggestedPriceLabel')}: </span>
-                        <span className={`font-mono font-semibold ${isDiscount ? 'text-status-warning' : 'text-status-success'}`}>
+                        <span className={`font-body font-semibold ${isDiscount ? 'text-status-warning' : 'text-status-success'}`}>
                           {formatCurrency(s.suggested_price)}
                         </span>
                       </div>
-                      <span className={`flex items-center gap-0.5 font-mono text-[11px] ${isDiscount ? 'text-status-warning' : 'text-status-success'}`}>
+                      <span className={`flex items-center gap-0.5 font-body text-[11px] ${isDiscount ? 'text-status-warning' : 'text-status-success'}`}>
                         {isDiscount ? <TrendingDown size={11} /> : <TrendingUp size={11} />}
                         {change > 0 ? '+' : ''}{change.toFixed(1)}%
                       </span>
@@ -272,7 +272,7 @@ function InsightCard({ icon, label, value, gradient }: { icon: React.ReactNode; 
         {icon}
       </div>
       <div className="text-lg font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[11px] font-mono text-text-muted mt-0.5">{label}</div>
+      <div className="text-[13px] font-body text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

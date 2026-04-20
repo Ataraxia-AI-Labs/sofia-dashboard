@@ -202,26 +202,26 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
               {/* Metrics */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-text-dim flex items-center gap-1">
+                  <span className="text-[12px] font-body text-text-dim flex items-center gap-1">
                     <MessageCircle size={9} /> {channel === 'VOICE' ? t('calls') : t('messages')}
                   </span>
-                  <span className="text-xs font-bold font-mono text-text-primary">
+                  <span className="text-xs font-bold font-body text-text-primary">
                     {(m?.message_count ?? 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-text-dim flex items-center gap-1">
+                  <span className="text-[12px] font-body text-text-dim flex items-center gap-1">
                     <Users size={9} /> {t('patients')}
                   </span>
-                  <span className="text-xs font-bold font-mono text-text-primary">
+                  <span className="text-xs font-bold font-body text-text-primary">
                     {m?.unique_patients ?? 0}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-text-dim flex items-center gap-1">
+                  <span className="text-[12px] font-body text-text-dim flex items-center gap-1">
                     <TrendingUp size={9} /> {t('conversion')}
                   </span>
-                  <span className="text-xs font-bold font-mono text-brand-purple">
+                  <span className="text-xs font-bold font-body text-brand-purple">
                     {((m?.conversion_rate ?? 0) * 100).toFixed(1)}%
                   </span>
                 </div>
@@ -230,7 +230,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
               {/* Last message time */}
               {m?.last_message_at && (
                 <div className="mt-3 pt-2 border-t border-border">
-                  <span className="text-[9px] font-mono text-text-dim flex items-center gap-1">
+                  <span className="text-[11px] font-body text-text-dim flex items-center gap-1">
                     <Clock size={8} /> {t('lastMessage')}: {timeAgo(m.last_message_at)}
                   </span>
                 </div>
@@ -311,7 +311,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           <button
             onClick={handleRefreshInsights}
             disabled={insightsLoading}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/20 transition-colors disabled:opacity-50"
           >
             {insightsLoading ? (
               <Loader2 size={10} className="animate-spin" />
@@ -327,7 +327,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
               <div className="space-y-3">
                 {insights.insights.map((item, idx) => (
                   <div key={idx} className="p-3 rounded-lg bg-surface-2 border border-border">
-                    <p className="text-[11px] font-mono font-semibold text-text-primary mb-1">{item.title}</p>
+                    <p className="text-[13px] font-body font-semibold text-text-primary mb-1">{item.title}</p>
                     <p className="text-[10px] text-text-muted leading-relaxed mb-1.5">{item.observation}</p>
                     {item.recommendation && (
                       <p className="text-[10px] text-brand-purple leading-relaxed">
@@ -362,13 +362,13 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
         <div className="glass-card p-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Settings2 size={14} className="text-text-muted" />
-            <span className="text-[11px] font-mono text-text-muted">
+            <span className="text-[13px] font-body text-text-muted">
               {t('unconfiguredChannelsHint')}
             </span>
           </div>
           <a
             href="/dashboard/ajustes?tab=channels"
-            className="text-[10px] font-mono font-semibold text-brand-purple hover:text-brand-purple-light transition-colors"
+            className="text-[12px] font-body font-semibold text-brand-purple hover:text-brand-purple-light transition-colors"
           >
             {t('goToSettings')} →
           </a>
@@ -403,7 +403,7 @@ function ComparisonRow({
     <div>
       <div className="flex items-center gap-1.5 mb-2">
         <span className="text-text-dim">{icon}</span>
-        <span className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">{label}</span>
+        <span className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider">{label}</span>
       </div>
       <div className="space-y-1.5">
         {metrics.map(m => {
@@ -437,7 +437,7 @@ function ComparisonRow({
                   }}
                 />
               </div>
-              <span className={`text-[11px] font-mono font-semibold w-20 text-right flex-shrink-0 ${
+              <span className={`text-[13px] font-body font-semibold w-20 text-right flex-shrink-0 ${
                 isWinner ? 'text-brand-purple' : 'text-text-muted'
               }`}>
                 {format(val)}

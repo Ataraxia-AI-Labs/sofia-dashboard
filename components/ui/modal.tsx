@@ -75,8 +75,8 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
         {(title || showClose) && (
           <div className="flex items-start justify-between px-6 pt-5 pb-0">
             <div>
-              {title && <h3 className="text-xs font-mono font-semibold text-text-primary">{title}</h3>}
-              {description && <p className="text-[10px] font-mono text-text-dim mt-0.5">{description}</p>}
+              {title && <h3 className="text-xs font-body font-semibold text-text-primary">{title}</h3>}
+              {description && <p className="text-[12px] font-body text-text-dim mt-0.5">{description}</p>}
             </div>
             {showClose && (
               <button

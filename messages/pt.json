@@ -30,7 +30,6 @@
     "webhooks": "Webhooks",
     "audit": "Auditoria",
     "automations": "Automacoes",
-    "backToAdmin": "Voltar ao Admin",
     "logout": "Sair"
   },
   "common": {
@@ -166,14 +165,7 @@
     "allBranches": "Todas as filiais",
     "closeMenu": "Fechar menu",
     "mainMenu": "Menu principal",
-    "trialExpiresAlert": "Seu periodo de teste expira hoje. Nao perca sua configuracao nem seus pacientes.",
-    "orgUnknown": "Org desconhecida",
-    "exitGodMode": "Sair do God Mode"
-  },
-  "godMode": {
-    "label": "GOD MODE",
-    "viewing": "Visualizando dashboard de",
-    "exit": "Sair"
+    "trialExpiresAlert": "Seu periodo de teste expira hoje. Nao perca sua configuracao nem seus pacientes."
   },
   "settings": {
     "title": "Configuracoes",

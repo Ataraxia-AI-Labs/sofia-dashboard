@@ -6,18 +6,18 @@ export interface StatusPillProps {
   color: 'success' | 'danger' | 'warning'
 }
 
-const colors = {
-  success: 'bg-status-success/8 border-status-success/15 text-status-success',
-  danger: 'bg-status-danger/8 border-status-danger/15 text-status-danger',
-  warning: 'bg-status-warning/8 border-status-warning/15 text-status-warning',
+const dotColors = {
+  success: 'bg-status-success',
+  danger: 'bg-status-danger',
+  warning: 'bg-status-warning',
 } as const
 
 export function StatusPill({ label, value, color }: StatusPillProps) {
   return (
-    <div className={`badge ${colors[color]}`}>
-      <div className={`w-1 h-1 rounded-full bg-status-${color}`} />
-      <span className="text-text-muted text-[9px] font-mono">{label}</span>
-      <span className="font-bold text-[10px] font-mono">{value}</span>
+    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-2 border border-border/50 text-[11px] font-body">
+      <div className={`w-1.5 h-1.5 rounded-full ${dotColors[color]}`} />
+      <span className="text-text-muted">{label}</span>
+      <span className="text-text-primary font-mono font-semibold tabular-nums">{value}</span>
     </div>
   )
 }

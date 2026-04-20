@@ -43,8 +43,8 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="w-10 h-10 rounded-lg bg-status-danger/8 border border-status-danger/15 flex items-center justify-center mx-auto">
               <span className="text-status-danger text-sm font-mono font-bold">!</span>
             </div>
-            <h3 className="text-text-primary font-mono font-semibold text-xs">Algo salio mal</h3>
-            <p className="text-text-muted text-[10px] font-mono">
+            <h3 className="text-text-primary font-body font-semibold text-xs">Algo salio mal</h3>
+            <p className="text-text-muted text-[12px] font-body">
               Ocurrio un error inesperado. Intenta recargar la pagina.
             </p>
             {isDev && this.state.error && (
@@ -52,16 +52,16 @@ export class ErrorBoundary extends Component<Props, State> {
                 <summary className="text-text-dim text-xs cursor-pointer hover:text-text-muted transition-colors">
                   Detalles del error (solo desarrollo)
                 </summary>
-                <pre className="mt-2 p-3 rounded-lg bg-surface-1 border border-border text-status-danger text-[10px] font-mono overflow-auto max-h-48 text-left whitespace-pre-wrap break-all">
+                <pre className="mt-2 p-3 rounded-lg bg-surface-1 border border-border text-status-danger text-[12px] font-body overflow-auto max-h-48 text-left whitespace-pre-wrap break-all">
                   {this.state.error.message}
                   {this.state.error.stack ? `\n\n${this.state.error.stack}` : ''}
                 </pre>
               </details>
             )}
-            <p className="text-text-dim text-[10px] font-mono">Ref: {this.state.eventId || errorId}</p>
+            <p className="text-text-dim text-[12px] font-body">Ref: {this.state.eventId || errorId}</p>
             <button
               onClick={() => this.setState({ hasError: false, error: null })}
-              className="px-3 py-1.5 rounded-md bg-brand-purple/10 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/20 transition-colors"
+              className="px-3 py-1.5 rounded-md bg-brand-purple/10 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/20 transition-colors"
             >
               Intentar de nuevo
             </button>

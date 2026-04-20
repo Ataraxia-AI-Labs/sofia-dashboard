@@ -79,7 +79,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
       {/* Header + Score All */}
       <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider flex items-center gap-2">
             <Target size={14} className="text-brand-purple" />
             {t('title')}
           </h3>
@@ -95,7 +95,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
             <button
               onClick={handleScoreAll}
               disabled={scoringAll}
-              className="px-3 py-1.5 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold flex items-center gap-1.5 disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
+              className="px-3 py-1.5 rounded-md bg-brand-purple text-white text-xs font-body font-semibold flex items-center gap-1.5 disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
             >
               {scoringAll ? (
                 <><Loader2 size={12} className="animate-spin" /> {t('scoring')}</>
@@ -122,8 +122,8 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('distribution')}</span>
-              <span className="text-[10px] text-text-dim font-mono">{totalScored} {t('leadsScored')}</span>
+              <span className="text-[12px] font-body text-text-dim uppercase font-semibold">{t('distribution')}</span>
+              <span className="text-[10px] text-text-dim font-body">{totalScored} {t('leadsScored')}</span>
             </div>
             {(['HOT', 'WARM', 'COLD', 'DEAD'] as LeadClassification[]).map(cls => {
               const cfg = CLASSIFICATION_ICONS[cls]
@@ -142,8 +142,8 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                       <span className="text-xs text-text-muted font-medium">{t(`classifications.${cls}`)}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold font-mono text-text-primary">{count}</span>
-                      <span className="text-[10px] text-text-dim font-mono">({pct}%)</span>
+                      <span className="text-xs font-bold font-body text-text-primary">{count}</span>
+                      <span className="text-[10px] text-text-dim font-body">({pct}%)</span>
                     </div>
                   </div>
                   <div className="h-2 bg-void rounded-full overflow-hidden">
@@ -186,7 +186,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
         {/* Average Score */}
         {insights && insights.avg_score > 0 && (
           <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-            <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('avgScore')}</span>
+            <span className="text-[12px] font-body text-text-dim uppercase font-semibold">{t('avgScore')}</span>
             <span className={`text-sm font-bold font-mono ${
               insights.avg_score >= 75 ? 'text-status-danger' :
               insights.avg_score >= 50 ? 'text-brand-gold' :
@@ -201,7 +201,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
 
       {/* Top 10 Hottest Leads */}
       <div className="glass-card p-4">
-        <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
+        <h3 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
           <Flame size={14} className="text-status-danger" />
           {t('topLeads')}
         </h3>
@@ -226,7 +226,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-void/50 border border-border hover:border-border-2 transition-colors"
               >
                 {/* Rank */}
-                <span className={`text-xs font-bold font-mono w-5 text-center ${
+                <span className={`text-xs font-bold font-body w-5 text-center ${
                   index === 0 ? 'text-brand-gold' :
                   index === 1 ? 'text-text-muted' :
                   index === 2 ? 'text-brand-gold' :
@@ -253,7 +253,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                   {lead.patients?.phone && (
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Phone size={9} className="text-text-dim flex-shrink-0" />
-                      <span className="text-[10px] text-text-dim font-mono">{lead.patients.phone}</span>
+                      <span className="text-[10px] text-text-dim font-body">{lead.patients.phone}</span>
                     </div>
                   )}
                 </div>

@@ -74,10 +74,10 @@ export function SofiaLogo({ size = 'md', variant = 'full', className = '' }: Sof
 
       {variant === 'full' && (
         <div className="flex flex-col leading-none">
-          <span className={`font-mono font-bold text-text-primary tracking-tight ${s.text}`}>
+          <span className={`font-body font-bold text-text-primary tracking-tight ${s.text}`}>
             Sof<span className="text-brand-purple">IA</span>
           </span>
-          <span className={`text-text-dim font-mono ${s.sub} mt-0.5 tracking-wider uppercase`}>
+          <span className={`text-text-dim font-body ${s.sub} mt-0.5 tracking-wider uppercase`}>
             Ataraxia IA Labs
           </span>
         </div>

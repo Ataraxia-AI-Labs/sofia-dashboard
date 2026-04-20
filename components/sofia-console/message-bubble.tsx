@@ -1,0 +1,160 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
+
+export interface Message {
+  id: string
+  role: 'user' | 'assistant'
+  text: string
+  artifacts?: Artifact[]
+  pending?: boolean
+  createdAt?: string
+  thinkingSteps?: string[]
+}
+
+export interface Artifact {
+  type: 'chart' | 'metric' | 'table' | 'note'
+  title?: string
+  data?: unknown
+}
+
+interface Props {
+  message: Message
+}
+
+export function MessageBubble({ message }: Props) {
+  const isUser = message.role === 'user'
+
+  if (isUser) {
+    return (
+      <div className="flex justify-end gap-2">
+        <div className="max-w-[68%]">
+          <div
+            className="rounded-[20px] px-4 py-2.5 text-[14px] font-body bg-brand-purple/14 text-text-primary"
+            style={{
+              lineHeight: 1.65,
+              letterSpacing: '-0.005em',
+              boxShadow:
+                '0 0 0 1px rgba(139,92,246,0.18), 0 4px 22px -6px rgba(139,92,246,0.25), 0 1px 0 0 rgba(255,255,255,0.03) inset',
+            }}
+          >
+            <p className="whitespace-pre-wrap text-left">{message.text}</p>
+          </div>
+          {message.createdAt && (
+            <div className="text-[10px] font-body text-text-dim text-right mt-1 mr-1.5">
+              {formatTime(message.createdAt)}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex gap-2.5">
+      <div className="flex-shrink-0 mt-2">
+        <AtaraxiaLogoCompact size={18} />
+      </div>
+      <div className="max-w-[75%] space-y-2">
+        <div
+          className="rounded-[20px] pl-3.5 pr-4 pt-3 pb-2.5 text-[14px] font-body bg-surface/60 backdrop-blur-sm text-text-primary"
+          style={{
+            lineHeight: 1.7,
+            letterSpacing: '-0.005em',
+            boxShadow:
+              '0 0 0 1px rgba(139,92,246,0.1), 0 4px 22px -6px rgba(139,92,246,0.18), 0 1px 0 0 rgba(255,255,255,0.03) inset',
+          }}
+        >
+          {message.pending ? (
+            <TypingState steps={message.thinkingSteps} />
+          ) : (
+            <p className="whitespace-pre-wrap text-left">{message.text}</p>
+          )}
+        </div>
+
+        {message.artifacts && message.artifacts.length > 0 && (
+          <div className="space-y-2">
+            {message.artifacts.map((a, i) => (
+              <ArtifactPlaceholder key={i} artifact={a} />
+            ))}
+          </div>
+        )}
+
+        {message.createdAt && !message.pending && (
+          <div className="text-[10px] font-body text-text-dim ml-1">
+            {formatTime(message.createdAt)}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function TypingState({ steps }: { steps?: string[] }) {
+  const defaultSteps = [
+    'SofIA está pensando',
+    'revisando la agenda',
+    'consultando datos',
+    'organizando la respuesta',
+  ]
+  const messages = steps && steps.length > 0 ? steps : defaultSteps
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % messages.length), 1800)
+    return () => clearInterval(t)
+  }, [messages.length])
+
+  return (
+    <span className="inline-flex items-center gap-2 text-text-muted">
+      <span className="inline-flex gap-1 items-center">
+        <span className="w-1.5 h-1.5 rounded-full bg-brand-purple/60 animate-loader-dot" style={{ animationDelay: '0ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-brand-purple/60 animate-loader-dot" style={{ animationDelay: '200ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-brand-purple/60 animate-loader-dot" style={{ animationDelay: '400ms' }} />
+      </span>
+      <span className="text-[13px] font-body italic opacity-80">{messages[idx]}…</span>
+    </span>
+  )
+}
+
+function ArtifactPlaceholder({ artifact }: { artifact: Artifact }) {
+  return (
+    <div className="relative rounded-xl overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-purple/5 via-transparent to-brand-purple/8 pointer-events-none" />
+      <div
+        className="relative bg-surface/55 backdrop-blur-sm rounded-xl p-3.5"
+        style={{
+          boxShadow:
+            '0 0 0 1px rgba(139,92,246,0.12), 0 6px 24px -8px rgba(139,92,246,0.22), 0 1px 0 0 rgba(255,255,255,0.03) inset',
+        }}
+      >
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <div className="w-1 h-1 rounded-full bg-brand-purple" />
+          <div className="text-[10px] font-body font-semibold uppercase tracking-[0.14em] text-text-dim">
+            {artifact.type}
+          </div>
+        </div>
+        {artifact.title && (
+          <div className="text-[13.5px] font-body font-medium text-text-primary mb-1">
+            {artifact.title}
+          </div>
+        )}
+        <div className="text-[12px] font-body text-text-dim leading-relaxed">
+          {artifact.type === 'note'
+            ? (artifact.data ? `→ "${String(artifact.data).slice(0, 140)}"` : 'Registrado para tu Data Lake.')
+            : 'El renderer real llega en Sprint 3 (backend + tools wired).'}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function formatTime(iso: string): string {
+  const date = new Date(iso)
+  const now = Date.now()
+  const diff = (now - date.getTime()) / 1000
+  if (diff < 60) return 'ahora'
+  if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`
+  return date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
+}

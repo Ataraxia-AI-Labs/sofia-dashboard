@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrg } from '@/lib/org-context'
-import { isSuperAdmin } from '@/lib/admin-api'
 import {
   fetchSubscription,
   fetchInvoices,
@@ -12,8 +11,6 @@ import {
   cancelSubscription,
   fetchWompiConfig,
 } from '@/lib/api/subscriptions'
-import { getMRR, getChurn, getCohorts, getRevenueFunnel, getRevenueForecast } from '@/lib/api/revenue'
-import type { CohortData } from '@/lib/api/revenue'
 import CardTokenizationForm from '@/components/card-tokenization-form'
 import type { Subscription, Invoice, UsageData, WompiConfig } from '@/types'
 import { formatCOP } from '@/lib/api'
@@ -25,8 +22,6 @@ import {
   ArrowRight,
   X,
   Loader2,
-  TrendingUp,
-  BarChart3,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -57,11 +52,10 @@ const INVOICE_STYLE: Record<string, string> = {
 /* -- Component -- */
 
 export default function FacturacionPage() {
-  const { orgId, user } = useOrg()
+  const { orgId } = useOrg()
   const router = useRouter()
   const t = useTranslations('billing')
   const tCommon = useTranslations('common')
-  const isAdmin = isSuperAdmin(user)
 
   const [sub, setSub] = useState<Subscription | null>(null)
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -73,12 +67,6 @@ export default function FacturacionPage() {
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancelling, setCancelling] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
-  const [revenueData, setRevenueData] = useState<{ mrr: number; arr: number; growth_rate: number } | null>(null)
-  const [churnData, setChurnData] = useState<{ churn_rate: number } | null>(null)
-  const [cohorts, setCohorts] = useState<CohortData[]>([])
-  const [funnel, setFunnel] = useState<Record<string, unknown>>({})
-  const [forecast, setForecast] = useState<Record<string, unknown>>({})
-  const [showRevenue, setShowRevenue] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -93,25 +81,11 @@ export default function FacturacionPage() {
       setInvoices(inv)
       setUsage(u)
       setWompiCfg(w)
-      // Revenue metrics — only for super admins (endpoints require is_super_admin)
-      if (isAdmin) {
-        try {
-          const [mrr, churn, coh, fun, fore] = await Promise.all([
-            getMRR(), getChurn(), getCohorts(6), getRevenueFunnel(30), getRevenueForecast(3),
-          ])
-          setRevenueData(mrr)
-          setChurnData(churn)
-          setCohorts(coh)
-          setFunnel(fun)
-          setForecast(fore)
-          setShowRevenue(true)
-        } catch { /* revenue endpoints failed — degrade gracefully */ }
-      }
     } catch {
       /* silently degrade — sections show empty states */
     }
     setLoading(false)
-  }, [orgId, isAdmin])
+  }, [orgId])
 
   useEffect(() => { load() }, [load])
 
@@ -168,15 +142,15 @@ export default function FacturacionPage() {
           <div className="w-12 h-12 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center mx-auto mb-3">
             <CreditCard size={24} className="text-brand-purple" />
           </div>
-          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-1">
+          <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary mb-1">
             {t('noSubscription')}
           </h3>
-          <p className="text-[9px] font-mono text-text-dim mb-4">
+          <p className="text-[11px] font-body text-text-dim mb-4">
             {t('noSubscriptionDesc')}
           </p>
           <button
             onClick={() => router.push('/dashboard/planes')}
-            className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors inline-flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors inline-flex items-center gap-1.5"
           >
             {t('viewPlans')} <ArrowRight size={12} />
           </button>
@@ -199,144 +173,35 @@ export default function FacturacionPage() {
 
   return (
     <div className="max-w-[900px] mx-auto space-y-4">
-      {/* -- Revenue Insights (admin/owner only) -- */}
-      {revenueData && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="border border-border rounded-lg p-3">
-            <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">MRR</p>
-            <p className="text-sm font-mono font-bold text-text-primary mt-0.5">{formatCOP(revenueData.mrr)}</p>
-          </div>
-          <div className="border border-border rounded-lg p-3">
-            <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">ARR</p>
-            <p className="text-sm font-mono font-bold text-text-primary mt-0.5">{formatCOP(revenueData.arr)}</p>
-          </div>
-          <div className="border border-border rounded-lg p-3">
-            <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{t('growthRate') || 'Crecimiento'}</p>
-            <p className={`text-sm font-mono font-bold mt-0.5 ${revenueData.growth_rate >= 0 ? 'text-status-success' : 'text-status-danger'}`}>
-              {revenueData.growth_rate >= 0 ? '+' : ''}{(revenueData.growth_rate * 100).toFixed(1)}%
-            </p>
-          </div>
-          {churnData && (
-            <div className="border border-border rounded-lg p-3">
-              <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">Churn</p>
-              <p className={`text-sm font-mono font-bold mt-0.5 ${churnData.churn_rate > 5 ? 'text-status-danger' : 'text-status-success'}`}>
-                {(churnData.churn_rate).toFixed(1)}%
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* -- Revenue Funnel -- */}
-      {showRevenue && Object.keys(funnel).length > 0 && (
-        <div className="glass-card p-4">
-          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3 flex items-center gap-1.5">
-            <TrendingUp size={13} className="text-brand-purple" />
-            {t('revenueFunnel') || 'Revenue Funnel'}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {Object.entries(funnel).map(([k, v]) => (
-              <div key={k} className="border border-border rounded-lg p-3">
-                <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{k.replace(/_/g, ' ')}</p>
-                <p className="text-sm font-mono font-bold text-text-primary mt-0.5">
-                  {typeof v === 'number' ? (k.includes('rate') ? `${(v * 100).toFixed(1)}%` : v.toLocaleString()) : String(v)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* -- Revenue Forecast -- */}
-      {showRevenue && Object.keys(forecast).length > 0 && (
-        <div className="glass-card p-4">
-          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3 flex items-center gap-1.5">
-            <BarChart3 size={13} className="text-brand-cyan" />
-            {t('forecast') || 'Pronóstico (3 meses)'}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {Object.entries(forecast).map(([k, v]) => (
-              <div key={k} className="border border-border rounded-lg p-3">
-                <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{k.replace(/_/g, ' ')}</p>
-                <p className="text-sm font-mono font-bold text-text-primary mt-0.5">
-                  {typeof v === 'number' ? (k.includes('revenue') || k.includes('mrr') ? formatCOP(v) : v.toLocaleString()) : String(v)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* -- Cohorts -- */}
-      {showRevenue && cohorts.length > 0 && (
-        <div className="glass-card p-4">
-          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3">
-            {t('cohorts') || 'Cohortes de Retención'}
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[9px] font-mono">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-1.5 px-2 text-text-dim uppercase tracking-wider">{t('cohortMonth') || 'Cohorte'}</th>
-                  <th className="text-right py-1.5 px-2 text-text-dim uppercase tracking-wider">{t('initial') || 'Inicial'}</th>
-                  {cohorts[0] && Object.keys(cohorts[0].months).map(m => (
-                    <th key={m} className="text-right py-1.5 px-2 text-text-dim uppercase tracking-wider">M{m}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {cohorts.map(c => (
-                  <tr key={c.cohort} className="border-b border-border/50">
-                    <td className="py-1.5 px-2 text-text-primary font-semibold">{c.cohort}</td>
-                    <td className="py-1.5 px-2 text-right text-text-primary">{c.initial_count}</td>
-                    {Object.entries(c.months).map(([m, pct]) => (
-                      <td key={m} className="py-1.5 px-2 text-right">
-                        <span className={`px-1.5 py-0.5 rounded ${
-                          pct >= 80 ? 'bg-status-success/10 text-status-success' :
-                          pct >= 50 ? 'bg-status-warning/10 text-status-warning' :
-                          'bg-status-danger/10 text-status-danger'
-                        }`}>
-                          {typeof pct === 'number' ? `${pct.toFixed(0)}%` : pct}
-                        </span>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
       {/* -- Section 1: Plan actual -- */}
       <div className="glass-card p-4">
-        <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3">{t('currentPlan')}</h3>
+        <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary mb-3">{t('currentPlan')}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div>
-            <p className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">{t('plan')}</p>
+            <p className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">{t('plan')}</p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] font-mono font-semibold text-text-primary">{sub.plan}</span>
-              <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold ${badgeCls}`}>
+              <span className="text-[12px] font-body font-semibold text-text-primary">{sub.plan}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-body font-semibold ${badgeCls}`}>
                 {badgeLabel}
               </span>
             </div>
           </div>
           <div>
-            <p className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">{t('price')}</p>
-            <p className="text-[10px] font-mono font-semibold text-text-primary mt-1">
+            <p className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">{t('price')}</p>
+            <p className="text-[12px] font-body font-semibold text-text-primary mt-1">
               {formatCOP(sub.amount_cop)} <span className="text-text-dim font-normal">/ {billingLabel}</span>
             </p>
           </div>
           <div>
-            <p className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">{t('nextCharge')}</p>
-            <p className="text-[10px] font-mono font-semibold text-text-primary mt-1 flex items-center gap-1.5">
+            <p className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">{t('nextCharge')}</p>
+            <p className="text-[12px] font-body font-semibold text-text-primary mt-1 flex items-center gap-1.5">
               <CalendarDays size={11} className="text-text-dim" />
               {formatDate(sub.next_billing_date)}
             </p>
           </div>
           <div>
-            <p className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">{t('paymentMethod')}</p>
-            <p className="text-[10px] font-mono font-semibold text-text-primary mt-1 flex items-center gap-1.5">
+            <p className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">{t('paymentMethod')}</p>
+            <p className="text-[12px] font-body font-semibold text-text-primary mt-1 flex items-center gap-1.5">
               <CreditCard size={11} className="text-text-dim" />
               {paymentLabel}
             </p>
@@ -344,7 +209,7 @@ export default function FacturacionPage() {
         </div>
 
         {sub.cancel_at_period_end && (
-          <div className="mt-3 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/20 text-[10px] font-mono text-status-warning flex items-center gap-2">
+          <div className="mt-3 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/20 text-[12px] font-body text-status-warning flex items-center gap-2">
             <AlertTriangle size={12} />
             {t('cancelAt', { date: formatDate(sub.current_period_end) })}
           </div>
@@ -354,13 +219,13 @@ export default function FacturacionPage() {
       {/* -- Section 2: Uso del mes (STARTER only) -- */}
       {isStarter && usage && (
         <div className="glass-card p-4">
-          <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3">{t('monthUsage')}</h3>
+          <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary mb-3">{t('monthUsage')}</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-text-muted">
+              <span className="text-[12px] font-body text-text-muted">
                 {t('messagesUsed', { used: usage.message_count.toLocaleString(), limit: usage.message_limit?.toLocaleString() ?? '∞' })}
               </span>
-              <span className={`text-[10px] font-mono font-semibold ${usageWarning ? 'text-status-warning' : 'text-text-dim'}`}>
+              <span className={`text-[12px] font-body font-semibold ${usageWarning ? 'text-status-warning' : 'text-text-dim'}`}>
                 {usagePercent}%
               </span>
             </div>
@@ -373,7 +238,7 @@ export default function FacturacionPage() {
               />
             </div>
             {usageWarning && (
-              <p className="text-[9px] font-mono text-status-warning flex items-center gap-1">
+              <p className="text-[11px] font-body text-status-warning flex items-center gap-1">
                 <AlertTriangle size={10} />
                 {t('nearLimit')}
               </p>
@@ -384,29 +249,29 @@ export default function FacturacionPage() {
 
       {/* -- Section 3: Actions -- */}
       <div className="glass-card p-4">
-        <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3">{t('actions')}</h3>
+        <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary mb-3">{t('actions')}</h3>
         {actionError && (
-          <div className="mb-3 px-3 py-2 rounded-lg bg-status-danger/10 border border-status-danger/20 text-[10px] font-mono text-status-danger">
+          <div className="mb-3 px-3 py-2 rounded-lg bg-status-danger/10 border border-status-danger/20 text-[12px] font-body text-status-danger">
             {actionError}
           </div>
         )}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => router.push('/dashboard/planes')}
-            className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
           >
             {t('changePlan')}
           </button>
           <button
             onClick={() => { setActionError(null); setShowCardModal(true) }}
-            className="px-3 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[10px] font-mono font-semibold hover:border-brand-purple/30 transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[12px] font-body font-semibold hover:border-brand-purple/30 transition-colors"
           >
             {t('updateCard')}
           </button>
           {!sub.cancel_at_period_end && sub.status !== 'CANCELLED' && (
             <button
               onClick={() => { setActionError(null); setShowCancelModal(true) }}
-              className="px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-mono font-semibold hover:bg-status-danger/20 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[12px] font-body font-semibold hover:bg-status-danger/20 transition-colors"
             >
               {t('cancelSubscription')}
             </button>
@@ -416,18 +281,18 @@ export default function FacturacionPage() {
 
       {/* -- Section 4: Historial de facturas -- */}
       <div className="glass-card p-4">
-        <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary mb-3 flex items-center gap-2">
+        <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary mb-3 flex items-center gap-2">
           <Receipt size={13} className="text-text-dim" />
           {t('invoiceHistory')}
         </h3>
         {invoices.length === 0 ? (
-          <p className="text-[10px] font-mono text-text-dim py-3 text-center">{t('noInvoices')}</p>
+          <p className="text-[12px] font-body text-text-dim py-3 text-center">{t('noInvoices')}</p>
         ) : (
           <div>
             {/* Header */}
             <div className="grid grid-cols-4 gap-2 pb-2 border-b border-border">
               {[t('invoiceDate'), t('invoiceAmount'), t('invoiceStatus'), t('invoicePeriod')].map(h => (
-                <span key={h} className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider">
+                <span key={h} className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">
                   {h}
                 </span>
               ))}
@@ -437,14 +302,14 @@ export default function FacturacionPage() {
               const invCls = INVOICE_STYLE[inv.status] || INVOICE_STYLE.PENDING
               return (
                 <div key={inv.id} className="grid grid-cols-4 gap-2 py-2 border-b border-border last:border-0 items-center">
-                  <span className="text-[10px] font-mono text-text-primary">{formatDate(inv.created_at)}</span>
-                  <span className="text-[10px] font-mono font-semibold text-text-primary">{formatCOP(inv.amount_cop)}</span>
+                  <span className="text-[12px] font-body text-text-primary">{formatDate(inv.created_at)}</span>
+                  <span className="text-[12px] font-body font-semibold text-text-primary">{formatCOP(inv.amount_cop)}</span>
                   <span>
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold ${invCls}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-body font-semibold ${invCls}`}>
                       {t(`invoiceStatuses.${inv.status}`)}
                     </span>
                   </span>
-                  <span className="text-[10px] font-mono text-text-dim">
+                  <span className="text-[12px] font-body text-text-dim">
                     {inv.period_start && inv.period_end
                       ? `${formatDate(inv.period_start)} - ${formatDate(inv.period_end)}`
                       : '-'}
@@ -461,7 +326,7 @@ export default function FacturacionPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md animate-fade-in">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary">{t('updateCard')}</h3>
+              <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary">{t('updateCard')}</h3>
               <button
                 onClick={() => setShowCardModal(false)}
                 className="w-6 h-6 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary transition-colors"
@@ -487,27 +352,27 @@ export default function FacturacionPage() {
               <div className="w-9 h-9 rounded-lg bg-status-danger/10 border border-status-danger/20 flex items-center justify-center">
                 <AlertTriangle size={18} className="text-status-danger" />
               </div>
-              <h3 className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary">{t('areYouSure')}</h3>
+              <h3 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary">{t('areYouSure')}</h3>
             </div>
-            <p className="text-[10px] font-mono text-text-muted leading-relaxed mb-4">
+            <p className="text-[12px] font-body text-text-muted leading-relaxed mb-4">
               {t('cancelDesc', { date: formatDate(sub.current_period_end), plan: sub.plan })}
             </p>
             {actionError && (
-              <div className="mb-3 px-3 py-2 rounded-lg bg-status-danger/10 border border-status-danger/20 text-[10px] font-mono text-status-danger">
+              <div className="mb-3 px-3 py-2 rounded-lg bg-status-danger/10 border border-status-danger/20 text-[12px] font-body text-status-danger">
                 {actionError}
               </div>
             )}
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setShowCancelModal(false)}
-                className="px-3 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[10px] font-mono font-semibold hover:border-brand-purple/30 transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[12px] font-body font-semibold hover:border-brand-purple/30 transition-colors"
               >
                 {tCommon('back')}
               </button>
               <button
                 onClick={handleCancel}
                 disabled={cancelling}
-                className="px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[10px] font-mono font-semibold hover:bg-status-danger/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-[12px] font-body font-semibold hover:bg-status-danger/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
               >
                 {cancelling && <Loader2 size={11} className="animate-spin" />}
                 {t('confirmCancel')}

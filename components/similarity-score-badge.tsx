@@ -111,7 +111,7 @@ export function SimilarityScoreBadge({
           />
         </svg>
         <div className="text-center z-10">
-          <div className={`${textSize} font-bold font-mono ${cfg.color}`}>{pct}%</div>
+          <div className={`${textSize} font-bold font-body ${cfg.color}`}>{pct}%</div>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ export function SimilarityScoreBadge({
                 title={s.label}
               >
                 <Icon size={9} className={cfg.color} />
-                <span className={`text-[8px] font-mono font-semibold ${cfg.color}`}>{s.label}</span>
+                <span className={`text-[10px] font-body font-semibold ${cfg.color}`}>{s.label}</span>
               </div>
             )
           })}
@@ -150,8 +150,8 @@ export function SimilarityScoreInline({
 
   return (
     <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}>
-      <span className={`text-[10px] font-bold font-mono ${cfg.color}`}>{pct}%</span>
-      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
+      <span className={`text-[10px] font-bold font-body ${cfg.color}`}>{pct}%</span>
+      <span className={`text-[12px] font-body font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

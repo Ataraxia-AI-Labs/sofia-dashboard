@@ -129,7 +129,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={tCommon('searchPages')}
-            className="flex-1 bg-transparent text-text-primary text-xs font-mono placeholder:text-text-dim outline-none"
+            className="flex-1 bg-transparent text-text-primary text-xs font-body placeholder:text-text-dim outline-none"
             autoComplete="off"
             aria-label={tCommon('searchPages')}
           />
@@ -142,7 +142,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               <X size={14} />
             </button>
           )}
-          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-2 border border-border text-text-dim text-[10px] font-mono">
+          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-2 border border-border text-text-dim text-[12px] font-body">
             esc
           </kbd>
         </div>
@@ -150,7 +150,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         {/* Results list */}
         <ul className="max-h-80 overflow-y-auto py-2" role="listbox">
           {filtered.length === 0 ? (
-            <li className="px-4 py-8 text-center text-text-dim text-[10px] font-mono">
+            <li className="px-4 py-8 text-center text-text-dim text-[12px] font-body">
               {tCommon('noResults')} &quot;{query}&quot;
             </li>
           ) : (
@@ -177,11 +177,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                       <Icon size={14} aria-hidden="true" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-mono font-medium">{item.label}</div>
-                      <div className="text-[9px] font-mono text-text-dim">{item.description}</div>
+                      <div className="text-[12px] font-body font-medium">{item.label}</div>
+                      <div className="text-[11px] font-body text-text-dim">{item.description}</div>
                     </div>
                     {item.shortcut && (
-                      <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-2 border border-border text-text-dim text-[10px] font-mono flex-shrink-0">
+                      <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-surface-2 border border-border text-text-dim text-[12px] font-body flex-shrink-0">
                         {item.shortcut}
                       </kbd>
                     )}
@@ -196,16 +196,16 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         <div className="px-4 py-2 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-3 text-[10px] text-text-dim">
             <span className="flex items-center gap-1">
-              <kbd className="px-1 rounded bg-surface-2 border border-border font-mono">↑↓</kbd>
+              <kbd className="px-1 rounded bg-surface-2 border border-border font-body">↑↓</kbd>
               nav
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1 rounded bg-surface-2 border border-border font-mono">↵</kbd>
+              <kbd className="px-1 rounded bg-surface-2 border border-border font-body">↵</kbd>
               go
             </span>
           </div>
           <span className="flex items-center gap-1 text-[10px] text-text-dim">
-            <kbd className="px-1 rounded bg-surface-2 border border-border font-mono">Ctrl+?</kbd>
+            <kbd className="px-1 rounded bg-surface-2 border border-border font-body">Ctrl+?</kbd>
             shortcuts
           </span>
         </div>

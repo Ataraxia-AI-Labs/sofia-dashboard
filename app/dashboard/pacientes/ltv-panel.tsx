@@ -101,11 +101,11 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
     <div className="space-y-5">
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <p className="text-xs font-mono text-text-dim">{t('subtitle')}</p>
+        <p className="text-xs font-body text-text-dim">{t('subtitle')}</p>
         <button
           onClick={handleRecalculate}
           disabled={recalculating}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-mono font-semibold hover:bg-brand-purple/15 transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-body font-semibold hover:bg-brand-purple/15 transition-all disabled:opacity-50"
         >
           <RefreshCw size={13} className={recalculating ? 'animate-spin' : ''} />
           {recalculating ? t('recalculating') : t('recalculate')}
@@ -182,7 +182,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                 <div key={tier} className="flex items-center gap-1.5">
                   <span className="text-xs">{cfg.emoji}</span>
                   <span className={`text-[11px] font-semibold ${cfg.textColor}`}>{cfg.label}</span>
-                  <span className="text-[11px] font-mono text-text-dim">{count}</span>
+                  <span className="text-[13px] font-body text-text-dim">{count}</span>
                 </div>
               )
             })}
@@ -199,8 +199,8 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
         {rankings.length === 0 ? (
           <div className="text-center py-8">
             <Award size={28} className="text-text-dim mx-auto mb-2" />
-            <p className="text-xs font-mono text-text-muted">{t('noRankings')}</p>
-            <p className="text-[10px] font-mono text-text-dim mt-1">{t('noRankingsHint')}</p>
+            <p className="text-xs font-body text-text-muted">{t('noRankings')}</p>
+            <p className="text-[12px] font-body text-text-dim mt-1">{t('noRankingsHint')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -221,7 +221,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
                 {/* Name */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-mono font-medium text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
+                  <p className="text-sm font-body font-medium text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
                     {p.patient_name}
                   </p>
                 </div>
@@ -255,7 +255,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                   <TrendingDown size={14} className="text-status-danger" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-mono font-medium text-text-primary truncate">{p.patient_name}</p>
+                  <p className="text-sm font-body font-medium text-text-primary truncate">{p.patient_name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <LTVTierInline tier={p.ltv_tier} />
                     <span className="text-[10px] text-status-danger font-semibold flex items-center gap-0.5">
@@ -264,7 +264,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <span className="text-xs font-mono font-semibold text-text-primary">
+                  <span className="text-xs font-body font-semibold text-text-primary">
                     {formatCurrency(p.predicted_ltv_12m)}
                   </span>
                   <p className="text-[9px] text-text-dim">{t('predicted12m')}</p>
@@ -290,7 +290,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                 const barWidth = (c.avg_ltv / maxLtv) * 100
                 return (
                   <div key={c.cohort_month} className="flex items-center gap-3">
-                    <span className="text-[11px] text-text-dim w-16 flex-shrink-0 font-mono">
+                    <span className="text-[11px] text-text-dim w-16 flex-shrink-0 font-body">
                       {c.cohort_month}
                     </span>
                     <div className="flex-1 relative">
@@ -308,7 +308,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
                       </div>
                     </div>
                     <div className="flex-shrink-0 text-right w-20">
-                      <span className="text-[11px] font-mono text-text-muted">
+                      <span className="text-[13px] font-body text-text-muted">
                         {barWidth <= 20 ? formatCurrency(c.avg_ltv) : ''}
                       </span>
                       <span className="text-[9px] text-text-dim ml-1">({c.patient_count})</span>
@@ -328,7 +328,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
             <Sparkles size={28} className="text-brand-purple" />
           </div>
           <h3 className="text-sm font-mono font-semibold text-text-primary mb-1">{t('noData')}</h3>
-          <p className="text-xs font-mono text-text-dim max-w-xs mx-auto">{t('noDataHint')}</p>
+          <p className="text-xs font-body text-text-dim max-w-xs mx-auto">{t('noDataHint')}</p>
         </div>
       )}
     </div>
@@ -348,8 +348,8 @@ function InsightCard({ icon, color, value, label, subValue }: {
         {icon}
       </div>
       <div className="text-base font-bold font-mono text-text-primary leading-tight">{value}</div>
-      {subValue && <div className="text-[10px] font-mono text-text-dim">{subValue}</div>}
-      <div className="text-[10px] font-mono text-text-muted mt-0.5">{label}</div>
+      {subValue && <div className="text-[12px] font-body text-text-dim">{subValue}</div>}
+      <div className="text-[12px] font-body text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

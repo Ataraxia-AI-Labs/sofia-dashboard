@@ -53,13 +53,13 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
 
   return (
     <div className="space-y-3">
-      <div className="px-3 py-2 rounded-md bg-status-info/10 border border-status-info/20 text-[10px] font-mono text-status-info leading-relaxed">
+      <div className="px-3 py-2 rounded-md bg-status-info/10 border border-status-info/20 text-[12px] font-body text-status-info leading-relaxed">
         <strong>Importante:</strong> Las plantillas deben estar aprobadas en Meta Business Manager antes de configurarlas aqui.
         Cuando los sub-bots (Reminder, Hunter, Nurse) envian mensajes fuera de la ventana de 24h de WhatsApp, usan estas plantillas en lugar de texto libre.
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-mono text-text-dim">{templates.length} plantillas configuradas</p>
+        <p className="text-[12px] font-body text-text-dim">{templates.length} plantillas configuradas</p>
         {!isReadOnly && (
           <Button variant="secondary" size="sm" onClick={() => setShowNew(true)} icon={<Plus size={13} />}>
             Nueva Plantilla
@@ -69,7 +69,7 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
 
       {showNew && (
         <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-xs font-mono font-semibold text-text-primary">Nueva Plantilla</h4>
+          <h4 className="text-xs font-body font-semibold text-text-primary">Nueva Plantilla</h4>
           <div className="grid grid-cols-2 gap-3">
             <Input label="Nombre (Meta template name)" value={newTpl.name} onChange={(e) => setNewTpl({ ...newTpl, name: e.target.value })} placeholder="appointment_reminder_es" />
             <Select label="Categoria" value={newTpl.category} onChange={(e) => setNewTpl({ ...newTpl, category: e.target.value as WATemplateCategory })} options={TEMPLATE_CATEGORIES} />
@@ -91,12 +91,12 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <Phone size={14} className="text-status-success flex-shrink-0" />
-                  <span className="text-xs font-mono font-semibold text-text-primary">{tpl.name}</span>
-                  <span className="text-[10px] font-mono bg-surface-3 text-text-dim px-2 py-0.5 rounded-md">{catLabel}</span>
-                  <span className="text-[10px] font-mono text-text-dim">{tpl.language}</span>
+                  <span className="text-xs font-body font-semibold text-text-primary">{tpl.name}</span>
+                  <span className="text-[12px] font-body bg-surface-3 text-text-dim px-2 py-0.5 rounded-md">{catLabel}</span>
+                  <span className="text-[12px] font-body text-text-dim">{tpl.language}</span>
                 </div>
                 {tpl.description && (
-                  <p className="text-[10px] font-mono text-text-muted mt-1 ml-6">{tpl.description}</p>
+                  <p className="text-[12px] font-body text-text-muted mt-1 ml-6">{tpl.description}</p>
                 )}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0 ml-3">
@@ -121,7 +121,7 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
       })}
 
       {templates.length === 0 && !showNew && (
-        <div className="glass-card p-6 text-center text-text-dim text-[10px] font-mono">
+        <div className="glass-card p-6 text-center text-text-dim text-[12px] font-body">
           No hay plantillas configuradas. Agrega la primera desde Meta Business Manager y registrala aqui.
         </div>
       )}

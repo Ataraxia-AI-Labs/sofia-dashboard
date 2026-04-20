@@ -72,7 +72,7 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-mono text-text-dim">{t('activeCount', { count: services.length })}</p>
+        <p className="text-[12px] font-body text-text-dim">{t('activeCount', { count: services.length })}</p>
         {!isReadOnly && (
           <Button variant="secondary" size="sm" onClick={() => setShowNew(true)} icon={<Plus size={13} />}>
             {t('newService')}
@@ -82,7 +82,7 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
 
       {showNew && (
         <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-xs font-mono font-semibold text-text-primary">{t('newServiceTitle')}</h4>
+          <h4 className="text-xs font-body font-semibold text-text-primary">{t('newServiceTitle')}</h4>
           <div className="grid grid-cols-2 gap-3">
             <Input label={t('name')} value={newSvc.name} onChange={(e) => setNewSvc({ ...newSvc, name: e.target.value })} placeholder={t('namePlaceholder')} />
             <Input label={t('price')} value={newSvc.price.toString()} onChange={(e) => setNewSvc({ ...newSvc, price: Number(e.target.value) || 0 })} placeholder="150000" type="number" />
@@ -116,10 +116,10 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-semibold text-text-primary">{svc.name}</span>
-                  <span className="text-[10px] font-mono bg-surface-3 text-text-dim px-2 py-0.5 rounded-md">{svc.category}</span>
+                  <span className="text-xs font-body font-semibold text-text-primary">{svc.name}</span>
+                  <span className="text-[12px] font-body bg-surface-3 text-text-dim px-2 py-0.5 rounded-md">{svc.category}</span>
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-[10px] font-mono text-text-muted">
+                <div className="flex items-center gap-3 mt-1 text-[12px] font-body text-text-muted">
                   <span className="font-semibold text-status-success">{formatCOP(svc.price)}</span>
                   <span>{svc.duration_minutes} min</span>
                   {svc.description && <span className="truncate max-w-[200px]">{svc.description}</span>}
@@ -147,7 +147,7 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
       ))}
 
       {services.length === 0 && !showNew && (
-        <div className="glass-card p-6 text-center text-text-dim text-[10px] font-mono">
+        <div className="glass-card p-6 text-center text-text-dim text-[12px] font-body">
           {tCommon('noResults')}
         </div>
       )}
@@ -155,7 +155,7 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
       {/* Delete Confirmation Modal */}
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title={tCommon('confirm')} size="sm">
         <div className="space-y-3">
-          <p className="text-xs font-mono text-text-muted">
+          <p className="text-xs font-body text-text-muted">
             {t('deactivated')}?
           </p>
           <div className="flex gap-2 justify-end">

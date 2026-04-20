@@ -34,7 +34,7 @@ export function ChatInput({ onSend, disabled = false, placeholder = 'Escribe un 
         onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
         placeholder={placeholder}
         disabled={disabled}
-        className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-lg text-xs font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors disabled:opacity-50"
+        className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-lg text-xs font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors disabled:opacity-50"
       />
       <button
         onClick={handleSubmit}

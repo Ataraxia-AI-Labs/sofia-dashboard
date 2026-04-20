@@ -19,8 +19,8 @@ export function PromptTab({ systemPrompt, onChangePrompt, onSave, saving, isRead
     <div className="glass-card p-5 space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xs font-mono font-semibold text-text-primary">{t('title')}</h3>
-          <p className="text-[10px] font-mono text-text-dim mt-0.5">{t('description')}</p>
+          <h3 className="text-xs font-body font-semibold text-text-primary">{t('title')}</h3>
+          <p className="text-[12px] font-body text-text-dim mt-0.5">{t('description')}</p>
         </div>
         <Button
           variant="secondary"
@@ -37,12 +37,12 @@ export function PromptTab({ systemPrompt, onChangePrompt, onSave, saving, isRead
         value={systemPrompt}
         onChange={(e) => onChangePrompt(e.target.value)}
         rows={16}
-        className="w-full px-3 py-2.5 rounded-lg bg-void border border-border text-text-primary text-xs font-mono leading-relaxed outline-none focus:border-brand-purple/40 resize-y"
+        className="w-full px-3 py-2.5 rounded-lg bg-void border border-border text-text-primary text-xs font-body leading-relaxed outline-none focus:border-brand-purple/40 resize-y"
         placeholder={t('placeholder')}
       />
       <div className="flex items-start gap-2 px-3 py-2 rounded-md bg-brand-purple/8 border border-brand-purple/15">
         <Shield size={14} className="text-brand-purple mt-0.5 flex-shrink-0" />
-        <p className="text-[10px] font-mono text-text-muted leading-relaxed">{t('securityNote')}</p>
+        <p className="text-[12px] font-body text-text-muted leading-relaxed">{t('securityNote')}</p>
       </div>
     </div>
   )

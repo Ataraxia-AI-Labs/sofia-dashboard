@@ -72,9 +72,9 @@ export function ConversionProbabilityBadge({
       className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}
     >
       <Icon size={10} className={cfg.color} />
-      <span className={`text-[10px] font-bold font-mono ${cfg.color}`}>{pct}%</span>
+      <span className={`text-[10px] font-bold font-body ${cfg.color}`}>{pct}%</span>
       {showLabel && (
-        <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
+        <span className={`text-[12px] font-body font-semibold ${cfg.color}`}>{cfg.label}</span>
       )}
     </div>
   )
@@ -123,8 +123,8 @@ export function ConversionGauge({
         />
       </svg>
       <div className="text-center z-10">
-        <div className={`${textSize} font-bold font-mono ${cfg.color}`}>{pct}%</div>
-        <div className={`${labelSize} font-mono text-text-dim`}>Conv.</div>
+        <div className={`${textSize} font-bold font-body ${cfg.color}`}>{pct}%</div>
+        <div className={`${labelSize} font-body text-text-dim`}>Conv.</div>
       </div>
     </div>
   )

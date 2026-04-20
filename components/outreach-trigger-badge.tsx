@@ -90,7 +90,7 @@ export function OutreachTriggerBadge({ triggerType, compact = false, className =
   return (
     <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border} ${className}`}>
       <Icon size={10} className={cfg.color} />
-      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
+      <span className={`text-[12px] font-body font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

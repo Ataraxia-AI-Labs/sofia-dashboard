@@ -66,8 +66,8 @@ export function PWAInstallPrompt() {
             <Download className="h-4 w-4 text-brand-purple" />
           </div>
           <div className="flex-1">
-            <p className="text-[11px] font-mono font-semibold text-text-primary">Instalar SofIA</p>
-            <p className="mt-0.5 text-[9px] font-mono text-text-dim">
+            <p className="text-[13px] font-body font-semibold text-text-primary">Instalar SofIA</p>
+            <p className="mt-0.5 text-[11px] font-body text-text-dim">
               Accede al dashboard desde tu pantalla de inicio
             </p>
           </div>
@@ -78,13 +78,13 @@ export function PWAInstallPrompt() {
         <div className="mt-2 flex gap-1.5">
           <button
             onClick={handleInstall}
-            className="flex-1 rounded-md bg-brand-purple px-3 py-1.5 text-[10px] font-mono font-semibold text-white transition-colors hover:bg-brand-purple-dark"
+            className="flex-1 rounded-md bg-brand-purple px-3 py-1.5 text-[12px] font-body font-semibold text-white transition-colors hover:bg-brand-purple-dark"
           >
             Instalar
           </button>
           <button
             onClick={handleDismiss}
-            className="rounded-md px-3 py-1.5 text-[10px] font-mono text-text-dim hover:text-text-muted transition-colors"
+            className="rounded-md px-3 py-1.5 text-[12px] font-body text-text-dim hover:text-text-muted transition-colors"
           >
             Ahora no
           </button>

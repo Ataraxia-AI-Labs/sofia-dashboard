@@ -102,7 +102,7 @@ export function LTVTierBadge({
         title={`${cfg.label} — ${predictedValue ? formatCurrency(predictedValue) : ''}`}
       >
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[12px] font-body font-bold ${cfg.textColor}`}>{cfg.label}</span>
         {trendCfg && <trendCfg.icon size={10} className={trendCfg.color} />}
       </div>
     )
@@ -116,11 +116,11 @@ export function LTVTierBadge({
       </div>
 
       {/* Tier name */}
-      <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
+      <span className={`text-[12px] font-body font-bold ${cfg.textColor}`}>{cfg.label}</span>
 
       {/* Predicted value */}
       {predictedValue !== undefined && (
-        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[12px] font-body font-semibold ${cfg.textColor}`}>
           {formatCurrency(predictedValue)}
         </span>
       )}
@@ -129,7 +129,7 @@ export function LTVTierBadge({
       {trendCfg && (
         <div className="flex items-center gap-0.5">
           <trendCfg.icon size={11} className={trendCfg.color} />
-          <span className={`text-[9px] font-mono font-semibold ${trendCfg.color}`}>{t(trendCfg.labelKey)}</span>
+          <span className={`text-[11px] font-body font-semibold ${trendCfg.color}`}>{t(trendCfg.labelKey)}</span>
         </div>
       )}
     </div>
@@ -155,10 +155,10 @@ export function LTVTierInline({
     <div className={`inline-flex items-center gap-2 ${className}`}>
       <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border}`}>
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[12px] font-body font-bold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
       {predictedValue !== undefined && (
-        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[12px] font-body font-semibold ${cfg.textColor}`}>
           {formatCurrency(predictedValue)}
         </span>
       )}

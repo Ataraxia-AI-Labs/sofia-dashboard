@@ -296,7 +296,7 @@ export default function ConversacionesPage() {
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[9px] font-mono mt-0.5">
+          <p className="text-text-dim text-[11px] font-body mt-0.5">
             {t('conversationCount', { count: uniquePatients })}{totalMessages > 0 && <> &middot; {t('messageCount', { count: totalMessages })}</>}
           </p>
         </div>
@@ -305,7 +305,7 @@ export default function ConversacionesPage() {
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveTab('conversations')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'conversations' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -314,7 +314,7 @@ export default function ConversacionesPage() {
             </button>
             <button
               onClick={() => setActiveTab('inbox')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'inbox' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -323,7 +323,7 @@ export default function ConversacionesPage() {
             </button>
             <button
               onClick={() => setActiveTab('channels')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'channels' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -332,7 +332,7 @@ export default function ConversacionesPage() {
             </button>
             <button
               onClick={() => setActiveTab('voice')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeTab === 'voice' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -475,7 +475,7 @@ export default function ConversacionesPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t('searchByNameOrPhone')}
-                className="w-full pl-9 pr-3 py-2 bg-surface-3 border border-border rounded-md font-mono text-[10px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
+                className="w-full pl-9 pr-3 py-2 bg-surface-3 border border-border rounded-md font-body text-[10px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
               />
               {search && (
                 <button
@@ -552,8 +552,8 @@ export default function ConversacionesPage() {
                 <div className="w-16 h-16 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center mx-auto mb-3">
                   <MessageSquare size={28} className="text-brand-purple/40" />
                 </div>
-                <p className="text-text-muted text-[10px] font-mono font-medium">{t('selectConversation')}</p>
-                <p className="text-text-dim text-[9px] font-mono mt-1">
+                <p className="text-text-muted text-[12px] font-body font-medium">{t('selectConversation')}</p>
+                <p className="text-text-dim text-[11px] font-body mt-1">
                   {t('selectThreadHint')}
                 </p>
               </div>
@@ -630,7 +630,7 @@ function ThreadCard({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-0.5">
-            <span className={`text-[10px] font-mono font-semibold truncate ${
+            <span className={`text-[12px] font-body font-semibold truncate ${
               isSelected ? 'text-brand-purple-light' : 'text-text-primary'
             }`}>
               {displayName}
@@ -638,7 +638,7 @@ function ThreadCard({
             <span className="text-[10px] text-text-dim flex-shrink-0">{timeLabel}</span>
           </div>
 
-          <p className="text-[10px] font-mono text-text-muted leading-relaxed line-clamp-2 mb-1.5">
+          <p className="text-[12px] font-body text-text-muted leading-relaxed line-clamp-2 mb-1.5">
             {preview}
           </p>
 
@@ -650,7 +650,7 @@ function ThreadCard({
               {t(`platforms.${thread.channel}`)}
             </span>
             {/* Message count */}
-            <span className="text-[9px] text-text-dim font-mono">
+            <span className="text-[9px] text-text-dim font-body">
               {thread.messageCount} msg
             </span>
           </div>
@@ -788,13 +788,13 @@ function ConversationDetail({
           <ArrowLeft size={14} />
         </button>
 
-        <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-mono font-bold flex-shrink-0">
+        <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-body font-bold flex-shrink-0">
           {displayName[0]?.toUpperCase() || '?'}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold text-text-primary truncate">{displayName}</span>
+            <span className="text-xs font-body font-semibold text-text-primary truncate">{displayName}</span>
             <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold border ${platformCfg.bg} ${platformCfg.color}`}>
               <PlatformIcon size={9} />
               {t(`platforms.${thread.channel}`)}
@@ -811,7 +811,7 @@ function ConversationDetail({
         {/* Sentiment indicator */}
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-surface-3 border border-border">
           <div className={`w-2 h-2 rounded-full ${SENTIMENT_COLORS[thread.sentimentLabel] || 'bg-status-warning'}`} />
-          <span className="text-[9px] font-mono text-text-muted font-medium capitalize">
+          <span className="text-[11px] font-body text-text-muted font-medium capitalize">
             {thread.sentimentLabel === 'POSITIVE' ? t('sentiment.positive') : thread.sentimentLabel === 'NEGATIVE' ? t('sentiment.negative') : t('sentiment.neutral')}
           </span>
         </div>
@@ -983,7 +983,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
             {isOutbound ? (message.is_human_takeover ? 'Doctor' : 'SofIA') : t('role.patient')}
           </span>
           {message.is_failed && (
-            <span className="text-[8px] font-mono text-status-danger bg-status-danger/10 border border-status-danger/20 px-1 py-0.5 rounded">
+            <span className="text-[10px] font-body text-status-danger bg-status-danger/10 border border-status-danger/20 px-1 py-0.5 rounded">
               {t('notDelivered')}
             </span>
           )}
@@ -1029,7 +1029,7 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
 
           {/* Response time (for outbound only) */}
           {isOutbound && message.response_time_ms != null && message.response_time_ms > 0 && (
-            <span className="text-[9px] text-text-dim font-mono">
+            <span className="text-[9px] text-text-dim font-body">
               {message.response_time_ms < 1000
                 ? `${message.response_time_ms}ms`
                 : `${(message.response_time_ms / 1000).toFixed(1)}s`}
@@ -1088,8 +1088,8 @@ function EmptyState({
     <div className="flex-1 flex items-center justify-center py-16 px-6">
       <div className="text-center">
         <div className="mb-3 flex justify-center">{icon}</div>
-        <p className="text-text-muted text-[10px] font-mono font-medium">{title}</p>
-        <p className="text-text-dim text-[9px] font-mono mt-1 max-w-xs mx-auto">{description}</p>
+        <p className="text-text-muted text-[12px] font-body font-medium">{title}</p>
+        <p className="text-text-dim text-[11px] font-body mt-1 max-w-xs mx-auto">{description}</p>
       </div>
     </div>
   )

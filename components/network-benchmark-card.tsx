@@ -60,8 +60,8 @@ export function NetworkBenchmarkCard({
   return (
     <div className="glass-card p-5">
       <div className="flex items-start justify-between mb-3">
-        <h4 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">{metricName}</h4>
-        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${bgClass} ${colorClass}`}>
+        <h4 className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider">{metricName}</h4>
+        <span className={`px-2 py-0.5 rounded text-[12px] font-body font-semibold border ${bgClass} ${colorClass}`}>
           {noData ? '—' : `P${percentile}`}
         </span>
       </div>
@@ -78,7 +78,7 @@ export function NetworkBenchmarkCard({
           ) : (
             <TrendingDown size={14} className={colorClass} />
           )}
-          <span className={`text-[10px] font-mono font-semibold ${colorClass}`}>
+          <span className={`text-[12px] font-body font-semibold ${colorClass}`}>
             {noData ? 'Sin datos' : isAbove ? t('aboveAvg') : isClose ? '~' : t('belowAvg')}
           </span>
         </div>
@@ -102,7 +102,7 @@ export function NetworkBenchmarkCard({
             style={{ width: `${Math.min(100, (yours / Math.max(yours, marketAvg) * 1.2) * 100 / 1.2)}%` }}
           />
         </div>
-        <div className="flex justify-between text-[10px] font-mono text-text-dim">
+        <div className="flex justify-between text-[12px] font-body text-text-dim">
           <span>{formatValue(yours)}</span>
           <span>{formatValue(marketAvg)}</span>
         </div>

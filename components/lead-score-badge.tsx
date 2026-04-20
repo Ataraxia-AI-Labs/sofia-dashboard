@@ -90,9 +90,9 @@ export function LeadScoreBadge({
     >
       <Icon size={10} className={cfg.color} />
       {showScore && (
-        <span className={`text-[10px] font-bold font-mono ${cfg.color}`}>{score}</span>
+        <span className={`text-[10px] font-bold font-body ${cfg.color}`}>{score}</span>
       )}
-      <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
+      <span className={`text-[12px] font-body font-semibold ${cfg.color}`}>{cfg.label}</span>
     </div>
   )
 }

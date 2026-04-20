@@ -71,11 +71,6 @@ import {
 } from '@/lib/api/marketplace'
 // ---- API Keys ----
 import { listApiKeys, createApiKey, revokeApiKey } from '@/lib/api/api-keys'
-// ---- Revenue ----
-import {
-  getRevenueDashboard, getMRR, getChurn, getCohorts,
-  getRevenueFunnel, getRevenueForecast,
-} from '@/lib/api/revenue'
 
 beforeEach(() => jest.clearAllMocks())
 
@@ -869,80 +864,3 @@ describe('API Keys API', () => {
   })
 })
 
-// ============================================================
-// REVENUE
-// ============================================================
-describe('Revenue API', () => {
-  it('getRevenueDashboard returns data', async () => {
-    ok({ mrr: 5000, arr: 60000, churn_rate: 0.02 })
-    const result = await getRevenueDashboard()
-    expect(result.mrr).toBe(5000)
-  })
-
-  it('getRevenueDashboard with days param', async () => {
-    ok({ mrr: 5000 })
-    await getRevenueDashboard(30)
-    expect(mockAuthFetch.mock.calls[0][0]).toContain('?days=30')
-  })
-
-  it('getRevenueDashboard throws on error', async () => {
-    fail()
-    await expect(getRevenueDashboard()).rejects.toThrow()
-  })
-
-  it('getMRR returns data', async () => {
-    ok({ mrr: 3000, arr: 36000, growth_rate: 0.15 })
-    const result = await getMRR()
-    expect(result.mrr).toBe(3000)
-  })
-
-  it('getMRR returns defaults on error', async () => {
-    fail()
-    const result = await getMRR()
-    expect(result.mrr).toBe(0)
-    expect(result.arr).toBe(0)
-  })
-
-  it('getChurn returns data', async () => {
-    ok({ churn_rate: 0.03, at_risk: [{ org_id: 'o-1' }] })
-    const result = await getChurn(30)
-    expect(result.churn_rate).toBe(0.03)
-  })
-
-  it('getChurn returns defaults on error', async () => {
-    fail()
-    const result = await getChurn()
-    expect(result.churn_rate).toBe(0)
-    expect(result.at_risk).toEqual([])
-  })
-
-  it('getCohorts returns array', async () => {
-    ok([{ cohort: '2026-01', initial_count: 10, months: {} }])
-    expect(await getCohorts()).toHaveLength(1)
-  })
-
-  it('getCohorts returns empty on error', async () => {
-    fail()
-    expect(await getCohorts()).toEqual([])
-  })
-
-  it('getRevenueFunnel returns object', async () => {
-    ok({ total: 1000 })
-    expect(await getRevenueFunnel(30)).toHaveProperty('total')
-  })
-
-  it('getRevenueFunnel returns empty on error', async () => {
-    fail()
-    expect(await getRevenueFunnel()).toEqual({})
-  })
-
-  it('getRevenueForecast returns object', async () => {
-    ok({ next_month: 5500 })
-    expect(await getRevenueForecast(6)).toHaveProperty('next_month')
-  })
-
-  it('getRevenueForecast returns empty on error', async () => {
-    fail()
-    expect(await getRevenueForecast()).toEqual({})
-  })
-})

@@ -38,18 +38,6 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/dashboard',
 }))
 
-// Mock innovation components
-jest.mock('@/components/innovations', () => ({
-  AtaraxiaScore: ({ data }: { data: unknown }) => <div data-testid="ataraxia-score">{data ? 'score-loaded' : ''}</div>,
-  SofiaSpeaks: ({ data }: { data: unknown }) => <div data-testid="sofia-speaks">{data ? 'speaks-loaded' : ''}</div>,
-  NightReport: () => <div data-testid="night-report">night-report</div>,
-  PhantomGrid: ({ sections, children, className }: { sections: { id: string; element: React.ReactNode }[]; children?: React.ReactNode; className?: string }) => (
-    <div data-testid="phantom-grid" className={className}>
-      {sections.map((s) => <div key={s.id} data-testid={`phantom-section-${s.id}`}>{s.element}</div>)}
-      {children}
-    </div>
-  ),
-}))
 
 // Mock UI components
 jest.mock('@/components/ui', () => ({
@@ -189,12 +177,6 @@ describe('DashboardOverview', () => {
       expect(screen.queryByTestId('metric-card')).not.toBeInTheDocument()
     })
 
-    it('should not render AtaraxiaScore during loading', () => {
-      mockFetchAnalytics.mockReturnValue(new Promise(() => {}))
-      render(<DashboardOverview />)
-
-      expect(screen.queryByTestId('ataraxia-score')).not.toBeInTheDocument()
-    })
   })
 
   // -----------------------------------------------------------------------
@@ -380,69 +362,12 @@ describe('DashboardOverview', () => {
       })
     })
 
-    it('should render AtaraxiaScore component', async () => {
-      render(<DashboardOverview />)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('ataraxia-score')).toBeInTheDocument()
-        expect(screen.getByText('score-loaded')).toBeInTheDocument()
-      })
-    })
-
-    it('should render SofiaSpeaks component', async () => {
-      render(<DashboardOverview />)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sofia-speaks')).toBeInTheDocument()
-      })
-    })
-
-    it('should render NightReport component', async () => {
-      render(<DashboardOverview />)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('night-report')).toBeInTheDocument()
-      })
-    })
-
-    it('should render PhantomGrid with all sections', async () => {
-      render(<DashboardOverview />)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('phantom-grid')).toBeInTheDocument()
-        expect(screen.getByTestId('phantom-section-funnel-revenue')).toBeInTheDocument()
-        expect(screen.getByTestId('phantom-section-intents-opps-perf')).toBeInTheDocument()
-        expect(screen.getByTestId('phantom-section-sub-bots')).toBeInTheDocument()
-      })
-    })
-
-    it('should render voice section when voice data has calls', async () => {
-      render(<DashboardOverview />)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('phantom-section-voice-ai')).toBeInTheDocument()
-      })
-    })
-
-    it('should NOT render voice section when no voice data', async () => {
-      mockFetchVoice.mockResolvedValue({ total_calls: 0, total_whatsapp: 0, avg_duration_seconds: 0, appointments_by_voice: 0, appointments_by_whatsapp: 0, voice_pct: 0 })
-
-      render(<DashboardOverview />)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('phantom-grid')).toBeInTheDocument()
-      })
-
-      expect(screen.queryByTestId('phantom-section-voice-ai')).not.toBeInTheDocument()
-    })
-
     it('should render opportunity items when opportunities exist', async () => {
       render(<DashboardOverview />)
 
       await waitFor(() => {
-        // 3 opportunity types: HOT_LEAD, UPSELL, CHURN_RISK
-        const oppSection = screen.getByTestId('phantom-section-intents-opps-perf')
-        expect(oppSection).toBeInTheDocument()
+        const botCards = screen.getAllByTestId('bot-card')
+        expect(botCards.length).toBeGreaterThan(0)
       })
     })
 

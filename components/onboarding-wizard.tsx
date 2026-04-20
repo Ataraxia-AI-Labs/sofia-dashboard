@@ -247,7 +247,7 @@ FLUJO TÍPICO:
             Activa SofIA en{' '}
             <span className="text-brand-purple">{org.name}</span>
           </h1>
-          <p className="text-text-muted text-xs font-mono mt-1">4 pasos y tu clínica empieza a vender sola — incluso cuando duermes</p>
+          <p className="text-text-muted text-xs font-body mt-1">4 pasos y tu clínica empieza a vender sola — incluso cuando duermes</p>
         </div>
 
         {/* Step indicator */}
@@ -261,7 +261,7 @@ FLUJO TÍPICO:
                 <button
                   onClick={() => i < step && setStep(i)}
                   disabled={i > step}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all w-full ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all w-full ${
                     isActive ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                     : isDone ? 'bg-status-success/10 text-status-success border border-status-success/20 cursor-pointer'
                     : 'bg-surface-2 text-text-dim border border-border'
@@ -282,28 +282,28 @@ FLUJO TÍPICO:
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <h3 className="text-xs font-mono font-semibold text-text-primary mb-1">Datos de tu clínica</h3>
-                <p className="text-[10px] font-mono text-text-dim">Información básica para que SofIA conozca tu negocio</p>
+                <h3 className="text-xs font-body font-semibold text-text-primary mb-1">Datos de tu clínica</h3>
+                <p className="text-[12px] font-body text-text-dim">Información básica para que SofIA conozca tu negocio</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Ciudad</label>
+                  <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">Ciudad</label>
                   <div className="relative">
                     <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                    <input type="text" value={clinicCity} onChange={e => setClinicCity(e.target.value)} placeholder="Medellín" className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+                    <input type="text" value={clinicCity} onChange={e => setClinicCity(e.target.value)} placeholder="Medellín" className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/40 transition-all" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Teléfono</label>
+                  <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">Teléfono</label>
                   <div className="relative">
                     <PhoneIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                    <input type="tel" value={clinicPhone} onChange={e => setClinicPhone(e.target.value)} placeholder="+57 300 123 4567" className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+                    <input type="tel" value={clinicPhone} onChange={e => setClinicPhone(e.target.value)} placeholder="+57 300 123 4567" className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/40 transition-all" />
                   </div>
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Dirección</label>
-                <input type="text" value={clinicAddress} onChange={e => setClinicAddress(e.target.value)} placeholder="Calle 10 #43-12, El Poblado" className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+                <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">Dirección</label>
+                <input type="text" value={clinicAddress} onChange={e => setClinicAddress(e.target.value)} placeholder="Calle 10 #43-12, El Poblado" className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/40 transition-all" />
               </div>
             </div>
           )}
@@ -313,8 +313,8 @@ FLUJO TÍPICO:
             <div className="space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xs font-mono font-semibold text-text-primary mb-1">Catálogo de Servicios</h3>
-                  <p className="text-[10px] font-mono text-text-dim">Los servicios que SofIA ofrecerá a los pacientes</p>
+                  <h3 className="text-xs font-body font-semibold text-text-primary mb-1">Catálogo de Servicios</h3>
+                  <p className="text-[12px] font-body text-text-dim">Los servicios que SofIA ofrecerá a los pacientes</p>
                 </div>
                 {services.length === 0 && (
                   <button onClick={loadTemplates} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 text-brand-purple text-xs font-semibold hover:bg-brand-purple/25 transition-colors">
@@ -328,11 +328,11 @@ FLUJO TÍPICO:
                 {services.map(s => (
                   <div key={s.id} className="flex items-center justify-between px-3 py-2 rounded-md bg-surface-2 border border-border">
                     <div>
-                      <span className="text-xs font-mono text-text-primary">{s.name}</span>
-                      <span className="text-[10px] font-mono text-text-dim ml-2">{s.duration_minutes}min</span>
+                      <span className="text-xs font-body text-text-primary">{s.name}</span>
+                      <span className="text-[12px] font-body text-text-dim ml-2">{s.duration_minutes}min</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono font-semibold text-text-primary">{s.price > 0 ? `$${s.price.toLocaleString()}` : 'Gratis'}</span>
+                      <span className="text-xs font-body font-semibold text-text-primary">{s.price > 0 ? `$${s.price.toLocaleString()}` : 'Gratis'}</span>
                       <button onClick={() => handleDeleteService(s.id)} className="text-text-dim hover:text-status-danger transition-colors"><Trash2 size={13} /></button>
                     </div>
                   </div>
@@ -341,8 +341,8 @@ FLUJO TÍPICO:
 
               {/* Add service */}
               <div className="flex gap-2">
-                <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="Nombre del servicio" className="flex-1 px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
-                <input type="number" value={newPrice} onChange={e => setNewPrice(e.target.value)} placeholder="$ COP" className="w-28 px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-all" />
+                <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="Nombre del servicio" className="flex-1 px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-body outline-none focus:border-brand-purple/40 transition-all" />
+                <input type="number" value={newPrice} onChange={e => setNewPrice(e.target.value)} placeholder="$ COP" className="w-28 px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-body outline-none focus:border-brand-purple/40 transition-all" />
                 <button onClick={handleAddService} className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple flex items-center justify-center hover:bg-brand-purple/15 transition-colors">
                   <Plus size={16} />
                 </button>
@@ -354,8 +354,8 @@ FLUJO TÍPICO:
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-xs font-mono font-semibold text-text-primary mb-1">Horarios de Atencion</h3>
-                <p className="text-[10px] font-mono text-text-dim">SofIA agendara citas dentro de estos horarios. Ajusta el horario de apertura y cierre de cada dia.</p>
+                <h3 className="text-xs font-body font-semibold text-text-primary mb-1">Horarios de Atencion</h3>
+                <p className="text-[12px] font-body text-text-dim">SofIA agendara citas dentro de estos horarios. Ajusta el horario de apertura y cierre de cada dia.</p>
               </div>
               <div className="space-y-2">
                 {hours.sort((a, b) => a.day_of_week - b.day_of_week).map(h => (
@@ -383,7 +383,7 @@ FLUJO TÍPICO:
                           />
                         </button>
                         <span
-                          className={`text-xs font-mono font-medium w-24 ${
+                          className={`text-xs font-body font-medium w-24 ${
                             h.is_active ? 'text-text-primary' : 'text-text-dim'
                           }`}
                         >
@@ -391,7 +391,7 @@ FLUJO TÍPICO:
                         </span>
                       </div>
                       {!h.is_active && (
-                        <span className="text-[10px] font-mono text-text-dim">Cerrado</span>
+                        <span className="text-[12px] font-body text-text-dim">Cerrado</span>
                       )}
                     </div>
 
@@ -399,22 +399,22 @@ FLUJO TÍPICO:
                     {h.is_active && (
                       <div className="flex items-center gap-2 mt-3 ml-12 animate-fade-in">
                         <div className="flex items-center gap-1.5">
-                          <label className="text-[9px] font-mono text-text-dim uppercase tracking-wider font-medium w-10">Abre</label>
+                          <label className="text-[11px] font-body text-text-dim uppercase tracking-wider font-medium w-10">Abre</label>
                           <input
                             type="time"
                             value={h.open_time?.slice(0, 5) || '08:00'}
                             onChange={(e) => handleUpdateTime(h, 'open_time', e.target.value + ':00')}
-                            className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-colors w-[100px]"
+                            className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-body outline-none focus:border-brand-purple/40 transition-colors w-[100px]"
                           />
                         </div>
                         <span className="text-text-dim text-xs">—</span>
                         <div className="flex items-center gap-1.5">
-                          <label className="text-[9px] font-mono text-text-dim uppercase tracking-wider font-medium w-10">Cierra</label>
+                          <label className="text-[11px] font-body text-text-dim uppercase tracking-wider font-medium w-10">Cierra</label>
                           <input
                             type="time"
                             value={h.close_time?.slice(0, 5) || '18:00'}
                             onChange={(e) => handleUpdateTime(h, 'close_time', e.target.value + ':00')}
-                            className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-mono outline-none focus:border-brand-purple/40 transition-colors w-[100px]"
+                            className="px-2 py-1.5 rounded-lg bg-surface-3 border border-border text-text-primary text-xs font-body outline-none focus:border-brand-purple/40 transition-colors w-[100px]"
                           />
                         </div>
                       </div>
@@ -422,7 +422,7 @@ FLUJO TÍPICO:
                   </div>
                 ))}
                 {hours.length === 0 && (
-                  <p className="text-[10px] font-mono text-text-dim text-center py-4">Los horarios se crearan al completar el setup</p>
+                  <p className="text-[12px] font-body text-text-dim text-center py-4">Los horarios se crearan al completar el setup</p>
                 )}
               </div>
             </div>
@@ -432,12 +432,12 @@ FLUJO TÍPICO:
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <h3 className="text-xs font-mono font-semibold text-text-primary mb-1">Personaliza a SofIA</h3>
-                <p className="text-[10px] font-mono text-text-dim">Define cómo se comunica SofIA con tus pacientes</p>
+                <h3 className="text-xs font-body font-semibold text-text-primary mb-1">Personaliza a SofIA</h3>
+                <p className="text-[12px] font-body text-text-dim">Define cómo se comunica SofIA con tus pacientes</p>
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Tono de comunicación</label>
+                <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">Tono de comunicación</label>
                 <div className="grid grid-cols-2 gap-2">
                   {TONE_OPTIONS.map(t => (
                     <button
@@ -447,32 +447,32 @@ FLUJO TÍPICO:
                         tone === t.value ? 'bg-brand-purple/10 border-brand-purple/25' : 'bg-surface-2 border-border hover:border-border-2'
                       }`}
                     >
-                      <div className={`text-[10px] font-mono font-semibold ${tone === t.value ? 'text-brand-purple' : 'text-text-primary'}`}>{t.label}</div>
-                      <div className="text-[9px] font-mono text-text-dim mt-0.5">{t.desc}</div>
+                      <div className={`text-[12px] font-body font-semibold ${tone === t.value ? 'text-brand-purple' : 'text-text-primary'}`}>{t.label}</div>
+                      <div className="text-[11px] font-body text-text-dim mt-0.5">{t.desc}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Mensaje de bienvenida (opcional)</label>
+                <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">Mensaje de bienvenida (opcional)</label>
                 <textarea
                   value={welcomeMsg}
                   onChange={e => setWelcomeMsg(e.target.value)}
                   rows={2}
                   placeholder="Ej: ¡Hola! Soy SofIA, tu asistente virtual. ¿En qué puedo ayudarte hoy?"
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 transition-all resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/40 transition-all resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-muted mb-1.5 uppercase tracking-wider">Instrucciones especiales (opcional)</label>
+                <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">Instrucciones especiales (opcional)</label>
                 <textarea
                   value={specialInstructions}
                   onChange={e => setSpecialInstructions(e.target.value)}
                   rows={3}
                   placeholder="Ej: No ofrecer descuentos. Siempre mencionar la garantía. Preguntar si es primera vez."
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/40 transition-all resize-none"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/40 transition-all resize-none"
                 />
               </div>
             </div>
@@ -484,7 +484,7 @@ FLUJO TÍPICO:
           <button
             onClick={() => step > 0 && setStep(step - 1)}
             disabled={step === 0}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-muted font-mono font-semibold text-[10px] hover:text-text-primary transition-colors disabled:opacity-30"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-muted font-body font-semibold text-[10px] hover:text-text-primary transition-colors disabled:opacity-30"
           >
             <ChevronLeft size={14} />
             Volver
@@ -493,7 +493,7 @@ FLUJO TÍPICO:
           {step < STEPS.length - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple text-white font-mono font-semibold text-[10px] hover:-translate-y-0.5 transition-all"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-purple text-white font-body font-semibold text-[10px] hover:-translate-y-0.5 transition-all"
             >
               {step === 0 && 'Agregar servicios'}
               {step === 1 && 'Definir horarios'}
@@ -504,7 +504,7 @@ FLUJO TÍPICO:
             <button
               onClick={handleComplete}
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 rounded-lg bg-status-success text-white font-mono font-semibold text-[10px] hover:-translate-y-0.5 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 rounded-lg bg-status-success text-white font-body font-semibold text-[10px] hover:-translate-y-0.5 transition-all disabled:opacity-50"
             >
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
               {saving ? 'Lanzando tu clínica...' : 'Lanzar mi Clínica'}

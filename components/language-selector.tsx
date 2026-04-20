@@ -26,8 +26,8 @@ export function LanguageSelector() {
       <div className="flex items-center gap-2">
         <Globe size={14} className="text-brand-purple" />
         <div>
-          <h3 className="text-[11px] font-mono font-semibold text-text-primary">{t('title')}</h3>
-          <p className="text-[9px] font-mono text-text-dim mt-0.5">{t('description')}</p>
+          <h3 className="text-[13px] font-body font-semibold text-text-primary">{t('title')}</h3>
+          <p className="text-[11px] font-body text-text-dim mt-0.5">{t('description')}</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ export function LanguageSelector() {
             }`}
           >
             <span className="text-sm">{locale === 'es' ? 'ES' : locale === 'en' ? 'EN' : 'PT'}</span>
-            <span className="text-[10px] font-mono">{t(`languages.${locale}`)}</span>
+            <span className="text-[12px] font-body">{t(`languages.${locale}`)}</span>
             {currentLocale === locale && (
               <span className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-purple" />
             )}

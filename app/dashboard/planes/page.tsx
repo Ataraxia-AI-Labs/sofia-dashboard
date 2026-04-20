@@ -214,7 +214,7 @@ export default function PlanesPage() {
       {/* Header */}
       <div>
         <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-        <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('subtitle')}</p>
+        <p className="text-text-dim text-[11px] font-body mt-0.5">{t('subtitle')}</p>
       </div>
 
       {/* Current plan card */}
@@ -225,13 +225,13 @@ export default function PlanesPage() {
               <Gem size={18} className="text-brand-purple" />
             </div>
             <div>
-              <h3 className="text-[10px] font-mono font-semibold text-text-primary">
+              <h3 className="text-[12px] font-body font-semibold text-text-primary">
                 {t('currentPlan')}: {currentPlan}
               </h3>
               {currentPlan === 'TRIAL' && trialDaysLeft !== null && (
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <Clock size={10} className={trialDaysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'} />
-                  <span className={`text-[9px] font-mono font-semibold ${trialDaysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'}`}>
+                  <span className={`text-[11px] font-body font-semibold ${trialDaysLeft <= 2 ? 'text-status-danger' : 'text-status-warning'}`}>
                     {trialDaysLeft === 0
                       ? t('trialExpiresToday')
                       : t('trialDaysLeft', { days: trialDaysLeft })}
@@ -239,12 +239,12 @@ export default function PlanesPage() {
                 </div>
               )}
               {isActive && nextBilling && (
-                <p className="text-[9px] font-mono text-text-dim mt-0.5">
+                <p className="text-[11px] font-body text-text-dim mt-0.5">
                   {t('nextBilling', { date: nextBilling })}
                 </p>
               )}
               {currentPlan !== 'TRIAL' && !isActive && (
-                <p className="text-[9px] font-mono text-text-dim mt-0.5">{t('planActive')}</p>
+                <p className="text-[11px] font-body text-text-dim mt-0.5">{t('planActive')}</p>
               )}
             </div>
           </div>
@@ -254,8 +254,8 @@ export default function PlanesPage() {
         {currentPlan === 'STARTER' && usage && (
           <div className="mt-3 pt-3 border-t border-border">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[9px] font-mono text-text-muted font-medium">{t('messagesUsed')}</span>
-              <span className="text-[9px] font-mono text-text-secondary font-semibold">
+              <span className="text-[11px] font-body text-text-muted font-medium">{t('messagesUsed')}</span>
+              <span className="text-[11px] font-body text-text-secondary font-semibold">
                 {usage.message_count} / {usage.message_limit ?? 500}
               </span>
             </div>
@@ -266,7 +266,7 @@ export default function PlanesPage() {
               />
             </div>
             {usage.percent >= 80 && (
-              <p className="text-[9px] font-mono text-status-warning mt-1">
+              <p className="text-[11px] font-body text-status-warning mt-1">
                 {t('nearLimit')}
               </p>
             )}
@@ -278,7 +278,7 @@ export default function PlanesPage() {
       <div className="flex items-center justify-center gap-1">
         <button
           onClick={() => setCycle('MONTHLY')}
-          className={`px-3 py-1.5 rounded-l-lg text-[10px] font-mono font-semibold transition-all ${
+          className={`px-3 py-1.5 rounded-l-lg text-[12px] font-body font-semibold transition-all ${
             cycle === 'MONTHLY'
               ? 'bg-brand-purple text-white'
               : 'bg-surface-3 text-text-muted hover:text-text-secondary'
@@ -288,14 +288,14 @@ export default function PlanesPage() {
         </button>
         <button
           onClick={() => setCycle('ANNUAL')}
-          className={`px-3 py-1.5 rounded-r-lg text-[10px] font-mono font-semibold transition-all relative ${
+          className={`px-3 py-1.5 rounded-r-lg text-[12px] font-body font-semibold transition-all relative ${
             cycle === 'ANNUAL'
               ? 'bg-brand-purple text-white'
               : 'bg-surface-3 text-text-muted hover:text-text-secondary'
           }`}
         >
           {t('annual')}
-          <span className="absolute -top-2.5 -right-2 px-1.5 py-0.5 rounded-full bg-status-success text-white text-[7px] font-mono font-bold whitespace-nowrap">
+          <span className="absolute -top-2.5 -right-2 px-1.5 py-0.5 rounded-full bg-status-success text-white text-[7px] font-body font-bold whitespace-nowrap">
             {t('save2months')}
           </span>
         </button>
@@ -325,7 +325,7 @@ export default function PlanesPage() {
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-brand-purple text-white text-[8px] font-mono font-bold uppercase tracking-wider">
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-brand-purple text-white text-[10px] font-body font-bold uppercase tracking-wider">
                     {t('recommended')}
                   </div>
                 )}
@@ -335,12 +335,12 @@ export default function PlanesPage() {
                     <Icon size={20} className={PLAN_COLOR_CLASSES[plan.color]?.text ?? ''} />
                   </div>
                   <h3 className="text-sm font-mono font-bold text-text-primary">{plan.name}</h3>
-                  <p className="text-[9px] font-mono text-text-muted mt-0.5">{t(`descriptions.${plan.id}`)}</p>
+                  <p className="text-[11px] font-body text-text-muted mt-0.5">{t(`descriptions.${plan.id}`)}</p>
                   <div className="mt-2">
                     <span className="text-xl font-mono font-bold text-text-primary">{price.main}</span>
                   </div>
                   {price.sub && (
-                    <p className="text-[9px] font-mono text-text-muted mt-0.5">{t('equiv')} {price.sub}</p>
+                    <p className="text-[11px] font-body text-text-muted mt-0.5">{t('equiv')} {price.sub}</p>
                   )}
                 </div>
 
@@ -352,7 +352,7 @@ export default function PlanesPage() {
                       ) : (
                         <X size={12} className="text-status-danger/60 flex-shrink-0" strokeWidth={2.5} />
                       )}
-                      <span className={`text-[10px] font-mono ${
+                      <span className={`text-[12px] font-body ${
                         feat.included ? 'text-text-secondary' : 'text-text-dim line-through opacity-60'
                       }`}>
                         {t(`features.${feat.key}`)}
@@ -364,7 +364,7 @@ export default function PlanesPage() {
                 <button
                   disabled={disabled}
                   onClick={() => !disabled && handleActivate(plan.id)}
-                  className={`w-full py-2 rounded-lg text-[10px] font-mono font-semibold transition-all ${
+                  className={`w-full py-2 rounded-lg text-[12px] font-body font-semibold transition-all ${
                     disabled
                       ? 'bg-surface-3 text-text-dim cursor-default'
                       : plan.popular
@@ -382,10 +382,10 @@ export default function PlanesPage() {
 
       {/* Contact CTA */}
       <div className="glass-card p-4 text-center">
-        <p className="text-text-muted text-[10px] font-mono">
+        <p className="text-text-muted text-[12px] font-body">
           {t('customPlanQuestion')}
         </p>
-        <p className="text-text-dim text-[9px] font-mono mt-1">
+        <p className="text-text-dim text-[11px] font-body mt-1">
           {t('customPlanHelp', { email: 'gestion@ataraxiaialabs.ai' })}
         </p>
       </div>

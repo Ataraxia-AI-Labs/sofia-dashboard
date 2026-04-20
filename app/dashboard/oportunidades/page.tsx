@@ -133,13 +133,13 @@ export default function OportunidadesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('subtitle')}</p>
+          <p className="text-text-dim text-[11px] font-body mt-0.5">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveView('list')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors ${
                 activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -147,7 +147,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('scoring')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'scoring' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -156,7 +156,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('predictions')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'predictions' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -165,7 +165,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('queue')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'queue' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -174,7 +174,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('pricing')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'pricing' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -183,7 +183,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('outreach')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'outreach' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -192,7 +192,7 @@ export default function OportunidadesPage() {
             </button>
             <button
               onClick={() => setActiveView('competitors')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'competitors' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -279,7 +279,7 @@ export default function OportunidadesPage() {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setStatusFilter('')}
-            className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all ${
               !statusFilter
                 ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                 : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -291,7 +291,7 @@ export default function OportunidadesPage() {
             <button
               key={key}
               onClick={() => setStatusFilter(key)}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all ${
                 statusFilter === key
                   ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                   : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -309,7 +309,7 @@ export default function OportunidadesPage() {
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setTypeFilter('')}
-            className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all ${
               !typeFilter
                 ? 'bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/25'
                 : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -324,7 +324,7 @@ export default function OportunidadesPage() {
               <button
                 key={key}
                 onClick={() => setTypeFilter(typeFilter === key ? '' : key)}
-                className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all flex items-center gap-1.5 ${
                   typeFilter === key
                     ? `${cfg.bg} ${cfg.color} border`
                     : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
@@ -332,7 +332,7 @@ export default function OportunidadesPage() {
               >
                 {cfg.label}
                 {count > 0 && (
-                  <span className={`text-[9px] font-mono ${typeFilter === key ? cfg.color : 'text-text-dim'}`}>
+                  <span className={`text-[11px] font-body ${typeFilter === key ? cfg.color : 'text-text-dim'}`}>
                     {count}
                   </span>
                 )}
@@ -354,7 +354,7 @@ export default function OportunidadesPage() {
         ) : filtered.length === 0 ? (
           <div className="glass-card p-8 text-center">
             <Target size={28} className="mx-auto text-text-dim mb-3" />
-            <p className="text-text-muted text-[10px] font-mono">
+            <p className="text-text-muted text-[12px] font-body">
               {statusFilter || typeFilter
                 ? `No hay oportunidades con ${statusFilter ? `estado "${STATUS_OPTIONS[statusFilter]?.label}"` : ''}${statusFilter && typeFilter ? ' y ' : ''}${typeFilter ? `tipo "${OPP_CONFIG[typeFilter]?.label}"` : ''}`
                 : 'No hay oportunidades detectadas aún'}
@@ -376,8 +376,8 @@ export default function OportunidadesPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-[10px] font-mono font-semibold ${cfg.color}`}>{cfg.label}</span>
-                        <span className={`text-[9px] font-mono font-semibold px-2 py-0.5 rounded-md border ${
+                        <span className={`text-[12px] font-body font-semibold ${cfg.color}`}>{cfg.label}</span>
+                        <span className={`text-[11px] font-body font-semibold px-2 py-0.5 rounded-md border ${
                           opp.status === 'DETECTED' ? 'bg-brand-purple/10 border-brand-purple/20 text-brand-purple'
                           : opp.status === 'CONVERTED' ? 'bg-status-success/10 border-status-success/20 text-status-success'
                           : opp.status === 'ACTED_ON' ? 'bg-status-info/10 border-status-info/20 text-status-info'
@@ -387,7 +387,7 @@ export default function OportunidadesPage() {
 
                       {/* Patient info + Lead Score */}
                       {opp.patients && (
-                        <div className="flex items-center gap-3 text-[10px] font-mono text-text-muted mb-2">
+                        <div className="flex items-center gap-3 text-[12px] font-body text-text-muted mb-2">
                           <span className="flex items-center gap-1">
                             <User size={11} />
                             {opp.patients?.full_name || 'Sin nombre'}
@@ -407,10 +407,10 @@ export default function OportunidadesPage() {
 
                       {/* Notes */}
                       {opp.notes && (
-                        <p className="text-[10px] font-mono text-text-muted leading-relaxed line-clamp-2">{opp.notes}</p>
+                        <p className="text-[12px] font-body text-text-muted leading-relaxed line-clamp-2">{opp.notes}</p>
                       )}
 
-                      <div className="flex items-center gap-3 mt-2 text-[9px] font-mono text-text-dim">
+                      <div className="flex items-center gap-3 mt-2 text-[11px] font-body text-text-dim">
                         <span className="flex items-center gap-1">
                           <Clock size={10} />
                           {timeAgo(opp.created_at)}
@@ -422,7 +422,7 @@ export default function OportunidadesPage() {
                   {/* Right - Value + Actions */}
                   <div className="flex flex-col items-end gap-2 flex-shrink-0">
                     <div className="text-right">
-                      <div className="text-[9px] font-mono text-text-dim">Valor estimado</div>
+                      <div className="text-[11px] font-body text-text-dim">Valor estimado</div>
                       <div className="text-sm font-bold font-mono text-text-primary">{formatCOP(opp.estimated_value)}</div>
                     </div>
 
@@ -431,19 +431,19 @@ export default function OportunidadesPage() {
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => updateStatus(opp.id, 'ACTED_ON')}
-                          className="px-2.5 py-1 rounded-md bg-status-info/10 border border-status-info/20 text-status-info text-[9px] font-mono font-semibold hover:bg-status-info/20 transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-status-info/10 border border-status-info/20 text-status-info text-[11px] font-body font-semibold hover:bg-status-info/20 transition-colors"
                         >
                           En acción
                         </button>
                         <button
                           onClick={() => updateStatus(opp.id, 'CONVERTED')}
-                          className="px-2.5 py-1 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[9px] font-mono font-semibold hover:bg-status-success/20 transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[11px] font-body font-semibold hover:bg-status-success/20 transition-colors"
                         >
                           Convertida
                         </button>
                         <button
                           onClick={() => updateStatus(opp.id, 'DISMISSED')}
-                          className="px-2.5 py-1 rounded-md bg-surface-3 border border-border text-text-dim text-[9px] font-mono font-semibold hover:text-text-muted transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-surface-3 border border-border text-text-dim text-[11px] font-body font-semibold hover:text-text-muted transition-colors"
                         >
                           Descartar
                         </button>
@@ -453,13 +453,13 @@ export default function OportunidadesPage() {
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => updateStatus(opp.id, 'CONVERTED')}
-                          className="px-2.5 py-1 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[9px] font-mono font-semibold hover:bg-status-success/20 transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-status-success/10 border border-status-success/20 text-status-success text-[11px] font-body font-semibold hover:bg-status-success/20 transition-colors"
                         >
                           Convertida ✓
                         </button>
                         <button
                           onClick={() => updateStatus(opp.id, 'EXPIRED')}
-                          className="px-2.5 py-1 rounded-md bg-surface-3 border border-border text-text-dim text-[9px] font-mono font-semibold hover:text-text-muted transition-colors"
+                          className="px-2.5 py-1 rounded-md bg-surface-3 border border-border text-text-dim text-[11px] font-body font-semibold hover:text-text-muted transition-colors"
                         >
                           Expirada
                         </button>
@@ -485,7 +485,7 @@ function SummaryCard({ icon, gradient, value, label }: { icon: React.ReactNode; 
         {icon}
       </div>
       <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[9px] font-mono text-text-muted mt-0.5">{label}</div>
+      <div className="text-[11px] font-body text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

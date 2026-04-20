@@ -127,7 +127,7 @@ export default function OutreachPanel({ orgId }: OutreachPanelProps) {
           <button
             onClick={handleScan}
             disabled={scanning}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple text-white text-xs font-body font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50"
           >
             {scanning ? <Loader2 size={14} className="animate-spin" /> : <Radar size={14} />}
             {scanning ? t('scanning') : t('scanOpportunities')}
@@ -176,7 +176,7 @@ export default function OutreachPanel({ orgId }: OutreachPanelProps) {
               <cfg.icon size={11} />
               {cfg.label}
               {count > 0 && (
-                <span className="text-[9px] font-mono">{count}</span>
+                <span className="text-[11px] font-body">{count}</span>
               )}
             </button>
           )
@@ -289,7 +289,7 @@ function StatPill({ icon, value, label, color }: { icon: React.ReactNode; value:
       <span className={color}>{icon}</span>
       <div>
         <div className={`text-lg font-bold font-mono ${color}`}>{value}</div>
-        <div className="text-[9px] font-mono text-text-dim uppercase tracking-wider">{label}</div>
+        <div className="text-[11px] font-body text-text-dim uppercase tracking-wider">{label}</div>
       </div>
     </div>
   )

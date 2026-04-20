@@ -163,12 +163,12 @@ function LoginForm() {
             </svg>
           </div>
 
-          <h1 className="font-mono text-3xl font-bold text-white leading-tight mb-3">
+          <h1 className="font-body text-3xl font-bold text-white leading-tight mb-3">
             Tu clinica opera sola.{' '}
             <span className="text-brand-purple">Siempre.</span>
           </h1>
 
-          <p className="text-text-muted text-sm font-mono leading-relaxed mb-10">
+          <p className="text-text-muted text-sm font-body leading-relaxed mb-10">
             SofIA gestiona pacientes, agenda citas, cobra anticipos y detecta oportunidades — 24/7, sin intervencion humana.
           </p>
 
@@ -181,13 +181,10 @@ function LoginForm() {
             ].map((stat) => (
               <div key={stat.label}>
                 <div className="text-2xl font-bold font-mono text-brand-purple">{stat.value}</div>
-                <div className="text-[10px] font-mono text-text-dim mt-1">{stat.label}</div>
+                <div className="text-[12px] font-body text-text-dim mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
-
-          {/* Heartbeat line */}
-          <div className="clinic-pulse" />
         </div>
       </div>
 
@@ -204,13 +201,13 @@ function LoginForm() {
           </div>
 
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white font-mono mb-1">Acceder al Nucleus</h2>
-            <p className="text-text-muted text-xs font-mono">Ingresa al centro de control de tu clinica</p>
+            <h2 className="text-2xl font-bold text-white font-body mb-1">Acceder al Nucleus</h2>
+            <p className="text-text-muted text-xs font-body">Ingresa al centro de control de tu clinica</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">
+              <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
                 Email
               </label>
               <input
@@ -218,14 +215,14 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@clinica.com"
-                className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors"
+                className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 transition-colors"
                 required
                 autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">
+              <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
                 Contrasena
               </label>
               <div className="relative">
@@ -234,7 +231,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2.5 pr-10 rounded-md bg-surface border border-border text-white placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/50 transition-colors"
+                  className="w-full px-3 py-2.5 pr-10 rounded-md bg-surface border border-border text-white placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 transition-colors"
                   required
                 />
                 <button
@@ -251,14 +248,14 @@ function LoginForm() {
             <div className="flex justify-end -mt-1">
               <a
                 href="/forgot-password"
-                className="text-[10px] font-mono text-brand-purple hover:brightness-125 transition-colors"
+                className="text-[12px] font-body text-brand-purple hover:brightness-125 transition-colors"
               >
                 Olvide mi contrasena
               </a>
             </div>
 
             {error && (
-              <div className="px-3 py-2.5 rounded-md text-status-danger text-xs font-mono"
+              <div className="px-3 py-2.5 rounded-md text-status-danger text-xs font-body"
                 style={{ background: 'rgba(239, 68, 68, 0.06)', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                 {error}
               </div>
@@ -267,7 +264,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-md bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 rounded-md bg-brand-purple text-white font-semibold text-xs font-body flex items-center justify-center gap-2 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -282,22 +279,22 @@ function LoginForm() {
 
           {/* Trial CTA */}
           <div className="mt-6 p-4 rounded-md bg-surface border border-border">
-            <p className="text-text-muted text-xs font-mono text-center mb-2.5">
+            <p className="text-text-muted text-xs font-body text-center mb-2.5">
               Aun no tienes cuenta?
             </p>
             <Link
               href="/onboarding"
-              className="w-full py-2.5 rounded-md bg-surface border border-brand-purple/30 text-brand-purple font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:brightness-110 transition-all"
+              className="w-full py-2.5 rounded-md bg-surface border border-brand-purple/30 text-brand-purple font-semibold text-xs font-body flex items-center justify-center gap-2 hover:brightness-110 transition-all"
               style={{ background: 'rgba(139, 92, 246, 0.05)' }}
             >
               <Zap size={12} />
               Prueba gratis de 7 dias
               <ArrowRight size={12} />
             </Link>
-            <p className="text-center text-text-dim text-[9px] font-mono mt-1.5">Sin tarjeta. Setup en 5 minutos.</p>
+            <p className="text-center text-text-dim text-[11px] font-body mt-1.5">Sin tarjeta. Setup en 5 minutos.</p>
           </div>
 
-          <p className="text-[9px] font-mono text-text-dim text-center mt-6">
+          <p className="text-[11px] font-body text-text-dim text-center mt-6">
             Powered by SofIA — Ataraxia IA Labs
           </p>
         </div>

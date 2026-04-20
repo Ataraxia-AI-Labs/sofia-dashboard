@@ -124,7 +124,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
     <div className="min-h-screen bg-void flex items-center justify-center">
       <div className="flex flex-col items-center gap-2">
         <div className="w-5 h-5 border-2 border-brand-purple/30 border-t-brand-purple rounded-full animate-spin" />
-        <p className="text-text-dim text-[10px] font-mono">Cargando...</p>
+        <p className="text-text-dim text-[12px] font-body">Cargando...</p>
       </div>
     </div>
   )
@@ -136,7 +136,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
           <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" />
           <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.5" />
         </svg>
-        <p className="text-text-muted text-xs font-mono">Esta clinica no tiene reservas en linea habilitadas.</p>
+        <p className="text-text-muted text-xs font-body">Esta clinica no tiene reservas en linea habilitadas.</p>
       </div>
     </div>
   )
@@ -151,10 +151,10 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
             <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.8" />
             <circle cx="24" cy="24" r="2" fill="#F5F3FF" />
           </svg>
-          <h1 className="text-xl font-bold text-white font-mono">{clinic.name}</h1>
-          {clinic.specialty && <p className="text-text-muted text-[10px] font-mono mt-0.5">{clinic.specialty}</p>}
+          <h1 className="text-xl font-bold text-white font-body">{clinic.name}</h1>
+          {clinic.specialty && <p className="text-text-muted text-[12px] font-body mt-0.5">{clinic.specialty}</p>}
           {clinic.city && (
-            <p className="text-text-dim text-[10px] font-mono flex items-center justify-center gap-1 mt-0.5">
+            <p className="text-text-dim text-[12px] font-body flex items-center justify-center gap-1 mt-0.5">
               <MapPin className="w-3 h-3" />{clinic.city}{clinic.address ? ` · ${clinic.address}` : ''}
             </p>
           )}
@@ -164,7 +164,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
         <div className="flex items-center justify-center gap-1 mb-5">
           {['Servicio', 'Fecha', 'Hora', 'Datos'].map((label, i) => (
             <div key={label} className="flex items-center gap-1">
-              <div className={`w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-mono font-medium transition-all ${
+              <div className={`w-6 h-6 rounded-md flex items-center justify-center text-[12px] font-body font-medium transition-all ${
                 step > i ? 'bg-brand-purple text-white'
                 : step === i ? 'text-brand-purple border border-brand-purple' : 'bg-surface text-text-dim border border-border'
               }`} style={step === i ? { background: 'rgba(139, 92, 246, 0.08)' } : {}}>
@@ -176,7 +176,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
         </div>
 
         {error && (
-          <div className="mb-3 p-2.5 rounded-md text-status-danger text-xs font-mono"
+          <div className="mb-3 p-2.5 rounded-md text-status-danger text-xs font-body"
             style={{ background: 'rgba(239, 68, 68, 0.06)', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
             {error}
           </div>
@@ -185,37 +185,37 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
         {/* Step 0: Services */}
         {step === 0 && (
           <div className="space-y-2" style={{ animation: 'fadeUp 0.3s ease-out' }}>
-            <h2 className="text-sm font-semibold text-white font-mono mb-1">Selecciona un servicio</h2>
+            <h2 className="text-sm font-semibold text-white font-body mb-1">Selecciona un servicio</h2>
             {services.map(svc => (
               <button key={svc.id} onClick={() => { setSelectedService(svc); setStep(1) }}
                 className="w-full text-left p-3 bg-surface rounded-md border border-border hover:border-brand-purple/30 transition-all">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-medium font-mono text-xs text-white">{svc.name}</p>
-                    <p className="text-[10px] font-mono text-text-dim mt-0.5">{svc.duration_minutes} min · {svc.category}</p>
-                    {svc.description && <p className="text-[10px] font-mono text-text-dim mt-0.5">{svc.description}</p>}
+                    <p className="font-medium font-body text-xs text-white">{svc.name}</p>
+                    <p className="text-[12px] font-body text-text-dim mt-0.5">{svc.duration_minutes} min · {svc.category}</p>
+                    {svc.description && <p className="text-[12px] font-body text-text-dim mt-0.5">{svc.description}</p>}
                   </div>
-                  <span className="text-brand-purple font-semibold text-xs font-mono whitespace-nowrap">{formatCOP(svc.price)}</span>
+                  <span className="text-brand-purple font-semibold text-xs font-body whitespace-nowrap">{formatCOP(svc.price)}</span>
                 </div>
-                {svc.requires_deposit && <p className="text-[10px] font-mono text-status-warning mt-1.5">Requiere anticipo: {formatCOP(svc.deposit_amount)}</p>}
+                {svc.requires_deposit && <p className="text-[12px] font-body text-status-warning mt-1.5">Requiere anticipo: {formatCOP(svc.deposit_amount)}</p>}
               </button>
             ))}
-            {services.length === 0 && <p className="text-text-dim text-[10px] font-mono text-center py-6">No hay servicios disponibles.</p>}
+            {services.length === 0 && <p className="text-text-dim text-[12px] font-body text-center py-6">No hay servicios disponibles.</p>}
           </div>
         )}
 
         {/* Step 1: Calendar */}
         {step === 1 && (
           <div style={{ animation: 'fadeUp 0.3s ease-out' }}>
-            <button onClick={() => setStep(0)} className="text-xs font-mono text-brand-purple mb-2 flex items-center gap-1"><ChevronLeft className="w-3.5 h-3.5" />Cambiar servicio</button>
-            <h2 className="text-sm font-semibold text-white font-mono mb-2">Selecciona una fecha</h2>
+            <button onClick={() => setStep(0)} className="text-xs font-body text-brand-purple mb-2 flex items-center gap-1"><ChevronLeft className="w-3.5 h-3.5" />Cambiar servicio</button>
+            <h2 className="text-sm font-semibold text-white font-body mb-2">Selecciona una fecha</h2>
             <div className="bg-surface rounded-md border border-border p-3">
               <div className="flex items-center justify-between mb-3">
                 <button onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1) } else setCalMonth(m => m - 1) }} className="p-1 hover:bg-surface-2 rounded-md transition-colors"><ChevronLeft className="w-4 h-4 text-text-muted" /></button>
-                <span className="font-medium text-xs font-mono text-white capitalize">{new Date(calYear, calMonth).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}</span>
+                <span className="font-medium text-xs font-body text-white capitalize">{new Date(calYear, calMonth).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}</span>
                 <button onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1) } else setCalMonth(m => m + 1) }} className="p-1 hover:bg-surface-2 rounded-md transition-colors"><ChevronRight className="w-4 h-4 text-text-muted" /></button>
               </div>
-              <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] font-mono text-text-dim mb-1.5">
+              <div className="grid grid-cols-7 gap-0.5 text-center text-[12px] font-body text-text-dim mb-1.5">
                 {DAYS.map(d => <div key={d}>{d}</div>)}
               </div>
               <div className="grid grid-cols-7 gap-0.5">
@@ -223,7 +223,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
                   <div key={i}>
                     {day ? (
                       <button disabled={!isDayAvailable(day)} onClick={() => handleDateSelect(day)}
-                        className={`w-full aspect-square rounded-md text-xs font-mono flex items-center justify-center transition-all ${
+                        className={`w-full aspect-square rounded-md text-xs font-body flex items-center justify-center transition-all ${
                           isDayAvailable(day) ? 'hover:text-brand-purple cursor-pointer text-text-muted' : 'text-text-dim/30 cursor-not-allowed'
                         } ${selectedDate === `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}` ? 'bg-brand-purple text-white' : ''}`}
                         style={isDayAvailable(day) && selectedDate !== `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}` ? {} : {}}>
@@ -240,20 +240,20 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
         {/* Step 2: Time slots */}
         {step === 2 && (
           <div style={{ animation: 'fadeUp 0.3s ease-out' }}>
-            <button onClick={() => { setStep(1); setSelectedSlot('') }} className="text-xs font-mono text-brand-purple mb-2 flex items-center gap-1"><ChevronLeft className="w-3.5 h-3.5" />Cambiar fecha</button>
-            <h2 className="text-sm font-semibold text-white font-mono mb-0.5">Selecciona una hora</h2>
-            <p className="text-xs font-mono text-text-muted mb-2 flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{selectedDate}</p>
+            <button onClick={() => { setStep(1); setSelectedSlot('') }} className="text-xs font-body text-brand-purple mb-2 flex items-center gap-1"><ChevronLeft className="w-3.5 h-3.5" />Cambiar fecha</button>
+            <h2 className="text-sm font-semibold text-white font-body mb-0.5">Selecciona una hora</h2>
+            <p className="text-xs font-body text-text-muted mb-2 flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{selectedDate}</p>
             {slotsLoading ? (
               <div className="flex justify-center py-6">
                 <div className="w-5 h-5 border-2 border-brand-purple/30 border-t-brand-purple rounded-full animate-spin" />
               </div>
             ) : availableSlots.length === 0 ? (
-              <p className="text-text-dim text-[10px] font-mono text-center py-6">No hay horarios disponibles para esta fecha.</p>
+              <p className="text-text-dim text-[12px] font-body text-center py-6">No hay horarios disponibles para esta fecha.</p>
             ) : (
               <div className="grid grid-cols-3 gap-1.5">
                 {availableSlots.map(slot => (
                   <button key={slot} onClick={() => { setSelectedSlot(slot); setStep(3) }}
-                    className={`p-2.5 rounded-md border text-xs font-mono font-medium flex items-center justify-center gap-1 transition-all ${
+                    className={`p-2.5 rounded-md border text-xs font-body font-medium flex items-center justify-center gap-1 transition-all ${
                       selectedSlot === slot ? 'bg-brand-purple text-white border-brand-purple' : 'bg-surface border-border hover:border-brand-purple/30 text-text-muted'
                     }`}>
                     <Clock className="w-3 h-3" />{slot}
@@ -267,23 +267,23 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
         {/* Step 3: Patient info */}
         {step === 3 && (
           <div style={{ animation: 'fadeUp 0.3s ease-out' }}>
-            <button onClick={() => setStep(2)} className="text-xs font-mono text-brand-purple mb-2 flex items-center gap-1"><ChevronLeft className="w-3.5 h-3.5" />Cambiar hora</button>
-            <h2 className="text-sm font-semibold text-white font-mono mb-2">Tus datos</h2>
+            <button onClick={() => setStep(2)} className="text-xs font-body text-brand-purple mb-2 flex items-center gap-1"><ChevronLeft className="w-3.5 h-3.5" />Cambiar hora</button>
+            <h2 className="text-sm font-semibold text-white font-body mb-2">Tus datos</h2>
             <div className="bg-surface rounded-md border border-border p-3 mb-3">
-              <p className="text-xs font-mono text-white font-medium">{selectedService?.name}</p>
-              <p className="text-[10px] font-mono text-text-dim">{selectedDate} a las {selectedSlot}</p>
+              <p className="text-xs font-body text-white font-medium">{selectedService?.name}</p>
+              <p className="text-[12px] font-body text-text-dim">{selectedDate} a las {selectedSlot}</p>
             </div>
             <div className="space-y-2">
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre completo *"
-                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-mono text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
+                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
               <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Telefono / WhatsApp *"
-                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-mono text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
+                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
               <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email (opcional)" type="email"
-                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-mono text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
+                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
               <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notas adicionales (opcional)" rows={2}
-                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-mono text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 resize-none transition-colors" />
+                className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 resize-none transition-colors" />
               <button onClick={handleSubmit} disabled={submitting || !name.trim() || !phone.trim()}
-                className="w-full py-2.5 bg-brand-purple text-white rounded-md font-medium text-xs font-mono hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                className="w-full py-2.5 bg-brand-purple text-white rounded-md font-medium text-xs font-body hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                 {submitting ? <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />Reservando...</> : 'Confirmar Reserva'}
               </button>
             </div>
@@ -300,9 +300,9 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
                 <Check className="w-5 h-5 text-status-success" />
               </div>
             </div>
-            <h2 className="text-lg font-bold text-white font-mono mb-1">Reserva Solicitada</h2>
-            <p className="text-text-muted text-xs font-mono mb-3">{result.message}</p>
-            <div className="bg-surface rounded-md border border-border p-3 text-left text-xs font-mono space-y-1">
+            <h2 className="text-lg font-bold text-white font-body mb-1">Reserva Solicitada</h2>
+            <p className="text-text-muted text-xs font-body mb-3">{result.message}</p>
+            <div className="bg-surface rounded-md border border-border p-3 text-left text-xs font-body space-y-1">
               <div className="flex justify-between">
                 <span className="text-text-dim">Servicio</span>
                 <span className="text-white font-medium">{selectedService?.name}</span>
@@ -322,14 +322,14 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
               )}
             </div>
             <button onClick={() => { setStep(0); setSelectedService(null); setSelectedDate(''); setSelectedSlot(''); setResult(null); setName(''); setPhone(''); setEmail(''); setNotes('') }}
-              className="mt-5 text-brand-purple text-xs font-mono font-medium hover:brightness-125 transition-colors">
+              className="mt-5 text-brand-purple text-xs font-body font-medium hover:brightness-125 transition-colors">
               Hacer otra reserva
             </button>
           </div>
         )}
 
         {/* Footer */}
-        <p className="text-center text-[9px] font-mono text-text-dim mt-8">
+        <p className="text-center text-[11px] font-body text-text-dim mt-8">
           Powered by <a href="https://ataraxiaialabs.ai" className="text-brand-purple hover:brightness-125" target="_blank" rel="noopener">SofIA</a>
         </p>
       </div>

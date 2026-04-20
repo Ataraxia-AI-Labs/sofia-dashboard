@@ -69,11 +69,11 @@ export default function ReferidosPage() {
             <Gift size={16} className="text-brand-purple" />
             {t('title')}
           </h1>
-          <p className="text-[10px] font-mono text-text-dim mt-0.5">{t('subtitle')}</p>
+          <p className="text-[12px] font-body text-text-dim mt-0.5">{t('subtitle')}</p>
         </div>
         {program && !isReadOnly && (
           <button onClick={handleToggle}
-            className={`text-[10px] font-mono font-semibold px-3 py-1 rounded border transition-colors ${
+            className={`text-[12px] font-body font-semibold px-3 py-1 rounded border transition-colors ${
               program.is_active
                 ? 'bg-status-success/8 border-status-success/20 text-status-success'
                 : 'bg-surface-2 border-border text-text-dim'
@@ -81,15 +81,15 @@ export default function ReferidosPage() {
         )}
       </div>
 
-      {msg && <div className="text-[10px] font-mono text-status-success bg-status-success/8 px-3 py-1.5 rounded border border-status-success/15">{msg}</div>}
+      {msg && <div className="text-[12px] font-body text-status-success bg-status-success/8 px-3 py-1.5 rounded border border-status-success/15">{msg}</div>}
 
       {loading ? (
-        <p className="text-[10px] font-mono text-text-dim py-12 text-center">...</p>
+        <p className="text-[12px] font-body text-text-dim py-12 text-center">...</p>
       ) : !program ? (
         <div className="text-center py-12">
           <Gift size={24} className="mx-auto text-text-dim/30 mb-2" />
-          <p className="text-[10px] font-mono text-text-dim">{t('noProgram')}</p>
-          <p className="text-[9px] font-mono text-text-dim/70 mt-1">{t('noProgramHint')}</p>
+          <p className="text-[12px] font-body text-text-dim">{t('noProgram')}</p>
+          <p className="text-[11px] font-body text-text-dim/70 mt-1">{t('noProgramHint')}</p>
         </div>
       ) : (
         <>
@@ -105,7 +105,7 @@ export default function ReferidosPage() {
                 <div key={kpi.l} className="border border-border rounded-lg p-3">
                   <div className="flex items-center gap-1 mb-1">
                     <kpi.icon size={10} className="text-text-dim" />
-                    <p className="text-[8px] font-mono text-text-dim uppercase tracking-wider">{kpi.l}</p>
+                    <p className="text-[10px] font-body text-text-dim uppercase tracking-wider">{kpi.l}</p>
                   </div>
                   <p className="text-sm font-mono font-bold text-text-primary">{kpi.v}</p>
                 </div>
@@ -121,7 +121,7 @@ export default function ReferidosPage() {
               { id: 'settings' as Tab, label: t('program') },
             ]).map(tb => (
               <button key={tb.id} onClick={() => setTab(tb.id)}
-                className={`text-[10px] font-mono font-semibold pb-1.5 border-b-2 transition-colors ${
+                className={`text-[12px] font-body font-semibold pb-1.5 border-b-2 transition-colors ${
                   tab === tb.id ? 'text-brand-purple border-brand-purple' : 'text-text-dim border-transparent hover:text-text-muted'
                 }`}>{tb.label}</button>
             ))}
@@ -131,19 +131,19 @@ export default function ReferidosPage() {
           {tab === 'leaderboard' && (
             <div className="space-y-1">
               {leaderboard.length === 0 ? (
-                <p className="text-[10px] font-mono text-text-dim py-8 text-center">Sin referidores activos</p>
+                <p className="text-[12px] font-body text-text-dim py-8 text-center">Sin referidores activos</p>
               ) : leaderboard.map((entry, i) => (
                 <div key={entry.patient_id} className="flex items-center justify-between border border-border rounded-lg px-3 py-2 hover:bg-surface-2/30 transition-colors">
                   <div className="flex items-center gap-3">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-body font-bold ${
                       i === 0 ? 'bg-brand-gold/15 text-brand-gold' : i === 1 ? 'bg-text-muted/15 text-text-muted' : i === 2 ? 'bg-status-warning/15 text-status-warning' : 'bg-surface-2 text-text-dim'
                     }`}>{i + 1}</span>
                     <div>
-                      <p className="text-[11px] font-mono font-semibold text-text-primary">{entry.patient_name}</p>
-                      <p className="text-[9px] font-mono text-text-dim">{entry.referral_count} referidos · {entry.converted_count} convertidos</p>
+                      <p className="text-[13px] font-body font-semibold text-text-primary">{entry.patient_name}</p>
+                      <p className="text-[11px] font-body text-text-dim">{entry.referral_count} referidos · {entry.converted_count} convertidos</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold text-status-success">{formatCurrency(entry.reward_earned)}</span>
+                  <span className="text-[12px] font-body font-bold text-status-success">{formatCurrency(entry.reward_earned)}</span>
                 </div>
               ))}
             </div>
@@ -153,16 +153,16 @@ export default function ReferidosPage() {
           {tab === 'settings' && (
             <div className="border border-border rounded-lg p-4 space-y-3">
               <div>
-                <p className="text-[9px] font-mono text-text-dim uppercase tracking-wider">{t('rewardType')}</p>
-                <p className="text-[11px] font-mono text-text-primary mt-0.5">{program.reward_type}</p>
+                <p className="text-[11px] font-body text-text-dim uppercase tracking-wider">{t('rewardType')}</p>
+                <p className="text-[13px] font-body text-text-primary mt-0.5">{program.reward_type}</p>
               </div>
               <div>
-                <p className="text-[9px] font-mono text-text-dim uppercase tracking-wider">{t('rewardValue')}</p>
-                <p className="text-[11px] font-mono text-text-primary mt-0.5">{formatCurrency(program.reward_value)}</p>
+                <p className="text-[11px] font-body text-text-dim uppercase tracking-wider">{t('rewardValue')}</p>
+                <p className="text-[13px] font-body text-text-primary mt-0.5">{formatCurrency(program.reward_value)}</p>
               </div>
               <div>
-                <p className="text-[9px] font-mono text-text-dim uppercase tracking-wider">Descripcion</p>
-                <p className="text-[11px] font-mono text-text-primary mt-0.5">{program.reward_description}</p>
+                <p className="text-[11px] font-body text-text-dim uppercase tracking-wider">Descripcion</p>
+                <p className="text-[13px] font-body text-text-primary mt-0.5">{program.reward_description}</p>
               </div>
             </div>
           )}
@@ -170,11 +170,11 @@ export default function ReferidosPage() {
           {/* Overview / Channel breakdown */}
           {tab === 'overview' && analytics?.top_channels && (
             <div className="space-y-2">
-              <p className="text-[9px] font-mono text-text-dim uppercase tracking-wider">Canales de referido</p>
+              <p className="text-[11px] font-body text-text-dim uppercase tracking-wider">Canales de referido</p>
               {Object.entries(analytics.top_channels).map(([channel, count]) => (
                 <div key={channel} className="flex items-center justify-between border border-border rounded-lg px-3 py-2">
-                  <span className="text-[10px] font-mono text-text-primary">{channel}</span>
-                  <span className="text-[10px] font-mono font-bold text-brand-purple">{count}</span>
+                  <span className="text-[12px] font-body text-text-primary">{channel}</span>
+                  <span className="text-[12px] font-body font-bold text-brand-purple">{count}</span>
                 </div>
               ))}
             </div>

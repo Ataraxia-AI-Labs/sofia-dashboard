@@ -20,12 +20,12 @@ export function BotCard({ emoji, icon, name, value, label, extra, desc, gradient
         <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-sm">
           {icon || emoji}
         </div>
-        <span className="text-[11px] font-mono font-semibold text-text-primary">{name}</span>
+        <span className="text-[13px] font-body font-semibold text-text-primary">{name}</span>
       </div>
-      <div className="text-2xl font-mono font-bold text-text-primary tracking-tight">{display}</div>
-      <div className="text-[9px] text-text-muted font-mono mt-0.5">{label}</div>
-      {extra && <div className="text-[9px] text-brand-purple font-mono font-semibold mt-1">{extra}</div>}
-      {desc && <div className="text-[9px] text-text-dim font-mono mt-2 leading-relaxed">{desc}</div>}
+      <div className="text-2xl font-mono font-semibold text-text-primary tracking-tight tabular-nums">{display}</div>
+      <div className="text-[11px] text-text-muted font-body mt-1">{label}</div>
+      {extra && <div className="text-[11px] text-brand-purple font-body font-semibold mt-1">{extra}</div>}
+      {desc && <div className="text-[11px] text-text-dim font-body mt-2 leading-relaxed">{desc}</div>}
     </div>
   )
 }

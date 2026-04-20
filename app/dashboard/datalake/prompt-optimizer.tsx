@@ -102,7 +102,7 @@ export default function PromptOptimizer({ orgId }: PromptOptimizerProps) {
             </div>
             <div>
               <h3 className="text-sm font-semibold font-mono text-text-primary">{t('title')}</h3>
-              <p className="text-[10px] font-mono text-text-dim">{t('subtitle')}</p>
+              <p className="text-[12px] font-body text-text-dim">{t('subtitle')}</p>
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export default function PromptOptimizer({ orgId }: PromptOptimizerProps) {
           <button
             onClick={handleAnalyze}
             disabled={analyzing}
-            className="flex items-center gap-2 px-4 py-2 rounded-md bg-brand-purple text-white font-semibold font-mono text-xs transition-all hover:bg-brand-purple-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-md bg-brand-purple text-white font-semibold font-body text-xs transition-all hover:bg-brand-purple-dark disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {analyzing ? (
               <>
@@ -135,16 +135,16 @@ export default function PromptOptimizer({ orgId }: PromptOptimizerProps) {
         {suggestions.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-void/50 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-status-warning font-mono">{pendingCount}</div>
-              <div className="text-[10px] font-mono text-text-dim">{t('statusLabels.pending')}</div>
+              <div className="text-lg font-bold text-status-warning font-body">{pendingCount}</div>
+              <div className="text-[12px] font-body text-text-dim">{t('statusLabels.pending')}</div>
             </div>
             <div className="bg-void/50 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-status-success font-mono">{appliedCount}</div>
-              <div className="text-[10px] font-mono text-text-dim">{t('statusLabels.applied')}</div>
+              <div className="text-lg font-bold text-status-success font-body">{appliedCount}</div>
+              <div className="text-[12px] font-body text-text-dim">{t('statusLabels.applied')}</div>
             </div>
             <div className="bg-void/50 rounded-lg p-3 text-center">
-              <div className="text-lg font-bold text-status-danger font-mono">{rejectedCount}</div>
-              <div className="text-[10px] font-mono text-text-dim">{t('statusLabels.rejected')}</div>
+              <div className="text-lg font-bold text-status-danger font-body">{rejectedCount}</div>
+              <div className="text-[12px] font-body text-text-dim">{t('statusLabels.rejected')}</div>
             </div>
           </div>
         )}
@@ -262,7 +262,7 @@ function SuggestionCard({
           </span>
         </div>
 
-        <span className="text-[10px] font-mono text-text-dim">
+        <span className="text-[12px] font-body text-text-dim">
           {formatDate(suggestion.created_at)}
         </span>
       </div>
@@ -288,7 +288,7 @@ function SuggestionCard({
         </button>
         {expandedCurrent && (
           <div className="bg-void rounded-lg p-3 animate-fade-in">
-            <pre className="text-[10px] text-text-dim font-mono whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
+            <pre className="text-[10px] text-text-dim font-body whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
               {suggestion.current_prompt || t('noPromptSet')}
             </pre>
           </div>
@@ -308,7 +308,7 @@ function SuggestionCard({
         </button>
         {expandedSuggested && (
           <div className="bg-brand-purple/5 border border-brand-purple/15 rounded-lg p-3 animate-fade-in">
-            <pre className="text-[11px] text-text-secondary font-mono whitespace-pre-wrap break-words max-h-60 overflow-y-auto leading-relaxed">
+            <pre className="text-[11px] text-text-secondary font-body whitespace-pre-wrap break-words max-h-60 overflow-y-auto leading-relaxed">
               {suggestion.suggested_prompt}
             </pre>
           </div>
@@ -333,7 +333,7 @@ function SuggestionCard({
           <button
             onClick={() => handleAction('apply')}
             disabled={actionLoading !== null}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[11px] font-semibold font-mono text-white bg-status-success hover:bg-status-success/80 transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[11px] font-semibold font-body text-white bg-status-success hover:bg-status-success/80 transition-all disabled:opacity-50"
           >
             {actionLoading === 'apply' ? (
               <Loader2 size={11} className="animate-spin" />

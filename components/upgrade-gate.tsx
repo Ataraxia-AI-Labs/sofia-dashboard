@@ -32,7 +32,7 @@ export function UpgradeGate({ minPlan, featureName }: UpgradeGateProps) {
           <h2 className="text-lg font-mono font-semibold text-text-primary tracking-tight">
             {featureName}
           </h2>
-          <p className="text-sm font-mono text-text-muted leading-relaxed">
+          <p className="text-sm font-body text-text-muted leading-relaxed">
             Esta funcionalidad requiere el plan{' '}
             <span className="text-brand-purple font-semibold">{targetName}</span>.
             Tu plan actual es{' '}
@@ -42,7 +42,7 @@ export function UpgradeGate({ minPlan, featureName }: UpgradeGateProps) {
 
         <Link
           href="/dashboard/planes"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-purple text-white text-xs font-mono font-medium tracking-wide hover:bg-brand-purple/90 transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-purple text-white text-xs font-body font-medium tracking-wide hover:bg-brand-purple/90 transition-colors"
         >
           Ver planes
           <ArrowUpRight size={14} />

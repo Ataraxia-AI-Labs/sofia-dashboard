@@ -143,7 +143,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                     key="all"
                     onClick={() => handleFilterChange('')}
                     title={t('allChannels')}
-                    className={`px-2 py-1 rounded-md text-[9px] font-mono font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
+                    className={`px-2 py-1 rounded-md text-[11px] font-body font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
                       isActive
                         ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                         : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
@@ -161,7 +161,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                   onClick={() => handleFilterChange(channelFilter === ch ? '' : ch)}
                   title={cfg.label}
                   aria-label={cfg.label}
-                  className={`px-2 py-1 rounded-md text-[9px] font-mono font-semibold uppercase tracking-wider transition-all flex items-center gap-1 whitespace-nowrap ${
+                  className={`px-2 py-1 rounded-md text-[11px] font-body font-semibold uppercase tracking-wider transition-all flex items-center gap-1 whitespace-nowrap ${
                     isActive
                       ? `${cfg.bg} ${cfg.color} border ${cfg.border}`
                       : 'bg-surface-3 text-text-muted border border-transparent hover:border-border'
@@ -245,7 +245,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                     <div className="flex items-start gap-2.5">
                       {/* Avatar */}
                       <div className="relative flex-shrink-0">
-                        <div className={`w-9 h-9 rounded-md flex items-center justify-center text-[10px] font-bold font-mono ${
+                        <div className={`w-9 h-9 rounded-md flex items-center justify-center text-[10px] font-bold font-body ${
                           isSelected
                             ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple'
                             : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'
@@ -260,7 +260,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-0.5">
-                          <span className={`text-[11px] font-semibold font-mono truncate ${
+                          <span className={`text-[11px] font-semibold font-body truncate ${
                             isSelected ? 'text-brand-purple-light' : 'text-text-primary'
                           }`}>
                             {conv.patient_name}
@@ -298,14 +298,14 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
               >
                 <ArrowLeft size={14} />
               </button>
-              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold font-mono flex-shrink-0">
+              <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold font-body flex-shrink-0">
                 {(selectedConversation.patient_name || '?')[0]?.toUpperCase() || '?'}
               </div>
               <div className="flex-1 min-w-0">
                 <span className="text-sm font-semibold font-mono text-text-primary truncate block">
                   {selectedConversation.patient_name}
                 </span>
-                <span className="text-[10px] font-mono text-text-dim">
+                <span className="text-[12px] font-body text-text-dim">
                   {t('crossChannelHistory')}
                 </span>
               </div>
@@ -369,7 +369,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
                               {isOutbound ? (msg.is_human_takeover ? 'Doctor' : 'SofIA') : tConv('role.patient')}
                             </span>
                             {msg.is_failed && (
-                              <span className="text-[8px] font-mono text-status-danger bg-status-danger/10 border border-status-danger/20 px-1 py-0.5 rounded">
+                              <span className="text-[10px] font-body text-status-danger bg-status-danger/10 border border-status-danger/20 px-1 py-0.5 rounded">
                                 {tConv('notDelivered')}
                               </span>
                             )}
@@ -397,8 +397,8 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
               <div className="w-14 h-14 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center mx-auto mb-3">
                 <Inbox size={24} className="text-brand-purple/40" />
               </div>
-              <p className="text-text-muted text-sm font-medium font-mono">{t('selectConversation')}</p>
-              <p className="text-text-dim text-[10px] font-mono mt-1">{t('selectConversationHint')}</p>
+              <p className="text-text-muted text-sm font-medium font-body">{t('selectConversation')}</p>
+              <p className="text-text-dim text-[12px] font-body mt-1">{t('selectConversationHint')}</p>
             </div>
           </div>
         )}

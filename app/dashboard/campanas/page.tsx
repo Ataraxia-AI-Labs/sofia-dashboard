@@ -193,7 +193,7 @@ export default function CampanasPage() {
           </div>
           <div>
             <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-            <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('subtitle')}</p>
+            <p className="text-text-dim text-[11px] font-body mt-0.5">{t('subtitle')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -259,8 +259,8 @@ export default function CampanasPage() {
         ) : campaigns.length === 0 ? (
           <div className="glass-card p-5 text-center">
             <Megaphone size={36} className="mx-auto text-text-dim mb-3 opacity-40" />
-            <p className="text-text-muted text-[10px] font-mono">{t('noCampaigns')}</p>
-            <p className="text-text-dim text-[9px] font-mono mt-1">{t('noCampaignsHint')}</p>
+            <p className="text-text-muted text-[12px] font-body">{t('noCampaigns')}</p>
+            <p className="text-text-dim text-[11px] font-body mt-1">{t('noCampaignsHint')}</p>
           </div>
         ) : (
           campaigns.map(campaign => {
@@ -272,7 +272,7 @@ export default function CampanasPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2.5 mb-2">
-                      <h3 className="text-xs font-mono font-semibold text-text-primary truncate">{campaign.name}</h3>
+                      <h3 className="text-xs font-body font-semibold text-text-primary truncate">{campaign.name}</h3>
                       <CampaignStatusBadge status={campaign.status} />
                     </div>
 
@@ -280,19 +280,19 @@ export default function CampanasPage() {
                     {segmentSummary && (
                       <div className="flex items-center gap-1.5 mb-2">
                         <Target size={11} className="text-text-dim" />
-                        <span className="text-[10px] font-mono text-text-muted">{segmentSummary}</span>
+                        <span className="text-[12px] font-body text-text-muted">{segmentSummary}</span>
                       </div>
                     )}
 
                     {/* Stats preview for completed campaigns */}
                     {hasResults && campaign.stats && (
                       <div className="flex items-center gap-4 text-[11px]">
-                        <span className="text-text-muted">{t('sent')}: <strong className="text-text-primary font-mono">{campaign.stats.sent || 0}</strong></span>
-                        <span className="text-text-muted">{t('delivered')}: <strong className="text-text-primary font-mono">{campaign.stats.delivered || 0}</strong></span>
-                        <span className="text-text-muted">{t('responded')}: <strong className="text-brand-cyan font-mono">{campaign.stats.responded || 0}</strong></span>
-                        <span className="text-text-muted">{t('converted')}: <strong className="text-status-success font-mono">{campaign.stats.converted || 0}</strong></span>
+                        <span className="text-text-muted">{t('sent')}: <strong className="text-text-primary font-body">{campaign.stats.sent || 0}</strong></span>
+                        <span className="text-text-muted">{t('delivered')}: <strong className="text-text-primary font-body">{campaign.stats.delivered || 0}</strong></span>
+                        <span className="text-text-muted">{t('responded')}: <strong className="text-brand-cyan font-body">{campaign.stats.responded || 0}</strong></span>
+                        <span className="text-text-muted">{t('converted')}: <strong className="text-status-success font-body">{campaign.stats.converted || 0}</strong></span>
                         {campaign.stats.revenue != null && campaign.stats.revenue > 0 && (
-                          <span className="text-brand-gold font-mono font-semibold">{formatCOP(campaign.stats.revenue)}</span>
+                          <span className="text-brand-gold font-body font-semibold">{formatCOP(campaign.stats.revenue)}</span>
                         )}
                       </div>
                     )}
@@ -355,7 +355,7 @@ export default function CampanasPage() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
           <div className="relative glass-card-elevated w-full max-w-2xl p-5 space-y-3 animate-fade-up max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('createTitle')}</h3>
+              <h3 className="text-xs font-body font-semibold uppercase tracking-wide text-text-primary">{t('createTitle')}</h3>
               <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
@@ -388,7 +388,7 @@ export default function CampanasPage() {
                   <button
                     key={v}
                     onClick={() => setForm({ ...form, message_template: form.message_template + v })}
-                    className="px-2 py-0.5 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/20 transition-colors"
+                    className="px-2 py-0.5 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/20 transition-colors"
                   >
                     {v}
                   </button>
@@ -399,7 +399,7 @@ export default function CampanasPage() {
             {/* Segment criteria */}
             <div className="space-y-3 p-4 rounded-lg bg-surface-2 border border-border">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wide">{t('segmentCriteria')}</span>
+                <span className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wide">{t('segmentCriteria')}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -478,7 +478,7 @@ export default function CampanasPage() {
                   <button
                     onClick={handleSuggestSegment}
                     disabled={suggesting || !aiGoal.trim()}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-brand-purple text-white text-[10px] font-mono font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
                   >
                     {suggesting ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                     {t('aiSuggest')}
@@ -511,7 +511,7 @@ export default function CampanasPage() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
           <div className="relative glass-card-elevated w-full max-w-lg p-5 space-y-3 animate-fade-up max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('previewTitle')}</h3>
+              <h3 className="text-xs font-body font-semibold uppercase tracking-wide text-text-primary">{t('previewTitle')}</h3>
               <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
@@ -533,7 +533,7 @@ export default function CampanasPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-[10px] font-mono font-semibold uppercase tracking-wide text-text-primary">{t('sampleMessages')}</p>
+                  <p className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary">{t('sampleMessages')}</p>
                   {preview.sample_messages.map((sm, i) => (
                     <div key={i} className="px-3 py-2.5 rounded-lg bg-surface-2 border border-border">
                       <div className="text-[10px] text-text-dim mb-1">{sm.patient_name}</div>
@@ -543,7 +543,7 @@ export default function CampanasPage() {
                 </div>
               </>
             ) : (
-              <p className="text-text-dim text-[10px] font-mono text-center py-8">{t('previewUnavailable')}</p>
+              <p className="text-text-dim text-[12px] font-body text-center py-8">{t('previewUnavailable')}</p>
             )}
           </div>
         </div>
@@ -555,7 +555,7 @@ export default function CampanasPage() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
           <div className="relative glass-card-elevated w-full max-w-sm p-5 space-y-3 animate-fade-up">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-mono font-semibold uppercase tracking-wide text-text-primary">{t('scheduleTitle')}</h3>
+              <h3 className="text-xs font-body font-semibold uppercase tracking-wide text-text-primary">{t('scheduleTitle')}</h3>
               <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
@@ -611,7 +611,7 @@ export default function CampanasPage() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal('none')} />
           <div className="relative glass-card-elevated w-full max-w-md p-5 space-y-3 animate-fade-up">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-mono font-semibold text-text-primary">{selectedCampaign.name}</h3>
+              <h3 className="text-xs font-body font-semibold text-text-primary">{selectedCampaign.name}</h3>
               <button onClick={() => setModal('none')} className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors">
                 <X size={14} />
               </button>
@@ -628,7 +628,7 @@ export default function CampanasPage() {
                 <div key={i}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className="text-xs text-text-muted">{step.label}</span>
-                    <span className="text-xs font-bold font-mono text-text-primary">{step.value}</span>
+                    <span className="text-xs font-bold font-body text-text-primary">{step.value}</span>
                   </div>
                   <div className="h-6 rounded-lg bg-surface-2 overflow-hidden">
                     <div className={`h-full rounded-lg ${step.color} transition-all duration-700`} style={{ width: step.width }} />
@@ -658,7 +658,7 @@ function AnalyticCard({ icon, value, label }: { icon: React.ReactNode; value: st
         {icon}
       </div>
       <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[9px] font-mono text-text-muted mt-0.5">{label}</div>
+      <div className="text-[11px] font-body text-text-muted mt-0.5">{label}</div>
     </div>
   )
 }

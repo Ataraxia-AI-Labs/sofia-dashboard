@@ -11,32 +11,33 @@
    Deep void with purple-tinted surfaces. The core Nucleus experience.
    Purple accents. The original. Balanced and authoritative. */
 .brand {
-  --color-void: #050507;
-  --color-surface: #0C0C14;
-  --color-surface-2: #12121E;
-  --color-surface-3: #1A1A2E;
-  --color-border: #1A1A2E;
-  --color-border-2: #252540;
-  --color-text-primary: #E0DCF0;
-  --color-text-secondary: #8882A0;
-  --color-text-muted: #4A4862;
-  --color-text-dim: #2A2842;
-  --color-white: #F5F3FF;
+  --color-void: #07070D;
+  --color-surface: #10101B;
+  --color-surface-2: #171725;
+  --color-surface-3: #1F1F32;
+  --color-border: #1C1C2E;
+  --color-border-2: #2A2A44;
+  /* Whites with lavender tint — menos impacto al leer, más cinematografía */
+  --color-text-primary: #E8E0FF;
+  --color-text-secondary: #B0A6D0;
+  --color-text-muted: #7C7398;
+  --color-text-dim: #4F4868;
+  --color-white: #F3EDFF;
 }
 
-/* Dark theme — neutral dark without purple tints */
+/* Dark theme — neutral dark, slightly warmer than pure black */
 .dark {
-  --color-void: #0A0A0A;
-  --color-surface: #141414;
-  --color-surface-2: #1C1C1C;
-  --color-surface-3: #262626;
-  --color-border: #2A2A2A;
-  --color-border-2: #383838;
-  --color-text-primary: #E8E8E8;
-  --color-text-secondary: #A0A0A0;
-  --color-text-muted: #666666;
-  --color-text-dim: #404040;
-  --color-white: #F5F5F5;
+  --color-void: #0D0D0E;
+  --color-surface: #18181A;
+  --color-surface-2: #222225;
+  --color-surface-3: #2C2C30;
+  --color-border: #2E2E32;
+  --color-border-2: #3E3E44;
+  --color-text-primary: #F5F5F5;
+  --color-text-secondary: #BEBEBE;
+  --color-text-muted: #8A8A8A;
+  --color-text-dim: #5E5E5E;
+  --color-white: #FFFFFF;
 }
 
 /* Light theme */
@@ -59,17 +60,17 @@
    Trust, calm, clinical precision. Purple appears as rare signal flares.
    Psychology: cyan = tranquility + trust + innovation. The Ataraxia feeling. */
 .ataraxia-cyan {
-  --color-void: #030A0C;
-  --color-surface: #071214;
-  --color-surface-2: #0B1A1E;
-  --color-surface-3: #102428;
-  --color-border: #0E2A2E;
-  --color-border-2: #14383E;
-  --color-text-primary: #D0F0E8;
-  --color-text-secondary: #7AB8A8;
-  --color-text-muted: #3D7868;
-  --color-text-dim: #1E4A40;
-  --color-white: #E8FFF6;
+  --color-void: #050E10;
+  --color-surface: #091618;
+  --color-surface-2: #0F2024;
+  --color-surface-3: #162D32;
+  --color-border: #12323A;
+  --color-border-2: #1A4450;
+  --color-text-primary: #ECFFF8;
+  --color-text-secondary: #95D0BF;
+  --color-text-muted: #518A7A;
+  --color-text-dim: #2E5F55;
+  --color-white: #F5FFFA;
 }
 
 /* Ataraxia Purple — Deep violet immersion.
@@ -77,17 +78,17 @@
    Power, intelligence, premium. Cyan sparks as vital signals.
    Psychology: purple = authority + luxury + wisdom. SofIA's mind. */
 .ataraxia-purple {
-  --color-void: #08050E;
-  --color-surface: #0F0A1A;
-  --color-surface-2: #161024;
-  --color-surface-3: #1E1632;
-  --color-border: #221840;
-  --color-border-2: #30204E;
-  --color-text-primary: #E4D8FF;
-  --color-text-secondary: #A088D0;
-  --color-text-muted: #604898;
-  --color-text-dim: #3A2868;
-  --color-white: #F0E8FF;
+  --color-void: #0B0710;
+  --color-surface: #130D1E;
+  --color-surface-2: #1B1328;
+  --color-surface-3: #261B38;
+  --color-border: #281D46;
+  --color-border-2: #382656;
+  --color-text-primary: #F0E4FF;
+  --color-text-secondary: #BCA4E0;
+  --color-text-muted: #7858AC;
+  --color-text-dim: #4C3680;
+  --color-white: #F8F1FF;
 }
 
 @layer base {
@@ -132,20 +133,45 @@
 }
 
 @layer components {
-  /* ---- Cards ---- */
+  /* ---- Cards ----
+     No hard borders. Glow-behind instead: inner subtle highlight + outer soft shadow.
+     Feels like the card has ambient light behind it, not a hard outline. */
   .glass-card {
-    @apply bg-surface border border-border rounded-lg;
+    @apply bg-surface rounded-lg;
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.06),
+      0 4px 24px -6px rgba(139, 92, 246, 0.1),
+      0 1px 0 0 rgba(255, 255, 255, 0.02) inset;
   }
   .glass-card-elevated {
-    @apply bg-surface-2 border border-border rounded-lg;
+    @apply bg-surface-2 rounded-lg;
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.08),
+      0 6px 28px -6px rgba(139, 92, 246, 0.15),
+      0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
   }
   .glass-card-accent {
-    @apply bg-surface border border-border rounded-lg relative overflow-hidden;
+    @apply bg-surface rounded-lg relative overflow-hidden;
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.1),
+      0 6px 28px -4px rgba(139, 92, 246, 0.18),
+      0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
   }
   .glass-card-accent::before {
     content: '';
     @apply absolute top-0 left-0 right-0 h-px;
-    background: rgba(139, 92, 246, 0.4);
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.45), transparent);
+    animation: sentientGlowSweep 6s ease-in-out infinite;
+  }
+
+  /* Sentient glow — pulsing halo behind interactive cards */
+  .sentient-glow {
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.08),
+      0 0 0 4px rgba(139, 92, 246, 0.0),
+      0 4px 20px -4px rgba(139, 92, 246, 0.18);
+    animation: sentientGlowPulse 4s ease-in-out infinite;
   }
 
   /* ---- Text ---- */
@@ -155,7 +181,7 @@
 
   /* ---- Sidebar ---- */
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2 rounded-md text-text-muted text-xs font-mono tracking-wide transition-all duration-150 hover:bg-surface-2 hover:text-text-primary;
+    @apply flex items-center gap-3 px-3 py-2 rounded-md text-text-muted text-[13px] font-body tracking-normal transition-all duration-150 hover:bg-surface-2 hover:text-text-primary;
   }
   .sidebar-link.active {
     @apply text-brand-purple border-l-2 border-brand-purple rounded-l-none;
@@ -164,12 +190,12 @@
 
   /* ---- Stats ---- */
   .stat-number {
-    @apply text-2xl font-mono font-bold tracking-tight text-white;
+    @apply text-2xl font-mono font-semibold tracking-tight text-white tabular-nums;
   }
 
   /* ---- Badges ---- */
   .badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium tracking-wide uppercase;
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-body font-medium tracking-wide uppercase;
   }
   .badge-success { @apply text-status-success border; background: rgba(6, 214, 160, 0.1); border-color: rgba(6, 214, 160, 0.15); }
   .badge-warning { @apply text-status-warning border; background: rgba(245, 200, 66, 0.1); border-color: rgba(245, 200, 66, 0.15); }
@@ -191,17 +217,6 @@
     animation: sentientPulse 3s ease-in-out infinite;
   }
 
-  /* ---- Clinic Pulse (heartbeat) ---- */
-  .clinic-pulse {
-    @apply h-px w-full relative overflow-hidden;
-    background: rgba(139, 92, 246, 0.2);
-  }
-  .clinic-pulse::after {
-    content: '';
-    @apply absolute inset-y-0 left-0 w-16;
-    background: rgba(139, 92, 246, 0.4);
-    animation: clinicHeartbeat 2s ease-in-out infinite;
-  }
 }
 
 /* ============================================================
@@ -214,17 +229,101 @@
   50% { opacity: 0.6; transform: scale(0.97); }
 }
 
+/* Sentient glow pulse — halo behind cards */
+@keyframes sentientGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.08),
+      0 4px 20px -4px rgba(139, 92, 246, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.14),
+      0 6px 28px -4px rgba(139, 92, 246, 0.28);
+  }
+}
+
+/* Sentient glow sweep — horizontal light pass over top edge of accent cards */
+@keyframes sentientGlowSweep {
+  0%, 100% { opacity: 0.4; transform: translateX(-30%); }
+  50% { opacity: 1; transform: translateX(30%); }
+}
+
+/* Sentient float-in — seductive entrance for popovers, mini-panels, tooltips. */
+@keyframes sentientFloatIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+.animate-sentient-float-in {
+  animation: sentientFloatIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ===== CINEMATIC BUTTON — reusable class for any clickable surface =====
+   Philosophy: the user's cursor approaches → the button BREATHES INTO LIFE.
+   Subtle scale, a widening halo, soft glow, smooth 250ms deceleration.
+   Active press: slight inset push, halo collapses. */
+
+.sentient-btn {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease-out,
+    color 150ms ease-out;
+  will-change: transform, box-shadow;
+}
+
+.sentient-btn::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(232, 224, 255, 0.12) 50%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms ease-out;
+  pointer-events: none;
+}
+
+.sentient-btn:hover {
+  transform: translateY(-0.5px);
+  box-shadow:
+    0 0 0 1px rgba(139, 92, 246, 0.22),
+    0 8px 28px -6px rgba(139, 92, 246, 0.35),
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.sentient-btn:hover::before {
+  opacity: 1;
+  animation: sentientShimmer 1.4s ease-out;
+}
+
+.sentient-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 0 0 1px rgba(139, 92, 246, 0.3),
+    0 2px 10px -4px rgba(139, 92, 246, 0.3),
+    0 1px 0 0 rgba(0, 0, 0, 0.15) inset;
+  transition-duration: 100ms;
+}
+
+/* Shimmer — subtle light pass across button on hover */
+@keyframes sentientShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 /* Sentient pulse — SofIA is alive/online */
 @keyframes sentientPulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
-}
-
-/* Clinic heartbeat — activity rhythm */
-@keyframes clinicHeartbeat {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(400%); }
-  100% { transform: translateX(-100%); }
 }
 
 /* Fade in — element appears */

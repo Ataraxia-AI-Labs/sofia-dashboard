@@ -260,13 +260,13 @@ export default function PacientesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[9px] font-mono mt-0.5">{t('registered', { count: formatNumber(total) })}</p>
+          <p className="text-text-dim text-[11px] font-body mt-0.5">{t('registered', { count: formatNumber(total) })}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
             <button
               onClick={() => setActiveView('list')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors ${
                 activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -274,7 +274,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('segments')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'segments' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -283,7 +283,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('duplicates')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'duplicates' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -292,7 +292,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('ltv')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'ltv' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -301,7 +301,7 @@ export default function PacientesPage() {
             </button>
             <button
               onClick={() => setActiveView('gamification')}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold transition-colors flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
                 activeView === 'gamification' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
               }`}
             >
@@ -309,10 +309,10 @@ export default function PacientesPage() {
               {t('views.gamification')}
             </button>
           </div>
-          <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[10px] font-mono font-semibold hover:text-text-primary transition-colors">
+          <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[12px] font-body font-semibold hover:text-text-primary transition-colors">
             <Download size={13} /> {t('exportCSV')}
           </button>
-          <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/25 transition-colors">
+          <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/25 transition-colors">
             <UserPlus size={13} /> {t('newPatient')}
           </button>
           <button onClick={loadPatients} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
@@ -353,7 +353,7 @@ export default function PacientesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full pl-10 pr-4 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-[10px] font-mono placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
+            className="w-full pl-10 pr-4 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-[12px] font-body placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
           />
           {search && (
             <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary">
@@ -390,7 +390,7 @@ export default function PacientesPage() {
                   <th
                     key={col.field}
                     onClick={() => toggleSort(col.field)}
-                    className="text-left text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-text-primary transition-colors select-none"
+                    className="text-left text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-text-primary transition-colors select-none"
                   >
                     <div className="flex items-center gap-1">
                       {col.label}
@@ -413,7 +413,7 @@ export default function PacientesPage() {
                 ))
               ) : patients.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-text-dim text-[10px] font-mono">
+                  <td colSpan={6} className="text-center py-10 text-text-dim text-[12px] font-body">
                     {search ? t('noResultsSearch') : t('noPatients')}
                   </td>
                 </tr>
@@ -426,32 +426,32 @@ export default function PacientesPage() {
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-mono font-bold flex-shrink-0">
+                        <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[12px] font-body font-bold flex-shrink-0">
                           {p.full_name?.[0]?.toUpperCase() || '?'}
                         </div>
-                        <span className="text-xs font-mono font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
+                        <span className="text-xs font-body font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
                           {p.full_name || t('noName')}
                         </span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[10px] text-text-secondary font-mono">{p.phone}</span>
+                      <span className="text-[10px] text-text-secondary font-body">{p.phone}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-[10px] font-mono font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
+                      <span className={`text-[12px] font-body font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
                         {t.has(`channels.${p.acquisition_channel}`) ? t(`channels.${p.acquisition_channel}`) : p.acquisition_channel}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[10px] font-mono text-text-muted truncate max-w-[140px] block">
+                      <span className="text-[12px] font-body text-text-muted truncate max-w-[140px] block">
                         {p.service_interest || '\u2014'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[10px] font-mono text-text-muted">{p.city || '\u2014'}</span>
+                      <span className="text-[12px] font-body text-text-muted">{p.city || '\u2014'}</span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="text-[9px] font-mono text-text-dim">{timeAgo(p.created_at)}</span>
+                      <span className="text-[11px] font-body text-text-dim">{timeAgo(p.created_at)}</span>
                     </td>
                   </tr>
                 ))
@@ -463,7 +463,7 @@ export default function PacientesPage() {
         {/* PAGINATION */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-2.5 border-t border-border">
-            <span className="text-[9px] font-mono text-text-dim">
+            <span className="text-[11px] font-body text-text-dim">
               {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} {t('ofTotal')} {total}
             </span>
             <div className="flex gap-1.5">
@@ -482,7 +482,7 @@ export default function PacientesPage() {
                   <button
                     key={pageNum}
                     onClick={() => setPage(pageNum)}
-                    className={`w-7 h-7 rounded-md text-[10px] font-mono font-semibold transition-colors ${
+                    className={`w-7 h-7 rounded-md text-[12px] font-body font-semibold transition-colors ${
                       pageNum === page
                         ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
                         : 'bg-surface-3 border border-border text-text-muted hover:text-text-primary'

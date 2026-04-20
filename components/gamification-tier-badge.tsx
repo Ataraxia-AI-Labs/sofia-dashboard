@@ -93,7 +93,7 @@ export function GamificationTierBadge({
         title={`${cfg.label}${totalPoints != null ? ` - ${totalPoints.toLocaleString()} pts` : ''}`}
       >
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[12px] font-body font-bold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
     )
   }
@@ -116,11 +116,11 @@ export function GamificationTierBadge({
       </div>
 
       {/* Tier name */}
-      <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
+      <span className={`text-[12px] font-body font-bold ${cfg.textColor}`}>{cfg.label}</span>
 
       {/* Total points */}
       {totalPoints != null && (
-        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[12px] font-body font-semibold ${cfg.textColor}`}>
           {totalPoints.toLocaleString()} pts
         </span>
       )}
@@ -134,7 +134,7 @@ export function GamificationTierBadge({
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className={`text-[9px] font-mono mt-0.5 text-center ${cfg.textColor} opacity-70`}>
+          <p className={`text-[11px] font-body mt-0.5 text-center ${cfg.textColor} opacity-70`}>
             {pointsToNext.toLocaleString()} pts to {TIER_CONFIG[nextTier].label}
           </p>
         </div>
@@ -159,10 +159,10 @@ export function GamificationTierInline({
     <div className={`inline-flex items-center gap-2 ${className}`}>
       <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${cfg.bg} border ${cfg.border}`}>
         <span className="text-xs">{cfg.emoji}</span>
-        <span className={`text-[10px] font-mono font-bold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[12px] font-body font-bold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
       {totalPoints != null && (
-        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>
+        <span className={`text-[12px] font-body font-semibold ${cfg.textColor}`}>
           {totalPoints.toLocaleString()}
         </span>
       )}

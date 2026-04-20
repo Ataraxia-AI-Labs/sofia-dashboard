@@ -26,9 +26,9 @@ export default function Forbidden() {
               <ShieldOff size={20} className="text-status-danger" />
             </div>
           </div>
-          <h1 className="text-7xl font-bold font-mono text-brand-purple mb-2">403</h1>
-          <h2 className="text-lg font-semibold text-white font-mono">Acceso denegado</h2>
-          <p className="text-text-muted text-xs font-mono mt-2 leading-relaxed max-w-sm mx-auto">
+          <h1 className="text-7xl font-bold font-body text-brand-purple mb-2">403</h1>
+          <h2 className="text-lg font-semibold text-white font-body">Acceso denegado</h2>
+          <p className="text-text-muted text-xs font-body mt-2 leading-relaxed max-w-sm mx-auto">
             No tienes permiso para ver esta pagina.
             Contacta al administrador de tu clinica si crees que esto es un error.
           </p>
@@ -38,20 +38,20 @@ export default function Forbidden() {
         <div className="flex items-center justify-center gap-3">
           <Link
             href="/dashboard"
-            className="px-4 py-2 rounded-md bg-brand-purple text-white font-semibold text-xs font-mono flex items-center gap-2 hover:bg-brand-purple-dark transition-colors"
+            className="px-4 py-2 rounded-md bg-brand-purple text-white font-semibold text-xs font-body flex items-center gap-2 hover:bg-brand-purple-dark transition-colors"
           >
             <Home size={12} />
             Ir al Nucleus
           </Link>
           <Link
             href="/"
-            className="px-4 py-2 rounded-md bg-surface border border-border text-text-muted text-xs font-mono font-semibold hover:text-text-primary hover:border-brand-purple/30 transition-all flex items-center gap-2"
+            className="px-4 py-2 rounded-md bg-surface border border-border text-text-muted text-xs font-body font-semibold hover:text-text-primary hover:border-brand-purple/30 transition-all flex items-center gap-2"
           >
             Inicio <ArrowRight size={12} />
           </Link>
         </div>
 
-        <p className="text-text-dim text-[10px] font-mono">
+        <p className="text-text-dim text-[12px] font-body">
           SofIA by Ataraxia IA Labs
         </p>
       </div>

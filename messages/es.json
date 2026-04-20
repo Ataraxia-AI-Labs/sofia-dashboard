@@ -30,7 +30,6 @@
     "webhooks": "Webhooks",
     "audit": "Auditoria",
     "automations": "Automatizaciones",
-    "backToAdmin": "Volver a Admin",
     "logout": "Cerrar sesion"
   },
   "common": {
@@ -166,14 +165,7 @@
     "allBranches": "Todas las sedes",
     "closeMenu": "Cerrar menu",
     "mainMenu": "Menu principal",
-    "trialExpiresAlert": "Tu prueba gratuita expira hoy. No pierdas tu configuracion ni tus pacientes.",
-    "orgUnknown": "Org desconocida",
-    "exitGodMode": "Salir de God Mode"
-  },
-  "godMode": {
-    "label": "GOD MODE",
-    "viewing": "Viendo dashboard de",
-    "exit": "Salir"
+    "trialExpiresAlert": "Tu prueba gratuita expira hoy. No pierdas tu configuracion ni tus pacientes."
   },
   "settings": {
     "title": "Ajustes",

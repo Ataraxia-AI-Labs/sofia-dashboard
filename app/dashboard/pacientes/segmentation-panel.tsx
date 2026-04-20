@@ -169,7 +169,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
           <div className="flex items-center gap-2 flex-1">
             <div className={`w-3 h-3 rounded-full ${colors.dot}`} />
             <h3 className="text-sm font-mono font-semibold text-text-primary">{selectedSegment.segment_label}</h3>
-            <span className="text-[10px] text-text-dim font-mono">
+            <span className="text-[10px] text-text-dim font-body">
               {selectedSegment.patient_count} {t('patients')}
             </span>
           </div>
@@ -178,18 +178,18 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
         {/* Segment Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="glass-card p-3">
-            <div className="text-[10px] font-mono text-text-dim uppercase">{t('patientCount')}</div>
+            <div className="text-[12px] font-body text-text-dim uppercase">{t('patientCount')}</div>
             <div className="text-lg font-bold font-mono text-text-primary">{selectedSegment.patient_count}</div>
           </div>
           <div className="glass-card p-3">
-            <div className="text-[10px] font-mono text-text-dim uppercase">{t('avgTicket')}</div>
+            <div className="text-[12px] font-body text-text-dim uppercase">{t('avgTicket')}</div>
             <div className="text-lg font-bold font-mono text-status-success">{formatCOP(selectedSegment.avg_ticket)}</div>
           </div>
           <div className="glass-card p-3">
-            <div className="text-[10px] font-mono text-text-dim uppercase">{t('topServices')}</div>
+            <div className="text-[12px] font-body text-text-dim uppercase">{t('topServices')}</div>
             <div className="flex flex-wrap gap-1 mt-1">
               {selectedSegment.top_services.slice(0, 3).map((svc, i) => (
-                <span key={i} className="px-1.5 py-0.5 rounded-md bg-surface-3 text-[9px] font-mono text-text-muted font-medium">
+                <span key={i} className="px-1.5 py-0.5 rounded-md bg-surface-3 text-[11px] font-body text-text-muted font-medium">
                   {svc}
                 </span>
               ))}
@@ -200,7 +200,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
         {/* Patient List */}
         <div className="glass-card p-4">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
               <Users size={13} className={colors.text} />
               {t('patientsInSegment')}
             </h4>
@@ -215,7 +215,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
           ) : segmentPatients.length === 0 ? (
             <div className="text-center py-8">
               <Users size={24} className="text-text-dim mx-auto mb-2" />
-              <p className="text-text-dim text-xs font-mono">{t('noPatientsInSegment')}</p>
+              <p className="text-text-dim text-xs font-body">{t('noPatientsInSegment')}</p>
             </div>
           ) : (
             <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
@@ -224,21 +224,21 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
                   key={p.patient_id}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-void/50 border border-border hover:border-border-2 transition-colors"
                 >
-                  <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-mono font-bold flex-shrink-0">
+                  <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[12px] font-body font-bold flex-shrink-0">
                     {p.full_name?.[0]?.toUpperCase() || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <User size={10} className="text-text-dim flex-shrink-0" />
-                      <span className="text-xs font-mono text-text-primary font-medium truncate">{p.full_name || t('unknownPatient')}</span>
+                      <span className="text-xs font-body text-text-primary font-medium truncate">{p.full_name || t('unknownPatient')}</span>
                     </div>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Phone size={9} className="text-text-dim flex-shrink-0" />
-                      <span className="text-[10px] text-text-dim font-mono">{p.phone}</span>
+                      <span className="text-[10px] text-text-dim font-body">{p.phone}</span>
                     </div>
                   </div>
                   {p.avg_ticket != null && (
-                    <span className="text-[10px] font-mono text-text-muted">{formatCOP(p.avg_ticket)}</span>
+                    <span className="text-[12px] font-body text-text-muted">{formatCOP(p.avg_ticket)}</span>
                   )}
                   <button
                     onClick={() => handleFindSimilar(p.patient_id)}
@@ -257,7 +257,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
         {/* Similar Patients Results */}
         {similarForPatient && (
           <div className="glass-card p-4">
-            <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
+            <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2 mb-3">
               <SearchIcon size={13} className="text-brand-cyan" />
               {t('similarPatients')}
             </h4>
@@ -268,18 +268,18 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
                 ))}
               </div>
             ) : similarPatients.length === 0 ? (
-              <p className="text-text-dim text-xs font-mono text-center py-4">{t('noSimilarFound')}</p>
+              <p className="text-text-dim text-xs font-body text-center py-4">{t('noSimilarFound')}</p>
             ) : (
               <div className="space-y-1.5">
                 {similarPatients.map((sp) => (
                   <div key={sp.patient_id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-void/50 border border-border">
                     <User size={12} className="text-text-dim flex-shrink-0" />
-                    <span className="text-xs font-mono text-text-primary font-medium truncate flex-1">{sp.full_name}</span>
+                    <span className="text-xs font-body text-text-primary font-medium truncate flex-1">{sp.full_name}</span>
                     {sp.segment_label && (
                       <span className="px-1.5 py-0.5 rounded-md bg-surface-3 text-[9px] text-text-muted">{sp.segment_label}</span>
                     )}
                     <div className="text-right">
-                      <span className="text-[10px] font-bold font-mono text-brand-cyan">
+                      <span className="text-[10px] font-bold font-body text-brand-cyan">
                         {Math.round(sp.similarity_score * 100)}%
                       </span>
                       <span className="text-[8px] text-text-dim block">{t('similarity')}</span>
@@ -294,14 +294,14 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
         {/* Campaign Suggestion */}
         <div className="glass-card p-4">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
               <Wand2 size={13} className="text-brand-gold" />
               {t('campaignSuggestion')}
             </h4>
             <button
               onClick={handleGenerateCampaign}
               disabled={campaignLoading}
-              className="px-3 py-1.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-gold text-xs font-mono font-semibold flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-gold text-xs font-body font-semibold flex items-center gap-1.5 disabled:opacity-50"
             >
               {campaignLoading ? (
                 <><Loader2 size={11} className="animate-spin" /> {t('generating')}</>
@@ -320,13 +320,13 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
                 <span className="px-2 py-0.5 rounded-md bg-status-info/10 border border-status-info/20 text-status-info text-[10px] font-semibold">
                   {campaign.channel}
                 </span>
-                <span className="text-[10px] text-text-dim font-mono">
+                <span className="text-[10px] text-text-dim font-body">
                   ~{campaign.estimated_reach} {t('reach')}
                 </span>
               </div>
               <div>
                 <p className="text-[10px] text-text-dim uppercase tracking-wider mb-1">{t('subject')}</p>
-                <p className="text-xs font-mono text-text-primary font-medium">{campaign.subject}</p>
+                <p className="text-xs font-body text-text-primary font-medium">{campaign.subject}</p>
               </div>
               <div>
                 <p className="text-[10px] text-text-dim uppercase tracking-wider mb-1">{t('message')}</p>
@@ -343,7 +343,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
               </button>
             </div>
           ) : (
-            <p className="text-text-dim text-xs font-mono text-center py-4">{t('noCampaignYet')}</p>
+            <p className="text-text-dim text-xs font-body text-center py-4">{t('noCampaignYet')}</p>
           )}
         </div>
       </div>
@@ -356,7 +356,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
       {/* Header + Actions */}
       <div className="glass-card p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
             <Layers size={14} className="text-brand-purple" />
             {t('title')}
           </h3>
@@ -383,7 +383,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
             <button
               onClick={handleRunClustering}
               disabled={clusteringInProgress}
-              className="px-3 py-1.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-mono font-semibold flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-body font-semibold flex items-center gap-1.5 disabled:opacity-50"
             >
               {clusteringInProgress ? (
                 <><Loader2 size={11} className="animate-spin" /> {t('clustering')}</>
@@ -403,8 +403,8 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
 
         {/* Summary */}
         <div className="flex items-center gap-6 text-[10px] text-text-dim mb-4">
-          <span className="font-mono">{segments.length} {t('segmentsCount')}</span>
-          <span className="font-mono">{totalPatients} {t('totalPatients')}</span>
+          <span className="font-body">{segments.length} {t('segmentsCount')}</span>
+          <span className="font-body">{totalPatients} {t('totalPatients')}</span>
         </div>
 
         {/* Segment Grid */}
@@ -417,8 +417,8 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
         ) : segments.length === 0 ? (
           <div className="text-center py-12">
             <Layers size={32} className="text-text-dim mx-auto mb-3" />
-            <p className="text-text-muted text-sm font-mono">{t('noSegments')}</p>
-            <p className="text-text-dim text-[10px] font-mono mt-1">{t('noSegmentsHint')}</p>
+            <p className="text-text-muted text-sm font-body">{t('noSegments')}</p>
+            <p className="text-text-dim text-[12px] font-body mt-1">{t('noSegmentsHint')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -437,11 +437,11 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
 
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <div>
-                      <div className="text-[9px] font-mono text-text-dim">{t('patients')}</div>
+                      <div className="text-[11px] font-body text-text-dim">{t('patients')}</div>
                       <div className="text-base font-bold font-mono text-text-primary">{seg.patient_count}</div>
                     </div>
                     <div>
-                      <div className="text-[9px] font-mono text-text-dim">{t('avgTicket')}</div>
+                      <div className="text-[11px] font-body text-text-dim">{t('avgTicket')}</div>
                       <div className="text-base font-bold font-mono text-text-primary">{formatCOP(seg.avg_ticket)}</div>
                     </div>
                   </div>

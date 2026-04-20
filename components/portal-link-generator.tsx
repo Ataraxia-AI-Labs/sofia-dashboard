@@ -67,8 +67,8 @@ export function PortalLinkGenerator({
           disabled={generating}
           className={`flex items-center gap-1.5 font-semibold transition-colors disabled:opacity-50 ${
             compact
-              ? 'px-2 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono hover:bg-brand-purple/15'
-              : 'px-2.5 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono hover:bg-brand-purple/15'
+              ? 'px-2 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[12px] font-body hover:bg-brand-purple/15'
+              : 'px-2.5 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[12px] font-body hover:bg-brand-purple/15'
           }`}
         >
           {generating ? (
@@ -78,7 +78,7 @@ export function PortalLinkGenerator({
           )}
           {t('generateLink')}
         </button>
-        {error && <p className="text-[9px] font-mono text-status-danger mt-1">{error}</p>}
+        {error && <p className="text-[11px] font-body text-status-danger mt-1">{error}</p>}
       </div>
     )
   }
@@ -88,7 +88,7 @@ export function PortalLinkGenerator({
     <div className={`${className}`}>
       <div className="flex items-center gap-1.5">
         <div className="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg bg-surface-2 border border-border">
-          <p className="text-[10px] text-text-muted truncate font-mono">{portalUrl}</p>
+          <p className="text-[10px] text-text-muted truncate font-body">{portalUrl}</p>
         </div>
         <button
           onClick={handleCopy}

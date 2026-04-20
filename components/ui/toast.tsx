@@ -99,7 +99,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             )}
           >
             {iconMap[t.type]}
-            <p className="text-text-primary text-[10px] font-mono flex-1">{t.message}</p>
+            <p className="text-text-primary text-[12px] font-body flex-1">{t.message}</p>
             <button
               onClick={() => removeToast(t.id)}
               className="text-text-dim hover:text-text-muted transition-colors flex-shrink-0"

@@ -133,7 +133,7 @@ export default function PipelinePage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[9px] font-mono mt-0.5">
+          <p className="text-text-dim text-[11px] font-body mt-0.5">
             {totalPatients} pacientes · {STAGES.filter(s => grouped[s.key].length > 0).length} de {STAGES.length} etapas activas
           </p>
         </div>
@@ -159,8 +159,8 @@ export default function PipelinePage() {
                 </div>
                 <span className={`text-sm font-bold font-mono ${stage.text}`}>{count}</span>
               </div>
-              <p className="text-[10px] font-mono font-semibold text-text-primary truncate">{stage.label}</p>
-              <p className="text-[9px] font-mono text-text-dim">{pct}% del total</p>
+              <p className="text-[12px] font-body font-semibold text-text-primary truncate">{stage.label}</p>
+              <p className="text-[11px] font-body text-text-dim">{pct}% del total</p>
             </div>
           )
         })}
@@ -171,7 +171,7 @@ export default function PipelinePage() {
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp size={14} className="text-brand-purple" />
-            <span className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider">Flujo de Conversión</span>
+            <span className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider">Flujo de Conversión</span>
           </div>
           <div className="flex items-center justify-between">
             {STAGES.map((stage, i) => {
@@ -183,7 +183,7 @@ export default function PipelinePage() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <span className={`text-[10px] font-semibold ${stage.text}`}>{stage.label}</span>
-                      <span className="text-[10px] font-mono text-text-dim">{count}</span>
+                      <span className="text-[12px] font-body text-text-dim">{count}</span>
                     </div>
                     <div className="h-2 bg-surface-3 rounded-full overflow-hidden">
                       <div
@@ -250,9 +250,9 @@ function PipelineColumn({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className={stage.text}>{stage.icon}</span>
-            <span className="text-[10px] font-mono font-semibold text-text-primary">{stage.label}</span>
+            <span className="text-[12px] font-body font-semibold text-text-primary">{stage.label}</span>
           </div>
-          <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-md ${stage.bg} ${stage.text}`}>
+          <span className={`text-[10px] font-bold font-body px-1.5 py-0.5 rounded-md ${stage.bg} ${stage.text}`}>
             {patients.length}
           </span>
         </div>
@@ -262,7 +262,7 @@ function PipelineColumn({
       <div className="p-2 space-y-2 max-h-[520px] overflow-y-auto">
         {patients.length === 0 ? (
           <div className="py-6 text-center">
-            <p className="text-[10px] font-mono text-text-dim">Sin pacientes</p>
+            <p className="text-[12px] font-body text-text-dim">Sin pacientes</p>
           </div>
         ) : (
           <>
@@ -300,10 +300,10 @@ function PatientCard({
     <div className="bg-surface-3/50 hover:bg-surface-3 rounded-lg px-3 py-2.5 transition-colors group cursor-default">
       {/* Name + avatar */}
       <div className="flex items-center gap-2 mb-1.5">
-        <div className={`w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${stage.text} text-[9px] font-mono font-bold flex-shrink-0`}>
+        <div className={`w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${stage.text} text-[11px] font-body font-bold flex-shrink-0`}>
           {patient.full_name?.[0]?.toUpperCase() || '?'}
         </div>
-        <span className="text-[10px] font-mono font-semibold text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
+        <span className="text-[12px] font-body font-semibold text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
           {patient.full_name || 'Sin nombre'}
         </span>
       </div>
@@ -312,18 +312,18 @@ function PatientCard({
       <div className="space-y-1 ml-8">
         <div className="flex items-center gap-1.5">
           <Phone size={9} className="text-text-dim" />
-          <span className="text-[9px] text-text-muted font-mono">{patient.phone}</span>
+          <span className="text-[9px] text-text-muted font-body">{patient.phone}</span>
         </div>
         {patient.service_interest && patient.service_interest !== 'Por identificar' && (
           <div className="flex items-center gap-1.5">
             <Star size={9} className="text-text-dim" />
-            <span className="text-[9px] font-mono text-text-muted truncate">{patient.service_interest}</span>
+            <span className="text-[11px] font-body text-text-muted truncate">{patient.service_interest}</span>
           </div>
         )}
         <div className="flex items-center justify-between">
           <span className="text-[9px] text-text-dim">{timeAgo(patient.created_at)}</span>
           {patient.interaction_count > 0 && (
-            <span className="text-[9px] text-text-dim font-mono">{patient.interaction_count} msg</span>
+            <span className="text-[9px] text-text-dim font-body">{patient.interaction_count} msg</span>
           )}
         </div>
       </div>

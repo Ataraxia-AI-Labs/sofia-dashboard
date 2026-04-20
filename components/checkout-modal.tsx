@@ -177,7 +177,7 @@ export function CheckoutModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xs font-mono text-text-primary font-semibold">Activar plan {planName}</h2>
+          <h2 className="text-xs font-body text-text-primary font-semibold">Activar plan {planName}</h2>
           <button
             onClick={handleClose}
             disabled={loading}
@@ -208,8 +208,8 @@ export function CheckoutModal({
                 <Zap size={16} className="text-brand-purple" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-text-primary font-mono font-semibold text-xs">Plan {planName}</p>
-                <p className="text-text-muted font-mono text-[10px]">
+                <p className="text-text-primary font-body font-semibold text-xs">Plan {planName}</p>
+                <p className="text-text-muted font-body text-[10px]">
                   {billingCycle === 'MONTHLY' ? 'Facturacion mensual' : 'Facturacion anual'}
                 </p>
               </div>
@@ -217,24 +217,24 @@ export function CheckoutModal({
             </div>
 
             <div className="space-y-2">
-              <p className="text-text-muted text-[10px] font-mono font-semibold uppercase tracking-wider">Incluido</p>
+              <p className="text-text-muted text-[12px] font-body font-semibold uppercase tracking-wider">Incluido</p>
               {PLAN_FEATURES[plan].map((f) => (
                 <div key={f} className="flex items-center gap-2">
                   <Check size={12} className="text-brand-purple shrink-0" />
-                  <span className="text-text-muted text-[10px] font-mono">{f}</span>
+                  <span className="text-text-muted text-[12px] font-body">{f}</span>
                 </div>
               ))}
             </div>
 
             <button
               onClick={() => setStep('card')}
-              className="w-full py-2.5 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors"
+              className="w-full py-2.5 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
             >
               Continuar al pago
             </button>
             <button
               onClick={handleClose}
-              className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[10px] font-mono font-semibold hover:border-brand-purple/30 transition-colors"
+              className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[12px] font-body font-semibold hover:border-brand-purple/30 transition-colors"
             >
               Cancelar
             </button>
@@ -246,7 +246,7 @@ export function CheckoutModal({
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <CreditCard size={14} className="text-text-muted" />
-              <p className="text-text-primary font-mono font-semibold text-xs">Datos de tu tarjeta</p>
+              <p className="text-text-primary font-body font-semibold text-xs">Datos de tu tarjeta</p>
             </div>
             <CardTokenizationForm
               wompiPublicKey={wompiPublicKey}
@@ -256,7 +256,7 @@ export function CheckoutModal({
             />
             <button
               onClick={() => setStep('summary')}
-              className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[10px] font-mono font-semibold hover:border-brand-purple/30 transition-colors"
+              className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[12px] font-body font-semibold hover:border-brand-purple/30 transition-colors"
             >
               Volver
             </button>
@@ -268,23 +268,23 @@ export function CheckoutModal({
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-1">
               <ShieldCheck size={14} className="text-brand-purple" />
-              <p className="text-text-primary font-mono font-semibold text-xs">Confirmar suscripcion</p>
+              <p className="text-text-primary font-body font-semibold text-xs">Confirmar suscripcion</p>
             </div>
 
             <div className="p-3 rounded-lg bg-surface-2 border border-border space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-text-muted text-[10px] font-mono">Plan</span>
-                <span className="text-text-primary text-[10px] font-mono font-semibold">{planName}</span>
+                <span className="text-text-muted text-[12px] font-body">Plan</span>
+                <span className="text-text-primary text-[12px] font-body font-semibold">{planName}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-text-muted text-[10px] font-mono">Ciclo</span>
-                <span className="text-text-primary text-[10px] font-mono font-semibold">
+                <span className="text-text-muted text-[12px] font-body">Ciclo</span>
+                <span className="text-text-primary text-[12px] font-body font-semibold">
                   {billingCycle === 'MONTHLY' ? 'Mensual' : 'Anual'}
                 </span>
               </div>
               <div className="flex items-center justify-between pt-1 border-t border-border">
                 <span className="text-text-muted text-xs font-semibold">Total</span>
-                <span className="text-text-primary text-xs font-mono font-semibold">{formatCOP(price)}</span>
+                <span className="text-text-primary text-xs font-body font-semibold">{formatCOP(price)}</span>
               </div>
             </div>
 
@@ -296,7 +296,7 @@ export function CheckoutModal({
                 onChange={(e) => setTermsAccepted(e.target.checked)}
                 className="mt-0.5 accent-brand-purple"
               />
-              <span className="text-text-muted text-[10px] font-mono leading-relaxed">
+              <span className="text-text-muted text-[12px] font-body leading-relaxed">
                 Acepto los{' '}
                 <a
                   href="/terminos"
@@ -313,7 +313,7 @@ export function CheckoutModal({
             <button
               onClick={handleConfirm}
               disabled={!termsAccepted || loading}
-              className="w-full py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2"
+              className="w-full py-2 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -327,7 +327,7 @@ export function CheckoutModal({
             <button
               onClick={() => setStep('card')}
               disabled={loading}
-              className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[10px] font-mono font-semibold hover:border-brand-purple/30 transition-colors disabled:opacity-40"
+              className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[12px] font-body font-semibold hover:border-brand-purple/30 transition-colors disabled:opacity-40"
             >
               Volver
             </button>
@@ -343,14 +343,14 @@ export function CheckoutModal({
                   <Check size={28} className="text-status-success" />
                 </div>
                 <div>
-                  <p className="text-text-primary font-mono font-semibold text-xs">Plan activado</p>
-                  <p className="text-text-muted text-[10px] font-mono mt-1">
+                  <p className="text-text-primary font-body font-semibold text-xs">Plan activado</p>
+                  <p className="text-text-muted text-[12px] font-body mt-1">
                     Tu plan {planName} esta activo. Ya puedes disfrutar de todas las funcionalidades.
                   </p>
                 </div>
                 <button
                   onClick={handleClose}
-                  className="w-full py-2.5 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors"
+                  className="w-full py-2.5 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
                 >
                   Entendido
                 </button>
@@ -361,18 +361,18 @@ export function CheckoutModal({
                   <AlertCircle size={28} className="text-status-danger" />
                 </div>
                 <div>
-                  <p className="text-text-primary font-mono font-semibold text-xs">Error en el pago</p>
-                  <p className="text-text-muted text-[10px] font-mono mt-1">{error}</p>
+                  <p className="text-text-primary font-body font-semibold text-xs">Error en el pago</p>
+                  <p className="text-text-muted text-[12px] font-body mt-1">{error}</p>
                 </div>
                 <button
                   onClick={handleRetry}
-                  className="w-full py-2.5 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors"
+                  className="w-full py-2.5 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
                 >
                   Reintentar
                 </button>
                 <button
                   onClick={handleClose}
-                  className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[10px] font-mono font-semibold hover:border-brand-purple/30 transition-colors"
+                  className="w-full py-2.5 rounded-lg bg-surface-3 border border-border text-text-primary text-[12px] font-body font-semibold hover:border-brand-purple/30 transition-colors"
                 >
                   Cerrar
                 </button>

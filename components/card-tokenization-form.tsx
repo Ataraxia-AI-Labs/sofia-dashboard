@@ -171,9 +171,9 @@ export default function CardTokenizationForm({
   }, [isValid, loading, disabled, wompiSandbox, wompiPublicKey, cleanNumber, cvc, expiry, cardHolder, onTokenized, onError])
 
   const inputClass =
-    'w-full px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-mono placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20'
-  const labelClass = 'text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-1.5'
-  const errorClass = 'text-[9px] font-mono text-status-danger mt-1'
+    'w-full px-3 py-2 rounded-md bg-surface-2 border border-border text-text-primary text-xs font-body placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20'
+  const labelClass = 'text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider mb-1.5'
+  const errorClass = 'text-[11px] font-body text-status-danger mt-1'
 
   return (
     <form onSubmit={handleSubmit} className="glass-card p-4" autoComplete="off">
@@ -257,7 +257,7 @@ export default function CardTokenizationForm({
       <button
         type="submit"
         disabled={!isValid || loading || disabled}
-        className="w-full py-2 rounded-lg bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-2 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
@@ -272,7 +272,7 @@ export default function CardTokenizationForm({
         )}
       </button>
 
-      <p className="text-[9px] font-mono text-text-dim text-center mt-2.5 flex items-center justify-center gap-1">
+      <p className="text-[11px] font-body text-text-dim text-center mt-2.5 flex items-center justify-center gap-1">
         <Lock className="h-2.5 w-2.5" />
         Datos encriptados. No almacenamos tu tarjeta.
       </p>

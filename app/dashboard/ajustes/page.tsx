@@ -103,7 +103,7 @@ export default function AjustesPage() {
   return (
     <div className="max-w-[1000px] space-y-4">
       {isReadOnly && (
-        <div className="px-3 py-2.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-[10px] font-mono text-status-warning font-semibold flex items-center gap-2">
+        <div className="px-3 py-2.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-[12px] font-body text-status-warning font-semibold flex items-center gap-2">
           <Shield size={12} />
           {t('readOnly', { role })}
         </div>
@@ -112,7 +112,7 @@ export default function AjustesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[9px] font-mono mt-0.5">{org?.name || t('subtitle')}</p>
+          <p className="text-text-dim text-[11px] font-body mt-0.5">{org?.name || t('subtitle')}</p>
         </div>
         <button onClick={loadData} aria-label={tCommon('refresh')} className="w-7 h-7 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
           <RefreshCw size={13} />

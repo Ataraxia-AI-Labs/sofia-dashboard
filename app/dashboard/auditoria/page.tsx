@@ -59,13 +59,13 @@ export default function AuditoriaPage() {
             <Shield size={16} className="text-brand-purple" />
             {t('title')}
           </h1>
-          <p className="text-[10px] font-mono text-text-dim mt-0.5">{t('subtitle')}</p>
+          <p className="text-[12px] font-body text-text-dim mt-0.5">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={actionFilter}
             onChange={e => { setActionFilter(e.target.value); setPage(0) }}
-            className="text-[10px] font-mono bg-surface-2 border border-border rounded px-2 py-1 text-text-secondary"
+            className="text-[12px] font-body bg-surface-2 border border-border rounded px-2 py-1 text-text-secondary"
           >
             <option value="">{t('allActions')}</option>
             {actions.map(a => <option key={a} value={a}>{a}</option>)}
@@ -78,36 +78,36 @@ export default function AuditoriaPage() {
         <table className="w-full">
           <thead>
             <tr className="bg-surface-2 border-b border-border">
-              <th className="text-left text-[9px] font-mono font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('date')}</th>
-              <th className="text-left text-[9px] font-mono font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('action')}</th>
-              <th className="text-left text-[9px] font-mono font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('user')}</th>
-              <th className="text-left text-[9px] font-mono font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('resource')}</th>
-              <th className="text-left text-[9px] font-mono font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('details')}</th>
+              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('date')}</th>
+              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('action')}</th>
+              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('user')}</th>
+              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('resource')}</th>
+              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('details')}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} className="text-center text-[10px] font-mono text-text-dim py-8">...</td></tr>
+              <tr><td colSpan={5} className="text-center text-[12px] font-body text-text-dim py-8">...</td></tr>
             ) : logs.length === 0 ? (
-              <tr><td colSpan={5} className="text-center text-[10px] font-mono text-text-dim py-8">{t('noLogs')}</td></tr>
+              <tr><td colSpan={5} className="text-center text-[12px] font-body text-text-dim py-8">{t('noLogs')}</td></tr>
             ) : logs.map(log => (
               <tr key={log.id} className="border-b border-border/50 hover:bg-surface-2/50 transition-colors">
-                <td className="px-3 py-2 text-[10px] font-mono text-text-muted whitespace-nowrap">
+                <td className="px-3 py-2 text-[12px] font-body text-text-muted whitespace-nowrap">
                   <div className="flex items-center gap-1">
                     <Clock size={10} className="text-text-dim" />
                     {timeAgo(log.created_at)}
                   </div>
                 </td>
                 <td className="px-3 py-2">
-                  <span className="text-[10px] font-mono font-semibold text-brand-purple bg-brand-purple/8 px-1.5 py-0.5 rounded">
+                  <span className="text-[12px] font-body font-semibold text-brand-purple bg-brand-purple/8 px-1.5 py-0.5 rounded">
                     {log.action}
                   </span>
                 </td>
-                <td className="px-3 py-2 text-[10px] font-mono text-text-secondary">{log.user_email || log.user_id?.slice(0, 8) || '—'}</td>
-                <td className="px-3 py-2 text-[10px] font-mono text-text-muted">
+                <td className="px-3 py-2 text-[12px] font-body text-text-secondary">{log.user_email || log.user_id?.slice(0, 8) || '—'}</td>
+                <td className="px-3 py-2 text-[12px] font-body text-text-muted">
                   {log.resource_type}{log.resource_id ? ` #${log.resource_id.slice(0, 8)}` : ''}
                 </td>
-                <td className="px-3 py-2 text-[10px] font-mono text-text-dim max-w-[200px] truncate">
+                <td className="px-3 py-2 text-[12px] font-body text-text-dim max-w-[200px] truncate">
                   {JSON.stringify(log.details).slice(0, 80)}
                 </td>
               </tr>
@@ -119,13 +119,13 @@ export default function AuditoriaPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-mono text-text-dim">{total} registros</span>
+          <span className="text-[11px] font-body text-text-dim">{total} registros</span>
           <div className="flex items-center gap-1">
             <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
               className="p-1 rounded border border-border text-text-muted hover:text-text-primary disabled:opacity-30">
               <ChevronLeft size={14} />
             </button>
-            <span className="text-[10px] font-mono text-text-secondary px-2">{page + 1} / {totalPages}</span>
+            <span className="text-[12px] font-body text-text-secondary px-2">{page + 1} / {totalPages}</span>
             <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
               className="p-1 rounded border border-border text-text-muted hover:text-text-primary disabled:opacity-30">
               <ChevronRight size={14} />

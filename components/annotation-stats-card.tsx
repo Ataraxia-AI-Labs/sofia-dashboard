@@ -42,7 +42,7 @@ export function AnnotationStatsCard({ orgId, className = '' }: AnnotationStatsCa
     <div className={`glass-card p-5 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[10px] font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
           <BarChart3 size={14} className="text-brand-purple" />
           {t('statsTitle')}
         </h3>
@@ -70,19 +70,19 @@ export function AnnotationStatsCard({ orgId, className = '' }: AnnotationStatsCa
             <ThumbsUp size={16} className="text-text-dim" />
             <ThumbsDown size={16} className="text-text-dim" />
           </div>
-          <p className="text-text-dim text-[10px] font-mono">{t('noAnnotations')}</p>
-          <p className="text-text-dim text-[9px] font-mono mt-1">{t('noAnnotationsHint')}</p>
+          <p className="text-text-dim text-[12px] font-body">{t('noAnnotations')}</p>
+          <p className="text-text-dim text-[11px] font-body mt-1">{t('noAnnotationsHint')}</p>
         </div>
       ) : (
         <>
           {/* Total count */}
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-md bg-brand-purple/10 border border-brand-purple/10 flex items-center justify-center">
-              <span className="text-lg font-bold text-brand-purple font-mono">{stats.total}</span>
+              <span className="text-lg font-bold text-brand-purple font-body">{stats.total}</span>
             </div>
             <div>
-              <div className="text-[11px] font-mono font-semibold text-text-primary">{t('totalAnnotations')}</div>
-              <div className="text-[9px] font-mono text-text-dim">{t('humanFeedback')}</div>
+              <div className="text-[13px] font-body font-semibold text-text-primary">{t('totalAnnotations')}</div>
+              <div className="text-[11px] font-body text-text-dim">{t('humanFeedback')}</div>
             </div>
           </div>
 
@@ -93,11 +93,11 @@ export function AnnotationStatsCard({ orgId, className = '' }: AnnotationStatsCa
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-1.5">
                   <ThumbsUp size={11} className="text-status-success" />
-                  <span className="text-[10px] font-mono text-text-muted font-medium">{t('positive')}</span>
+                  <span className="text-[12px] font-body text-text-muted font-medium">{t('positive')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-status-success font-mono">{stats.thumbs_up}</span>
-                  <span className="text-[10px] text-text-dim font-mono">({approvalPct.toFixed(1)}%)</span>
+                  <span className="text-[10px] font-bold text-status-success font-body">{stats.thumbs_up}</span>
+                  <span className="text-[10px] text-text-dim font-body">({approvalPct.toFixed(1)}%)</span>
                 </div>
               </div>
               <div className="h-2 bg-void rounded overflow-hidden">
@@ -113,11 +113,11 @@ export function AnnotationStatsCard({ orgId, className = '' }: AnnotationStatsCa
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-1.5">
                   <ThumbsDown size={11} className="text-status-danger" />
-                  <span className="text-[10px] font-mono text-text-muted font-medium">{t('negative')}</span>
+                  <span className="text-[12px] font-body text-text-muted font-medium">{t('negative')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-status-danger font-mono">{stats.thumbs_down}</span>
-                  <span className="text-[10px] text-text-dim font-mono">({rejectionPct.toFixed(1)}%)</span>
+                  <span className="text-[10px] font-bold text-status-danger font-body">{stats.thumbs_down}</span>
+                  <span className="text-[10px] text-text-dim font-body">({rejectionPct.toFixed(1)}%)</span>
                 </div>
               </div>
               <div className="h-2 bg-void rounded overflow-hidden">
@@ -132,8 +132,8 @@ export function AnnotationStatsCard({ orgId, className = '' }: AnnotationStatsCa
           {/* Approval rate summary */}
           <div className="mt-4 pt-3 border-t border-border">
             <div className="flex items-center justify-between">
-              <span className="text-[9px] font-mono text-text-dim uppercase font-semibold tracking-wider">{t('approvalRate')}</span>
-              <span className={`text-[11px] font-bold font-mono ${
+              <span className="text-[11px] font-body text-text-dim uppercase font-semibold tracking-wider">{t('approvalRate')}</span>
+              <span className={`text-[11px] font-bold font-body ${
                 approvalPct >= 80 ? 'text-status-success' :
                 approvalPct >= 50 ? 'text-status-warning' :
                 'text-status-danger'

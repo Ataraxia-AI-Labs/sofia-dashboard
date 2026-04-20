@@ -30,7 +30,6 @@
     "webhooks": "Webhooks",
     "audit": "Audit",
     "automations": "Automations",
-    "backToAdmin": "Back to Admin",
     "logout": "Log out"
   },
   "common": {
@@ -166,14 +165,7 @@
     "allBranches": "All branches",
     "closeMenu": "Close menu",
     "mainMenu": "Main menu",
-    "trialExpiresAlert": "Your free trial expires today. Don't lose your configuration or your patients.",
-    "orgUnknown": "Unknown org",
-    "exitGodMode": "Exit God Mode"
-  },
-  "godMode": {
-    "label": "GOD MODE",
-    "viewing": "Viewing dashboard of",
-    "exit": "Exit"
+    "trialExpiresAlert": "Your free trial expires today. Don't lose your configuration or your patients."
   },
   "settings": {
     "title": "Settings",

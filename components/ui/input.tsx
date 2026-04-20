@@ -15,7 +15,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label className="block text-[9px] font-mono font-semibold text-text-dim uppercase tracking-wider">
+          <label className="block text-[11px] font-body font-semibold text-text-dim uppercase tracking-wider">
             {label}
           </label>
         )}
@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={clsx(
-              'w-full px-3 py-2 rounded-md bg-surface border text-text-primary text-xs font-mono outline-none transition-colors',
+              'w-full px-3 py-2 rounded-md bg-surface border text-text-primary text-xs font-body outline-none transition-colors',
               icon && 'pl-9',
               error
                 ? 'border-status-danger/50 focus:border-status-danger focus:ring-1 focus:ring-status-danger/20'
@@ -38,8 +38,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
         </div>
-        {error && <p className="text-[9px] font-mono text-status-danger">{error}</p>}
-        {hint && !error && <p className="text-[9px] font-mono text-text-dim">{hint}</p>}
+        {error && <p className="text-[11px] font-body text-status-danger">{error}</p>}
+        {hint && !error && <p className="text-[11px] font-body text-text-dim">{hint}</p>}
       </div>
     )
   }
@@ -58,14 +58,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label className="block text-[9px] font-mono font-semibold text-text-dim uppercase tracking-wider">
+          <label className="block text-[11px] font-body font-semibold text-text-dim uppercase tracking-wider">
             {label}
           </label>
         )}
         <textarea
           ref={ref}
           className={clsx(
-            'w-full px-3 py-2 rounded-md bg-surface border text-text-primary text-xs font-mono outline-none transition-colors resize-y',
+            'w-full px-3 py-2 rounded-md bg-surface border text-text-primary text-xs font-body outline-none transition-colors resize-y',
             error
               ? 'border-status-danger/50 focus:border-status-danger'
               : 'border-border focus:border-brand-purple/40',
@@ -73,8 +73,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           {...props}
         />
-        {error && <p className="text-[9px] font-mono text-status-danger">{error}</p>}
-        {hint && !error && <p className="text-[9px] font-mono text-text-dim">{hint}</p>}
+        {error && <p className="text-[11px] font-body text-status-danger">{error}</p>}
+        {hint && !error && <p className="text-[11px] font-body text-text-dim">{hint}</p>}
       </div>
     )
   }
@@ -93,14 +93,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label className="block text-[9px] font-mono font-semibold text-text-dim uppercase tracking-wider">
+          <label className="block text-[11px] font-body font-semibold text-text-dim uppercase tracking-wider">
             {label}
           </label>
         )}
         <select
           ref={ref}
           className={clsx(
-            'w-full px-3 py-2 rounded-md bg-surface border text-text-primary text-xs font-mono outline-none transition-colors',
+            'w-full px-3 py-2 rounded-md bg-surface border text-text-primary text-xs font-body outline-none transition-colors',
             error ? 'border-status-danger/50' : 'border-border focus:border-brand-purple/40',
             className,
           )}
@@ -112,7 +112,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {error && <p className="text-[9px] font-mono text-status-danger">{error}</p>}
+        {error && <p className="text-[11px] font-body text-status-danger">{error}</p>}
       </div>
     )
   }

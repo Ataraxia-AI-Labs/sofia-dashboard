@@ -86,8 +86,8 @@ export default function ResetPasswordPage() {
               <CheckCircle2 size={24} className="text-status-success" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-text-primary font-mono mb-1">Contrasena actualizada</h2>
-              <p className="text-text-muted text-xs font-mono">
+              <h2 className="text-xl font-semibold text-text-primary font-body mb-1">Contrasena actualizada</h2>
+              <p className="text-text-muted text-xs font-body">
                 Tu contrasena ha sido restablecida exitosamente. Redirigiendo al dashboard...
               </p>
             </div>
@@ -99,11 +99,11 @@ export default function ResetPasswordPage() {
               <Lock size={24} className="text-text-dim" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-text-primary font-mono mb-1">Verificando enlace...</h2>
-              <p className="text-text-muted text-xs font-mono">
+              <h2 className="text-xl font-semibold text-text-primary font-body mb-1">Verificando enlace...</h2>
+              <p className="text-text-muted text-xs font-body">
                 Si fuiste redirigido desde tu email, espera un momento.
               </p>
-              <p className="text-text-dim text-[10px] font-mono mt-1.5">
+              <p className="text-text-dim text-[12px] font-body mt-1.5">
                 Si el enlace expiro, <button onClick={() => router.push('/forgot-password')} className="text-brand-purple hover:underline">solicita uno nuevo</button>.
               </p>
             </div>
@@ -112,15 +112,15 @@ export default function ResetPasswordPage() {
         ) : (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-text-primary font-mono mb-1">Nueva contrasena</h2>
-              <p className="text-text-muted text-xs font-mono">
+              <h2 className="text-2xl font-semibold text-text-primary font-body mb-1">Nueva contrasena</h2>
+              <p className="text-text-muted text-xs font-body">
                 Ingresa tu nueva contrasena. Debe tener al menos 8 caracteres.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">
+                <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
                   Nueva contrasena
                 </label>
                 <div className="relative">
@@ -129,7 +129,7 @@ export default function ResetPasswordPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimo 8 caracteres"
-                    className="w-full px-3 py-2.5 pr-10 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+                    className="w-full px-3 py-2.5 pr-10 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
                     required
                     minLength={8}
                     autoFocus
@@ -145,7 +145,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">
+                <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
                   Confirmar contrasena
                 </label>
                 <input
@@ -153,7 +153,7 @@ export default function ResetPasswordPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repite la contrasena"
-                  className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+                  className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
                   required
                   minLength={8}
                 />
@@ -178,7 +178,7 @@ export default function ResetPasswordPage() {
               </div>
 
               {error && (
-                <div className="px-3 py-2.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-mono">
+                <div className="px-3 py-2.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-body">
                   {error}
                 </div>
               )}
@@ -186,7 +186,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || password.length < 8}
-                className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-body flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

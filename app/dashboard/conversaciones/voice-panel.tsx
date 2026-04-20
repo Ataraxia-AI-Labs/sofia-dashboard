@@ -181,7 +181,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
             <Users size={14} className="text-text-muted" />
-            <span className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider">
+            <span className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider">
               {t('sentimentDistribution')}
             </span>
           </div>
@@ -281,7 +281,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
             {/* Modal header */}
             <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold font-mono">
+                <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold font-body">
                   {selectedCall.patient_name?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div>
@@ -413,7 +413,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                         {/* Narrative summary + Sentiment */}
                         <div className="glass-card p-3 space-y-2.5">
                           {selectedCall.summary.summary_text && (
-                            <p className="text-[11px] leading-relaxed text-text-secondary font-mono">
+                            <p className="text-[11px] leading-relaxed text-text-secondary font-body">
                               {selectedCall.summary.summary_text}
                             </p>
                           )}
@@ -426,10 +426,10 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
 
                         {/* Topics */}
                         <div>
-                          <span className="text-[10px] text-text-dim font-mono font-semibold uppercase tracking-wider">{t('topics')}</span>
+                          <span className="text-[10px] text-text-dim font-body font-semibold uppercase tracking-wider">{t('topics')}</span>
                           <div className="flex flex-wrap gap-1.5 mt-1.5">
                             {selectedCall.summary.topics.map((topic, i) => (
-                              <span key={i} className="px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-[10px] text-brand-purple font-mono font-medium">
+                              <span key={i} className="px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-[10px] text-brand-purple font-body font-medium">
                                 {topic}
                               </span>
                             ))}
@@ -442,13 +442,13 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                             {/* Action items */}
                             {selectedCall.summary.action_items && selectedCall.summary.action_items.length > 0 && (
                               <div className="glass-card p-3">
-                                <span className="text-[10px] text-brand-cyan font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                                <span className="text-[10px] text-brand-cyan font-body font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
                                   <span className="w-1.5 h-1.5 rounded-full bg-brand-cyan" />
                                   {t('actionItems')}
                                 </span>
                                 <ul className="space-y-1.5">
                                   {selectedCall.summary.action_items.map((item, i) => (
-                                    <li key={i} className="text-[10px] text-text-muted font-mono flex items-start gap-1.5">
+                                    <li key={i} className="text-[10px] text-text-muted font-body flex items-start gap-1.5">
                                       <span className="text-brand-cyan text-[8px] mt-0.5">&#9654;</span>
                                       {item}
                                     </li>
@@ -459,13 +459,13 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                             {/* Follow-ups */}
                             {selectedCall.summary.follow_ups && selectedCall.summary.follow_ups.length > 0 && (
                               <div className="glass-card p-3">
-                                <span className="text-[10px] text-brand-gold font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                                <span className="text-[10px] text-brand-gold font-body font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
                                   <span className="w-1.5 h-1.5 rounded-full bg-brand-gold" />
                                   {t('followUps')}
                                 </span>
                                 <ul className="space-y-1.5">
                                   {selectedCall.summary.follow_ups.map((fu, i) => (
-                                    <li key={i} className="text-[10px] text-text-muted font-mono flex items-start gap-1.5">
+                                    <li key={i} className="text-[10px] text-text-muted font-body flex items-start gap-1.5">
                                       <span className="text-brand-gold text-[8px] mt-0.5">&#9654;</span>
                                       {fu}
                                     </li>
@@ -477,7 +477,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                         )}
                       </div>
                     ) : (
-                      <p className="text-[10px] text-text-dim font-mono">
+                      <p className="text-[10px] text-text-dim font-body">
                         {summaryLoading ? tCommon('loading') : t('noSummary')}
                       </p>
                     )}
@@ -525,7 +525,7 @@ function AnalyticsCard({
           </span>
         )}
       </div>
-      <span className="text-[10px] font-mono text-text-muted mt-0.5 block">{label}</span>
+      <span className="text-[12px] font-body text-text-muted mt-0.5 block">{label}</span>
     </div>
   )
 }

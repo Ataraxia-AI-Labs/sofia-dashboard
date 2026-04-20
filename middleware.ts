@@ -5,7 +5,6 @@ import { createServerClient } from '@supabase/ssr'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Create a Supabase client that reads/writes cookies from the request
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -27,27 +26,16 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Validate the session JWT (not just cookie existence)
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protected routes — redirect to login if no valid session
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/dashboard')) {
     if (!user) {
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
-
-    // /admin routes require is_super_admin — server-side enforcement
-    if (pathname.startsWith('/admin')) {
-      const isSuperAdmin = user.app_metadata?.is_super_admin === true
-      if (!isSuperAdmin) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
-      }
-    }
   }
 
-  // Already logged in — redirect away from login
   if (pathname === '/login' && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
@@ -56,5 +44,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*', '/login', '/reset-password', '/onboarding', '/forgot-password', '/auth/callback'],
+  matcher: ['/dashboard/:path*', '/login', '/reset-password', '/onboarding', '/forgot-password', '/auth/callback'],
 }

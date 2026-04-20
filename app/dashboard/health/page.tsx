@@ -69,13 +69,13 @@ export default function SystemHealthPage() {
           </div>
           <div>
             <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-            <p className="text-[9px] font-mono text-text-dim">Circuit Breakers & Service Status</p>
+            <p className="text-[11px] font-body text-text-dim">Circuit Breakers & Service Status</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`px-3 py-1.5 rounded-md text-[10px] font-mono font-semibold border ${autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-muted'}`}
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold border ${autoRefresh ? 'bg-status-success/10 border-status-success/20 text-status-success' : 'bg-surface-2 border-border text-text-muted'}`}
           >
             {autoRefresh ? '● Auto-refresh ON' : '○ Auto-refresh OFF'}
           </button>
@@ -92,13 +92,13 @@ export default function SystemHealthPage() {
             <Shield size={20} className={healthConfig.color} />
             <div>
               <div className={`text-sm font-mono font-bold ${healthConfig.color}`}>{healthConfig.label}</div>
-              <div className="text-[9px] font-mono text-text-dim">
+              <div className="text-[11px] font-body text-text-dim">
                 Uptime: {health?.uptime_human || '—'} | DB: {health?.database || '—'} | v{health?.version || '—'}
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[9px] font-mono text-text-dim">Cola de mensajes</div>
+            <div className="text-[11px] font-body text-text-dim">Cola de mensajes</div>
             <div className={`text-sm font-bold font-mono ${(health?.message_queue?.pending || 0) > 0 ? 'text-status-warning' : 'text-status-success'}`}>
               {health?.message_queue?.pending || 0}
             </div>
@@ -120,26 +120,26 @@ export default function SystemHealthPage() {
                   <div className={`w-7 h-7 rounded-md ${breaker.state === 'CLOSED' ? 'bg-status-success/10' : breaker.state === 'HALF_OPEN' ? 'bg-status-warning/10' : 'bg-status-danger/10'} flex items-center justify-center`}>
                     <Icon size={14} className={statusConf.color} />
                   </div>
-                  <span className="text-[10px] font-mono font-semibold text-text-primary">{breaker.name}</span>
+                  <span className="text-[12px] font-body font-semibold text-text-primary">{breaker.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <StatusIcon size={12} className={statusConf.color} />
-                  <span className={`text-[9px] font-mono font-semibold ${statusConf.color}`}>{statusConf.label}</span>
+                  <span className={`text-[11px] font-body font-semibold ${statusConf.color}`}>{statusConf.label}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-void/50 rounded-md p-1.5">
-                  <div className="text-[10px] font-bold text-text-primary font-mono">{breaker.failure_count}</div>
-                  <div className="text-[8px] font-mono text-text-dim">Fallos</div>
+                  <div className="text-[10px] font-bold text-text-primary font-body">{breaker.failure_count}</div>
+                  <div className="text-[10px] font-body text-text-dim">Fallos</div>
                 </div>
                 <div className="bg-void/50 rounded-md p-1.5">
-                  <div className="text-[10px] font-bold text-text-primary font-mono">{breaker.success_count}</div>
-                  <div className="text-[8px] font-mono text-text-dim">Exitos</div>
+                  <div className="text-[10px] font-bold text-text-primary font-body">{breaker.success_count}</div>
+                  <div className="text-[10px] font-body text-text-dim">Exitos</div>
                 </div>
                 <div className="bg-void/50 rounded-md p-1.5">
-                  <div className="text-[10px] font-bold text-text-primary font-mono">{breaker.uptime_seconds}s</div>
-                  <div className="text-[8px] font-mono text-text-dim">En estado</div>
+                  <div className="text-[10px] font-bold text-text-primary font-body">{breaker.uptime_seconds}s</div>
+                  <div className="text-[10px] font-body text-text-dim">En estado</div>
                 </div>
               </div>
             </div>
@@ -149,22 +149,22 @@ export default function SystemHealthPage() {
 
       {/* How it works */}
       <div className="glass-card p-4">
-        <h3 className="text-[9px] font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">Como funciona el Circuit Breaker</h3>
+        <h3 className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider mb-3">Como funciona el Circuit Breaker</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
           <div className="p-2.5 rounded-md bg-status-success/5 border border-status-success/20">
             <CheckCircle size={18} className="text-status-success mx-auto mb-1.5" />
-            <div className="text-[10px] font-mono font-semibold text-status-success">CLOSED</div>
-            <div className="text-[9px] font-mono text-text-dim mt-1">Todo funciona. Trafico normal.</div>
+            <div className="text-[12px] font-body font-semibold text-status-success">CLOSED</div>
+            <div className="text-[11px] font-body text-text-dim mt-1">Todo funciona. Trafico normal.</div>
           </div>
           <div className="p-2.5 rounded-md bg-status-warning/5 border border-status-warning/20">
             <AlertTriangle size={18} className="text-status-warning mx-auto mb-1.5" />
-            <div className="text-[10px] font-mono font-semibold text-status-warning">HALF-OPEN</div>
-            <div className="text-[9px] font-mono text-text-dim mt-1">Probando recuperacion. Trafico limitado.</div>
+            <div className="text-[12px] font-body font-semibold text-status-warning">HALF-OPEN</div>
+            <div className="text-[11px] font-body text-text-dim mt-1">Probando recuperacion. Trafico limitado.</div>
           </div>
           <div className="p-2.5 rounded-md bg-status-danger/5 border border-status-danger/20">
             <XCircle size={18} className="text-status-danger mx-auto mb-1.5" />
-            <div className="text-[10px] font-mono font-semibold text-status-danger">OPEN</div>
-            <div className="text-[9px] font-mono text-text-dim mt-1">Servicio caido. Usando fallback.</div>
+            <div className="text-[12px] font-body font-semibold text-status-danger">OPEN</div>
+            <div className="text-[11px] font-body text-text-dim mt-1">Servicio caido. Usando fallback.</div>
           </div>
         </div>
       </div>

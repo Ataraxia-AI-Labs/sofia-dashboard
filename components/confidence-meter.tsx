@@ -87,7 +87,7 @@ export function ConfidenceMeter({
         {/* Center text */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="font-bold font-mono"
+            className="font-bold font-body"
             style={{ color, fontSize: size * 0.22 }}
           >
             {Math.round(clampedValue)}%
@@ -95,7 +95,7 @@ export function ConfidenceMeter({
         </div>
       </div>
       {label && (
-        <span className="text-[10px] text-text-dim font-mono font-semibold">{label}</span>
+        <span className="text-[10px] text-text-dim font-body font-semibold">{label}</span>
       )}
     </div>
   )
@@ -124,7 +124,7 @@ export function ConfidenceBar({
         />
       </div>
       <span
-        className="text-[10px] font-bold font-mono"
+        className="text-[10px] font-bold font-body"
         style={{ color }}
       >
         {Math.round(clampedValue)}%

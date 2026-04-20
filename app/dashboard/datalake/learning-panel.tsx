@@ -154,7 +154,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
           </div>
           <div>
             <h3 className="text-lg font-semibold font-mono text-text-primary">{t('title')}</h3>
-            <p className="text-xs font-mono text-text-dim">{t('subtitle')}</p>
+            <p className="text-xs font-body text-text-dim">{t('subtitle')}</p>
           </div>
         </div>
         <button
@@ -174,9 +174,9 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
               <div className="w-8 h-8 rounded-lg bg-brand-purple/10 flex items-center justify-center">
                 <Brain size={16} className="text-brand-purple" />
               </div>
-              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('totalCorrections')}</span>
+              <span className="text-[12px] font-body text-text-dim uppercase font-semibold">{t('totalCorrections')}</span>
             </div>
-            <div className="text-xl font-bold text-brand-purple font-mono">
+            <div className="text-xl font-bold text-brand-purple font-body">
               {progress.org_total_corrections.toLocaleString()}
             </div>
           </div>
@@ -186,9 +186,9 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
               <div className="w-8 h-8 rounded-lg bg-status-success/10 flex items-center justify-center">
                 <Sparkles size={16} className="text-status-success" />
               </div>
-              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('activeRules')}</span>
+              <span className="text-[12px] font-body text-text-dim uppercase font-semibold">{t('activeRules')}</span>
             </div>
-            <div className="text-xl font-bold text-status-success font-mono">
+            <div className="text-xl font-bold text-status-success font-body">
               {progress.org_total_rules}
             </div>
           </div>
@@ -206,9 +206,9 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
               <div className="w-8 h-8 rounded-lg bg-brand-cyan/10 flex items-center justify-center">
                 <Brain size={16} className="text-brand-cyan" />
               </div>
-              <span className="text-[10px] font-mono text-text-dim uppercase font-semibold">{t('doctors')}</span>
+              <span className="text-[12px] font-body text-text-dim uppercase font-semibold">{t('doctors')}</span>
             </div>
-            <div className="text-xl font-bold text-brand-cyan font-mono">
+            <div className="text-xl font-bold text-brand-cyan font-body">
               {progress.doctors.length}
             </div>
           </div>
@@ -219,7 +219,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
       {progress && progress.doctors.length > 0 && (
         <div className="glass-card p-4">
           <div className="flex items-center gap-3 mb-3">
-            <label className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider">
+            <label className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider">
               {t('selectDoctor')}
             </label>
             <div className="relative flex-1 max-w-xs">
@@ -261,16 +261,16 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
           {doctorStats && !loadingDoctor && (
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div className="bg-surface-3/50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-brand-purple font-mono">{doctorStats.total_corrections}</div>
-                <div className="text-[10px] font-mono text-text-dim">{t('correctionsLabel')}</div>
+                <div className="text-lg font-bold text-brand-purple font-body">{doctorStats.total_corrections}</div>
+                <div className="text-[12px] font-body text-text-dim">{t('correctionsLabel')}</div>
               </div>
               <div className="bg-surface-3/50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-status-success font-mono">{doctorStats.active_rules}</div>
-                <div className="text-[10px] font-mono text-text-dim">{t('rulesLabel')}</div>
+                <div className="text-lg font-bold text-status-success font-body">{doctorStats.active_rules}</div>
+                <div className="text-[12px] font-body text-text-dim">{t('rulesLabel')}</div>
               </div>
               <div className="bg-surface-3/50 rounded-lg p-3 text-center">
-                <div className="text-lg font-bold text-brand-cyan font-mono">{(doctorStats.accuracy_rate * 100).toFixed(1)}%</div>
-                <div className="text-[10px] font-mono text-text-dim">{t('accuracy')}</div>
+                <div className="text-lg font-bold text-brand-cyan font-body">{(doctorStats.accuracy_rate * 100).toFixed(1)}%</div>
+                <div className="text-[12px] font-body text-text-dim">{t('accuracy')}</div>
               </div>
             </div>
           )}
@@ -284,7 +284,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
               </div>
               <p className="text-sm text-text-primary mb-2">{suggestedRule.rule_description}</p>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-mono text-text-dim">{t('type')}: {suggestedRule.rule_type}</span>
+                <span className="text-[12px] font-body text-text-dim">{t('type')}: {suggestedRule.rule_type}</span>
                 <ConfidenceBar value={suggestedRule.confidence * 100} className="w-24" />
               </div>
             </div>
@@ -300,7 +300,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
           {/* Learned Rules */}
           {!loadingDoctor && doctorRules.length > 0 && (
             <div className="mb-3">
-              <h4 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider mb-3">
+              <h4 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider mb-3">
                 {t('learnedRules')} ({doctorRules.length})
               </h4>
               <div className="space-y-2">
@@ -320,7 +320,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-3 border border-border text-[10px] font-semibold text-text-muted">
                             {rule.rule_type.replace(/_/g, ' ')}
                           </span>
-                          <span className="text-[10px] font-mono text-text-dim">
+                          <span className="text-[12px] font-body text-text-dim">
                             {rule.times_applied} {t('applied')} / {rule.times_correct} {t('correct')}
                           </span>
                         </div>
@@ -359,7 +359,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
       {/* Correction History */}
       {!loadingDoctor && corrections.length > 0 && (
         <div className="glass-card p-4">
-          <h4 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider mb-3">
+          <h4 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider mb-3">
             {t('correctionHistory')} ({corrections.length})
           </h4>
 
@@ -393,7 +393,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
                       <span className="text-[9px] text-status-danger font-semibold uppercase block mb-1">
                         {t('original')}
                       </span>
-                      <pre className="text-[10px] text-text-muted font-mono whitespace-pre-wrap break-all max-h-16 overflow-y-auto">
+                      <pre className="text-[10px] text-text-muted font-body whitespace-pre-wrap break-all max-h-16 overflow-y-auto">
                         {JSON.stringify(correction.original_value, null, 1)}
                       </pre>
                     </div>
@@ -401,7 +401,7 @@ export default function LearningPanel({ orgId }: LearningPanelProps) {
                       <span className="text-[9px] text-status-success font-semibold uppercase block mb-1">
                         {t('corrected')}
                       </span>
-                      <pre className="text-[10px] text-text-muted font-mono whitespace-pre-wrap break-all max-h-16 overflow-y-auto">
+                      <pre className="text-[10px] text-text-muted font-body whitespace-pre-wrap break-all max-h-16 overflow-y-auto">
                         {JSON.stringify(correction.corrected_value, null, 1)}
                       </pre>
                     </div>

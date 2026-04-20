@@ -10,19 +10,19 @@ interface PatientMLTabProps {
 
 export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
   if (!mlFeatures) {
-    return <p className="text-[11px] font-mono text-text-dim text-center py-8">No hay datos de ML disponibles para este paciente.</p>
+    return <p className="text-[13px] font-body text-text-dim text-center py-8">No hay datos de ML disponibles para este paciente.</p>
   }
 
   return (
     <div className="glass-card p-4 space-y-4">
-      <h4 className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
+      <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider flex items-center gap-2">
         <Brain size={12} className="text-brand-purple" />
         ML Features
       </h4>
 
       {/* Engagement */}
       <div>
-        <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2">Engagement</p>
+        <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2">Engagement</p>
         <div className="grid grid-cols-3 gap-2">
           <MLStat label="Interacciones" value={mlFeatures.total_interactions} />
           <MLStat label="Mensajes in" value={mlFeatures.total_inbound} />
@@ -35,7 +35,7 @@ export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
 
       {/* Appointments */}
       <div>
-        <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2">Citas</p>
+        <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2">Citas</p>
         <div className="grid grid-cols-3 gap-2">
           <MLStat label="Total" value={mlFeatures.total_appointments} />
           <MLStat label="Completadas" value={mlFeatures.completed_appointments} color="text-status-success" />
@@ -48,7 +48,7 @@ export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
 
       {/* Revenue */}
       <div>
-        <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2">Revenue</p>
+        <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2">Revenue</p>
         <div className="grid grid-cols-3 gap-2">
           <MLStat label="Total" value={formatCOP(mlFeatures.total_revenue ?? 0)} color="text-status-success" />
           <MLStat label="Transacciones" value={mlFeatures.total_transactions} />
@@ -59,7 +59,7 @@ export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
 
       {/* Predictions */}
       <div>
-        <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2">Predicciones IA</p>
+        <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2">Predicciones IA</p>
         <div className="grid grid-cols-2 gap-2">
           <PredictionBar label="Probabilidad Conversion" value={mlFeatures.conversion_probability ?? 0} color="bg-status-success" />
           <PredictionBar label="Riesgo de Churn" value={mlFeatures.churn_probability ?? 0} color="bg-status-danger" />
@@ -70,7 +70,7 @@ export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
 
       {/* Sentiment */}
       <div>
-        <p className="text-[10px] font-mono text-text-dim uppercase tracking-wider mb-2">Sentiment</p>
+        <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2">Sentiment</p>
         <div className="grid grid-cols-3 gap-2">
           <MLStat label="Promedio" value={mlFeatures.avg_sentiment?.toFixed(2)} color={(mlFeatures.avg_sentiment ?? 0) >= 0 ? 'text-status-success' : 'text-status-danger'} />
           <MLStat label="Tendencia" value={mlFeatures.sentiment_trend?.toFixed(2)} color={(mlFeatures.sentiment_trend ?? 0) >= 0 ? 'text-status-success' : 'text-status-danger'} />
@@ -91,8 +91,8 @@ export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
 function MLStat({ label, value, color }: { label: string; value: string | number | null | undefined; color?: string }) {
   return (
     <div className="bg-void/50 rounded-md px-2.5 py-1.5">
-      <div className="text-[9px] font-mono text-text-dim">{label}</div>
-      <div className={`text-xs font-semibold font-mono ${color || 'text-text-primary'}`}>{value ?? '\u2014'}</div>
+      <div className="text-[11px] font-body text-text-dim">{label}</div>
+      <div className={`text-xs font-semibold font-body ${color || 'text-text-primary'}`}>{value ?? '\u2014'}</div>
     </div>
   )
 }
@@ -102,8 +102,8 @@ function PredictionBar({ label, value, color, extra }: { label: string; value: n
   return (
     <div className="bg-void/50 rounded-md px-2.5 py-2">
       <div className="flex justify-between items-center mb-1">
-        <span className="text-[9px] font-mono text-text-dim">{label}</span>
-        <span className="text-[10px] font-bold font-mono text-text-primary">{extra || `${pct}%`}</span>
+        <span className="text-[11px] font-body text-text-dim">{label}</span>
+        <span className="text-[10px] font-bold font-body text-text-primary">{extra || `${pct}%`}</span>
       </div>
       <div className="h-1.5 bg-surface-3 rounded-md overflow-hidden">
         <div className={`h-full rounded-md ${color} transition-all duration-700`} style={{ width: `${Math.max(pct, 2)}%` }} />

@@ -21,7 +21,7 @@ const variantStyles: Record<BadgeVariant, string> = {
 export function Badge({ variant = 'neutral', children, className, dot }: BadgeProps) {
   return (
     <span className={clsx(
-      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold border',
+      'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-body font-semibold border',
       variantStyles[variant],
       className,
     )}>

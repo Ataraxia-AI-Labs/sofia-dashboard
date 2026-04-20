@@ -56,18 +56,18 @@ export default function ForgotPasswordPage() {
               <Mail size={24} className="text-status-success" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-text-primary font-mono mb-1">Revisa tu correo</h2>
-              <p className="text-text-muted text-xs font-mono leading-relaxed">
+              <h2 className="text-xl font-semibold text-text-primary font-body mb-1">Revisa tu correo</h2>
+              <p className="text-text-muted text-xs font-body leading-relaxed">
                 Enviamos un enlace de recuperacion a <strong className="text-text-primary">{email}</strong>.
                 Haz clic en el enlace para restablecer tu contrasena.
               </p>
             </div>
-            <p className="text-text-dim text-[10px] font-mono">
+            <p className="text-text-dim text-[12px] font-body">
               Si no lo ves, revisa la carpeta de spam. El enlace expira en 1 hora.
             </p>
             <button
               onClick={() => router.push('/login')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-mono font-semibold hover:text-text-primary transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-body font-semibold hover:text-text-primary transition-colors"
             >
               <ArrowLeft size={14} />
               Volver al login
@@ -76,15 +76,15 @@ export default function ForgotPasswordPage() {
         ) : (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-text-primary font-mono mb-1">Recuperar contrasena</h2>
-              <p className="text-text-muted text-xs font-mono">
+              <h2 className="text-2xl font-semibold text-text-primary font-body mb-1">Recuperar contrasena</h2>
+              <p className="text-text-muted text-xs font-body">
                 Ingresa tu email y te enviaremos un enlace para restablecer tu contrasena.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-mono font-medium text-text-dim mb-1.5 uppercase tracking-wider">
+                <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
                   Email
                 </label>
                 <input
@@ -92,14 +92,14 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@clinica.com"
-                  className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-mono outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+                  className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
                   required
                   autoFocus
                 />
               </div>
 
               {error && (
-                <div className="px-3 py-2.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-mono">
+                <div className="px-3 py-2.5 rounded-lg bg-status-danger/10 border border-status-danger/20 text-status-danger text-xs font-body">
                   {error}
                 </div>
               )}
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-mono flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-lg bg-brand-purple text-white font-semibold text-xs font-body flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="button"
                 onClick={() => router.push('/login')}
-                className="w-full py-2 text-text-muted text-xs font-mono font-medium hover:text-text-primary transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2 text-text-muted text-xs font-body font-medium hover:text-text-primary transition-colors flex items-center justify-center gap-2"
               >
                 <ArrowLeft size={12} />
                 Volver al login

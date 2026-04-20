@@ -41,9 +41,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        display: ['var(--font-playfair)', 'Georgia', 'serif'],
+        display: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
         body: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-jetbrains)', 'monospace'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
       },
       spacing: {
         // 8px grid enforcement

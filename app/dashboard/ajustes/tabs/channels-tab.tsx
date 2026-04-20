@@ -269,24 +269,24 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
               <Globe size={20} style={{ color: webchatCfg?.enabled ? webchatCfg.primary_color : undefined }} className={webchatCfg?.enabled ? '' : 'text-text-dim'} />
             </div>
             <div>
-              <h3 className="text-xs font-mono font-semibold text-text-primary">Web Chat Widget</h3>
+              <h3 className="text-xs font-body font-semibold text-text-primary">Web Chat Widget</h3>
               <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                 {webchatCfg === null ? (
-                  <span className="text-[10px] font-mono text-text-dim">Cargando...</span>
+                  <span className="text-[12px] font-body text-text-dim">Cargando...</span>
                 ) : webchatCfg.enabled ? (
                   <>
                     <CheckCircle size={11} className="text-status-success" />
-                    <span className="text-[10px] font-mono text-status-success font-medium">Activo</span>
+                    <span className="text-[12px] font-body text-status-success font-medium">Activo</span>
                     {webchatCfg.allowed_domains.length > 0 ? (
-                      <span className="text-[10px] font-mono text-text-dim">· {webchatCfg.allowed_domains.length} dominio{webchatCfg.allowed_domains.length === 1 ? '' : 's'}</span>
+                      <span className="text-[12px] font-body text-text-dim">· {webchatCfg.allowed_domains.length} dominio{webchatCfg.allowed_domains.length === 1 ? '' : 's'}</span>
                     ) : (
-                      <span className="text-[10px] font-mono text-status-warning">· sin restriccion de dominios</span>
+                      <span className="text-[12px] font-body text-status-warning">· sin restriccion de dominios</span>
                     )}
                   </>
                 ) : (
                   <>
                     <XCircle size={11} className="text-text-dim" />
-                    <span className="text-[10px] font-mono text-text-dim font-medium">Desactivado</span>
+                    <span className="text-[12px] font-body text-text-dim font-medium">Desactivado</span>
                   </>
                 )}
               </div>
@@ -294,7 +294,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
           </div>
           <button
             onClick={() => onNavigateToTab?.('webchat')}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-surface-3 border border-border hover:border-brand-purple/30 text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-surface-3 border border-border hover:border-brand-purple/30 text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider transition-colors"
           >
             Configurar
             <ArrowRight size={11} />
@@ -334,20 +334,20 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   <Icon size={20} className={connected ? ch.color : 'text-text-dim'} />
                 </div>
                 <div>
-                  <h3 className="text-xs font-mono font-semibold text-text-primary">{ch.label}</h3>
+                  <h3 className="text-xs font-body font-semibold text-text-primary">{ch.label}</h3>
                   <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     {connected ? (
                       <>
                         <CheckCircle size={11} className="text-status-success" />
-                        <span className="text-[10px] font-mono text-status-success font-medium">Conectado</span>
+                        <span className="text-[12px] font-body text-status-success font-medium">Conectado</span>
                         {statusDetail && (
-                          <span className="text-[10px] font-mono text-text-dim ml-1">· {statusDetail}</span>
+                          <span className="text-[12px] font-body text-text-dim ml-1">· {statusDetail}</span>
                         )}
                       </>
                     ) : (
                       <>
                         <XCircle size={11} className="text-text-dim" />
-                        <span className="text-[10px] font-mono text-text-dim font-medium">
+                        <span className="text-[12px] font-body text-text-dim font-medium">
                           {ch.configurable ? 'No conectado' : 'Proximamente'}
                         </span>
                       </>
@@ -364,7 +364,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                 <button
                   onClick={handleEmbeddedSignup}
                   disabled={embeddedConnecting || (!fbSdkLoaded && !!FB_CONFIG_ID)}
-                  className="w-full px-4 py-2.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[10px] font-mono font-semibold hover:bg-brand-purple/15 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/15 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {embeddedConnecting ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -373,7 +373,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   )}
                   Conectar WhatsApp con un clic
                 </button>
-                <p className="text-[10px] font-mono text-text-dim text-center">
+                <p className="text-[12px] font-body text-text-dim text-center">
                   Vincula tu cuenta de WhatsApp Business directamente desde Meta.
                   Pendiente aprobacion de Meta Technology Provider — usa configuracion manual mientras tanto.
                 </p>
@@ -381,7 +381,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                 {/* Manual form toggle */}
                 <button
                   onClick={() => setShowManualForm(prev => !prev)}
-                  className="flex items-center gap-1 text-[10px] font-mono text-text-dim hover:text-text-secondary transition-colors mx-auto"
+                  className="flex items-center gap-1 text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors mx-auto"
                 >
                   {showManualForm ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
                   Configuracion manual
@@ -391,29 +391,29 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                 {showManualForm && (
                   <div className="space-y-3 pt-2">
                     <div>
-                      <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Phone Number ID</label>
+                      <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Phone Number ID</label>
                       <input
                         type="text"
                         value={phoneId}
                         onChange={(e) => setPhoneId(e.target.value)}
                         placeholder="Ej: 123456789012345"
-                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (Meta Cloud API)</label>
+                      <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (Meta Cloud API)</label>
                       <input
                         type="password"
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
                         placeholder="Tu API key"
-                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                        className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
                       />
                     </div>
                     <button
                       onClick={handleConnect}
                       disabled={connecting || !phoneId.trim()}
-                      className="px-3 py-2 rounded-md bg-brand-purple text-white text-[10px] font-mono font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="px-3 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                       {connecting ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
                       Conectar WhatsApp
@@ -432,20 +432,20 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <PhoneCall size={14} className="text-brand-cyan" />
-              <h3 className="text-xs font-mono font-semibold text-text-primary">Voice AI (Twilio)</h3>
+              <h3 className="text-xs font-body font-semibold text-text-primary">Voice AI (Twilio)</h3>
               {voicePerClinic ? (
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-status-success/10 border border-status-success/20 text-status-success uppercase tracking-wider">Conectado</span>
+                <span className="text-[11px] font-body px-1.5 py-0.5 rounded bg-status-success/10 border border-status-success/20 text-status-success uppercase tracking-wider">Conectado</span>
               ) : voiceConnected ? (
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-status-warning/10 border border-status-warning/20 text-status-warning uppercase tracking-wider">Modo demo (env global)</span>
+                <span className="text-[11px] font-body px-1.5 py-0.5 rounded bg-status-warning/10 border border-status-warning/20 text-status-warning uppercase tracking-wider">Modo demo (env global)</span>
               ) : (
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface-3 border border-border text-text-dim uppercase tracking-wider">Desconectado</span>
+                <span className="text-[11px] font-body px-1.5 py-0.5 rounded bg-surface-3 border border-border text-text-dim uppercase tracking-wider">Desconectado</span>
               )}
             </div>
             {voicePerClinic && (
               <button
                 onClick={handleDisconnectVoice}
                 disabled={voiceDisconnecting}
-                className="text-[9px] font-mono text-status-danger hover:underline uppercase tracking-wider disabled:opacity-50"
+                className="text-[11px] font-body text-status-danger hover:underline uppercase tracking-wider disabled:opacity-50"
               >
                 {voiceDisconnecting ? 'Desconectando...' : 'Desconectar'}
               </button>
@@ -453,7 +453,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
           </div>
 
           {voicePerClinic && voicePhoneConnected && (
-            <div className="text-[10px] font-mono text-text-muted px-3 py-2 bg-surface-2 border border-border rounded-md">
+            <div className="text-[12px] font-body text-text-muted px-3 py-2 bg-surface-2 border border-border rounded-md">
               Numero activo: <span className="text-brand-cyan font-semibold">{voicePhoneConnected}</span>
             </div>
           )}
@@ -464,36 +464,36 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                 onClick={() => setShowVoiceForm(v => !v)}
                 className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-surface-3 border border-border hover:border-brand-cyan/30 transition-colors"
               >
-                <span className="text-[10px] font-mono font-semibold text-text-primary uppercase tracking-wider">Conectar mi cuenta Twilio</span>
+                <span className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider">Conectar mi cuenta Twilio</span>
                 {showVoiceForm ? <ChevronUp size={12} className="text-text-dim" /> : <ChevronDown size={12} className="text-text-dim" />}
               </button>
 
               {showVoiceForm && (
                 <div className="space-y-3 p-3 rounded-md bg-surface-2 border border-border">
-                  <p className="text-[9px] font-mono text-text-dim leading-relaxed">
+                  <p className="text-[11px] font-body text-text-dim leading-relaxed">
                     Conecta tu cuenta Twilio para que SofIA atienda tu numero. Encuentra Account SID y Auth Token en console.twilio.com.
                   </p>
 
                   <div>
-                    <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Account SID</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Account SID</label>
                     <input
                       type="text"
                       value={voiceAccountSid}
                       onChange={(e) => setVoiceAccountSid(e.target.value)}
                       placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                      className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                      className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Auth Token</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Auth Token</label>
                     <div className="relative">
                       <input
                         type={showAuthToken ? 'text' : 'password'}
                         value={voiceAuthToken}
                         onChange={(e) => setVoiceAuthToken(e.target.value)}
                         placeholder="********************************"
-                        className="w-full px-3 py-2 pr-9 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                        className="w-full px-3 py-2 pr-9 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
                       />
                       <button
                         type="button"
@@ -507,20 +507,20 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block mb-1">Numero Twilio (E.164)</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Numero Twilio (E.164)</label>
                     <input
                       type="tel"
                       value={voicePhoneNumber}
                       onChange={(e) => setVoicePhoneNumber(e.target.value)}
                       placeholder="+573001234567"
-                      className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                      className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
                     />
                   </div>
 
                   <button
                     onClick={handleConnectVoice}
                     disabled={voiceConnecting || !voiceAccountSid || !voiceAuthToken || !voicePhoneNumber}
-                    className="w-full px-3 py-2 rounded-md bg-brand-cyan text-void text-[10px] font-mono font-semibold uppercase tracking-wider hover:bg-brand-cyan/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    className="w-full px-3 py-2 rounded-md bg-brand-cyan text-void text-[12px] font-body font-semibold uppercase tracking-wider hover:bg-brand-cyan/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     {voiceConnecting ? (
                       <><Loader2 size={12} className="animate-spin" /> Validando con Twilio...</>
@@ -529,7 +529,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                     )}
                   </button>
 
-                  <p className="text-[8px] font-mono text-text-dim/70 leading-relaxed">
+                  <p className="text-[10px] font-body text-text-dim/70 leading-relaxed">
                     Validamos las credenciales y configuramos automaticamente los webhooks de tu numero (Voice + Status Callback).
                   </p>
                 </div>
@@ -539,10 +539,10 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
 
           {voiceConnected && (
             <div className="space-y-1.5">
-              <label className="text-[9px] font-mono text-text-dim font-semibold uppercase tracking-wider block">
+              <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block">
                 Numero de transferencia
               </label>
-              <p className="text-[9px] font-mono text-text-dim">
+              <p className="text-[11px] font-body text-text-dim">
                 Cuando un paciente pide hablar con humano, la llamada se transfiere a este numero.
               </p>
               <div className="flex gap-2">
@@ -551,12 +551,12 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   value={transferNumber}
                   onChange={(e) => setTransferNumber(e.target.value)}
                   placeholder="+573001234567"
-                  className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-md text-[10px] font-mono text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
+                  className="flex-1 px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-cyan/40"
                 />
                 <button
                   onClick={handleSaveTransferNumber}
                   disabled={savingTransfer || transferNumber.trim() === currentTransferNumber}
-                  className="px-3 py-2 rounded-md bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-[10px] font-mono font-semibold hover:bg-brand-cyan/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-3 py-2 rounded-md bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-[12px] font-body font-semibold hover:bg-brand-cyan/20 transition-colors disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {savingTransfer ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
                   Guardar

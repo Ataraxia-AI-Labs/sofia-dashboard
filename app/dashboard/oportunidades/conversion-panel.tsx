@@ -105,7 +105,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
             <button
               onClick={handlePredictAll}
               disabled={predictingAll}
-              className="px-3 py-1.5 rounded-md bg-brand-purple text-white text-xs font-mono font-semibold flex items-center gap-1.5 disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
+              className="px-3 py-1.5 rounded-md bg-brand-purple text-white text-xs font-body font-semibold flex items-center gap-1.5 disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
             >
               {predictingAll ? (
                 <><Loader2 size={12} className="animate-spin" /> {t('predicting')}</>
@@ -132,7 +132,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
             <div className="bg-void/50 rounded-lg p-3 border border-border">
-              <div className="text-[9px] font-mono text-text-dim uppercase">{t('avgConversionRate')}</div>
+              <div className="text-[11px] font-body text-text-dim uppercase">{t('avgConversionRate')}</div>
               <div className={`text-xl font-bold font-mono ${
                 avgRate >= 0.7 ? 'text-status-success' : avgRate >= 0.4 ? 'text-status-warning' : 'text-status-danger'
               }`}>
@@ -140,7 +140,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
               </div>
             </div>
             <div className="bg-void/50 rounded-lg p-3 border border-border">
-              <div className="text-[9px] font-mono text-text-dim uppercase">{t('quincenaEffect')}</div>
+              <div className="text-[11px] font-body text-text-dim uppercase">{t('quincenaEffect')}</div>
               <div className="flex items-center gap-1">
                 <span className={`text-xl font-bold font-mono ${
                   quincenaBoost > 0 ? 'text-status-success' : 'text-text-muted'
@@ -152,11 +152,11 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
               <div className="text-[8px] text-text-dim mt-0.5">{t('quincenaHint')}</div>
             </div>
             <div className="bg-void/50 rounded-lg p-3 border border-border">
-              <div className="text-[9px] font-mono text-text-dim uppercase">{t('totalPredicted')}</div>
+              <div className="text-[11px] font-body text-text-dim uppercase">{t('totalPredicted')}</div>
               <div className="text-xl font-bold font-mono text-text-primary">{totalPredicted}</div>
             </div>
             <div className="bg-void/50 rounded-lg p-3 border border-border">
-              <div className="text-[9px] font-mono text-text-dim uppercase">{t('queueSize')}</div>
+              <div className="text-[11px] font-body text-text-dim uppercase">{t('queueSize')}</div>
               <div className="text-xl font-bold font-mono text-brand-purple">{queue.length}</div>
             </div>
           </div>
@@ -167,14 +167,14 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
           <div>
             <div className="flex items-center gap-1.5 mb-3">
               <BarChart3 size={12} className="text-brand-cyan" />
-              <span className="text-[10px] font-mono font-semibold text-text-muted uppercase">{t('heatmapTitle')}</span>
+              <span className="text-[12px] font-body font-semibold text-text-muted uppercase">{t('heatmapTitle')}</span>
             </div>
             <div className="overflow-x-auto">
               <div className="min-w-[500px]">
                 {/* Hour labels */}
                 <div className="flex gap-0.5 mb-0.5 pl-12">
                   {BUSINESS_HOURS.map(h => (
-                    <div key={h} className="flex-1 text-center text-[8px] text-text-dim font-mono">
+                    <div key={h} className="flex-1 text-center text-[8px] text-text-dim font-body">
                       {h}h
                     </div>
                   ))}
@@ -199,7 +199,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
                 ))}
                 {/* Legend */}
                 <div className="flex items-center justify-end gap-2 mt-2">
-                  <span className="text-[8px] font-mono text-text-dim">{t('low')}</span>
+                  <span className="text-[10px] font-body text-text-dim">{t('low')}</span>
                   <div className="flex gap-0.5">
                     <div className="w-4 h-3 rounded-sm bg-status-danger/20" />
                     <div className="w-4 h-3 rounded-sm bg-status-warning/30" />
@@ -207,7 +207,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
                     <div className="w-4 h-3 rounded-sm bg-status-success/50" />
                     <div className="w-4 h-3 rounded-sm bg-status-success/80" />
                   </div>
-                  <span className="text-[8px] font-mono text-text-dim">{t('high')}</span>
+                  <span className="text-[10px] font-body text-text-dim">{t('high')}</span>
                 </div>
               </div>
             </div>
@@ -219,7 +219,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
           <div className="mt-4 pt-3 border-t border-border">
             <div className="flex items-center gap-1.5 mb-2">
               <Target size={11} className="text-status-success" />
-              <span className="text-[10px] font-mono font-semibold text-text-muted uppercase">{t('topFactors')}</span>
+              <span className="text-[12px] font-body font-semibold text-text-muted uppercase">{t('topFactors')}</span>
             </div>
             <div className="space-y-1.5">
               {topFactors.slice(0, 6).map((factor, i) => (
@@ -230,7 +230,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
                     <ArrowDownRight size={10} className="text-status-danger flex-shrink-0" />
                   )}
                   <span className="text-xs text-text-muted flex-1">{factor.name}</span>
-                  <span className={`text-[10px] font-bold font-mono ${
+                  <span className={`text-[10px] font-bold font-body ${
                     factor.direction === 'positive' ? 'text-status-success' : 'text-status-danger'
                   }`}>
                     {factor.direction === 'positive' ? '+' : ''}{Math.round(factor.impact * 100)}%
@@ -276,7 +276,7 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
   return (
     <div className="glass-card p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-semibold font-mono text-text-muted uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-xs font-semibold font-body text-text-muted uppercase tracking-wider flex items-center gap-2">
           <Phone size={14} className="text-brand-cyan" />
           {t('followUpQueue')}
         </h3>
@@ -310,7 +310,7 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-void/50 border border-border hover:border-border-2 transition-colors"
             >
               {/* Priority rank */}
-              <span className={`text-xs font-bold font-mono w-5 text-center ${
+              <span className={`text-xs font-bold font-body w-5 text-center ${
                 index === 0 ? 'text-brand-gold' :
                 index === 1 ? 'text-text-muted' :
                 index === 2 ? 'text-brand-gold' :
@@ -331,7 +331,7 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <span className="flex items-center gap-1 text-[10px] text-text-dim font-mono">
+                  <span className="flex items-center gap-1 text-[10px] text-text-dim font-body">
                     <Phone size={9} />
                     {item.phone}
                   </span>

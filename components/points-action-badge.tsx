@@ -103,7 +103,7 @@ export function PointsActionBadge({
       >
         <span className="text-[10px]">{cfg.emoji}</span>
         {points != null && (
-          <span className={`text-[9px] font-mono font-bold ${cfg.textColor}`}>+{points}</span>
+          <span className={`text-[11px] font-body font-bold ${cfg.textColor}`}>+{points}</span>
         )}
       </span>
     )
@@ -113,10 +113,10 @@ export function PointsActionBadge({
     <div className={`inline-flex items-center gap-2 px-2 py-1 rounded ${cfg.bg} border ${cfg.border} ${className}`}>
       <span className="text-sm">{cfg.emoji}</span>
       <div className="flex flex-col">
-        <span className={`text-[10px] font-mono font-semibold ${cfg.textColor}`}>{cfg.label}</span>
+        <span className={`text-[12px] font-body font-semibold ${cfg.textColor}`}>{cfg.label}</span>
       </div>
       {points != null && (
-        <span className={`text-[10px] font-bold font-mono ${cfg.textColor} ml-auto`}>
+        <span className={`text-[10px] font-bold font-body ${cfg.textColor} ml-auto`}>
           +{points.toLocaleString()}
         </span>
       )}

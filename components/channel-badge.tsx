@@ -76,7 +76,7 @@ export function ChannelBadge({ channel, compact = false, className = '' }: Chann
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-body font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
     >
       <Icon size={9} />
       {cfg.label}

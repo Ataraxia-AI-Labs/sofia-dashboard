@@ -12,7 +12,7 @@ export default function TerminosPage() {
       {/* Nav */}
       <nav className="border-b border-border/50 bg-surface sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-xs font-mono text-brand-purple font-semibold tracking-wide">
+          <Link href="/" className="flex items-center gap-2 text-xs font-body text-brand-purple font-semibold tracking-wide">
             <svg width="20" height="20" viewBox="0 0 48 48">
               <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.6" />
               <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.8" />
@@ -22,7 +22,7 @@ export default function TerminosPage() {
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-mono text-text-muted hover:text-text-primary transition-colors"
+            className="flex items-center gap-2 text-xs font-body text-text-muted hover:text-text-primary transition-colors"
           >
             <ArrowLeft size={12} />
             Volver
@@ -33,10 +33,10 @@ export default function TerminosPage() {
       <div className="max-w-3xl mx-auto px-5 py-12">
         <div className="mb-8">
           <span className="badge badge-purple mb-3 inline-flex">Legal</span>
-          <h1 className="font-mono text-3xl lg:text-4xl font-bold text-white mb-3">
+          <h1 className="font-body text-3xl lg:text-4xl font-bold text-white mb-3">
             Terminos de Servicio
           </h1>
-          <p className="text-text-muted text-xs font-mono">
+          <p className="text-text-muted text-xs font-body">
             Ultima actualizacion: febrero de 2026 &mdash; Version 2.0
           </p>
         </div>
@@ -147,7 +147,7 @@ export default function TerminosPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-brand-purple hover:text-brand-purple-light text-xs font-mono transition-colors">
+          <Link href="/" className="text-brand-purple hover:text-brand-purple-light text-xs font-body transition-colors">
             Volver al inicio
           </Link>
         </div>

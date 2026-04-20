@@ -74,14 +74,14 @@ export function SentimentBadge({ sentiment, compact = false, className = '' }: S
         title={cfg.label}
       >
         <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-        <span className={`text-[9px] font-mono font-bold ${cfg.color}`}>{cfg.short}</span>
+        <span className={`text-[11px] font-body font-bold ${cfg.color}`}>{cfg.short}</span>
       </span>
     )
   }
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[12px] font-body font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} ${className}`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
       {cfg.label}
