@@ -28,16 +28,18 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'SofIA — Tu clinica nunca duerme.',
-    description: 'SofIA opera tu clinica 24/7. WhatsApp, voz, citas, cobros, oportunidades — todo autonomo.',
+    title: 'SofIA — Tu clínica nunca duerme.',
+    description: 'SofIA opera tu clínica 24/7. WhatsApp, voz, citas, cobros, oportunidades — todo autónomo.',
     siteName: 'SofIA / Ataraxia IA Labs',
     type: 'website',
     url: 'https://ataraxiaialabs.ai',
+    images: [{ url: 'https://ataraxiaialabs.ai/og-image.png', width: 1200, height: 630, alt: 'SofIA — Ataraxia IA Labs' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SofIA — Tu clinica nunca duerme.',
-    description: 'IA autonoma para tu clinica. 24/7, sin humanos.',
+    title: 'SofIA — Tu clínica nunca duerme.',
+    description: 'IA autónoma para tu clínica. 24/7, sin humanos.',
+    images: ['https://ataraxiaialabs.ai/og-image.png'],
   },
   other: {
     'facebook-domain-verification': 'l321wmcuefen0vbdkhj2fbflsdwqff',
