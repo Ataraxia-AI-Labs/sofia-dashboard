@@ -33,7 +33,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://*.supabase.co",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://*.sentry.io https://*.ingest.sentry.io https://challenges.cloudflare.com https://*.onrender.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://*.sentry.io https://*.ingest.sentry.io https://challenges.cloudflare.com https://*.onrender.com" + (process.env.NODE_ENV !== 'production' ? " http://127.0.0.1:8080 http://localhost:8080 https://va.vercel-scripts.com" : ""),
               "frame-src 'self' https://challenges.cloudflare.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
