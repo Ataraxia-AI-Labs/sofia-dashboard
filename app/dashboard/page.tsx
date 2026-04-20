@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import { useOrg } from '@/lib/org-context'
 import { WelcomeState } from '@/components/sofia-console/welcome-state'
 import { ChatInput } from '@/components/sofia-console/chat-input'
 import { SuggestedPrompts } from '@/components/sofia-console/suggested-prompts'
 import { MessageBubble, type Message } from '@/components/sofia-console/message-bubble'
+import { askConsole, type ConsoleHistoryItem } from '@/lib/api/console'
 
 /**
  * Infer thinking-step narration from user question keywords.
@@ -39,7 +41,7 @@ function inferThinkingSteps(q: string): string[] {
  * Sprint 3: conectar a backend /console/ask con OpenAI function-calling + tools.
  */
 export default function SofiaConsolePage() {
-  const { user, org } = useOrg()
+  const { user, org, branchId } = useOrg()
   const [messages, setMessages] = useState<Message[]>([])
   const [sending, setSending] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -48,7 +50,8 @@ export default function SofiaConsolePage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
-  const handleSubmit = (text: string) => {
+  const handleSubmit = async (text: string) => {
+    if (!org?.id) return
     const now = new Date().toISOString()
     const userMsg: Message = {
       id: crypto.randomUUID(),
@@ -67,8 +70,34 @@ export default function SofiaConsolePage() {
     setMessages(m => [...m, userMsg, pending])
     setSending(true)
 
-    // Sprint 1: mock response. Sprint 3 wires to backend /console/ask with tool-calling.
-    setTimeout(() => {
+    // Build history from last 6 messages (excluding current pending)
+    const history: ConsoleHistoryItem[] = messages
+      .filter(m => !m.pending && m.text)
+      .slice(-6)
+      .map(m => ({ role: m.role, content: m.text }))
+
+    try {
+      const response = await askConsole({
+        org_id: org.id,
+        branch_id: branchId,
+        message: text,
+        history,
+      })
+      setMessages(m =>
+        m.map(msg =>
+          msg.id === pendingId
+            ? {
+                ...msg,
+                pending: false,
+                createdAt: new Date().toISOString(),
+                text: response.narrative || 'Listo.',
+                artifacts: response.artifacts,
+              }
+            : msg,
+        ),
+      )
+    } catch (err) {
+      Sentry.captureException(err, { tags: { context: 'sofia_console_ask' } })
       setMessages(m =>
         m.map(msg =>
           msg.id === pendingId
@@ -77,16 +106,14 @@ export default function SofiaConsolePage() {
                 pending: false,
                 createdAt: new Date().toISOString(),
                 text:
-                  'Voy a ser honesta contigo: ahorita estoy en construcción. Mi cerebro (backend con tools) llega en la próxima sesión. Pero ya te registré la pregunta para priorizar las herramientas que más te sirvan primero.',
-                artifacts: [
-                  { type: 'note', title: 'Tu pregunta quedó guardada', data: text },
-                ],
+                  'Tuve un tropiezo consultando. Dame un momento y te respondo — si insiste, avísame y lo revisamos juntos.',
               }
             : msg,
         ),
       )
+    } finally {
       setSending(false)
-    }, 1600)
+    }
   }
 
   const isEmpty = messages.length === 0

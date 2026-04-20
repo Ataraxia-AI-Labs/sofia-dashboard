@@ -2,21 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
+import { ArtifactRenderer } from './artifact-renderer'
+import type { ConsoleArtifact } from '@/lib/api/console'
 
 export interface Message {
   id: string
   role: 'user' | 'assistant'
   text: string
-  artifacts?: Artifact[]
+  artifacts?: ConsoleArtifact[]
   pending?: boolean
   createdAt?: string
   thinkingSteps?: string[]
-}
-
-export interface Artifact {
-  type: 'chart' | 'metric' | 'table' | 'note'
-  title?: string
-  data?: unknown
 }
 
 interface Props {
@@ -76,7 +72,7 @@ export function MessageBubble({ message }: Props) {
         {message.artifacts && message.artifacts.length > 0 && (
           <div className="space-y-2">
             {message.artifacts.map((a, i) => (
-              <ArtifactPlaceholder key={i} artifact={a} />
+              <ArtifactRenderer key={i} artifact={a} />
             ))}
           </div>
         )}
@@ -115,38 +111,6 @@ function TypingState({ steps }: { steps?: string[] }) {
       </span>
       <span className="text-[13px] font-body italic opacity-80">{messages[idx]}…</span>
     </span>
-  )
-}
-
-function ArtifactPlaceholder({ artifact }: { artifact: Artifact }) {
-  return (
-    <div className="relative rounded-xl overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-purple/5 via-transparent to-brand-purple/8 pointer-events-none" />
-      <div
-        className="relative bg-surface/55 backdrop-blur-sm rounded-xl p-3.5"
-        style={{
-          boxShadow:
-            '0 0 0 1px rgba(139,92,246,0.12), 0 6px 24px -8px rgba(139,92,246,0.22), 0 1px 0 0 rgba(255,255,255,0.03) inset',
-        }}
-      >
-        <div className="flex items-center gap-1.5 mb-1.5">
-          <div className="w-1 h-1 rounded-full bg-brand-purple" />
-          <div className="text-[10px] font-body font-semibold uppercase tracking-[0.14em] text-text-dim">
-            {artifact.type}
-          </div>
-        </div>
-        {artifact.title && (
-          <div className="text-[13.5px] font-body font-medium text-text-primary mb-1">
-            {artifact.title}
-          </div>
-        )}
-        <div className="text-[12px] font-body text-text-dim leading-relaxed">
-          {artifact.type === 'note'
-            ? (artifact.data ? `→ "${String(artifact.data).slice(0, 140)}"` : 'Registrado para tu Data Lake.')
-            : 'El renderer real llega en Sprint 3 (backend + tools wired).'}
-        </div>
-      </div>
-    </div>
   )
 }
 
