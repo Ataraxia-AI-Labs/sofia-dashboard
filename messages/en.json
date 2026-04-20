@@ -1532,7 +1532,9 @@
     "rewardsGiven": "Rewards given",
     "generateLink": "Generate link",
     "noProgram": "No referral program",
-    "noProgramHint": "Set up a program so your patients recommend your clinic and receive benefits."
+    "noProgramHint": "Set up a program so your patients recommend your clinic and receive benefits.",
+    "createProgram": "Set up program",
+    "createdToast": "Referral program activated"
   },
   "reviewsPage": {
     "title": "Reviews & Reputation",
@@ -1552,6 +1554,7 @@
     "replied": "Replied",
     "flagged": "Flagged",
     "noReviews": "No reviews",
+    "connectGBP": "Connect Google My Business",
     "noReviewsHint": "Connect Google My Business to import and manage reviews."
   },
   "marketplacePage": {

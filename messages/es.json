@@ -1532,7 +1532,9 @@
     "rewardsGiven": "Recompensas otorgadas",
     "generateLink": "Generar link",
     "noProgram": "Sin programa de referidos",
-    "noProgramHint": "Configura un programa para que tus pacientes recomienden tu clinica y reciban beneficios."
+    "noProgramHint": "Configura un programa para que tus pacientes recomienden tu clinica y reciban beneficios.",
+    "createProgram": "Configurar programa",
+    "createdToast": "Programa de referidos activado"
   },
   "reviewsPage": {
     "title": "Resenas y Reputacion",
@@ -1552,6 +1554,7 @@
     "replied": "Respondida",
     "flagged": "Marcada",
     "noReviews": "Sin resenas",
+    "connectGBP": "Conectar Google My Business",
     "noReviewsHint": "Conecta Google My Business para importar y gestionar resenas."
   },
   "marketplacePage": {

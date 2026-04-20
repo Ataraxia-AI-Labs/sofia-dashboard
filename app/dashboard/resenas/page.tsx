@@ -5,7 +5,8 @@ import { useOrg } from '@/lib/org-context'
 import { listReviews, getReviewStats, replyToReview, generateReviewReply, syncReviews, getNPS } from '@/lib/api/reviews'
 import type { Review, ReviewStats } from '@/lib/api/reviews'
 import { useTranslations } from 'next-intl'
-import { Star, RefreshCw, MessageSquare, Sparkles, BarChart3 } from 'lucide-react'
+import { Star, RefreshCw, MessageSquare, Sparkles, BarChart3, Link as LinkIcon } from 'lucide-react'
+import Link from 'next/link'
 
 type Tab = 'reviews' | 'stats'
 
@@ -136,7 +137,16 @@ export default function ResenasPage() {
             <div className="text-center py-12">
               <Star size={24} className="mx-auto text-text-dim/30 mb-2" />
               <p className="text-[12px] font-body text-text-dim">{t('noReviews')}</p>
-              <p className="text-[11px] font-body text-text-dim/70 mt-1">{t('noReviewsHint')}</p>
+              <p className="text-[11px] font-body text-text-dim/70 mt-1 mb-4">{t('noReviewsHint')}</p>
+              {!isReadOnly && (
+                <Link
+                  href="/dashboard/ajustes?tab=channels"
+                  className="sentient-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
+                >
+                  <LinkIcon size={12} />
+                  {t('connectGBP') || 'Conectar Google My Business'}
+                </Link>
+              )}
             </div>
           ) : reviews.map(review => (
             <div key={review.id} className="rounded-xl p-3.5 bg-surface/40 hover:bg-surface-2/40 transition-colors" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>

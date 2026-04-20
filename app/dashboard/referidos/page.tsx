@@ -89,7 +89,25 @@ export default function ReferidosPage() {
         <div className="text-center py-12">
           <Gift size={24} className="mx-auto text-text-dim/30 mb-2" />
           <p className="text-[12px] font-body text-text-dim">{t('noProgram')}</p>
-          <p className="text-[11px] font-body text-text-dim/70 mt-1">{t('noProgramHint')}</p>
+          <p className="text-[11px] font-body text-text-dim/70 mt-1 mb-4">{t('noProgramHint')}</p>
+          {!isReadOnly && (
+            <button
+              onClick={async () => {
+                try {
+                  await updateReferralProgram(orgId, { is_active: true })
+                  toast.success(t('createdToast') || 'Programa activado')
+                  load()
+                } catch (err) {
+                  Sentry.captureException(err)
+                  toast.error(t('toggleError'))
+                }
+              }}
+              className="sentient-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
+            >
+              <Gift size={12} />
+              {t('createProgram') || 'Configurar programa de referidos'}
+            </button>
+          )}
         </div>
       ) : (
         <>
