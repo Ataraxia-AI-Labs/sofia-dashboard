@@ -223,7 +223,7 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
           <Code size={12} className="text-text-dim" />
           {t('webchat.embedCode') || 'Código de instalación'}
         </h4>
-        <p className="text-[11px] font-body text-text-dim">{t('webchat.embedHint') || 'Pega este código antes de </body> en tu sitio web.'}</p>
+        <p className="text-[11px] font-body text-text-dim">{t('webchat.embedHint', { closeTag: '</body>' })}</p>
         <div className="relative">
           <pre className="text-[11px] font-body bg-surface border border-border rounded p-3 text-text-muted overflow-x-auto whitespace-pre-wrap break-all">
             {embedCode}

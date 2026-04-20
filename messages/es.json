@@ -202,7 +202,7 @@
       "security": "Dominios permitidos",
       "domainsHint": "Un dominio por linea. Dejar vacio para permitir todos.",
       "embedCode": "Codigo de instalacion",
-      "embedHint": "Pega este codigo antes de </body> en tu sitio web.",
+      "embedHint": "Pega este código antes de {closeTag} en tu sitio web.",
       "preview": "Vista previa",
       "save": "Guardar configuracion"
     }

@@ -202,7 +202,7 @@
       "security": "Allowed domains",
       "domainsHint": "One domain per line. Leave empty to allow all.",
       "embedCode": "Installation code",
-      "embedHint": "Paste this code before </body> on your website.",
+      "embedHint": "Paste this code before {closeTag} on your website.",
       "preview": "Preview",
       "save": "Save configuration"
     }
