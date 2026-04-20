@@ -22,13 +22,20 @@ export async function checkIn(
 export async function getQueue(orgId: string): Promise<WaitingRoomEntry[]> {
   const res = await authFetch(`${API_URL}/api/waiting-room/${orgId}/queue`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  if (Array.isArray(data)) return data
+  if (data && Array.isArray(data.queue)) return data.queue
+  return []
 }
 
 export async function getLatePatients(orgId: string): Promise<LatePatient[]> {
   const res = await authFetch(`${API_URL}/api/waiting-room/${orgId}/late`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  if (Array.isArray(data)) return data
+  if (data && Array.isArray(data.late_patients)) return data.late_patients
+  if (data && Array.isArray(data.late)) return data.late
+  return []
 }
 
 export async function notifyLate(orgId: string, patientId: string): Promise<void> {
@@ -62,5 +69,16 @@ export async function completeVisit(orgId: string, appointmentId: string): Promi
 export async function getWaitingStats(orgId: string): Promise<WaitingRoomStats | null> {
   const res = await authFetch(`${API_URL}/api/waiting-room/${orgId}/stats`)
   if (!res.ok) return null
-  return res.json()
+  const data = await res.json()
+  // Backend returns {stats: {total_visits, avg_wait_minutes, late_rate, no_show_rate, reschedule_rate, by_status}}
+  // Frontend expects {currently_waiting, avg_wait_today, late_count, no_show_rate, completed_today}
+  const raw = (data?.stats ?? data) as Record<string, unknown>
+  const byStatus = (raw.by_status ?? {}) as Record<string, number>
+  return {
+    currently_waiting: Number(byStatus.WAITING ?? byStatus.CHECKED_IN ?? 0),
+    avg_wait_today: Math.round(Number(raw.avg_wait_minutes ?? 0)),
+    late_count: Math.round(Number(raw.total_visits ?? 0) * Number(raw.late_rate ?? 0)),
+    no_show_rate: Number(raw.no_show_rate ?? 0),
+    completed_today: Number(byStatus.COMPLETED ?? byStatus.DONE ?? 0),
+  }
 }

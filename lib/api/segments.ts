@@ -31,7 +31,11 @@ export async function runClustering(orgId: string, nClusters?: number): Promise<
 export async function getSegments(orgId: string): Promise<PatientSegment[]> {
   const res = await authFetch(`${API_URL}/segments/${orgId}/segments`)
   if (!res.ok) return []
-  return res.json()
+  const data = await res.json()
+  // Backend wraps the list as { segments: [...], count: N }. Unwrap defensively.
+  if (Array.isArray(data)) return data
+  if (data && Array.isArray(data.segments)) return data.segments
+  return []
 }
 
 export async function getPatientSegment(orgId: string, patientId: string): Promise<PatientSegment | null> {

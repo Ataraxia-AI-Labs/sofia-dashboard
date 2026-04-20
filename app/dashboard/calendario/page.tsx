@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useOrg } from '@/lib/org-context'
 import {
   fetchAppointments, updateAppointmentStatus, createAppointment,
@@ -41,7 +42,12 @@ export default function CalendarioPage() {
   const { orgId, branchId } = useOrg()
   const t = useTranslations('calendar')
   const tCommon = useTranslations('common')
-  const [activeTab, setActiveTab] = useState<ActiveTab>('calendar')
+  const searchParams = useSearchParams()
+  const initialTab: ActiveTab = (() => {
+    const v = searchParams.get('tab')
+    return v === 'waitingRoom' || v === 'waiting' || v === 'sala' ? 'waitingRoom' : 'calendar'
+  })()
+  const [activeTab, setActiveTab] = useState<ActiveTab>(initialTab)
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())

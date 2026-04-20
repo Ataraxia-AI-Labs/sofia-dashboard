@@ -81,7 +81,8 @@ export default function PacientesPage() {
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
   const searchParams = useSearchParams()
   const initialView = ((): 'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification' => {
-    const v = searchParams.get('view')
+    // Accept ?tab= for cross-page consistency and keep ?view= as legacy alias.
+    const v = searchParams.get('tab') ?? searchParams.get('view')
     if (v === 'segments' || v === 'duplicates' || v === 'ltv' || v === 'gamification' || v === 'list') return v
     return 'list'
   })()
