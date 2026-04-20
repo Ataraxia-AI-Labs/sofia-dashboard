@@ -134,83 +134,50 @@ export default function OportunidadesPage() {
     typeCounts[o.opportunity_type] = (typeCounts[o.opportunity_type] || 0) + 1
   }
 
+  const VIEW_TABS = [
+    { id: 'list' as const, icon: Target, label: t('views.list') },
+    { id: 'scoring' as const, icon: BarChart3, label: t('views.scoring') },
+    { id: 'predictions' as const, icon: TrendingUp, label: t('views.predictions') },
+    { id: 'queue' as const, icon: Phone, label: t('views.queue') },
+    { id: 'pricing' as const, icon: DollarSign, label: t('views.pricing') },
+    { id: 'outreach' as const, icon: Radar, label: t('views.outreach') },
+    { id: 'competitors' as const, icon: Swords, label: t('views.competitors') },
+  ]
+
   return (
-    <div className="max-w-[1200px] space-y-4">
+    <div className="space-y-4">
       {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
-          <p className="text-text-dim text-[11px] font-body mt-0.5">{t('subtitle')}</p>
+      <div>
+        <h2 className="text-sm font-body font-bold uppercase tracking-wide text-text-primary flex items-center gap-2">
+          <Target size={14} className="text-brand-purple" />
+          {t('title')}
+        </h2>
+        <p className="text-text-dim text-[11px] font-body mt-0.5">{t('subtitle')}</p>
+      </div>
+
+      {/* Tabs row + refresh — own line, won't collide with floating topbar */}
+      <div className="flex items-end justify-between gap-4 border-b border-brand-purple/10">
+        <div className="flex gap-4 flex-wrap">
+          {VIEW_TABS.map(tb => (
+            <button
+              key={tb.id}
+              onClick={() => setActiveView(tb.id)}
+              className={`flex items-center gap-1 text-[12px] font-body font-semibold pb-1.5 border-b-2 transition-colors ${
+                activeView === tb.id ? 'text-brand-purple border-brand-purple' : 'text-text-dim border-transparent hover:text-text-muted'
+              }`}
+            >
+              <tb.icon size={11} /> {tb.label}
+            </button>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
-            <button
-              onClick={() => setActiveView('list')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors ${
-                activeView === 'list' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              {t('views.list')}
-            </button>
-            <button
-              onClick={() => setActiveView('scoring')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeView === 'scoring' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <BarChart3 size={11} />
-              {t('views.scoring')}
-            </button>
-            <button
-              onClick={() => setActiveView('predictions')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeView === 'predictions' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <TrendingUp size={11} />
-              {t('views.predictions')}
-            </button>
-            <button
-              onClick={() => setActiveView('queue')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeView === 'queue' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <Phone size={11} />
-              {t('views.queue')}
-            </button>
-            <button
-              onClick={() => setActiveView('pricing')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeView === 'pricing' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <DollarSign size={11} />
-              {t('views.pricing')}
-            </button>
-            <button
-              onClick={() => setActiveView('outreach')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeView === 'outreach' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <Radar size={11} />
-              {t('views.outreach')}
-            </button>
-            <button
-              onClick={() => setActiveView('competitors')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeView === 'competitors' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <Swords size={11} />
-              {t('views.competitors')}
-            </button>
-          </div>
-          <button onClick={loadData} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          </button>
-        </div>
+        <button
+          onClick={loadData}
+          aria-label={tCommon('refresh')}
+          className="sentient-btn w-7 h-7 mb-1 rounded-md bg-surface/40 flex items-center justify-center text-text-muted hover:text-text-primary"
+          style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}
+        >
+          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+        </button>
       </div>
 
       {/* SUMMARY CARDS */}
@@ -281,16 +248,15 @@ export default function OportunidadesPage() {
       {activeView !== 'list' ? null : (
       <>
       {/* FILTERS — Status */}
-      <div className="space-y-2">
-        <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Estado</p>
-        <div className="flex gap-2 flex-wrap">
+      <div className="space-y-1.5">
+        <p className="text-[10px] text-text-dim font-semibold uppercase tracking-[0.14em]">Estado</p>
+        <div className="flex gap-1 flex-wrap">
           <button
             onClick={() => setStatusFilter('')}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all ${
-              !statusFilter
-                ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
-                : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+            className={`sentient-btn h-7 px-2.5 rounded-md text-[11.5px] font-body font-medium transition-all ${
+              !statusFilter ? 'bg-brand-purple/18 text-brand-purple' : 'bg-surface/40 text-text-muted hover:text-text-primary'
             }`}
+            style={{ boxShadow: !statusFilter ? '0 0 0 1px rgba(139,92,246,0.3), 0 2px 10px -3px rgba(139,92,246,0.3)' : '0 0 0 1px rgba(139,92,246,0.1)' }}
           >
             Todos
           </button>
@@ -298,11 +264,10 @@ export default function OportunidadesPage() {
             <button
               key={key}
               onClick={() => setStatusFilter(key)}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all ${
-                statusFilter === key
-                  ? 'bg-brand-purple/15 text-brand-purple border border-brand-purple/25'
-                  : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+              className={`sentient-btn h-7 px-2.5 rounded-md text-[11.5px] font-body font-medium transition-all ${
+                statusFilter === key ? 'bg-brand-purple/18 text-brand-purple' : 'bg-surface/40 text-text-muted hover:text-text-primary'
               }`}
+              style={{ boxShadow: statusFilter === key ? '0 0 0 1px rgba(139,92,246,0.3), 0 2px 10px -3px rgba(139,92,246,0.3)' : '0 0 0 1px rgba(139,92,246,0.1)' }}
             >
               {cfg.label}
             </button>
@@ -311,35 +276,34 @@ export default function OportunidadesPage() {
       </div>
 
       {/* FILTERS — Type */}
-      <div className="space-y-2">
-        <p className="text-[10px] text-text-dim font-semibold uppercase tracking-wider">Tipo</p>
-        <div className="flex gap-2 flex-wrap">
+      <div className="space-y-1.5">
+        <p className="text-[10px] text-text-dim font-semibold uppercase tracking-[0.14em]">Tipo</p>
+        <div className="flex gap-1 flex-wrap">
           <button
             onClick={() => setTypeFilter('')}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all ${
-              !typeFilter
-                ? 'bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/25'
-                : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+            className={`sentient-btn h-7 px-2.5 rounded-md text-[11.5px] font-body font-medium transition-all ${
+              !typeFilter ? 'bg-brand-purple/18 text-brand-purple' : 'bg-surface/40 text-text-muted hover:text-text-primary'
             }`}
+            style={{ boxShadow: !typeFilter ? '0 0 0 1px rgba(139,92,246,0.3), 0 2px 10px -3px rgba(139,92,246,0.3)' : '0 0 0 1px rgba(139,92,246,0.1)' }}
           >
             Todos
           </button>
           {Object.entries(OPP_CONFIG).map(([key, cfg]) => {
             const count = typeCounts[key] || 0
             if (count === 0 && opportunities.length > 0) return null
+            const active = typeFilter === key
             return (
               <button
                 key={key}
                 onClick={() => setTypeFilter(typeFilter === key ? '' : key)}
-                className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-all flex items-center gap-1.5 ${
-                  typeFilter === key
-                    ? `${cfg.bg} ${cfg.color} border`
-                    : 'bg-surface-2 text-text-muted border border-border hover:border-border-2'
+                className={`sentient-btn h-7 px-2.5 rounded-md text-[11.5px] font-body font-medium transition-all flex items-center gap-1.5 ${
+                  active ? 'bg-brand-purple/18 text-brand-purple' : 'bg-surface/40 text-text-muted hover:text-text-primary'
                 }`}
+                style={{ boxShadow: active ? '0 0 0 1px rgba(139,92,246,0.3), 0 2px 10px -3px rgba(139,92,246,0.3)' : '0 0 0 1px rgba(139,92,246,0.1)' }}
               >
                 {cfg.label}
                 {count > 0 && (
-                  <span className={`text-[11px] font-body ${typeFilter === key ? cfg.color : 'text-text-dim'}`}>
+                  <span className={`text-[10px] font-mono tabular-nums ${active ? 'text-brand-purple' : 'text-text-dim'}`}>
                     {count}
                   </span>
                 )}
@@ -486,13 +450,16 @@ export default function OportunidadesPage() {
 }
 
 function SummaryCard({ icon, gradient, value, label }: { icon: React.ReactNode; gradient: string; value: string; label: string }) {
+  void gradient
   return (
-    <div className="glass-card p-4">
-      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
-        {icon}
+    <div className="rounded-xl p-3 bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="w-7 h-7 rounded-md bg-brand-purple/10 flex items-center justify-center text-brand-purple flex-shrink-0" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.15)' }}>
+          <span className="[&>svg]:w-3.5 [&>svg]:h-3.5">{icon}</span>
+        </div>
       </div>
-      <div className="text-sm font-bold font-mono text-text-primary">{value}</div>
-      <div className="text-[11px] font-body text-text-muted mt-0.5">{label}</div>
+      <div className="text-[18px] font-mono font-semibold text-text-primary mt-2 tabular-nums leading-none">{value}</div>
+      <div className="text-[10.5px] font-body text-text-muted mt-1">{label}</div>
     </div>
   )
 }
