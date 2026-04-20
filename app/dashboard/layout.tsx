@@ -477,8 +477,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Menu size={16} />
           </button>
 
-          {/* Floating controls cluster — top-right */}
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20">
+          {/*
+            Floating controls cluster — top-right.
+            pointer-events-none on the wrapper so empty gaps between controls
+            don't intercept clicks on underlying page tabs/buttons.
+            pointer-events-auto on each direct child restores interactivity
+            exactly where a visible control exists. Fix for S99 audit bugs
+            #6/#24/#27/#35/#39/#46/#50 where Playwright confirmed this div
+            was blocking tabs (Transmisiones, Impulsos, Revenue, Reseñas,
+            Inteligencia, Auditoría, Salud).
+          */}
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20 pointer-events-none [&>*]:pointer-events-auto">
             <TrialPill org={org} onNavigate={navigateTo} />
             {branches.length > 1 && (
               <BranchSelector
