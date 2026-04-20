@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { mfaChallengeRequired } from '@/lib/mfa-api'
 import { Eye, EyeOff, ArrowRight, Zap } from 'lucide-react'
+import { AtaraxiaLogo, AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 
 export default function LoginPage() {
   return (
@@ -152,15 +153,8 @@ function LoginForm() {
       {/* ===== LEFT PANEL ===== */}
       <div className="hidden lg:flex lg:w-[45%] relative items-center justify-center">
         <div className="relative z-10 px-12 max-w-md">
-          {/* Sentient eye */}
           <div className="mb-10">
-            <svg width="56" height="56" viewBox="0 0 48 48" className="animate-sentient-breathe">
-              <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-              <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
-                <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
-            </svg>
+            <AtaraxiaLogo size={72} />
           </div>
 
           <h1 className="font-body text-3xl font-bold text-white leading-tight mb-3">
@@ -191,13 +185,8 @@ function LoginForm() {
       {/* ===== RIGHT PANEL — Login ===== */}
       <div className="flex-1 flex items-center justify-center px-5 relative z-10">
         <div className="w-full max-w-md">
-          {/* Mobile: sentient eye */}
           <div className="lg:hidden flex justify-center mb-6">
-            <svg width="40" height="40" viewBox="0 0 48 48" className="animate-sentient-breathe">
-              <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-              <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8" />
-              <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
-            </svg>
+            <AtaraxiaLogoCompact size={40} />
           </div>
 
           <div className="mb-6">

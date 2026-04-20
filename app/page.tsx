@@ -4,17 +4,11 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-// Sentient Eye SVG component
+import { AtaraxiaLogo, AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
+
+// Backwards-compat alias so existing call-sites keep working.
 function SentientEye({ size = 28 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48">
-      <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-      <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
-        <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
-      </circle>
-      <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
-    </svg>
-  )
+  return size > 36 ? <AtaraxiaLogo size={size} /> : <AtaraxiaLogoCompact size={size} />
 }
 import {
   ArrowRight, Check, Zap, Clock, Shield, MessageSquare,

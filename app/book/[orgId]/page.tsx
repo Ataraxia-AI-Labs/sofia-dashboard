@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Calendar, Clock, MapPin, Phone, ChevronLeft, ChevronRight, Check, Loader2, User } from 'lucide-react'
+import { AtaraxiaLogo, AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 
 const API = process.env.NEXT_PUBLIC_API_URL!
 
@@ -132,10 +133,9 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
   if (!clinic || !clinic.booking_enabled) return (
     <div className="min-h-screen bg-void flex items-center justify-center px-4">
       <div className="text-center">
-        <svg width="32" height="32" viewBox="0 0 48 48" className="mx-auto mb-3 opacity-40">
-          <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" />
-          <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.5" />
-        </svg>
+        <div className="mx-auto mb-3 opacity-50 flex justify-center">
+          <AtaraxiaLogoCompact size={40} />
+        </div>
         <p className="text-text-muted text-xs font-body">Esta clinica no tiene reservas en linea habilitadas.</p>
       </div>
     </div>
@@ -146,11 +146,9 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-5">
-          <svg width="28" height="28" viewBox="0 0 48 48" className="mx-auto mb-2 animate-sentient-breathe">
-            <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-            <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.8" />
-            <circle cx="24" cy="24" r="2" fill="#F5F3FF" />
-          </svg>
+          <div className="mx-auto mb-2 flex justify-center">
+            <AtaraxiaLogo size={40} ambient={false} />
+          </div>
           <h1 className="text-xl font-bold text-white font-body">{clinic.name}</h1>
           {clinic.specialty && <p className="text-text-muted text-[12px] font-body mt-0.5">{clinic.specialty}</p>}
           {clinic.city && (

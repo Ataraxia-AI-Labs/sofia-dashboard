@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 
 export const metadata = {
   title: 'Terminos de Servicio — SofIA by Ataraxia IA Labs',
@@ -13,11 +14,7 @@ export default function TerminosPage() {
       <nav className="border-b border-border/50 bg-surface sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-xs font-body text-brand-purple font-semibold tracking-wide">
-            <svg width="20" height="20" viewBox="0 0 48 48">
-              <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.6" />
-              <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.8" />
-              <circle cx="24" cy="24" r="2" fill="#F5F3FF" />
-            </svg>
+            <AtaraxiaLogoCompact size={20} />
             SofIA
           </Link>
           <Link

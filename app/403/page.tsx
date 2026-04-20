@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Home, ShieldOff } from 'lucide-react'
+import { AtaraxiaLogo } from '@/components/ataraxia-logo'
 
 export default function Forbidden() {
   return (
@@ -8,15 +9,8 @@ export default function Forbidden() {
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[250px] rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(239, 68, 68, 0.04)' }} />
 
       <div className="text-center space-y-6 max-w-md relative z-10">
-        {/* Sentient Eye */}
         <div className="flex justify-center">
-          <svg width="36" height="36" viewBox="0 0 48 48">
-            <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-            <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
-              <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
-            </circle>
-            <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
-          </svg>
+          <AtaraxiaLogo size={56} />
         </div>
 
         {/* Icon + 403 display */}

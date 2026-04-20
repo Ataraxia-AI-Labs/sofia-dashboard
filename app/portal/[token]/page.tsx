@@ -11,6 +11,7 @@ import {
   getPortalData, cancelAppointment, requestReschedule,
 } from '@/lib/api/portal'
 import type { PortalData } from '@/types'
+import { AtaraxiaLogo } from '@/components/ataraxia-logo'
 
 // ============================================================
 // TIER CONFIG — Patient-facing gamification tiers
@@ -164,11 +165,9 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* ======== WELCOME HEADER ======== */}
         <div className="text-center mb-5">
-          <svg width="28" height="28" viewBox="0 0 48 48" className="mx-auto mb-2 animate-sentient-breathe">
-            <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-            <circle cx="24" cy="24" r="5" fill="#8B5CF6" opacity="0.8" />
-            <circle cx="24" cy="24" r="2" fill="#F5F3FF" />
-          </svg>
+          <div className="mx-auto mb-2 flex justify-center">
+            <AtaraxiaLogo size={40} ambient={false} />
+          </div>
           <p className="text-[10px] text-brand-purple font-body font-medium uppercase tracking-wider mb-0.5">{data.clinic_name}</p>
           <h1 className="text-2xl font-bold text-white font-body mb-2">
             Hola, {data.patient_info.name.split(' ')[0]}

@@ -8,6 +8,7 @@ import {
   ArrowRight, ArrowLeft, Check, Zap, Clock, CreditCard, MessageSquare,
   Eye, EyeOff, ExternalLink, Shield, Mail, RefreshCw
 } from 'lucide-react'
+import { AtaraxiaLogo, AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
 
@@ -452,15 +453,8 @@ export default function OnboardingPage() {
       {/* ===== LEFT PANEL — Dynamic Portal ===== */}
       <div className="hidden lg:flex lg:w-[42%] relative items-center justify-center">
         <div className="relative z-10 px-12 max-w-md">
-          {/* Sentient eye */}
           <div className="mb-10">
-            <svg width="48" height="48" viewBox="0 0 48 48" className="animate-sentient-breathe">
-              <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-              <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8">
-                <animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
-            </svg>
+            <AtaraxiaLogo size={64} />
           </div>
 
           {/* Step counter */}
@@ -540,11 +534,7 @@ export default function OnboardingPage() {
           {/* Mobile: step counter + narrative */}
           <div className="lg:hidden mb-6">
             <div className="flex items-center gap-2 mb-2">
-              <svg width="24" height="24" viewBox="0 0 48 48" className="animate-sentient-breathe">
-                <ellipse cx="24" cy="24" rx="20" ry="12" fill="none" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.4" />
-                <circle cx="24" cy="24" r="6" fill="#8B5CF6" opacity="0.8" />
-                <circle cx="24" cy="24" r="2.5" fill="#F5F3FF" />
-              </svg>
+              <AtaraxiaLogoCompact size={24} />
               <span className="text-[12px] font-body text-text-dim uppercase tracking-widest">
                 Paso {step}/4
               </span>
