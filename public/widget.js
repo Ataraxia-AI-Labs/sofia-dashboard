@@ -231,6 +231,12 @@
   async function init() {
     try {
       const res = await fetch(`${API_BASE}/webchat/${ORG_ID}/config`);
+      if (res.status === 403) {
+        // Backend rejected the domain. Do NOT render — refusing silently
+        // is safer than falling back to an open default config.
+        console.warn('[SofIA Widget] Domain not authorized for this widget');
+        return;
+      }
       if (!res.ok) throw new Error('Config fetch failed');
       config = await res.json();
       if (!config.enabled) return;
@@ -239,16 +245,23 @@
       config = { bot_name: 'SofIA', welcome_message: 'Hola! ¿En que te puedo ayudar?', primary_color: '#7c3aed', enabled: true };
     }
 
-    // Domain allowlist — if configured, widget only renders on approved domains
+    // Client-side defensive check mirrors the server allowlist.
+    // '*.domain.com' patterns allow any subdomain, 'www.' is normalized.
     const domains = Array.isArray(config.allowed_domains) ? config.allowed_domains.filter(Boolean) : [];
     if (domains.length > 0) {
-      const host = window.location.hostname.toLowerCase();
+      const host = window.location.hostname.toLowerCase().replace(/^www\./, '');
       const allowed = domains.some(d => {
-        const norm = String(d).toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-        return host === norm || host.endsWith('.' + norm);
+        let norm = String(d).trim().toLowerCase()
+          .replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/\/$/, '');
+        if (norm.startsWith('*.')) {
+          const base = norm.slice(2);
+          return host === base || host.endsWith('.' + base);
+        }
+        norm = norm.replace(/^www\./, '');
+        return host === norm;
       });
       if (!allowed) {
-        console.warn('[SofIA Widget] Current domain not in allowlist');
+        console.warn('[SofIA Widget] Current domain', host, 'not in allowlist:', domains);
         return;
       }
     }
