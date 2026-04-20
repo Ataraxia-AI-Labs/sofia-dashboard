@@ -189,7 +189,13 @@ export default function FacturacionPage() {
           <div>
             <p className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">{t('price')}</p>
             <p className="text-[12px] font-body font-semibold text-text-primary mt-1">
-              {formatCOP(sub.amount_cop)} <span className="text-text-dim font-normal">/ {billingLabel}</span>
+              {sub.plan === 'ENTERPRISE' ? (
+                <span>{t('customPricing') || 'Personalizado'}</span>
+              ) : (
+                <>
+                  {formatCOP(sub.amount_cop)} <span className="text-text-dim font-normal">/ {billingLabel}</span>
+                </>
+              )}
             </p>
           </div>
           <div>

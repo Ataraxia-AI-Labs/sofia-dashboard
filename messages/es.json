@@ -913,10 +913,11 @@
     "completed": "Completadas"
   },
   "billing": {
-    "title": "Facturacion",
+    "title": "Facturación",
     "currentPlan": "Plan actual",
     "plan": "Plan",
     "price": "Precio",
+    "customPricing": "Personalizado",
     "nextCharge": "Proximo cobro",
     "paymentMethod": "Metodo de pago",
     "notRegistered": "No registrado",

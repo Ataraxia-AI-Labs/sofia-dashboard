@@ -917,6 +917,7 @@
     "currentPlan": "Current plan",
     "plan": "Plan",
     "price": "Price",
+    "customPricing": "Custom",
     "nextCharge": "Next charge",
     "paymentMethod": "Payment method",
     "notRegistered": "Not registered",
