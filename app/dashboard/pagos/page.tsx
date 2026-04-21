@@ -65,7 +65,7 @@ export default function PagosPage() {
               const paid = payments.filter(p => p.status === 'PAID' || p.status === 'Pagado').length
               const pending = payments.filter(p => p.status === 'PENDING' || p.status === 'Pendiente').length
               const rejected = payments.filter(p => p.status === 'FAILED' || p.status === 'REJECTED' || p.status === 'Rechazado').length
-              return `${payments.length} transacciones · ${paid} pagadas · ${pending} pendientes${rejected > 0 ? ` · ${rejected} rechazadas` : ''}`
+              return `${payments.length} transacciones · ${paid} ${paid === 1 ? 'pagada' : 'pagadas'} · ${pending} ${pending === 1 ? 'pendiente' : 'pendientes'}${rejected > 0 ? ` · ${rejected} ${rejected === 1 ? 'rechazada' : 'rechazadas'}` : ''}`
             })()}
           </p>
         </div>
@@ -104,7 +104,7 @@ export default function PagosPage() {
             <span className="text-[12px] font-body text-text-dim uppercase font-semibold">Pendiente</span>
           </div>
           <div className="text-sm font-bold text-status-warning font-body">{formatCOP(resumen.total_pending || 0)}</div>
-          <div className="text-[10px] text-text-dim mt-1">{resumen.pagos_pendientes || 0} pendientes</div>
+          <div className="text-[10px] text-text-dim mt-1">{resumen.pagos_pendientes || 0} {(resumen.pagos_pendientes || 0) === 1 ? 'pendiente' : 'pendientes'}</div>
         </div>
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">

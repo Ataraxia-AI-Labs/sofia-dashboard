@@ -125,7 +125,8 @@ const PLAN_COLOR_CLASSES: Record<string, { bg: string; border: string; text: str
 /* ------------------------------------------------------------------ */
 
 export default function PlanesPage() {
-  const { org, orgId, user } = useOrg()
+  const { org, orgId, user, branches } = useOrg()
+  const activeBranchesCount = branches?.length || 0
   const t = useTranslations('plans')
 
   const [cycle, setCycle] = useState<BillingCycle>('MONTHLY')
@@ -345,20 +346,38 @@ export default function PlanesPage() {
                 </div>
 
                 <div className="space-y-1.5 mb-4">
-                  {plan.features.map((feat) => (
-                    <div key={feat.key} className="flex items-center gap-2">
-                      {feat.included ? (
-                        <Check size={12} className="text-status-success flex-shrink-0" strokeWidth={2.5} />
-                      ) : (
-                        <X size={12} className="text-status-danger/60 flex-shrink-0" strokeWidth={2.5} />
-                      )}
-                      <span className={`text-[12px] font-body ${
-                        feat.included ? 'text-text-secondary' : 'text-text-dim line-through opacity-60'
-                      }`}>
-                        {t(`features.${feat.key}`)}
-                      </span>
-                    </div>
-                  ))}
+                  {plan.features.map((feat) => {
+                    // For the plan the org currently has, annotate the
+                    // location feature with real consumption so the CEO
+                    // sees "Sedes ilimitadas · 2 activas" etc. Only on
+                    // the user's own plan — other plans stay abstract.
+                    const isCurrent = plan.id === currentPlan
+                    const isLocationFeature =
+                      feat.key === 'upTo3Locations' ||
+                      feat.key === 'upTo10Locations' ||
+                      feat.key === 'unlimitedLocations'
+                    const showBranchCount = isCurrent && isLocationFeature && activeBranchesCount > 0
+                    return (
+                      <div key={feat.key} className="flex items-center gap-2">
+                        {feat.included ? (
+                          <Check size={12} className="text-status-success flex-shrink-0" strokeWidth={2.5} />
+                        ) : (
+                          <X size={12} className="text-status-danger/60 flex-shrink-0" strokeWidth={2.5} />
+                        )}
+                        <span className={`text-[12px] font-body ${
+                          feat.included ? 'text-text-secondary' : 'text-text-dim line-through opacity-60'
+                        }`}>
+                          {t(`features.${feat.key}`)}
+                          {showBranchCount && (
+                            <span className="text-text-dim">
+                              {' · '}
+                              {activeBranchesCount} {activeBranchesCount === 1 ? 'activa' : 'activas'}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    )
+                  })}
                 </div>
 
                 <button

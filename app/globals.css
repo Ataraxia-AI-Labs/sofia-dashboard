@@ -44,25 +44,27 @@
   --color-white: #FFFFFF;
 }
 
-/* Light theme — Calm White.
-   CEO note: antes era lavanda claro y se sentía visualmente agresivo.
-   Ahora blanco puro con greys cálidos neutros como base, y el brand
-   purple (#8B5CF6) queda como ACENTO vibrante (botones, cards, glows)
-   en vez de teñir el fondo. Transmite tranquilidad + claridad. */
+/* Light theme — Calm White con morado armonizado.
+   Iteración: el white puro-puro se sentía clínico y agresivo. CEO pidió
+   'más descanso visual, morado que acompañe al blanco como antes lo
+   hacía el lavanda'. Ahora blanco casi puro con un hint morado MUY
+   sutil en surfaces secundarios (~1-2%), text-primary suavizado a un
+   gris-tinta con tinte morado casi imperceptible, y bordes que siguen
+   la misma paleta. El ojo descansa. El morado acentúa. Ninguno grita. */
 .light {
-  --color-void: #FCFCFD;
+  --color-void: #FBFBFE;          /* near white, un soplo de morado */
   --color-surface: #FFFFFF;
   --color-surface-rgb: 255 255 255;
-  --color-surface-2: #F5F5F7;
-  --color-surface-2-rgb: 245 245 247;
-  --color-surface-3: #ECECEF;
-  --color-border: #E2E2E7;
-  --color-border-2: #CFCFD6;
-  --color-text-primary: #0E0E1A;
-  --color-text-secondary: #3A3A44;
-  --color-text-muted: #6B6B75;
-  --color-text-dim: #A3A3AD;
-  --color-white: #0E0E1A;
+  --color-surface-2: #F4F3FA;     /* card hover: morado al 2% */
+  --color-surface-2-rgb: 244 243 250;
+  --color-surface-3: #E9E7F4;     /* pressed / selected */
+  --color-border: #E0DCEE;        /* bordes suaves, no grises puros */
+  --color-border-2: #C9C2E0;
+  --color-text-primary: #1C1830;  /* gris-tinta con tilt morado, no #000 duro */
+  --color-text-secondary: #3F3A55;
+  --color-text-muted: #6C6780;
+  --color-text-dim: #A09AB0;
+  --color-white: #1C1830;
 }
 
 /* Ataraxia Cyan — Immersive cyan atmosphere.

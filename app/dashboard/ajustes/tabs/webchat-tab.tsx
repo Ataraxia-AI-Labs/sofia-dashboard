@@ -81,9 +81,16 @@ export function WebchatTab({ orgId, isReadOnly, onMessage }: Props) {
     setSaving(false)
   }
 
-  const widgetOrigin = typeof window !== 'undefined'
-    ? window.location.origin
-    : (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://sofia-dashboard-mu.vercel.app')
+  // Always serve the install snippet from the production host — even when
+  // the CEO is previewing from localhost:3000 or a Vercel preview URL,
+  // the embed code a clinic pastes into their website must point to the
+  // stable production widget.js. Override via NEXT_PUBLIC_WIDGET_ORIGIN
+  // if the dashboard ever migrates domain.
+  const widgetOrigin =
+    process.env.NEXT_PUBLIC_WIDGET_ORIGIN ||
+    (typeof window !== 'undefined' && /^https:\/\/dashboard\.ataraxiaialabs\.ai/.test(window.location.origin)
+      ? window.location.origin
+      : 'https://dashboard.ataraxiaialabs.ai')
   const embedCode = `<script src="${widgetOrigin}/widget.js" data-org-id="${orgId}" data-color="${config.primary_color}" data-position="${config.position}" async></script>`
 
   const handleCopy = () => {
