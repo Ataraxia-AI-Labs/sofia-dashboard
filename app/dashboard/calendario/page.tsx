@@ -22,14 +22,18 @@ const WaitingRoomPanel = dynamic(() => import('./waiting-room-panel'), {
   loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
+// 7 statuses, 7 visually distinct hues. REQUESTED (purple), SCHEDULED
+// (teal/cyan-success) and RESCHEDULED (amber/gold) used to read as
+// "purple variants" in the legend because cyan at low opacity drifts
+// toward purple on the dark theme. Mapped each to its own color family.
 const STATUS_STYLE: Record<string, { color: string; bg: string; icon: typeof CheckCircle }> = {
   CONFIRMED: { color: 'text-status-info', bg: 'bg-status-info/10 border-status-info/20', icon: CheckCircle },
   COMPLETED: { color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', icon: CheckCircle },
   CANCELLED: { color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20', icon: XCircle },
   NO_SHOW: { color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', icon: AlertTriangle },
   REQUESTED: { color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20', icon: HelpCircle },
-  RESCHEDULED: { color: 'text-brand-gold', bg: 'bg-brand-gold/10 border-brand-gold/20', icon: CalIcon },
-  SCHEDULED: { color: 'text-brand-cyan', bg: 'bg-brand-cyan/10 border-brand-cyan/20', icon: CalIcon },
+  SCHEDULED: { color: 'text-brand-cyan', bg: 'bg-brand-cyan/15 border-brand-cyan/30', icon: CalIcon },
+  RESCHEDULED: { color: 'text-brand-gold', bg: 'bg-brand-gold/15 border-brand-gold/30', icon: CalIcon },
 }
 
 const STATUS_KEYS = ['CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'REQUESTED', 'RESCHEDULED', 'SCHEDULED']

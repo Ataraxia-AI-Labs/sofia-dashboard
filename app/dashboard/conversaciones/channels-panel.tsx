@@ -221,8 +221,13 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   <span className="text-[12px] font-body text-text-dim flex items-center gap-1">
                     <TrendingUp size={9} /> {t('conversion')}
                   </span>
-                  <span className="text-xs font-bold font-body text-brand-purple">
-                    {((m?.conversion_rate ?? 0) * 100).toFixed(1)}%
+                  <span
+                    className="text-xs font-bold font-body text-brand-purple"
+                    title={(m?.message_count ?? 0) < 5 ? 'Muestra insuficiente (menos de 5 mensajes)' : undefined}
+                  >
+                    {(m?.message_count ?? 0) < 5
+                      ? '—'
+                      : `${((m?.conversion_rate ?? 0) * 100).toFixed(1)}%`}
                   </span>
                 </div>
               </div>

@@ -21,11 +21,14 @@
 
   // Session management
   const SESSION_KEY = `sofia_session_${ORG_ID}`;
+  const NAME_KEY = `sofia_name_${ORG_ID}`;
   let sessionId = localStorage.getItem(SESSION_KEY);
   if (!sessionId) {
     sessionId = crypto.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36);
     localStorage.setItem(SESSION_KEY, sessionId);
   }
+  // null = not asked yet, '' = user skipped, any string = their name
+  let visitorName = localStorage.getItem(NAME_KEY);
 
   let config = null;
   let isOpen = false;
@@ -88,6 +91,21 @@
     #sofia-widget-root #sofia-send:disabled { opacity: .35; cursor: not-allowed; }
     #sofia-widget-root #sofia-powered { font-family: 'JetBrains Mono', ui-monospace, monospace; text-align: center; padding: 7px; font-size: 8px; color: #9ca3af; background: #fff; letter-spacing: 1.2px; text-transform: uppercase; border-top: 1px solid #f3f4f6; flex-shrink: 0; }
     #sofia-widget-root #sofia-powered a { color: var(--sofia-color); text-decoration: none; font-weight: 600; }
+
+    /* Pre-chat name capture — shown on first open when visitor is anonymous */
+    #sofia-widget-root #sofia-prechat { position: absolute; inset: 56px 0 0 0; background: #f8f8fa; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; gap: 14px; animation: sofia-msg-in .25s; }
+    #sofia-widget-root #sofia-prechat.show { display: flex; }
+    #sofia-widget-root #sofia-prechat-title { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--sofia-color); font-weight: 600; }
+    #sofia-widget-root #sofia-prechat-sub { font-size: 15px; color: #1f2937; text-align: center; line-height: 1.45; max-width: 300px; font-weight: 500; letter-spacing: -.01em; }
+    #sofia-widget-root #sofia-prechat-hint { font-size: 11px; color: #9ca3af; text-align: center; margin-top: -6px; }
+    #sofia-widget-root #sofia-prechat-form { display: flex; gap: 8px; width: 100%; max-width: 300px; margin-top: 4px; }
+    #sofia-widget-root #sofia-prechat-input { flex: 1; border: 1px solid #e5e7eb; border-radius: 22px; padding: 10px 16px; font-size: 14px; outline: none; background: #fff; color: #1f2937; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
+    #sofia-widget-root #sofia-prechat-input:focus { border-color: var(--sofia-color); box-shadow: 0 0 0 3px var(--sofia-color-soft); }
+    #sofia-widget-root #sofia-prechat-submit { padding: 10px 18px; border-radius: 22px; background: var(--sofia-color); color: #fff; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; transition: transform .15s, opacity .15s; }
+    #sofia-widget-root #sofia-prechat-submit:hover:not(:disabled) { transform: scale(1.03); }
+    #sofia-widget-root #sofia-prechat-submit:disabled { opacity: .4; cursor: not-allowed; }
+    #sofia-widget-root #sofia-prechat-skip { background: none; border: none; font-size: 11px; color: #9ca3af; cursor: pointer; text-decoration: underline; font-family: inherit; margin-top: 2px; padding: 4px; }
+    #sofia-widget-root #sofia-prechat-skip:hover { color: #6b7280; }
   `;
 
   // ---------------------------------------------------------------
@@ -129,6 +147,16 @@
           <button id="sofia-close" aria-label="Cerrar">&times;</button>
         </div>
         <div id="sofia-messages"></div>
+        <div id="sofia-prechat">
+          <div id="sofia-prechat-title">Antes de empezar</div>
+          <div id="sofia-prechat-sub">¿Cómo te llamas?</div>
+          <div id="sofia-prechat-hint">Nos ayuda a atenderte mejor</div>
+          <form id="sofia-prechat-form">
+            <input id="sofia-prechat-input" placeholder="Tu nombre" autocomplete="given-name" maxlength="60" required />
+            <button id="sofia-prechat-submit" type="submit">Empezar</button>
+          </form>
+          <button id="sofia-prechat-skip" type="button">Prefiero no decirlo</button>
+        </div>
         <div id="sofia-input-area">
           <input id="sofia-input" placeholder="Escribe un mensaje..." autocomplete="off" />
           <button id="sofia-send" aria-label="Enviar">
@@ -148,6 +176,39 @@
     document.getElementById('sofia-input').addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
+
+    // Pre-chat name capture
+    const prechatForm = document.getElementById('sofia-prechat-form');
+    prechatForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const input = document.getElementById('sofia-prechat-input');
+      const name = input.value.trim().slice(0, 60);
+      if (!name) return;
+      visitorName = name;
+      localStorage.setItem(NAME_KEY, name);
+      hidePrechat();
+      const botName = config?.bot_name || 'SofIA';
+      const firstGreeting = `Hola ${name.split(' ')[0]}, soy ${botName}. ¿En qué te puedo ayudar?`;
+      addMessage(firstGreeting, 'bot');
+    });
+    document.getElementById('sofia-prechat-skip').addEventListener('click', function () {
+      visitorName = '';
+      localStorage.setItem(NAME_KEY, '');
+      hidePrechat();
+      const greeting = config?.welcome_message || config?.greeting;
+      if (greeting) addMessage(greeting, 'bot');
+    });
+  }
+
+  function showPrechat() {
+    document.getElementById('sofia-prechat').classList.add('show');
+    // focus after CSS transition starts
+    setTimeout(() => document.getElementById('sofia-prechat-input')?.focus(), 60);
+  }
+
+  function hidePrechat() {
+    document.getElementById('sofia-prechat').classList.remove('show');
+    setTimeout(() => document.getElementById('sofia-input')?.focus(), 120);
   }
 
   function toggleChat() {
@@ -156,8 +217,22 @@
     win.classList.toggle('open', isOpen);
 
     if (isOpen && messages.length === 0) {
+      // visitorName === null means we never asked — show the pre-chat name form.
+      // Empty string ('') means the user explicitly skipped — just greet.
+      // Any other string means we have a saved name — greet personalized.
+      if (visitorName === null) {
+        showPrechat();
+        return;
+      }
       const greeting = config?.welcome_message || config?.greeting;
-      if (greeting) addMessage(greeting, 'bot');
+      if (greeting) {
+        if (visitorName) {
+          const firstName = visitorName.split(' ')[0];
+          addMessage(greeting.replace(/^hola[,!]?/i, `Hola ${firstName},`), 'bot');
+        } else {
+          addMessage(greeting, 'bot');
+        }
+      }
     }
   }
 
@@ -199,10 +274,12 @@
     showTyping();
 
     try {
+      const body = { session_id: sessionId, message: text };
+      if (visitorName) body.visitor_name = visitorName;
       const res = await fetch(`${API_BASE}/webchat/${ORG_ID}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, message: text }),
+        body: JSON.stringify(body),
       });
 
       hideTyping();

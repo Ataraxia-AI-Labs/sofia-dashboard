@@ -122,14 +122,16 @@ export default function PagosPage() {
             </div>
             <span className="text-[12px] font-body text-text-dim uppercase font-semibold">ROI</span>
           </div>
-          <div className="text-xs font-bold text-status-info font-body">{(() => {
+          <div className="text-xs font-bold text-status-info font-body" title="Revenue cobrado dividido por costo IA. Valores muy altos reflejan que el costo IA del periodo es de centavos de USD.">{(() => {
             const r = Number(resumen.roi_estimado) || 0
             if (!isFinite(r) || r <= 0) return '—'
-            if (r >= 1e6) return `${(r / 1e6).toFixed(1)}M×`
-            if (r >= 1e3) return `${(r / 1e3).toFixed(1)}K×`
-            return `${r.toFixed(0)}×`
+            // Beyond 1000× the exact figure is noise — IA cost dropped near zero.
+            // Clamp to a signal-of-scale rather than a fake-precision number.
+            if (r >= 1e3) return '1000×+'
+            if (r >= 100) return `${Math.round(r)}×`
+            return `${r.toFixed(1)}×`
           })()}</div>
-          <div className="text-[10px] text-text-dim mt-1" title="Revenue cobrado dividido por costo IA. Si el valor parece desproporcionado, es porque el costo de IA en este periodo fue casi cero (centavos de USD).">IA: ${(Number(resumen.costo_ia_usd) || 0).toFixed(2)} USD</div>
+          <div className="text-[10px] text-text-dim mt-1">IA: ${(Number(resumen.costo_ia_usd) || 0).toFixed(2)} USD</div>
         </div>
       </div>
 
@@ -288,12 +290,12 @@ export default function PagosPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-[12px] font-body text-text-muted">ROI estimado</span>
-                  <span className="text-xs font-bold text-status-success font-body">{(() => {
+                  <span className="text-xs font-bold text-status-success font-body" title="Revenue cobrado dividido por costo IA. Valores muy altos reflejan que el costo IA del periodo es de centavos de USD.">{(() => {
             const r = Number(resumen.roi_estimado) || 0
             if (!isFinite(r) || r <= 0) return '—'
-            if (r >= 1e6) return `${(r / 1e6).toFixed(1)}M×`
-            if (r >= 1e3) return `${(r / 1e3).toFixed(1)}K×`
-            return `${r.toFixed(0)}×`
+            if (r >= 1e3) return '1000×+'
+            if (r >= 100) return `${Math.round(r)}×`
+            return `${r.toFixed(1)}×`
           })()}</span>
                 </div>
                 <div className="flex justify-between items-center">
