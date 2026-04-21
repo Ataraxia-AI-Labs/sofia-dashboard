@@ -68,7 +68,7 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
           aria-label={locked ? `${label} — próximamente` : label}
           aria-current={isActive ? 'page' : undefined}
           className={`
-            group relative w-7 h-7 flex items-center justify-center rounded-md
+            group relative w-8 h-8 flex items-center justify-center rounded-md
             transition-all duration-150 ease-out
             active:scale-[0.9]
             ${locked
@@ -79,12 +79,12 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
             }
           `}
         >
-          <Icon size={14} strokeWidth={isActive ? 2 : 1.6} />
+          <Icon size={16} strokeWidth={isActive ? 2 : 1.6} />
           {isActive && (
-            <span className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[2px] h-3 bg-brand-purple rounded-full shadow-[0_0_5px_rgba(139,92,246,0.7)]" />
+            <span className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[2px] h-3.5 bg-brand-purple rounded-full shadow-[0_0_5px_rgba(139,92,246,0.7)]" />
           )}
           {locked && (
-            <Lock size={6} className="absolute -top-0.5 -right-0.5 text-text-dim/50" />
+            <Lock size={7} className="absolute -top-0.5 -right-0.5 text-text-dim/50" />
           )}
         </button>
       </div>

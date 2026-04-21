@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
+import { AtaraxiaLogo } from '@/components/ataraxia-logo'
 import { ArtifactRenderer } from './artifact-renderer'
 import type { ConsoleArtifact } from '@/lib/api/console'
 
@@ -19,6 +19,79 @@ interface Props {
   message: Message
 }
 
+/**
+ * Render `**text**` / `*text*` / `` `code` `` as semantic HTML instead of
+ * letting the raw asterisks bleed into the bubble. Keeps the renderer
+ * lightweight — no external markdown dep — while still giving the CEO
+ * the cinematic "emphasized" feel he asked for.
+ */
+function formatInline(text: string): React.ReactNode[] {
+  const tokens: React.ReactNode[] = []
+  // Order matters: bold first, then italics, then inline code, else plain.
+  const re = /(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)|(`[^`\n]+`)/g
+  let last = 0
+  let key = 0
+  let m: RegExpExecArray | null
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) tokens.push(text.slice(last, m.index))
+    const raw = m[0]
+    if (raw.startsWith('**')) {
+      tokens.push(
+        <strong
+          key={`b-${key++}`}
+          className="font-semibold text-brand-purple"
+          style={{ textShadow: '0 0 12px rgba(139,92,246,0.25)' }}
+        >
+          {raw.slice(2, -2)}
+        </strong>,
+      )
+    } else if (raw.startsWith('`')) {
+      tokens.push(
+        <code key={`c-${key++}`} className="font-mono text-[12.5px] px-1.5 py-0.5 rounded bg-brand-purple/12 text-brand-purple">
+          {raw.slice(1, -1)}
+        </code>,
+      )
+    } else {
+      tokens.push(<em key={`i-${key++}`} className="text-text-primary opacity-95">{raw.slice(1, -1)}</em>)
+    }
+    last = m.index + raw.length
+  }
+  if (last < text.length) tokens.push(text.slice(last))
+  return tokens
+}
+
+function FormattedText({ text }: { text: string }) {
+  // Preserve newlines as separate <p> nodes so markdown feels structured
+  // (not a giant wall of pre-wrap) while inline bold/italic/code still works.
+  const blocks = text.split(/\n{2,}/)
+  return (
+    <div className="space-y-2.5">
+      {blocks.map((block, bi) => {
+        // Detect a list block (lines starting with '-', '*', or '1.')
+        const lines = block.split('\n')
+        const looksList = lines.every(l => /^\s*(?:[-*]|\d+\.)\s+/.test(l))
+        if (looksList && lines.length > 1) {
+          return (
+            <ul key={bi} className="space-y-1 pl-0.5">
+              {lines.map((l, li) => (
+                <li key={li} className="flex gap-2 text-left">
+                  <span className="text-brand-purple/70 select-none mt-[0.45em] leading-none">·</span>
+                  <span className="flex-1">{formatInline(l.replace(/^\s*(?:[-*]|\d+\.)\s+/, ''))}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        return (
+          <p key={bi} className="whitespace-pre-wrap text-left">
+            {formatInline(block)}
+          </p>
+        )
+      })}
+    </div>
+  )
+}
+
 export function MessageBubble({ message }: Props) {
   const isUser = message.role === 'user'
 
@@ -27,7 +100,7 @@ export function MessageBubble({ message }: Props) {
       <div className="flex justify-end gap-2">
         <div className="max-w-[68%]">
           <div
-            className="rounded-[20px] px-4 py-2.5 text-[14px] font-body bg-brand-purple/14 text-text-primary"
+            className="rounded-[20px] pl-3 pr-4 py-2.5 text-[14px] font-body bg-brand-purple/14 text-text-primary"
             style={{
               lineHeight: 1.65,
               letterSpacing: '-0.005em',
@@ -48,11 +121,20 @@ export function MessageBubble({ message }: Props) {
   }
 
   return (
-    <div className="flex gap-2.5">
-      <div className="flex-shrink-0 mt-2">
-        <AtaraxiaLogoCompact size={18} />
+    <div className="flex gap-3">
+      <div
+        className="flex-shrink-0 mt-1 relative"
+        aria-hidden
+        style={{ width: 32, height: 32 }}
+      >
+        {/* Subtle breathing halo behind the eye so it never reads 'tiny' */}
+        <span
+          className="absolute inset-0 rounded-full blur-[6px] opacity-70"
+          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.28), transparent 70%)' }}
+        />
+        <AtaraxiaLogo size={32} ambient={false} />
       </div>
-      <div className="max-w-[75%] space-y-2">
+      <div className="max-w-[75%] space-y-2 min-w-0">
         <div
           className="rounded-[20px] pl-3.5 pr-4 pt-3 pb-2.5 text-[14px] font-body bg-surface/60 backdrop-blur-sm text-text-primary"
           style={{
@@ -65,7 +147,7 @@ export function MessageBubble({ message }: Props) {
           {message.pending ? (
             <TypingState steps={message.thinkingSteps} />
           ) : (
-            <p className="whitespace-pre-wrap text-left">{message.text}</p>
+            <FormattedText text={message.text} />
           )}
         </div>
 

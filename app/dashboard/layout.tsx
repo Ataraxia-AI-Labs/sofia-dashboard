@@ -166,15 +166,16 @@ function Sidebar({
         ))}
       </nav>
 
-      {/* Bottom — logout naked */}
-      <div className="py-1.5 flex justify-center">
+      {/* Bottom — logout naked. A subtle divider keeps it tucked against
+          the last group without a visible gap breaking the flow. */}
+      <div className="mt-0.5 pt-1 flex justify-center relative before:absolute before:top-0 before:left-2 before:right-2 before:h-px before:bg-gradient-to-r before:from-transparent before:via-brand-purple/15 before:to-transparent">
         <Tooltip label={logoutLabel} side="right" delay={120}>
           <button
             onClick={onLogout}
-            className="w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-status-danger transition-all active:scale-[0.9] hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-text-dim hover:text-status-danger transition-all active:scale-[0.9] hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]"
             aria-label={logoutLabel}
           >
-            <LogOut size={13} strokeWidth={1.6} />
+            <LogOut size={15} strokeWidth={1.6} />
           </button>
         </Tooltip>
       </div>
