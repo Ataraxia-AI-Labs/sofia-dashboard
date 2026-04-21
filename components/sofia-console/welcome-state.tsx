@@ -30,7 +30,7 @@ export function WelcomeState({ userName, orgName }: WelcomeStateProps) {
       </h1>
 
       <p className="text-[12.5px] font-body text-text-dim max-w-[420px]">
-        {orgName ? `Pregúntale a SofIA lo que quieras sobre ${orgName}.` : 'Pregúntale a SofIA lo que quieras.'}
+        {orgName ? `${orgName} está pensando contigo. Pregúntale.` : 'Tu clínica está pensando contigo. Pregúntale.'}
       </p>
     </div>
   )

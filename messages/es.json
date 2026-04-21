@@ -869,7 +869,7 @@
   },
   "reports": {
     "title": "Inteligencia",
-    "subtitle": "Genera y descarga reportes PDF de rendimiento",
+    "subtitle": "Tu clínica por dentro — en números y narrativa.",
     "days": "{count} días",
     "downloadPDF": "Descargar PDF",
     "generating": "Generando...",
@@ -972,7 +972,7 @@
   },
   "plans": {
     "title": "Planes",
-    "subtitle": "Elige el plan que mejor se adapte a tu clínica",
+    "subtitle": "Un plan para cada etapa. De una clínica que abre a una red que nunca duerme.",
     "currentPlan": "Plan actual",
     "trialDaysLeft": "{days} días restantes de prueba",
     "trialExpiresToday": "Tu prueba expira hoy -- activa un plan para no perder acceso",
@@ -1217,7 +1217,7 @@
   },
   "campaigns": {
     "title": "Campañas de Marketing",
-    "subtitle": "Crea y gestiona campañas de WhatsApp segmentadas",
+    "subtitle": "Mensajes que agendan. No que se ignoran.",
     "newCampaign": "Nueva Campana",
     "totalCampaigns": "Total campañas",
     "totalSent": "Total enviados",
@@ -1389,7 +1389,7 @@
   },
   "auditLogs": {
     "title": "Auditoria",
-    "subtitle": "Registro completo de acciones en tu organización",
+    "subtitle": "Quién, cuándo, qué. Sin olvidos — para ti y para la reguladora.",
     "action": "Acción",
     "user": "Usuario",
     "resource": "Recurso",
