@@ -13,7 +13,9 @@
 .brand {
   --color-void: #07070D;
   --color-surface: #10101B;
+  --color-surface-rgb: 16 16 27;
   --color-surface-2: #171725;
+  --color-surface-2-rgb: 23 23 37;
   --color-surface-3: #1F1F32;
   --color-border: #1C1C2E;
   --color-border-2: #2A2A44;
@@ -29,7 +31,9 @@
 .dark {
   --color-void: #0D0D0E;
   --color-surface: #18181A;
+  --color-surface-rgb: 24 24 26;
   --color-surface-2: #222225;
+  --color-surface-2-rgb: 34 34 37;
   --color-surface-3: #2C2C30;
   --color-border: #2E2E32;
   --color-border-2: #3E3E44;
@@ -40,19 +44,25 @@
   --color-white: #FFFFFF;
 }
 
-/* Light theme */
+/* Light theme — Calm White.
+   CEO note: antes era lavanda claro y se sentía visualmente agresivo.
+   Ahora blanco puro con greys cálidos neutros como base, y el brand
+   purple (#8B5CF6) queda como ACENTO vibrante (botones, cards, glows)
+   en vez de teñir el fondo. Transmite tranquilidad + claridad. */
 .light {
-  --color-void: #F5F3FF;
+  --color-void: #FCFCFD;
   --color-surface: #FFFFFF;
-  --color-surface-2: #F0EFF8;
-  --color-surface-3: #E8E6F5;
-  --color-border: #DDD9F0;
-  --color-border-2: #C8C3E8;
-  --color-text-primary: #1A1625;
-  --color-text-secondary: #3D3654;
-  --color-text-muted: #6B6480;
-  --color-text-dim: #9B94B0;
-  --color-white: #1A1625;
+  --color-surface-rgb: 255 255 255;
+  --color-surface-2: #F5F5F7;
+  --color-surface-2-rgb: 245 245 247;
+  --color-surface-3: #ECECEF;
+  --color-border: #E2E2E7;
+  --color-border-2: #CFCFD6;
+  --color-text-primary: #0E0E1A;
+  --color-text-secondary: #3A3A44;
+  --color-text-muted: #6B6B75;
+  --color-text-dim: #A3A3AD;
+  --color-white: #0E0E1A;
 }
 
 /* Ataraxia Cyan — Immersive cyan atmosphere.
@@ -62,7 +72,9 @@
 .ataraxia-cyan {
   --color-void: #050E10;
   --color-surface: #091618;
+  --color-surface-rgb: 9 22 24;
   --color-surface-2: #0F2024;
+  --color-surface-2-rgb: 15 32 36;
   --color-surface-3: #162D32;
   --color-border: #12323A;
   --color-border-2: #1A4450;
@@ -80,7 +92,9 @@
 .ataraxia-purple {
   --color-void: #0B0710;
   --color-surface: #130D1E;
+  --color-surface-rgb: 19 13 30;
   --color-surface-2: #1B1328;
+  --color-surface-2-rgb: 27 19 40;
   --color-surface-3: #261B38;
   --color-border: #281D46;
   --color-border-2: #382656;
@@ -133,28 +147,47 @@
 }
 
 @layer components {
-  /* ---- Cards ----
-     No hard borders. Glow-behind instead: inner subtle highlight + outer soft shadow.
-     Feels like the card has ambient light behind it, not a hard outline. */
+  /* ---- Cards ---- "Sentient Vibrante"
+     Every surface in the app pulls from the same visual DNA as the SofIA
+     chat bubble: semi-transparent surface, subtle backdrop blur, purple
+     glow border + outer halo, inner highlight line. This is what the CEO
+     called "el sentient vibrante que despega del fondo" — cards never
+     look flat-glued to the background, they float on top with ambient
+     light behind them. Applies cleanly to every theme (dark void AND
+     calm white) because it uses the theme's own surface color at 60%. */
   .glass-card {
-    @apply bg-surface rounded-lg;
+    background-color: rgb(var(--color-surface-rgb, 16 16 27) / 0.6);
+    @apply rounded-[16px] backdrop-blur-sm;
     box-shadow:
-      0 0 0 1px rgba(139, 92, 246, 0.06),
-      0 4px 24px -6px rgba(139, 92, 246, 0.1),
-      0 1px 0 0 rgba(255, 255, 255, 0.02) inset;
-  }
-  .glass-card-elevated {
-    @apply bg-surface-2 rounded-lg;
-    box-shadow:
-      0 0 0 1px rgba(139, 92, 246, 0.08),
-      0 6px 28px -6px rgba(139, 92, 246, 0.15),
+      0 0 0 1px rgba(139, 92, 246, 0.10),
+      0 4px 22px -6px rgba(139, 92, 246, 0.18),
       0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
   }
-  .glass-card-accent {
-    @apply bg-surface rounded-lg relative overflow-hidden;
+  .glass-card-elevated {
+    background-color: rgb(var(--color-surface-2-rgb, 23 23 37) / 0.72);
+    @apply rounded-[18px] backdrop-blur-sm;
     box-shadow:
-      0 0 0 1px rgba(139, 92, 246, 0.1),
-      0 6px 28px -4px rgba(139, 92, 246, 0.18),
+      0 0 0 1px rgba(139, 92, 246, 0.14),
+      0 6px 26px -6px rgba(139, 92, 246, 0.24),
+      0 1px 0 0 rgba(255, 255, 255, 0.04) inset;
+  }
+  .glass-card-accent {
+    background-color: rgb(var(--color-surface-rgb, 16 16 27) / 0.65);
+    @apply rounded-[18px] backdrop-blur-sm relative overflow-hidden;
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.18),
+      0 6px 28px -4px rgba(139, 92, 246, 0.28),
+      0 1px 0 0 rgba(255, 255, 255, 0.04) inset;
+  }
+  /* Canonical "Sentient Vibrante" surface — the exact recipe of the
+     SofIA chat bubble. Use this on any hero card, modal, highlight panel
+     where you want the object to READ as floating on top of the theme. */
+  .sentient-surface {
+    background-color: rgb(var(--color-surface-rgb, 16 16 27) / 0.6);
+    @apply rounded-[20px] backdrop-blur-sm;
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.10),
+      0 4px 22px -6px rgba(139, 92, 246, 0.18),
       0 1px 0 0 rgba(255, 255, 255, 0.03) inset;
   }
   .glass-card-accent::before {
