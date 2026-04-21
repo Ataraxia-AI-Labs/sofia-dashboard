@@ -141,10 +141,11 @@ function Sidebar({
         </button>
       )}
 
-      {/* Navigation — Hyprland naked floating icons, fit-without-scroll. No brand mark in sidebar. */}
-      <nav className="flex-1 pt-2 pb-0.5 overflow-y-auto scrollbar-thin space-y-[1px]" role="navigation" aria-label="Navigation">
+      {/* Navigation — Hyprland naked floating icons. Compact gaps so all
+          26 items + logout fit without a scrollbar on a 900px laptop. */}
+      <nav className="flex-1 pt-1 pb-0.5 overflow-y-auto scrollbar-thin" role="navigation" aria-label="Navigation">
         {navGroups.map((group, gi) => (
-          <div key={group.label} className={gi > 0 ? 'mt-1 pt-1' : ''}>
+          <div key={group.label} className={gi > 0 ? 'mt-0.5 pt-0.5' : ''}>
             {group.items.map((item) => {
               const isActive = item.href === '/dashboard'
                 ? pathname === '/dashboard'
@@ -168,14 +169,14 @@ function Sidebar({
 
       {/* Bottom — logout naked. A hairline divider docks it against the
           last nav group so there's no awkward floating gap (CEO note). */}
-      <div className="mt-1 pt-1 flex justify-center relative before:absolute before:top-0 before:left-2 before:right-2 before:h-px before:bg-gradient-to-r before:from-transparent before:via-brand-purple/15 before:to-transparent">
+      <div className="mt-1 pt-1.5 flex justify-center relative before:absolute before:top-0 before:left-2 before:right-2 before:h-px before:bg-gradient-to-r before:from-transparent before:via-brand-purple/15 before:to-transparent">
         <Tooltip label={logoutLabel} side="right" delay={120}>
           <button
             onClick={onLogout}
-            className="w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-status-danger transition-all active:scale-[0.9] hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]"
+            className="w-8 h-8 flex items-center justify-center rounded-md text-text-dim hover:text-status-danger transition-all active:scale-[0.9] hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]"
             aria-label={logoutLabel}
           >
-            <LogOut size={14} strokeWidth={1.6} />
+            <LogOut size={15} strokeWidth={1.6} />
           </button>
         </Tooltip>
       </div>

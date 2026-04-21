@@ -122,32 +122,38 @@ export default function SofiaConsolePage() {
   return (
     <div className="relative min-h-[calc(100vh-60px)] flex flex-col">
       {isEmpty ? (
-        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-5">
+        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-4">
           <WelcomeState userName={userName} orgName={org?.name} />
-          <ChatInput onSubmit={handleSubmit} disabled={sending} />
-          <SuggestedPrompts onSelect={handleSubmit} />
+          <div className="w-full max-w-[760px] px-4 space-y-3">
+            <ChatInput onSubmit={handleSubmit} disabled={sending} />
+            <SuggestedPrompts onSelect={handleSubmit} />
+          </div>
         </div>
       ) : (
         <>
-          <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-thin py-5 pb-32">
+          {/* More bottom padding so the last message doesn't hide behind the
+              input+prompts dock (~ChatInput 56px + prompts row 32px + gap 12). */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-thin py-5 pb-44">
             <div className="max-w-[760px] mx-auto px-4 space-y-5">
               {messages.map(m => (
                 <MessageBubble key={m.id} message={m} />
               ))}
             </div>
           </div>
-          {/* Input docked to the bottom of the viewport, clear of the sidebar.
-              Theme-aware fade (using CSS var --bg) blends the input into the
-              current theme instead of stamping a hard dark strip over light
-              themes like SofIA Lavanda. */}
+          {/* Input + quick-prompts docked at the bottom of the viewport. The
+              prompts never disappear as the thread grows — they sit under
+              the input so the CEO always has one-tap shortcuts, which is
+              what he asked for. Theme-aware fade blends cleanly on any
+              theme (Lavanda, Oscuro, Cyan, Purple). */}
           <div className="fixed bottom-4 left-[88px] right-4 lg:right-6 z-30 pointer-events-none">
             <div
               aria-hidden
-              className="absolute -top-6 inset-x-0 h-6"
+              className="absolute -top-8 inset-x-0 h-8"
               style={{ background: 'linear-gradient(to top, var(--color-void, transparent), transparent)' }}
             />
-            <div className="relative mx-auto max-w-[760px] pointer-events-auto">
+            <div className="relative mx-auto max-w-[760px] pointer-events-auto space-y-2.5">
               <ChatInput onSubmit={handleSubmit} disabled={sending} />
+              <SuggestedPrompts onSelect={handleSubmit} />
             </div>
           </div>
         </>
