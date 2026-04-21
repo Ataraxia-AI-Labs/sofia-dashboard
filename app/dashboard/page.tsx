@@ -121,45 +121,30 @@ export default function SofiaConsolePage() {
 
   return (
     <div className="relative min-h-[calc(100vh-60px)] flex flex-col">
-      {/* Cinematic background — three layered radial gradients give depth
-          without fighting the cards. Inspired by openclaw.ai's approach of
-          separating content from the void. pointer-events-none so clicks
-          pass through to everything beneath. */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(900px 520px at 50% -6%, rgba(139,92,246,0.10), transparent 70%),' +
-              'radial-gradient(620px 400px at 12% 112%, rgba(139,92,246,0.06), transparent 70%),' +
-              'radial-gradient(540px 380px at 92% 108%, rgba(6,182,160,0.05), transparent 72%)',
-          }}
-        />
-      </div>
-
       {isEmpty ? (
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-6 gap-5">
+        <div className="flex-1 flex flex-col items-center justify-center py-6 gap-5">
           <WelcomeState userName={userName} orgName={org?.name} />
           <ChatInput onSubmit={handleSubmit} disabled={sending} />
           <SuggestedPrompts onSelect={handleSubmit} />
         </div>
       ) : (
         <>
-          <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin py-5 pb-40">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-thin py-5 pb-32">
             <div className="max-w-[760px] mx-auto px-4 space-y-5">
               {messages.map(m => (
                 <MessageBubble key={m.id} message={m} />
               ))}
             </div>
           </div>
-          {/* Input anchored to bottom of the Nucleus main area — stays put
-              even when the conversation scrolls. Fades the area directly
-              above it so long threads never feel cramped. */}
+          {/* Input docked to the bottom of the viewport, clear of the sidebar.
+              Theme-aware fade (using CSS var --bg) blends the input into the
+              current theme instead of stamping a hard dark strip over light
+              themes like SofIA Lavanda. */}
           <div className="fixed bottom-4 left-[88px] right-4 lg:right-6 z-30 pointer-events-none">
             <div
               aria-hidden
-              className="absolute -top-10 inset-x-0 h-10"
-              style={{ background: 'linear-gradient(to top, rgba(5,5,7,0.95), transparent)' }}
+              className="absolute -top-6 inset-x-0 h-6"
+              style={{ background: 'linear-gradient(to top, var(--color-void, transparent), transparent)' }}
             />
             <div className="relative mx-auto max-w-[760px] pointer-events-auto">
               <ChatInput onSubmit={handleSubmit} disabled={sending} />
