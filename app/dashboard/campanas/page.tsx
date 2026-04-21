@@ -236,11 +236,17 @@ export default function CampanasPage() {
           ? (listTotals.sent > 0 ? listTotals.converted / listTotals.sent : 0)
           : (backend.avg_conversion_rate ?? 0)
         const totalRevenue = useFallback ? listTotals.revenue : (backend.total_revenue ?? 0)
+        // Surface "—" instead of a misleading 0.0% when there is revenue
+        // but the conversion counter never got populated (backend doesn't
+        // mirror payment attribution back into campaign_messages yet).
+        const convDisplay = (listTotals.converted === 0 && totalRevenue > 0)
+          ? '—'
+          : `${(avgConv * 100).toFixed(1)}%`
         return (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <AnalyticCard icon={<Megaphone size={16} />} value={String(totalCampaigns ?? 0)} label={t('totalCampaigns')} />
             <AnalyticCard icon={<Send size={16} />} value={Number(totalSent ?? 0).toLocaleString()} label={t('totalSent')} />
-            <AnalyticCard icon={<TrendingUp size={16} />} value={`${(avgConv * 100).toFixed(1)}%`} label={t('avgConversion')} />
+            <AnalyticCard icon={<TrendingUp size={16} />} value={convDisplay} label={t('avgConversion')} />
             <AnalyticCard icon={<DollarSign size={16} />} value={formatCOP(totalRevenue)} label={t('totalRevenue')} />
           </div>
         )
@@ -285,17 +291,30 @@ export default function CampanasPage() {
                     )}
 
                     {/* Stats preview for completed campaigns */}
-                    {hasResults && campaign.stats && (
-                      <div className="flex items-center gap-4 text-[11px]">
-                        <span className="text-text-muted">{t('sent')}: <strong className="text-text-primary font-body">{campaign.stats.sent || 0}</strong></span>
-                        <span className="text-text-muted">{t('delivered')}: <strong className="text-text-primary font-body">{campaign.stats.delivered || 0}</strong></span>
-                        <span className="text-text-muted">{t('responded')}: <strong className="text-brand-cyan font-body">{campaign.stats.responded || 0}</strong></span>
-                        <span className="text-text-muted">{t('converted')}: <strong className="text-status-success font-body">{campaign.stats.converted || 0}</strong></span>
-                        {campaign.stats.revenue != null && campaign.stats.revenue > 0 && (
-                          <span className="text-brand-gold font-body font-semibold">{formatCOP(campaign.stats.revenue)}</span>
-                        )}
-                      </div>
-                    )}
+                    {hasResults && campaign.stats && (() => {
+                      // If backend reports 0 converted but positive revenue, treat the
+                      // dash as "no converted count available" instead of a misleading 0.
+                      // Revenue is sourced from attributed appointments/payments even
+                      // when the campaign_messages table never received the CONVERTED
+                      // status transition.
+                      const sent = campaign.stats.sent || 0
+                      const converted = campaign.stats.converted || 0
+                      const revenue = campaign.stats.revenue || 0
+                      const showConverted = converted > 0 || revenue === 0
+                      return (
+                        <div className="flex items-center gap-4 text-[11px]">
+                          <span className="text-text-muted">{t('sent')}: <strong className="text-text-primary font-body">{sent}</strong></span>
+                          <span className="text-text-muted">{t('delivered')}: <strong className="text-text-primary font-body">{campaign.stats.delivered || 0}</strong></span>
+                          <span className="text-text-muted">{t('responded')}: <strong className="text-brand-cyan font-body">{campaign.stats.responded || 0}</strong></span>
+                          <span className="text-text-muted" title={showConverted ? undefined : 'Revenue atribuido a la campaña — conteo de conversiones no disponible en este periodo'}>
+                            {t('converted')}: <strong className="text-status-success font-body">{showConverted ? converted : '—'}</strong>
+                          </span>
+                          {revenue > 0 && (
+                            <span className="text-brand-gold font-body font-semibold">{formatCOP(revenue)}</span>
+                          )}
+                        </div>
+                      )
+                    })()}
 
                     {campaign.scheduled_at && campaign.status === 'SCHEDULED' && (
                       <div className="flex items-center gap-1 text-[11px] text-status-info mt-1.5">

@@ -299,77 +299,77 @@ export default function ConversacionesPage() {
 
   return (
     <div className="h-[calc(100vh-5rem)] lg:h-[calc(100vh-5.5rem)] flex flex-col">
-      {/* HEADER */}
-      <div className="flex items-center justify-between mb-3 flex-shrink-0">
+      {/* HEADER — title + secondary actions only (tabs dropped to own row below) */}
+      <div className="flex items-start justify-between mb-2 flex-shrink-0">
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
           <p className="text-text-dim text-[11px] font-body mt-0.5">
             {t('conversationCount', { count: uniquePatients })}{totalMessages > 0 && <> &middot; {t('messageCount', { count: totalMessages })}</>}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Tab selector */}
-          <div className="flex bg-surface-2 rounded-lg border border-border p-0.5">
+        {activeTab === 'conversations' && (
+          <div className="flex items-center gap-2 max-w-[calc(100%-24rem)]">
             <button
-              onClick={() => setActiveTab('conversations')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeTab === 'conversations' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
+              onClick={() => setShowFilters(!showFilters)}
+              className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+                showFilters || platformFilter || dateFrom || dateTo
+                  ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
+                  : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
               }`}
+              aria-label={tCommon('filter')}
             >
-              <MessageSquare size={11} />
-              <span className="hidden sm:inline">{t('tabs.conversations')}</span>
+              <Filter size={14} />
             </button>
             <button
-              onClick={() => setActiveTab('inbox')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeTab === 'inbox' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
+              onClick={loadData}
+              aria-label={tCommon('refresh')}
+              className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
             >
-              <Inbox size={11} />
-              <span className="hidden sm:inline">{t('tabs.inbox')}</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('channels')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeTab === 'channels' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <Layers size={11} />
-              <span className="hidden sm:inline">{t('tabs.channels')}</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('voice')}
-              className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1 ${
-                activeTab === 'voice' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted'
-              }`}
-            >
-              <Mic size={11} />
-              <span className="hidden sm:inline">{t('tabs.voice')}</span>
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
             </button>
           </div>
+        )}
+      </div>
 
-          {activeTab === 'conversations' && (
-            <>
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
-                  showFilters || platformFilter || dateFrom || dateTo
-                    ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
-                    : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
-                }`}
-                aria-label={tCommon('filter')}
-              >
-                <Filter size={14} />
-              </button>
-              <button
-                onClick={loadData}
-                aria-label={tCommon('refresh')}
-                className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
-              >
-                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-              </button>
-            </>
-          )}
+      {/* TABS — own row below header so the floating topbar cluster can't overlap */}
+      <div className="flex flex-shrink-0 mb-3">
+        <div className="inline-flex bg-surface-2 rounded-lg border border-border p-0.5">
+          <button
+            onClick={() => setActiveTab('conversations')}
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
+              activeTab === 'conversations' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            }`}
+          >
+            <MessageSquare size={12} />
+            {t('tabs.conversations')}
+          </button>
+          <button
+            onClick={() => setActiveTab('inbox')}
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
+              activeTab === 'inbox' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            }`}
+          >
+            <Inbox size={12} />
+            {t('tabs.inbox')}
+          </button>
+          <button
+            onClick={() => setActiveTab('channels')}
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
+              activeTab === 'channels' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            }`}
+          >
+            <Layers size={12} />
+            {t('tabs.channels')}
+          </button>
+          <button
+            onClick={() => setActiveTab('voice')}
+            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
+              activeTab === 'voice' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            }`}
+          >
+            <Mic size={12} />
+            {t('tabs.voice')}
+          </button>
         </div>
       </div>
 
