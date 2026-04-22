@@ -1,18 +1,15 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import * as Sentry from '@sentry/nextjs'
 import { useOrg } from '@/lib/org-context'
 import { WelcomeState } from '@/components/sofia-console/welcome-state'
 import { ChatInput } from '@/components/sofia-console/chat-input'
 import { SuggestedPrompts } from '@/components/sofia-console/suggested-prompts'
 import { MessageBubble, type Message } from '@/components/sofia-console/message-bubble'
-import { askConsole, type ConsoleHistoryItem } from '@/lib/api/console'
+import { memoryBridge } from '@/lib/memory-bridge'
+import { askConsole, getConsoleMessages, type ConsoleHistoryItem } from '@/lib/api/console'
 
-/**
- * Infer thinking-step narration from user question keywords.
- * Makes SofIA feel alive — she narrates what she's doing while tools run.
- */
 function inferThinkingSteps(q: string): string[] {
   const s = q.toLowerCase()
   if (s.includes('agenda') || s.includes('cita')) {
@@ -33,32 +30,51 @@ function inferThinkingSteps(q: string): string[] {
   return ['SofIA está pensando', 'consultando tus datos', 'organizando la respuesta']
 }
 
-/**
- * SofIA Console — nueva home del dashboard.
- * Conversational-first. Reemplaza el viejo Pulso con widgets.
- *
- * Sprint 1: shell estatico con welcome + suggested prompts + input + message list.
- * Sprint 3: conectar a backend /console/ask con OpenAI function-calling + tools.
- */
 export default function SofiaConsolePage() {
   const { user, org, branchId } = useOrg()
   const [messages, setMessages] = useState<Message[]>([])
   const [sending, setSending] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
+  const loadSession = useCallback(async (sid: string) => {
+    setSessionId(sid)
+    setMessages([])
+    try {
+      const res = await getConsoleMessages(sid)
+      const mapped: Message[] = res.messages.map(m => ({
+        id: m.id,
+        role: m.role,
+        text: m.content,
+        createdAt: m.created_at,
+        artifacts: m.artifacts,
+      }))
+      setMessages(mapped)
+    } catch (err) {
+      Sentry.captureException(err, { tags: { context: 'sofia_console_load_session' } })
+    }
+  }, [])
+
+  const startFresh = useCallback(() => {
+    setSessionId(null)
+    setMessages([])
+  }, [])
+
+  useEffect(() => {
+    return memoryBridge.onSelect(sid => {
+      if (sid) loadSession(sid)
+      else startFresh()
+    })
+  }, [loadSession, startFresh])
+
   const handleSubmit = async (text: string) => {
     if (!org?.id) return
     const now = new Date().toISOString()
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      text,
-      createdAt: now,
-    }
+    const userMsg: Message = { id: crypto.randomUUID(), role: 'user', text, createdAt: now }
     const pendingId = crypto.randomUUID()
     const pending: Message = {
       id: pendingId,
@@ -70,7 +86,6 @@ export default function SofiaConsolePage() {
     setMessages(m => [...m, userMsg, pending])
     setSending(true)
 
-    // Build history from last 6 messages (excluding current pending)
     const history: ConsoleHistoryItem[] = messages
       .filter(m => !m.pending && m.text)
       .slice(-6)
@@ -82,7 +97,12 @@ export default function SofiaConsolePage() {
         branch_id: branchId,
         message: text,
         history,
+        session_id: sessionId,
+        persist: true,
       })
+      if (response.session_id && response.session_id !== sessionId) {
+        setSessionId(response.session_id)
+      }
       setMessages(m =>
         m.map(msg =>
           msg.id === pendingId
@@ -96,6 +116,7 @@ export default function SofiaConsolePage() {
             : msg,
         ),
       )
+      memoryBridge.bumpReload()
     } catch (err) {
       Sentry.captureException(err, { tags: { context: 'sofia_console_ask' } })
       setMessages(m =>
@@ -120,7 +141,7 @@ export default function SofiaConsolePage() {
   const userName = (user?.user_metadata?.full_name as string) || user?.email?.split('@')[0]
 
   return (
-    <div className="relative min-h-[calc(100vh-60px)] flex flex-col">
+    <div className="relative flex flex-col h-[calc(100vh-60px)]">
       {isEmpty ? (
         <div className="flex-1 flex flex-col items-center justify-center py-6 gap-4">
           <WelcomeState userName={userName} orgName={org?.name} />
@@ -131,25 +152,26 @@ export default function SofiaConsolePage() {
         </div>
       ) : (
         <>
-          {/* More bottom padding so the last message doesn't hide behind the
-              input+prompts dock (~ChatInput 56px + prompts row 32px + gap 12). */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-thin py-5 pb-44">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-hide py-5 pb-64">
             <div className="max-w-[760px] mx-auto px-4 space-y-5">
               {messages.map(m => (
                 <MessageBubble key={m.id} message={m} />
               ))}
             </div>
           </div>
-          {/* Input + quick-prompts docked at the bottom of the viewport. The
-              prompts never disappear as the thread grows — they sit under
-              the input so the CEO always has one-tap shortcuts, which is
-              what he asked for. Theme-aware fade blends cleanly on any
-              theme (Lavanda, Oscuro, Cyan, Purple). */}
+          {/* Dock — floating input + prompts.
+              Taller gradient fade so long answers never slip UNDER the
+              prompts row (CEO: "los botones tapan el mensaje"). The fade
+              starts fully opaque at the bottom and softens up 96px so
+              any scrolling text dies cleanly behind it. */}
           <div className="fixed bottom-4 left-[88px] right-4 lg:right-6 z-30 pointer-events-none">
             <div
               aria-hidden
-              className="absolute -top-8 inset-x-0 h-8"
-              style={{ background: 'linear-gradient(to top, var(--color-void, transparent), transparent)' }}
+              className="absolute -top-24 inset-x-0 h-24"
+              style={{
+                background:
+                  'linear-gradient(to top, var(--color-void, transparent) 0%, var(--color-void, transparent) 40%, transparent 100%)',
+              }}
             />
             <div className="relative mx-auto max-w-[760px] pointer-events-auto space-y-2.5">
               <ChatInput onSubmit={handleSubmit} disabled={sending} />

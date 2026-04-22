@@ -11,6 +11,7 @@ export { Spinner } from './spinner'
 export { ToastProvider, useToast } from './toast'
 
 export { Skeleton } from './skeleton'
+export { Tooltip } from './tooltip'
 
 // Dashboard-specific reusable components
 export { MetricCard } from './metric-card'

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { Bell, Calendar, MessageSquare, AlertTriangle, CreditCard, X } from 'lucide-react'
+import { Tooltip } from '@/components/ui'
 import { authFetch, API_URL } from '@/lib/supabase'
 import { timeAgo } from '@/lib/api'
 
@@ -67,25 +68,55 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
 
   return (
     <div className="relative">
+      <Tooltip label="Notificaciones" side="left" delay={120}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-9 h-9 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors relative"
+        className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)] active:scale-[0.9] transition-all duration-150"
         aria-label="Notificaciones"
       >
-        <Bell size={16} />
+        <Bell size={14} strokeWidth={1.6} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-status-danger text-white text-[11px] font-body font-bold flex items-center justify-center animate-fade-in">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-3.5 px-1 rounded-full bg-status-danger text-white text-[9px] font-mono font-bold flex items-center justify-center animate-fade-in">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
+      </Tooltip>
 
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-2 z-40 w-80 bg-surface border border-border rounded-lg animate-fade-in overflow-hidden">
+          {/* LiquidGlass — same language as the sidebar capsule + memory
+              dropdown. Denser tint (0.88) so notification text stays crisp. */}
+          <div
+            className="absolute right-0 top-full mt-2 z-40 w-80 rounded-2xl animate-fade-in overflow-hidden"
+            style={{
+              background:
+                'linear-gradient(180deg, rgb(var(--color-surface-rgb) / 0.88) 0%, rgb(var(--color-surface-2-rgb) / 0.82) 100%)',
+              backdropFilter: 'blur(22px) saturate(150%)',
+              WebkitBackdropFilter: 'blur(22px) saturate(150%)',
+              boxShadow:
+                '0 0 0 1px rgba(139,92,246,0.14), 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 20px 48px -8px rgba(0,0,0,0.55), 0 0 28px -6px rgba(139,92,246,0.22)',
+            }}
+          >
+            {/* Hyprland hairlines — brand language shared with the sidebar. */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-3 top-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.45), transparent)' }}
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-3 bottom-0 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.22), transparent)' }}
+            />
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <div className="relative flex items-center justify-between px-4 py-3">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-3 bottom-0 h-px"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.25) 50%, transparent)' }}
+              />
               <h3 className="text-xs font-body font-semibold text-text-primary">Notificaciones</h3>
               <button onClick={() => setOpen(false)} className="text-text-dim hover:text-text-muted transition-colors">
                 <X size={14} />
@@ -115,7 +146,7 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
                 notifications.map(n => (
                   <div
                     key={n.id}
-                    className={`px-4 py-3 border-b border-border/50 hover:bg-surface-2/50 transition-colors ${!n.read ? 'bg-brand-purple/3' : ''}`}
+                    className={`sentient-row px-4 py-3 hover:bg-surface-2/50 transition-colors ${!n.read ? 'bg-brand-purple/5' : ''}`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center flex-shrink-0">

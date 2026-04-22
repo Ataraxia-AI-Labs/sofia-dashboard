@@ -5,13 +5,16 @@ import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { fetchUserOrganization, fetchBranches } from '@/lib/api'
 import { OrgContext } from '@/lib/org-context'
-import { filterNavByRole } from '@/lib/role-permissions'
+import { filterNavByRole, canAccessRoute } from '@/lib/role-permissions'
 import { canAccessByPlan } from '@/lib/plan-features'
 import { RoleGuard } from '@/components/role-guard'
 import { ErrorBoundary } from '@/components/error-boundary'
 import * as Sentry from '@sentry/nextjs'
 import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
+import { ClinicAvatar } from '@/components/clinic-avatar'
+import { MemoryDropdown } from '@/components/sofia-console/memory-dropdown'
+import { memoryBridge } from '@/lib/memory-bridge'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { AtaraxiaLogo, AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -141,11 +144,11 @@ function Sidebar({
         </button>
       )}
 
-      {/* Navigation — Hyprland naked floating icons. Compact gaps so all
-          26 items + logout fit without a scrollbar on a 900px laptop. */}
-      <nav className="flex-1 pt-1 pb-0.5 overflow-y-auto scrollbar-thin" role="navigation" aria-label="Navigation">
+      {/* Navigation — Hyprland naked floating icons. Tight gaps so all
+          24+ items + logout fit on a 900px laptop without scrolling. */}
+      <nav className="flex-1 pt-0.5 pb-0 overflow-y-auto scrollbar-hide" role="navigation" aria-label="Navigation">
         {navGroups.map((group, gi) => (
-          <div key={group.label} className={gi > 0 ? 'mt-0.5 pt-0.5' : ''}>
+          <div key={group.label} className={gi > 0 ? 'mt-px pt-px' : ''}>
             {group.items.map((item) => {
               const isActive = item.href === '/dashboard'
                 ? pathname === '/dashboard'
@@ -167,9 +170,9 @@ function Sidebar({
         ))}
       </nav>
 
-      {/* Bottom — logout naked. A hairline divider docks it against the
-          last nav group so there's no awkward floating gap (CEO note). */}
-      <div className="mt-0.5 pt-1 flex justify-center relative before:absolute before:top-0 before:left-2 before:right-2 before:h-px before:bg-gradient-to-r before:from-transparent before:via-brand-purple/15 before:to-transparent">
+      {/* Bottom — logout naked. Tight spacing: hairline right above, tiny
+          padding so it's still distinguishable but close to the last icon. */}
+      <div className="mt-0 pt-0.5 pb-1 flex justify-center relative before:absolute before:top-0 before:left-2 before:right-2 before:h-px before:bg-gradient-to-r before:from-transparent before:via-brand-purple/20 before:to-transparent">
         <Tooltip label={logoutLabel} side="right" delay={120}>
           <button
             onClick={onLogout}
@@ -203,20 +206,18 @@ function BranchSelector({
 
   return (
     <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="sentient-btn w-8 h-8 rounded-xl bg-surface/60 backdrop-blur-md flex items-center justify-center text-text-muted hover:text-text-primary relative"
-        style={{
-          boxShadow: '0 0 0 1px rgba(139,92,246,0.12), 0 2px 10px -4px rgba(139,92,246,0.15)',
-        }}
-        title={selected ? selected.name : tLayout('allBranches')}
-        aria-label={selected ? selected.name : tLayout('allBranches')}
-      >
-        <MapPin size={13} strokeWidth={1.6} className={selectedBranchId ? 'text-brand-purple' : ''} />
-        {selectedBranchId && (
-          <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-brand-purple shadow-[0_0_4px_rgba(139,92,246,0.7)]" />
-        )}
-      </button>
+      <Tooltip label={selected ? selected.name : tLayout('allBranches')} side="left" delay={120}>
+        <button
+          onClick={() => setOpen(!open)}
+          className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)] active:scale-[0.9] transition-all duration-150"
+          aria-label={selected ? selected.name : tLayout('allBranches')}
+        >
+          <MapPin size={14} strokeWidth={1.6} className={selectedBranchId ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.5)]' : ''} />
+          {selectedBranchId && (
+            <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-brand-purple shadow-[0_0_4px_rgba(139,92,246,0.7)]" />
+          )}
+        </button>
+      </Tooltip>
 
       {open && (
         <>
@@ -366,6 +367,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       .catch(() => {})
   }, [org?.id])
 
+  // Route-guard: STAFF/ADMIN/OWNER entering a restricted URL directly → /403
+  useEffect(() => {
+    if (loading) return
+    if (!pathname?.startsWith('/dashboard')) return
+    if (!canAccessRoute(role, pathname)) {
+      router.replace('/403')
+    }
+  }, [loading, pathname, role, router])
+
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.replace('/login')
@@ -452,9 +462,49 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <div className="flex-1 flex relative">
-        {/* ========== DESKTOP SIDEBAR — Hyprland naked floating icons ========== */}
-        <aside className="hidden lg:flex w-10 flex-shrink-0 bg-transparent flex-col relative z-30">
-          <Sidebar {...sidebarProps} />
+        {/* ========== DESKTOP SIDEBAR — Vapi-style floating rail ==========
+            Hyprland naked icons, BUT the container itself floats with a soft
+            capsule: subtle glass background, inner lilac glow, drop shadow,
+            sticky to viewport. Icons appear to hover over the content. */}
+        <aside className="hidden lg:flex flex-shrink-0 flex-col sticky top-1.5 self-start z-30 ml-1.5 my-1.5 h-[calc(100vh-12px)]">
+          {/* Liquid-glass capsule. NO overflow-hidden — it would clip the
+              hover mini-panels (fixed-positioned portals can still be trapped
+              by ancestors with backdrop-filter). rounded-2xl still applies to
+              the background shape itself.
+              Tight margins (1.5 = 6px) so the rail keeps its 100vh minus
+              breathing room for the shadow, while every nav icon + logout
+              still fits on a 900px laptop. */}
+          <div
+            className="relative flex flex-col h-full w-11 rounded-2xl"
+            style={{
+              background:
+                'linear-gradient(180deg, rgb(var(--color-surface-rgb) / 0.42) 0%, rgb(var(--color-surface-2-rgb) / 0.28) 100%)',
+              backdropFilter: 'blur(22px) saturate(150%)',
+              WebkitBackdropFilter: 'blur(22px) saturate(150%)',
+              boxShadow:
+                '0 0 0 1px rgba(139,92,246,0.14), 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 18px 40px -12px rgba(0,0,0,0.55), 0 0 28px -6px rgba(139,92,246,0.18)',
+            }}
+          >
+            {/* Inner hairline edge light — very soft so it doesn't read as a
+                stray purple pixel above Pulso (CEO: "brillito morado molesto"). */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-3 top-0 h-px"
+              style={{
+                background:
+                  'linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.12) 35%, rgba(139,92,246,0.18) 50%, rgba(139,92,246,0.12) 65%, transparent 100%)',
+              }}
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-3 bottom-0 h-px"
+              style={{
+                background:
+                  'linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.10) 35%, rgba(139,92,246,0.14) 50%, rgba(139,92,246,0.10) 65%, transparent 100%)',
+              }}
+            />
+            <Sidebar {...sidebarProps} />
+          </div>
         </aside>
 
         {/* ========== MOBILE SIDEBAR OVERLAY ========== */}
@@ -489,27 +539,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             was blocking tabs (Transmisiones, Impulsos, Revenue, Reseñas,
             Inteligencia, Auditoría, Salud).
           */}
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20 pointer-events-none [&>*]:pointer-events-auto">
+          {/* Topbar cluster — full toolset lives ONLY on /dashboard (Pulso).
+              Inner pages stay quiet: just the account avatar + trial pill
+              if any, so nothing competes with the page's own header. */}
+          <div className="absolute top-3 right-3 flex items-center gap-1 z-20 pointer-events-none [&>*]:pointer-events-auto">
             <TrialPill org={org} onNavigate={navigateTo} />
-            {branches.length > 1 && (
-              <BranchSelector
-                branches={branches}
-                selectedBranchId={selectedBranchId}
-                onSelect={setBranchId}
-              />
+            {pathname === '/dashboard' && (
+              <>
+                {branches.length > 1 && (
+                  <BranchSelector
+                    branches={branches}
+                    selectedBranchId={selectedBranchId}
+                    onSelect={setBranchId}
+                  />
+                )}
+                <NotificationsDropdown orgId={org?.id || ''} />
+                <ThemeToggle />
+                <MemoryDropdown
+                  canSeeTeam={role === 'OWNER' || role === 'ADMIN'}
+                  userId={user?.id}
+                  orgId={org?.id || ''}
+                  onOpenSession={sid => {
+                    if (pathname !== '/dashboard') navigateTo('/dashboard')
+                    memoryBridge.select(sid)
+                  }}
+                  onNewThread={() => {
+                    if (pathname !== '/dashboard') navigateTo('/dashboard')
+                    memoryBridge.select(null)
+                  }}
+                />
+              </>
             )}
-            <NotificationsDropdown orgId={org?.id || ''} />
-            <ThemeToggle />
-            <button
-              className="sentient-btn w-8 h-8 rounded-xl bg-gradient-to-b from-brand-purple/25 to-brand-purple/10 flex items-center justify-center font-display font-semibold text-[13px] text-brand-purple cursor-pointer"
-              style={{
-                boxShadow:
-                  '0 0 0 1px rgba(139,92,246,0.28), 0 2px 10px -2px rgba(139,92,246,0.3), 0 1px 0 0 rgba(255,255,255,0.08) inset',
-              }}
-              aria-label="Cuenta"
-            >
-              {user?.email?.[0]?.toUpperCase() || 'U'}
-            </button>
+            <ClinicAvatar org={org} userEmail={user?.email} />
           </div>
 
           {/* Page content — full canvas, topbar area ~56px reserved */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 interface TooltipProps {
   label: string
@@ -17,9 +18,12 @@ interface TooltipProps {
  */
 export function Tooltip({ label, children, side = 'right', delay = 150, kbd, className = '' }: TooltipProps) {
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const triggerRef = useRef<HTMLSpanElement>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => { setMounted(true) }, [])
 
   const show = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
@@ -61,7 +65,7 @@ export function Tooltip({ label, children, side = 'right', delay = 150, kbd, cla
       >
         {children}
       </span>
-      {open && (
+      {open && mounted && createPortal(
         <div
           role="tooltip"
           style={{
@@ -73,13 +77,14 @@ export function Tooltip({ label, children, side = 'right', delay = 150, kbd, cla
           }}
           className="pointer-events-none animate-fade-in"
         >
-          <div className="flex items-center gap-1.5 bg-surface-2/95 backdrop-blur-md border border-border/60 text-text-primary text-[12px] font-body font-medium px-2.5 py-1 rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.4)] whitespace-nowrap">
+          <div className="flex items-center gap-1.5 bg-surface-2/95 backdrop-blur-md border border-border/60 text-text-primary text-[11px] font-body font-medium px-2.5 py-1 rounded-md shadow-[0_4px_16px_rgba(0,0,0,0.4)] whitespace-nowrap">
             <span>{label}</span>
             {kbd && (
               <kbd className="text-[10px] font-mono text-text-dim bg-surface border border-border/60 rounded px-1 py-px">{kbd}</kbd>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

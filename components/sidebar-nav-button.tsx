@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { LucideIcon } from 'lucide-react'
 import { Lock, ChevronRight } from 'lucide-react'
 import { getSubpages } from '@/lib/nav-subpages'
@@ -24,11 +25,14 @@ interface Props {
 export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, onNavigate }: Props) {
   const [open, setOpen] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
+  const [mounted, setMounted] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
   const timer = useRef<NodeJS.Timeout | null>(null)
 
   const subpages = getSubpages(href)
   const hasSubpages = !locked && !!subpages && subpages.length > 0
+
+  useEffect(() => { setMounted(true) }, [])
 
   const show = () => {
     if (timer.current) clearTimeout(timer.current)
@@ -89,7 +93,7 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
         </button>
       </div>
 
-      {open && (
+      {open && mounted && createPortal(
         <div
           style={{
             position: 'fixed',
@@ -135,7 +139,8 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
               {locked && <Lock size={8} className="text-text-dim/60" />}
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

@@ -7,18 +7,33 @@ import type { OrgRole } from './org-context'
 // ============================================================
 
 export const ROUTE_PERMISSIONS: Record<string, OrgRole[]> = {
+  // STAFF-accessible (day-to-day clinic ops)
   '/dashboard': ['OWNER', 'ADMIN', 'STAFF'],
   '/dashboard/conversaciones': ['OWNER', 'ADMIN', 'STAFF'],
   '/dashboard/pacientes': ['OWNER', 'ADMIN', 'STAFF'],
   '/dashboard/calendario': ['OWNER', 'ADMIN', 'STAFF'],
+  '/dashboard/referidos': ['OWNER', 'ADMIN', 'STAFF'],
+  '/dashboard/contenido': ['OWNER', 'ADMIN', 'STAFF'],
+  '/dashboard/resenas': ['OWNER', 'ADMIN', 'STAFF'],
+
+  // OWNER/ADMIN (revenue, pipeline, campaigns, integrations, analytics)
   '/dashboard/pipeline': ['OWNER', 'ADMIN'],
   '/dashboard/oportunidades': ['OWNER', 'ADMIN'],
   '/dashboard/campanas': ['OWNER', 'ADMIN'],
   '/dashboard/pagos': ['OWNER', 'ADMIN'],
   '/dashboard/equipo': ['OWNER', 'ADMIN'],
+  '/dashboard/crecimiento': ['OWNER', 'ADMIN'],
+  '/dashboard/reportes': ['OWNER', 'ADMIN'],
   '/dashboard/datalake': ['OWNER', 'ADMIN'],
+  '/dashboard/auditoria': ['OWNER', 'ADMIN'],
+  '/dashboard/automatizaciones': ['OWNER', 'ADMIN'],
+  '/dashboard/marketplace': ['OWNER', 'ADMIN'],
+  '/dashboard/webhooks': ['OWNER', 'ADMIN'],
+  '/dashboard/network': ['OWNER', 'ADMIN'],
   '/dashboard/health': ['OWNER', 'ADMIN'],
   '/dashboard/ajustes': ['OWNER', 'ADMIN'],
+
+  // OWNER only (billing-level decisions)
   '/dashboard/planes': ['OWNER'],
   '/dashboard/facturacion': ['OWNER'],
 }

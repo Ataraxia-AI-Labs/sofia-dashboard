@@ -719,6 +719,7 @@
     "noteError": "Error saving note",
     "treatmentError": "Error creating treatment",
     "exportError": "Error exporting CSV",
+    "exportForbidden": "Only OWNER or ADMIN can export patients",
     "newPatient": "New Patient",
     "contactInfo": "Contact info",
     "city": "City",

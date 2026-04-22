@@ -49,7 +49,8 @@ const CHANNEL_COLORS: Record<string, string> = {
 const PAGE_SIZE = 20
 
 export default function PacientesPage() {
-  const { orgId, branchId } = useOrg()
+  const { orgId, branchId, role } = useOrg()
+  const canExport = role === 'OWNER' || role === 'ADMIN'
   const toast = useToast()
   const t = useTranslations('patients')
   const tCommon = useTranslations('common')
@@ -236,6 +237,10 @@ export default function PacientesPage() {
 
   const handleExport = async () => {
     if (!orgId) return
+    if (!canExport) {
+      toast.error(t('exportForbidden'))
+      return
+    }
     try {
       await exportPatientsCSV(orgId)
     } catch (err) {
@@ -317,9 +322,11 @@ export default function PacientesPage() {
               {t('views.gamification')}
             </button>
           </div>
-          <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[12px] font-body font-semibold hover:text-text-primary transition-colors">
-            <Download size={13} /> {t('exportCSV')}
-          </button>
+          {canExport && (
+            <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[12px] font-body font-semibold hover:text-text-primary transition-colors">
+              <Download size={13} /> {t('exportCSV')}
+            </button>
+          )}
           <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/25 transition-colors">
             <UserPlus size={13} /> {t('newPatient')}
           </button>
@@ -381,12 +388,12 @@ export default function PacientesPage() {
         />
       )}
 
-      {/* TABLE */}
-      <div className="glass-card overflow-hidden">
+      {/* TABLE — sentient-surface envelope + gradient dividers */}
+      <div className="sentient-surface overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px]">
-            <thead>
-              <tr className="border-b border-border">
+          <table className="w-full min-w-[760px] border-separate border-spacing-0">
+            <thead className="sentient-thead">
+              <tr>
                 {[
                   { field: 'full_name', label: t('patient') },
                   { field: 'phone', label: t('phone') },
@@ -398,7 +405,7 @@ export default function PacientesPage() {
                   <th
                     key={col.field}
                     onClick={() => toggleSort(col.field)}
-                    className="text-left text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-text-primary transition-colors select-none"
+                    className="text-left text-[10px] font-mono font-semibold text-text-muted uppercase tracking-[0.16em] px-4 py-3 cursor-pointer hover:text-brand-purple transition-colors select-none"
                   >
                     <div className="flex items-center gap-1">
                       {col.label}
@@ -411,10 +418,10 @@ export default function PacientesPage() {
             <tbody>
               {loading && patients.length === 0 ? (
                 Array.from({ length: 8 }).map((_, i) => (
-                  <tr key={i} className="border-b border-border/50">
+                  <tr key={i} className="sentient-row">
                     {Array.from({ length: 6 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
-                        <div className="h-4 bg-surface-3 rounded animate-pulse w-24" />
+                        <div className="h-4 bg-surface-3/50 rounded animate-pulse w-24" />
                       </td>
                     ))}
                   </tr>
@@ -430,7 +437,7 @@ export default function PacientesPage() {
                   <tr
                     key={p.id}
                     onClick={() => openDetail(p)}
-                    className="border-b border-border/50 hover:bg-surface-3/50 cursor-pointer transition-colors group"
+                    className="sentient-row cursor-pointer transition-colors group"
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">

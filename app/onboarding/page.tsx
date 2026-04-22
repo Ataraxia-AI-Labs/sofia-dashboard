@@ -330,7 +330,7 @@ export default function OnboardingPage() {
   // ======= SUCCESS SCREEN: Email Verification =======
   if (success && result) {
     return (
-      <div className="min-h-screen bg-void flex items-center justify-center px-4 relative overflow-hidden">
+      <div className="brand min-h-screen bg-void flex items-center justify-center px-4 py-12 relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-[0.04]"
           style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)' }} />
@@ -421,7 +421,7 @@ export default function OnboardingPage() {
   const depthPercent = (step / 4) * 100
 
   return (
-    <div className="min-h-screen bg-void flex relative overflow-hidden">
+    <div className="brand min-h-screen bg-void flex relative overflow-hidden pt-12 lg:pt-16">
       {/* Cloudflare Turnstile */}
       {TURNSTILE_SITE_KEY && (
         <Script

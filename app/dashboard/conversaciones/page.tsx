@@ -308,66 +308,74 @@ export default function ConversacionesPage() {
           </p>
         </div>
         {activeTab === 'conversations' && (
-          <div className="flex items-center gap-2 max-w-[calc(100%-24rem)]">
+          <div className="flex items-center gap-1 max-w-[calc(100%-24rem)]">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+              className={`w-7 h-7 flex items-center justify-center rounded-md active:scale-[0.9] transition-all duration-150 ${
                 showFilters || platformFilter || dateFrom || dateTo
-                  ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
-                  : 'bg-surface-2 border-border text-text-muted hover:text-text-primary'
+                  ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.5)]'
+                  : 'text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)]'
               }`}
               aria-label={tCommon('filter')}
             >
-              <Filter size={14} />
+              <Filter size={13} strokeWidth={1.6} />
             </button>
             <button
               onClick={loadData}
               aria-label={tCommon('refresh')}
-              className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+              className="w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)] active:scale-[0.9] transition-all duration-150"
             >
-              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              <RefreshCw size={13} strokeWidth={1.6} className={loading ? 'animate-spin' : ''} />
             </button>
           </div>
         )}
       </div>
 
-      {/* TABS — own row below header so the floating topbar cluster can't overlap */}
-      <div className="flex flex-shrink-0 mb-3">
-        <div className="inline-flex bg-surface-2 rounded-lg border border-border p-0.5">
+      {/* TABS — hyprland naked pills, smaller */}
+      <div className="flex flex-shrink-0 mb-2">
+        <div className="inline-flex gap-0.5">
           <button
             onClick={() => setActiveTab('conversations')}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTab === 'conversations' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            className={`px-2.5 py-1 rounded-md text-[11px] font-body font-semibold transition-all flex items-center gap-1 ${
+              activeTab === 'conversations'
+                ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.45)]'
+                : 'text-text-dim hover:text-text-primary'
             }`}
           >
-            <MessageSquare size={12} />
+            <MessageSquare size={11} strokeWidth={1.6} />
             {t('tabs.conversations')}
           </button>
           <button
             onClick={() => setActiveTab('inbox')}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTab === 'inbox' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            className={`px-2.5 py-1 rounded-md text-[11px] font-body font-semibold transition-all flex items-center gap-1 ${
+              activeTab === 'inbox'
+                ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.45)]'
+                : 'text-text-dim hover:text-text-primary'
             }`}
           >
-            <Inbox size={12} />
+            <Inbox size={11} strokeWidth={1.6} />
             {t('tabs.inbox')}
           </button>
           <button
             onClick={() => setActiveTab('channels')}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTab === 'channels' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            className={`px-2.5 py-1 rounded-md text-[11px] font-body font-semibold transition-all flex items-center gap-1 ${
+              activeTab === 'channels'
+                ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.45)]'
+                : 'text-text-dim hover:text-text-primary'
             }`}
           >
-            <Layers size={12} />
+            <Layers size={11} strokeWidth={1.6} />
             {t('tabs.channels')}
           </button>
           <button
             onClick={() => setActiveTab('voice')}
-            className={`px-3 py-1.5 rounded-md text-[12px] font-body font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTab === 'voice' ? 'bg-brand-purple/15 text-brand-purple' : 'text-text-muted hover:text-text-primary'
+            className={`px-2.5 py-1 rounded-md text-[11px] font-body font-semibold transition-all flex items-center gap-1 ${
+              activeTab === 'voice'
+                ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.45)]'
+                : 'text-text-dim hover:text-text-primary'
             }`}
           >
-            <Mic size={12} />
+            <Mic size={11} strokeWidth={1.6} />
             {t('tabs.voice')}
           </button>
         </div>
@@ -615,21 +623,21 @@ function ThreadCard({
           : 'hover:bg-surface-3 border border-transparent'
       }`}
     >
-      <div className="flex items-start gap-3">
-        {/* Avatar */}
+      <div className="flex items-start gap-2.5">
+        {/* Avatar — compact, hyprland-friendly */}
         <div className="relative flex-shrink-0">
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${
+            className={`w-8 h-8 rounded-md flex items-center justify-center text-[11px] font-mono font-bold ${
               isSelected
-                ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple'
-                : 'bg-surface-3 text-text-muted group-hover:bg-brand-purple/8 group-hover:text-brand-purple'
+                ? 'bg-brand-purple/10 border border-brand-purple/25 text-brand-purple'
+                : 'bg-surface-3/70 text-text-muted group-hover:bg-brand-purple/10 group-hover:text-brand-purple'
             } transition-colors`}
           >
             {displayName[0]?.toUpperCase() || '?'}
           </div>
           {/* Sentiment dot */}
           <div
-            className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-surface-2 ${sentimentColor}`}
+            className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-surface-2 ${sentimentColor}`}
             title={`${t('sentimentLabel')}: ${thread.sentimentLabel.toLowerCase()}`}
           />
         </div>
@@ -637,15 +645,15 @@ function ThreadCard({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-0.5">
-            <span className={`text-[12px] font-body font-semibold truncate ${
+            <span className={`text-[11px] font-body font-semibold truncate ${
               isSelected ? 'text-brand-purple-light' : 'text-text-primary'
             }`}>
               {displayName}
             </span>
-            <span className="text-[10px] text-text-dim flex-shrink-0">{timeLabel}</span>
+            <span className="text-[9.5px] text-text-dim flex-shrink-0 font-mono">{timeLabel}</span>
           </div>
 
-          <p className="text-[12px] font-body text-text-muted leading-relaxed line-clamp-2 mb-1.5">
+          <p className="text-[11px] font-body text-text-muted leading-snug line-clamp-2 mb-1">
             {preview}
           </p>
 

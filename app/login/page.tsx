@@ -136,7 +136,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex bg-void relative overflow-hidden">
+    <div className="brand min-h-screen flex bg-void relative overflow-hidden pt-12 lg:pt-16">
       {/* Particle canvas */}
       <canvas
         ref={canvasRef}

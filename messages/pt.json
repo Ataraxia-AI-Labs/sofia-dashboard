@@ -699,6 +699,7 @@
     "noteError": "Erro ao salvar nota",
     "treatmentError": "Erro ao criar tratamento",
     "exportError": "Erro ao exportar CSV",
+    "exportForbidden": "Apenas OWNER ou ADMIN podem exportar pacientes",
     "newPatient": "Novo Paciente",
     "contactInfo": "Informacoes de contato",
     "city": "Cidade",

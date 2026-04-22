@@ -49,7 +49,7 @@ function MFAForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 bg-void">
+    <div className="brand min-h-screen flex items-center justify-center px-5 py-12 bg-void">
       <div className="relative w-full max-w-sm">
         <div className="flex justify-center mb-6">
           <AtaraxiaLogo size={56} />
