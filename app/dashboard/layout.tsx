@@ -455,7 +455,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Ver planes
             </button>
             <p className="text-text-dim text-[11px] font-body mt-2">
-              gestion@ataraxiaialabs.ai
+              ataraxia.centrodecontrol@gmail.com
             </p>
           </div>
         </div>

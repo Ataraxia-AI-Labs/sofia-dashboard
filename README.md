@@ -114,5 +114,5 @@ Vercel auto-deploys from `main`. Environment variables configured in Vercel dash
 
 ```
 Ataraxia IA Labs SAS · Colombia
-gestion@ataraxiaialabs.ai
+ataraxia.centrodecontrol@gmail.com
 ```

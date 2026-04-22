@@ -183,10 +183,15 @@ export default function PlanesPage() {
     return { main: formatCOP(price) + t('perMonth'), sub: '' }
   }
 
-  /* CTA logic */
+  /* CTA logic — Enterprise abre Gmail compose web (no el cliente del
+     sistema que forzaba Outlook en Windows). */
   function handleActivate(planId: PlanId) {
     if (planId === 'ENTERPRISE') {
-      window.open('mailto:gestion@ataraxiaialabs.ai?subject=Plan%20Enterprise', '_blank')
+      window.open(
+        'https://mail.google.com/mail/?view=cm&fs=1&to=ataraxia.centrodecontrol@gmail.com&su=Plan%20Enterprise',
+        '_blank',
+        'noopener,noreferrer',
+      )
       return
     }
     setCheckoutPlan(planId)
@@ -405,7 +410,7 @@ export default function PlanesPage() {
           {t('customPlanQuestion')}
         </p>
         <p className="text-text-dim text-[11px] font-body mt-1">
-          {t('customPlanHelp', { email: 'gestion@ataraxiaialabs.ai' })}
+          {t('customPlanHelp', { email: 'ataraxia.centrodecontrol@gmail.com' })}
         </p>
       </div>
 

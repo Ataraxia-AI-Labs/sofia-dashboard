@@ -356,8 +356,14 @@ describe('PlanesPage', () => {
     await user.click(screen.getByText('contactSales'))
 
     expect(openSpy).toHaveBeenCalledWith(
-      expect.stringContaining('mailto:gestion@ataraxiaialabs.ai'),
-      '_blank'
+      expect.stringContaining('mail.google.com/mail/?view=cm'),
+      '_blank',
+      'noopener,noreferrer',
+    )
+    expect(openSpy).toHaveBeenCalledWith(
+      expect.stringContaining('ataraxia.centrodecontrol@gmail.com'),
+      '_blank',
+      'noopener,noreferrer',
     )
   })
 
