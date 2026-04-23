@@ -102,11 +102,15 @@ export function HyperPersuasivePage({
       <section className="text-center">
         <div className="relative inline-block mb-6">
           <div className="absolute inset-0 bg-brand-purple/30 blur-3xl rounded-full scale-150" />
-          <div className="relative w-24 h-24 rounded-3xl bg-gradient-to-br from-surface-2 to-surface border border-border/60 flex items-center justify-center shadow-[0_1px_0_0_rgba(255,255,255,0.06)_inset,0_10px_40px_-8px_rgba(0,0,0,0.5),0_0_0_1px_rgba(139,92,246,0.2)]">
+          <div
+            className="relative w-24 h-24 rounded-3xl bg-brand-purple/[0.04] flex items-center justify-center"
+            style={{
+              boxShadow:
+                '0 0 0 1px rgba(139,92,246,0.2), 0 0 50px -15px rgba(168,85,247,0.45), 0 1px 0 0 rgba(255,255,255,0.05) inset',
+            }}
+          >
             <div className="text-brand-purple">{icon}</div>
-            <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-surface-2 border border-border/60 flex items-center justify-center shadow">
-              <Lock size={11} className="text-text-dim" />
-            </div>
+            <Lock size={14} className="absolute -top-1.5 -right-1.5 text-brand-purple/80" strokeWidth={2} />
           </div>
         </div>
 
@@ -138,7 +142,11 @@ export function HyperPersuasivePage({
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {features.map((f, i) => (
-              <div key={i} className="p-4 rounded-xl bg-surface/40 border border-border/40 hover:border-brand-purple/30 transition-colors">
+              <div
+                key={i}
+                className="p-4 rounded-lg bg-surface/40 transition-all"
+                style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.12)' }}
+              >
                 <div className="w-9 h-9 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-purple mb-3">
                   {f.icon}
                 </div>
@@ -158,7 +166,11 @@ export function HyperPersuasivePage({
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {testimonials.map((t, i) => (
-              <div key={i} className="p-5 rounded-xl bg-surface/40 border border-border/40">
+              <div
+                key={i}
+                className="p-5 rounded-lg bg-surface/40"
+                style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.12)' }}
+              >
                 <div className="flex items-center gap-0.5 text-brand-purple mb-3">
                   {[0, 1, 2, 3, 4].map(s => <Star key={s} size={11} fill="currentColor" strokeWidth={0} />)}
                 </div>
@@ -188,7 +200,11 @@ export function HyperPersuasivePage({
           </h2>
           <div className="flex flex-wrap justify-center gap-2">
             {integrations.map((ig, i) => (
-              <div key={i} className="px-3 py-2 rounded-lg bg-surface/40 border border-border/40 text-[12px] font-body text-text-muted">
+              <div
+                key={i}
+                className="px-3 py-2 rounded-lg bg-surface/40 text-[12px] font-body text-text-muted"
+                style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}
+              >
                 {ig.name}
               </div>
             ))}
@@ -272,7 +288,8 @@ export function HyperPersuasivePage({
                 <button
                   key={i}
                   onClick={() => setOpenFaq(isOpen ? null : i)}
-                  className="w-full p-4 rounded-xl bg-surface/40 border border-border/40 hover:border-brand-purple/25 transition-colors text-left"
+                  className="w-full p-4 rounded-lg bg-surface/40 hover:bg-surface/60 transition-colors text-left"
+                  style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-[13px] font-body font-semibold text-text-primary">{f.q}</span>

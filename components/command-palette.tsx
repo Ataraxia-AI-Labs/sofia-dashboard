@@ -122,7 +122,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       {/* Panel */}
       <div className="relative w-full max-w-lg bg-surface border border-border rounded-lg animate-fade-up overflow-hidden">
         {/* Search input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-border/30">
           <Search size={16} className="text-text-dim flex-shrink-0" aria-hidden="true" />
           <input
             ref={inputRef}
@@ -193,7 +193,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         </ul>
 
         {/* Footer hints */}
-        <div className="px-4 py-2 border-t border-border flex items-center justify-between">
+        <div className="px-4 py-2 border-t border-border/30 flex items-center justify-between">
           <div className="flex items-center gap-3 text-[10px] text-text-dim">
             <span className="flex items-center gap-1">
               <kbd className="px-1 rounded bg-surface-2 border border-border font-body">↑↓</kbd>

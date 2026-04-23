@@ -155,11 +155,11 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
       <div className="glass-card p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <ImageIcon size={16} className="text-brand-purple" />
-          <h3 className="text-xs font-body font-semibold text-text-primary">Logo de la Organizacion</h3>
+          <h3 className="text-xs font-body font-semibold text-text-primary">Logo de la Organización</h3>
         </div>
         <p className="text-[12px] font-body text-text-dim">
-          Sube el logo de tu clinica. Se mostrara en el sidebar del dashboard, el chat web y los reportes PDF.
-          Formatos: PNG, JPG, SVG, WebP. Maximo 2MB.
+          Sube el logo de tu clínica. Se mostrará en el sidebar del dashboard, el chat web y los reportes PDF.
+          Formatos: PNG, JPG, SVG, WebP. Máximo 2MB.
         </p>
 
         {/* Current logo preview */}
@@ -336,9 +336,9 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
         {/* DNS Instructions */}
         {domainStatus === 'pending' && dnsInstructions && (
           <div className="space-y-2 p-3 rounded-md bg-surface-3/50 border border-border">
-            <h4 className="text-[12px] font-body font-semibold text-text-primary">Instrucciones de configuracion DNS</h4>
+            <h4 className="text-[12px] font-body font-semibold text-text-primary">Instrucciones de configuración DNS</h4>
             <p className="text-[12px] font-body text-text-muted">
-              Agrega el siguiente registro CNAME en el panel de administracion de tu proveedor de dominio:
+              Agrega el siguiente registro CNAME en el panel de administración de tu proveedor de dominio:
             </p>
             <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[12px] font-body">
               <span className="text-text-dim font-semibold">Tipo:</span>

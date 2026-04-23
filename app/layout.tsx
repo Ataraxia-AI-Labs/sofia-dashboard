@@ -13,8 +13,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'SofIA — Nucleus | Ataraxia IA Labs',
-  description: 'SofIA opera tu clinica 24/7. WhatsApp, voz, citas, cobros, oportunidades — todo autonomo. Tu clinica nunca duerme.',
-  keywords: 'IA clinicas, chatbot dental, WhatsApp dental, asistente IA clinica, automatizacion clinicas, SofIA, Ataraxia, Nucleus',
+  description: 'SofIA opera tu clínica 24/7. WhatsApp, voz, citas, cobros, oportunidades — todo autónomo. Tu clínica nunca duerme.',
+  keywords: 'IA clínicas, chatbot dental, WhatsApp dental, asistente IA clínica, automatización clínicas, SofIA, Ataraxia, Nucleus',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },

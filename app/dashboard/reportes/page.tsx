@@ -191,7 +191,7 @@ export default function ReportesPage() {
                 <RevenueRow label={t('charged')} value={rev.revenue_total} />
                 <RevenueRow label={t('pendingRevenue')} value={rev.revenue_pendiente} />
                 <RevenueRow label={t('pipelineRevenue')} value={rev.revenue_pipeline} />
-                <div className="border-t border-border pt-3 mt-3">
+                <div className="border-t border-border/30 pt-3 mt-3">
                   <RevenueRow label={t('averageTicket')} value={rev.ticket_promedio} />
                   <RevenueRow label={t('dailyAverage')} value={rev.revenue_diario_promedio} />
                   <RevenueRow label={t('monthlyProjection')} value={rev.proyeccion_mensual} bold />
@@ -235,7 +235,7 @@ export default function ReportesPage() {
                 <BotCard name="Reminder" count={bots.reminder_bot?.mensajes_enviados ?? 0} desc={t('appointmentReminders')} />
                 <BotCard name="Hunter" count={bots.hunter_bot?.followups_enviados ?? 0} desc={t('leadFollowups')} extra={bots.hunter_bot?.conversiones_post_followup ? `${bots.hunter_bot.conversiones_post_followup} ${t('converted')}` : undefined} />
                 <BotCard name="Nurse" count={bots.nurse_bot?.recordatorios_enviados ?? 0} desc={t('medicationReminders')} />
-                <div className="border-t border-border pt-3">
+                <div className="border-t border-border/30 pt-3">
                   <div className="flex justify-between text-[12px] font-body">
                     <span className="text-text-muted">{t('totalAutomatic')}</span>
                     <span className="font-bold text-text-primary">{bots.total_mensajes_automaticos ?? 0}</span>

@@ -75,7 +75,7 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
       {/* Panel */}
       <div className="relative w-full max-w-lg bg-surface border-l border-border overflow-y-auto animate-slide-in">
         {/* Header */}
-        <div className="sticky top-0 bg-surface/90 backdrop-blur-md border-b border-border px-5 py-3 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-surface/90 backdrop-blur-md border-b border-border/30 px-5 py-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple font-body font-bold">
               {patient.full_name?.[0]?.toUpperCase() || '?'}
@@ -91,7 +91,7 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-1.5 px-5 py-2 border-b border-border bg-surface/50">
+        <div className="flex gap-1.5 px-5 py-2 border-b border-border/30 bg-surface/50">
           <button onClick={props.onToggleEdit} className={`px-2.5 py-1 rounded-md text-[12px] font-body font-semibold transition-colors ${props.editingPatient ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
             <Edit3 size={11} className="inline mr-1" />Editar
           </button>
@@ -105,7 +105,7 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
         </div>
 
         {/* Tab navigation */}
-        <div className="flex gap-0 px-5 border-b border-border bg-surface/50">
+        <div className="flex gap-0 px-5 border-b border-border/30 bg-surface/50">
           {tabs.map((tab) => (
             <button key={tab.id} onClick={() => onTabChange(tab.id)} className={`px-3 py-2 text-[13px] font-body font-semibold border-b-2 transition-colors ${detailTab === tab.id ? 'border-brand-purple text-brand-purple' : 'border-transparent text-text-dim hover:text-text-muted'}`}>
               {tab.label}

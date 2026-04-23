@@ -132,7 +132,7 @@ export default function ReferidosPage() {
           )}
 
           {/* Tabs */}
-          <div className="flex gap-4 border-b border-border">
+          <div className="flex gap-4 border-b border-brand-purple/10">
             {([
               { id: 'overview' as Tab, label: t('analytics') },
               { id: 'leaderboard' as Tab, label: t('leaderboard') },
@@ -151,7 +151,11 @@ export default function ReferidosPage() {
               {leaderboard.length === 0 ? (
                 <p className="text-[12px] font-body text-text-dim py-8 text-center">Sin referidores activos</p>
               ) : leaderboard.map((entry, i) => (
-                <div key={entry.patient_id} className="flex items-center justify-between border border-border rounded-lg px-3 py-2 hover:bg-surface-2/30 transition-colors">
+                <div
+                  key={entry.patient_id}
+                  className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-brand-purple/[0.04] transition-colors"
+                  style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}
+                >
                   <div className="flex items-center gap-3">
                     <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[12px] font-body font-bold ${
                       i === 0 ? 'bg-brand-gold/15 text-brand-gold' : i === 1 ? 'bg-text-muted/15 text-text-muted' : i === 2 ? 'bg-status-warning/15 text-status-warning' : 'bg-surface-2 text-text-dim'

@@ -43,23 +43,23 @@ type Step = 1 | 2 | 3 | 4
 const STEP_NARRATIVE = [
   {
     title: 'Nombra tu universo',
-    sub: 'Cada clinica es un mundo. El tuyo comienza ahora.',
-    hint: 'SofIA aprendera todo sobre tu clinica para atender como si fuera parte de tu equipo.',
+    sub: 'Cada clínica es un mundo. El tuyo comienza ahora.',
+    hint: 'SofIA aprenderá todo sobre tu clínica para atender como si fuera parte de tu equipo.',
   },
   {
     title: 'El comandante',
-    sub: 'Cada Nucleus necesita un piloto. Identificate.',
-    hint: 'Estas credenciales te daran acceso al centro de control de tu clinica.',
+    sub: 'Cada Nucleus necesita un piloto. Identifícate.',
+    hint: 'Estas credenciales te darán acceso al centro de control de tu clínica.',
   },
   {
-    title: 'Conecta la senal',
+    title: 'Conecta la señal',
     sub: 'SofIA necesita un canal para hablar con el mundo.',
-    hint: 'WhatsApp es el canal principal. Puedes conectar mas despues.',
+    hint: 'WhatsApp es el canal principal. Puedes conectar más después.',
   },
   {
     title: 'Activar el portal',
-    sub: 'Todo listo. Un clic y tu clinica nunca vuelve a dormir.',
-    hint: 'Al confirmar, SofIA comienza a aprender sobre tu clinica.',
+    sub: 'Todo listo. Un clic y tu clínica nunca vuelve a dormir.',
+    hint: 'Al confirmar, SofIA comienza a aprender sobre tu clínica.',
   },
 ]
 
@@ -565,7 +565,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="space-y-4" key="step1" style={{ animation: 'fadeUp 0.3s ease-out' }}>
               <div>
-                <label htmlFor="ob-clinic-name" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre de la clinica *</label>
+                <label htmlFor="ob-clinic-name" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Nombre de la clínica *</label>
                 <input
                   id="ob-clinic-name"
                   type="text"
@@ -755,7 +755,7 @@ export default function OnboardingPage() {
                   <p className="text-[12px] font-body text-text-muted leading-relaxed">
                     Puedes configurar WhatsApp en cualquier momento desde
                     <strong className="text-text-primary"> Control &rarr; Canales</strong>.
-                    SofIA estara lista cuando tu lo estes.
+                    SofIA estará lista cuando tú lo estés.
                   </p>
                 </div>
               </div>
@@ -767,7 +767,7 @@ export default function OnboardingPage() {
             <div className="space-y-4" key="step4" style={{ animation: 'fadeUp 0.3s ease-out' }}>
               {/* Summary */}
               <div className="bg-surface border border-border rounded-md p-4 space-y-2">
-                <ConfirmRow label="Clinica" value={form.clinic_name} />
+                <ConfirmRow label="Clínica" value={form.clinic_name} />
                 <ConfirmRow label="Especialidad" value={form.specialty} />
                 <ConfirmRow label="Ciudad" value={form.city || '—'} />
                 <ConfirmRow label="Comandante" value={form.owner_name} />

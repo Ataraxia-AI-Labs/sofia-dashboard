@@ -138,7 +138,7 @@ export default function PagosPage() {
       {/* TAB: PAGOS */}
       {activeTab === 'pagos' && (
         <div className="glass-card overflow-hidden">
-          <div className="p-4 border-b border-border flex items-center gap-2">
+          <div className="p-4 border-b border-border/30 flex items-center gap-2">
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-1.5 rounded-lg bg-void border border-border text-text-primary text-xs outline-none">
               <option value="">Todos los estados</option>
               <option value="PAID">Pagados</option>
@@ -149,7 +149,7 @@ export default function PagosPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-border/30">
                   <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Paciente</th>
                   <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Servicio</th>
                   <th className="text-right text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Monto</th>
@@ -162,7 +162,7 @@ export default function PagosPage() {
               <tbody>
                 {loading && payments.length === 0 ? (
                   Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="border-b border-border/50">
+                    <tr key={i} className="border-b border-border/30">
                       {Array.from({ length: 7 }).map((_, j) => (
                         <td key={j} className="px-5 py-3"><div className="h-4 bg-surface-3 rounded animate-pulse w-20" /></td>
                       ))}
@@ -173,7 +173,7 @@ export default function PagosPage() {
                 ) : payments.map((p) => {
                   const status = STATUS_CONFIG[p.status] || STATUS_CONFIG.PENDING
                   return (
-                    <tr key={p.id} className="border-b border-border/50 hover:bg-surface-3/50 transition-colors">
+                    <tr key={p.id} className="border-b border-border/30 hover:bg-surface-3/50 transition-colors">
                       <td className="px-5 py-3">
                         <span className="text-xs font-body font-medium text-text-primary">{p.patients?.full_name || 'Sin nombre'}</span>
                         <div className="text-[10px] text-text-dim font-body">{p.patients?.phone || ''}</div>
@@ -252,7 +252,7 @@ export default function PagosPage() {
                   })}
                 </div>
               ) : (
-                <p className="text-text-dim text-[12px] font-body">Sin datos aun</p>
+                <p className="text-text-dim text-[12px] font-body">Sin datos aún</p>
               )}
             </div>
           </div>

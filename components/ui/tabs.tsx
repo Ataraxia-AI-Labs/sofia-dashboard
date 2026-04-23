@@ -17,7 +17,7 @@ interface TabsProps {
 export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
   return (
     <div
-      className="flex gap-1.5 border-b border-border pb-px overflow-x-auto scrollbar-thin"
+      className="flex gap-1.5 border-b border-border/30 pb-px overflow-x-auto scrollbar-thin"
       // Soft gradient fade on both edges hints that the tab strip scrolls
       // when more than ~7 tabs are defined (e.g. Ajustes has 12).
       style={{

@@ -24,14 +24,19 @@ export interface FeatureLockProps {
 export function FeatureLock({ icon, title, headline, subhead, eta, bullets, ctaLabel = 'Ver más y entrar a la beta', persuasiveKey }: FeatureLockProps) {
   return (
     <div className="flex flex-col items-center text-center max-w-[560px] mx-auto pt-16 pb-12">
-      {/* Floating icon with halo */}
+      {/* Floating icon with lila halo — no heavy border, just inner glow */}
       <div className="relative mb-6">
         <div className="absolute inset-0 bg-brand-purple/25 blur-3xl rounded-full" />
-        <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-b from-surface-2 to-surface border border-border/60 flex items-center justify-center shadow-[0_1px_0_0_rgba(255,255,255,0.06)_inset,0_8px_32px_-4px_rgba(0,0,0,0.5),0_0_0_1px_rgba(139,92,246,0.15)]">
+        <div
+          className="relative w-20 h-20 rounded-2xl bg-brand-purple/[0.04] flex items-center justify-center"
+          style={{
+            boxShadow:
+              '0 0 0 1px rgba(139,92,246,0.15), 0 0 40px -20px rgba(168,85,247,0.4), 0 1px 0 0 rgba(255,255,255,0.05) inset',
+          }}
+        >
           <div className="text-brand-purple">{icon}</div>
-          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-surface border border-border/60 flex items-center justify-center shadow">
-            <Lock size={10} className="text-text-dim" />
-          </div>
+          {/* Naked lock icon — no circle bg */}
+          <Lock size={14} className="absolute -top-1 -right-1 text-brand-purple/80" strokeWidth={2} />
         </div>
       </div>
 
@@ -54,7 +59,11 @@ export function FeatureLock({ icon, title, headline, subhead, eta, bullets, ctaL
       {/* Bullets */}
       <div className="w-full max-w-md space-y-2 mb-8">
         {bullets.map((b, i) => (
-          <div key={i} className="flex items-start gap-2.5 text-left px-3 py-2 rounded-lg bg-surface/40 border border-border/30">
+          <div
+            key={i}
+            className="flex items-start gap-2.5 text-left px-3 py-2 rounded-lg bg-surface/40"
+            style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}
+          >
             <div className="mt-[3px] flex-shrink-0 w-4 h-4 rounded-full bg-brand-purple/15 flex items-center justify-center">
               <Check size={10} className="text-brand-purple" strokeWidth={2.5} />
             </div>

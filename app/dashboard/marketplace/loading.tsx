@@ -5,7 +5,7 @@ export default function MarketplaceLoading() {
     <div className="space-y-3 animate-sentient-breathe">
       <Skeleton className="h-5 w-48 mb-2" />
       <Skeleton className="h-3 w-32" />
-      <div className="flex gap-4 border-b border-border pb-2">
+      <div className="flex gap-4 border-b border-border/30 pb-2">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-4 w-24" />

@@ -485,7 +485,7 @@ export default function CampanasPage() {
               </div>
 
               {/* AI Suggest Segment */}
-              <div className="pt-3 border-t border-border">
+              <div className="pt-3 border-t border-border/30">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -686,7 +686,7 @@ function summarizeSegment(criteria: Record<string, unknown>): string {
   const parts: string[] = []
   if (criteria.age_range) {
     const range = criteria.age_range as number[]
-    parts.push(`${range[0]}-${range[1]} anos`)
+    parts.push(`${range[0]}-${range[1]} años`)
   }
   if (criteria.gender === 'F') parts.push('Mujeres')
   if (criteria.gender === 'M') parts.push('Hombres')

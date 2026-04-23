@@ -196,7 +196,7 @@ export default function EquipoPage() {
                                 {t('changeTo', { role: r.label })}
                               </button>
                             ))}
-                            <div className="border-t border-border my-1" />
+                            <div className="border-t border-border/30 my-1" />
                             <button
                               onClick={() => handleDeactivate(member.id, member.full_name || member.email || t('deactivated'))}
                               className="w-full text-left px-3 py-2 text-[12px] font-body text-status-danger hover:bg-status-danger/5 transition-colors flex items-center gap-2"

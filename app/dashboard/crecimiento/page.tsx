@@ -110,8 +110,8 @@ function SEOHealthView({ seo }: { seo: Record<string, unknown> }) {
     return (
       <div className="text-center py-12">
         <Search size={24} className="mx-auto text-text-dim/30 mb-2" />
-        <p className="text-[12px] font-body text-text-dim">Aún no hay análisis SEO disponible.</p>
-        <p className="text-[11px] font-body text-text-dim/70 mt-1">El próximo crawl se ejecutará automáticamente.</p>
+        <p className="text-[12px] font-body text-text-dim">Aún no hay análisis de tu presencia en Google.</p>
+        <p className="text-[11px] font-body text-text-dim/70 mt-1">SofIA revisará tu sitio automáticamente y te dirá cómo mejorar.</p>
       </div>
     )
   }
@@ -122,6 +122,16 @@ function SEOHealthView({ seo }: { seo: Record<string, unknown> }) {
   const calculatedAt = seo.calculated_at as string | null
   const factors = seo.factors as Record<string, number> | null
   const pct = Math.min(100, Math.max(0, (score / (maxScore || 100)) * 100))
+
+  // If every factor is 0 (typical first-visit state before GBP is connected),
+  // render a single intentional empty state with a CTA instead of 8 cards
+  // silently screaming "0%". Feels diseñado, no roto.
+  const allFactorsZero = factors && typeof factors === 'object' &&
+    Object.keys(factors).length > 0 &&
+    Object.values(factors).every(v => {
+      const n = typeof v === 'number' ? v : Number(v) || 0
+      return n === 0
+    })
 
   return (
     <div className="space-y-5">
@@ -176,42 +186,62 @@ function SEOHealthView({ seo }: { seo: Record<string, unknown> }) {
       {factors && typeof factors === 'object' && Object.keys(factors).length > 0 && (
         <div>
           <div className="text-[11px] font-body font-semibold uppercase tracking-[0.18em] text-text-dim mb-2.5">
-            Factores analizados
+            Qué miramos en tu presencia digital
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {Object.entries(factors).map(([k, v]) => {
-              const numeric = typeof v === 'number' ? v : Number(v) || 0
-              const factorPct = numeric <= 1 ? numeric * 100 : numeric
-              return (
-                <div
-                  key={k}
-                  className="rounded-lg p-3 bg-surface/40"
-                  style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.08)' }}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[12px] font-body text-text-primary">
-                      {FACTOR_LABELS[k] || k.replace(/_/g, ' ')}
-                    </span>
-                    <span className="text-[11px] font-mono font-semibold text-text-primary tabular-nums">
-                      {factorPct.toFixed(0)}%
-                    </span>
+          {allFactorsZero ? (
+            // Intentional empty state — no Google Business Profile conectado todavía
+            <div
+              className="rounded-lg p-6 bg-brand-purple/[0.04] text-center"
+              style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.12), 0 0 40px -20px rgba(139,92,246,0.4)' }}
+            >
+              <div className="w-10 h-10 rounded-full bg-brand-purple/10 flex items-center justify-center mx-auto mb-3">
+                <Search size={16} className="text-brand-purple" strokeWidth={1.8} />
+              </div>
+              <p className="text-[13px] font-body text-text-primary mb-1 font-semibold">
+                Aún no hay datos de SEO local
+              </p>
+              <p className="text-[12px] font-body text-text-dim max-w-[380px] mx-auto leading-relaxed mb-4">
+                Conecta tu Google Business Profile para empezar a medir tu posicionamiento, reseñas y palabras clave.
+              </p>
+              <button
+                onClick={() => { if (typeof window !== 'undefined') window.location.href = '/dashboard/ajustes?tab=channels' }}
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-brand-purple/10 border border-brand-purple/20 hover:bg-brand-purple/20 text-brand-purple text-[12px] font-body font-medium transition-colors"
+              >
+                <Sparkles size={11} strokeWidth={1.8} />
+                Conectar Google Business Profile
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {Object.entries(factors).map(([k, v]) => {
+                const numeric = typeof v === 'number' ? v : Number(v) || 0
+                const factorPct = numeric <= 1 ? numeric * 100 : numeric
+                return (
+                  <div
+                    key={k}
+                    className="rounded-lg p-3 bg-surface-2/40"
+                    style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.08)' }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[12px] font-body text-text-primary">
+                        {FACTOR_LABELS[k] || k.replace(/_/g, ' ')}
+                      </span>
+                      <span className="text-[11px] font-mono font-semibold text-text-primary tabular-nums">
+                        {factorPct.toFixed(0)}%
+                      </span>
+                    </div>
+                    {/* Thin 2px hairline track + lila fill */}
+                    <div className="w-full h-0.5 rounded-full bg-brand-purple/10 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-brand-purple transition-all duration-500"
+                        style={{ width: `${Math.min(100, factorPct)}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-1 rounded-full bg-surface-2 overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${Math.min(100, factorPct)}%`,
-                        background:
-                          factorPct >= 80 ? '#06d6a0' :
-                          factorPct >= 50 ? '#8b5cf6' :
-                          factorPct >= 25 ? '#f5c842' : '#ef4444',
-                      }}
-                    />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
 
@@ -340,8 +370,8 @@ export default function CrecimientoPage() {
         <>
           {/* Funnel */}
           {tab === 'funnel' && metrics && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-center gap-2 py-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-2 py-4">
                 {funnelSteps.map((step, i) => (
                   <div key={step.label} className="flex items-center gap-2">
                     <div className="text-center">
@@ -353,17 +383,67 @@ export default function CrecimientoPage() {
                 ))}
               </div>
 
-              {/* KPIs */}
-              {metrics.kpis && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {Object.entries(metrics.kpis).map(([k, v]) => (
-                    <div key={k} className="rounded-xl p-3.5 bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>
-                      <p className="text-[10px] font-body text-text-dim uppercase tracking-[0.14em]">{formatKpiLabel(k)}</p>
-                      <p className="text-xl font-mono font-semibold text-text-primary mt-1 tabular-nums">{formatKpiValue(k, v)}</p>
+              {/* KPIs — conversion rate + contextual metrics packed together
+                  so the tab doesn't leave a giant whitespace hole. */}
+              {metrics.kpis && (() => {
+                const overallRate = Number(metrics.kpis.overall_conversion_rate ?? 0)
+                const overallPct = overallRate <= 1 ? overallRate * 100 : overallRate
+                // Compute derived metrics from funnel so the row always shows >=3 cards
+                const { visitors, leads, appointments, completed } = metrics.funnel
+                const visitorToLead = visitors > 0 ? (leads / visitors) * 100 : 0
+                const leadToAppt = leads > 0 ? (appointments / leads) * 100 : 0
+                const apptToClient = appointments > 0 ? (completed / appointments) * 100 : 0
+
+                const extraKpis = Object.entries(metrics.kpis).filter(([k]) => k !== 'overall_conversion_rate')
+                const derived: { label: string; value: string; hint: string }[] = []
+                if (visitorToLead > 0) derived.push({ label: 'Visita → Lead', value: `${visitorToLead.toFixed(1)}%`, hint: 'conversión del primer contacto' })
+                if (leadToAppt > 0) derived.push({ label: 'Lead → Cita', value: `${leadToAppt.toFixed(1)}%`, hint: 'agendan después de interesarse' })
+                if (apptToClient > 0) derived.push({ label: 'Cita → Paciente', value: `${apptToClient.toFixed(1)}%`, hint: 'completan el tratamiento' })
+
+                return (
+                  <div className="space-y-2.5">
+                    {/* Hero: overall conversion + narrative */}
+                    <div
+                      className="rounded-lg p-4 bg-surface/40 flex flex-wrap items-center gap-4"
+                      style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.12), 0 2px 12px -4px rgba(139,92,246,0.14)' }}
+                    >
+                      <div className="flex-shrink-0">
+                        <p className="text-[10px] font-body text-text-dim uppercase tracking-[0.14em]">Tasa de conversión</p>
+                        <p className="text-3xl font-mono font-semibold text-brand-purple mt-0.5 tabular-nums leading-none">
+                          {overallPct.toFixed(1)}%
+                        </p>
+                      </div>
+                      <div className="flex-1 min-w-[240px]">
+                        <p className="text-[12.5px] font-body text-text-primary leading-relaxed">
+                          {overallPct > 0
+                            ? `${overallPct.toFixed(1)}% de tus visitantes se vuelven pacientes. Cada punto que suba esta cifra multiplica tus ingresos.`
+                            : 'Aún no hay conversiones registradas en este periodo. Conecta tus canales o amplía el rango para ver tu tasa.'}
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    {/* Secondary metrics row — derived + any extra backend KPIs.
+                        Grid siempre se ve compacto, nunca un solo card solitario. */}
+                    {(derived.length > 0 || extraKpis.length > 0) && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+                        {derived.map(d => (
+                          <div key={d.label} className="rounded-lg p-3 bg-surface-2/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.08)' }}>
+                            <p className="text-[10px] font-body text-text-dim uppercase tracking-[0.14em]">{d.label}</p>
+                            <p className="text-lg font-mono font-semibold text-text-primary mt-0.5 tabular-nums">{d.value}</p>
+                            <p className="text-[10.5px] font-body text-text-dim/80 mt-0.5">{d.hint}</p>
+                          </div>
+                        ))}
+                        {extraKpis.map(([k, v]) => (
+                          <div key={k} className="rounded-lg p-3 bg-surface-2/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.08)' }}>
+                            <p className="text-[10px] font-body text-text-dim uppercase tracking-[0.14em]">{formatKpiLabel(k)}</p>
+                            <p className="text-lg font-mono font-semibold text-text-primary mt-0.5 tabular-nums">{formatKpiValue(k, v)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
 
               {/* Anomalies */}
               {metrics.anomalies?.length > 0 && (
@@ -406,10 +486,10 @@ export default function CrecimientoPage() {
                   {Object.entries(attribution.channels || {}).map(([channel, data]) => {
                     const d = data as { conversions: number; revenue: number; weight: number }
                     return (
-                      <div key={channel} className="rounded-xl p-3.5 flex items-center justify-between bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}>
+                      <div key={channel} className="rounded-lg p-3.5 flex items-center justify-between bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}>
                         <div className="min-w-0">
                           <div className="text-[13px] font-body font-semibold text-text-primary truncate">{formatChannelName(channel)}</div>
-                          <div className="text-[11px] font-body text-text-dim mt-0.5">{d.conversions.toLocaleString()} conversiones</div>
+                          <div className="text-[11px] font-body text-text-dim mt-0.5">{d.conversions.toLocaleString()} pacientes captados</div>
                         </div>
                         <div className="text-right flex-shrink-0 ml-4">
                           <div className="text-[14px] font-mono font-semibold text-text-primary tabular-nums">{formatCurrency(d.revenue)}</div>
@@ -438,11 +518,11 @@ export default function CrecimientoPage() {
               {ads.length === 0 ? (
                 <div className="text-center py-12">
                   <Megaphone size={24} className="mx-auto text-text-dim/30 mb-2" />
-                  <p className="text-[12.5px] font-body text-text-dim">Aún no hay campañas activas.</p>
-                  <p className="text-[11px] font-body text-text-dim/70 mt-1">Conecta Meta Ads o Google Ads desde Ajustes para ver tus campañas aquí.</p>
+                  <p className="text-[12.5px] font-body text-text-dim">Aún no tienes publicidad activa conectada.</p>
+                  <p className="text-[11px] font-body text-text-dim/70 mt-1">Ve a Ajustes → Canales y conecta Meta Ads o Google Ads. SofIA los leerá automáticamente.</p>
                 </div>
               ) : ads.map(ad => (
-                <div key={ad.id} className="rounded-xl p-4 bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>
+                <div key={ad.id} className="rounded-lg p-4 bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="flex-shrink-0 text-[10px] font-body bg-surface-2 rounded px-1.5 py-0.5 text-text-dim uppercase tracking-wide" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}>{ad.platform}</span>

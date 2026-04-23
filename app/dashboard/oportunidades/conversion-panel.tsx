@@ -216,7 +216,7 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
 
         {/* Top Converting Factors */}
         {topFactors.length > 0 && (
-          <div className="mt-4 pt-3 border-t border-border">
+          <div className="mt-4 pt-3 border-t border-border/30">
             <div className="flex items-center gap-1.5 mb-2">
               <Target size={11} className="text-status-success" />
               <span className="text-[12px] font-body font-semibold text-text-muted uppercase">{t('topFactors')}</span>

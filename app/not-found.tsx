@@ -16,10 +16,10 @@ export default function NotFound() {
         {/* 404 display */}
         <div>
           <h1 className="text-7xl font-bold font-body text-brand-purple mb-2">404</h1>
-          <h2 className="text-lg font-semibold text-white font-body">Pagina no encontrada</h2>
+          <h2 className="text-lg font-semibold text-white font-body">Página no encontrada</h2>
           <p className="text-text-muted text-xs font-body mt-2 leading-relaxed max-w-sm mx-auto">
-            La pagina que buscas no existe o fue movida.
-            Pero tu clinica sigue funcionando &mdash; SofIA nunca se pierde.
+            La página que buscas no existe o fue movida.
+            Pero tu clínica sigue funcionando &mdash; SofIA nunca se pierde.
           </p>
         </div>
 

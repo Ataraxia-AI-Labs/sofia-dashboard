@@ -480,7 +480,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-border/30">
                   <th className="text-left py-2 text-text-dim font-semibold">{t('service')}</th>
                   <th className="text-right py-2 text-text-dim font-semibold">{t('yourPrice')}</th>
                   <th className="text-right py-2 text-text-dim font-semibold">{t('competitorAvg')}</th>
@@ -491,7 +491,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
               </thead>
               <tbody>
                 {pricingToShow.map((p, i) => (
-                  <tr key={i} className="border-b border-border/50 hover:bg-surface-2/50 transition-colors">
+                  <tr key={i} className="border-b border-border/30 hover:bg-brand-purple/[0.04] transition-colors">
                     <td className="py-2.5 font-medium text-text-primary">{p.service}</td>
                     <td className="py-2.5 text-right font-body text-text-primary">{formatCurrency(p.your_price)}</td>
                     <td className="py-2.5 text-right font-body text-text-muted">{formatCurrency(p.competitor_avg)}</td>

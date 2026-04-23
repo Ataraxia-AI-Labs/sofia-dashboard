@@ -130,7 +130,7 @@ export function AnnotationStatsCard({ orgId, className = '' }: AnnotationStatsCa
           </div>
 
           {/* Approval rate summary */}
-          <div className="mt-4 pt-3 border-t border-border">
+          <div className="mt-4 pt-3 border-t border-border/30">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-body text-text-dim uppercase font-semibold tracking-wider">{t('approvalRate')}</span>
               <span className={`text-[11px] font-bold font-body ${

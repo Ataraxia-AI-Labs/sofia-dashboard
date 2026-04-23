@@ -234,7 +234,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
 
               {/* Last message time */}
               {m?.last_message_at && (
-                <div className="mt-3 pt-2 border-t border-border">
+                <div className="mt-3 pt-2 border-t border-border/30">
                   <span className="text-[11px] font-body text-text-dim flex items-center gap-1">
                     <Clock size={8} /> {t('lastMessage')}: {timeAgo(m.last_message_at)}
                   </span>

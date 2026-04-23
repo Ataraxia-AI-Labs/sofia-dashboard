@@ -116,7 +116,7 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
   const shareWhatsApp = () => {
     if (!data?.referral.code) return
-    const msg = encodeURIComponent(`Te recomiendo esta clinica! Usa mi codigo ${data.referral.code} y ambos recibimos descuento.`)
+    const msg = encodeURIComponent(`Te recomiendo esta clínica! Usa mi código ${data.referral.code} y ambos recibimos descuento.`)
     window.open(`https://wa.me/?text=${msg}`, '_blank')
   }
 
@@ -314,7 +314,7 @@ export default function PatientPortalPage({ params }: { params: { token: string 
           <div className="mb-3 p-5 rounded-lg bg-surface border border-border text-center">
             <Calendar className="w-6 h-6 text-text-dim mx-auto mb-1.5" />
             <p className="text-xs font-body font-medium text-text-muted">Sin citas pendientes</p>
-            <p className="text-[12px] font-body text-text-dim mt-0.5">Contacta a la clinica para agendar tu proxima visita</p>
+            <p className="text-[12px] font-body text-text-dim mt-0.5">Contacta a la clínica para agendar tu próxima visita</p>
           </div>
         )}
 
@@ -487,7 +487,7 @@ export default function PatientPortalPage({ params }: { params: { token: string 
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-status-success text-white text-xs font-body font-medium hover:opacity-90 transition-opacity"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              Contactar clinica por WhatsApp
+              Contactar clínica por WhatsApp
             </a>
           )}
 

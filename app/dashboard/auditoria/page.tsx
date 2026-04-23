@@ -126,7 +126,7 @@ export default function AuditoriaPage() {
           <select
             value={actionFilter}
             onChange={e => { setActionFilter(e.target.value); setPage(0) }}
-            className="text-[12px] font-body bg-surface-2 border border-border rounded px-2 py-1 text-text-secondary"
+            className="text-[12px] font-body bg-surface-2/60 border border-border/40 rounded-md px-2 py-1 text-text-secondary outline-none focus:border-brand-purple/40"
           >
             <option value="">{t('allActions')}</option>
             {actions.map(a => <option key={a} value={a}>{a}</option>)}
@@ -134,11 +134,14 @@ export default function AuditoriaPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="border border-border rounded-lg overflow-hidden">
+      {/* Table — hairline divisions, glass surface */}
+      <div
+        className="rounded-lg overflow-hidden"
+        style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1)' }}
+      >
         <table className="w-full">
           <thead>
-            <tr className="bg-surface-2 border-b border-border">
+            <tr className="bg-surface-2/40 border-b border-border/30">
               <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('date')}</th>
               <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('action')}</th>
               <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('user')}</th>
@@ -152,7 +155,7 @@ export default function AuditoriaPage() {
             ) : logs.length === 0 ? (
               <tr><td colSpan={5} className="text-center text-[12px] font-body text-text-dim py-8">{t('noLogs')}</td></tr>
             ) : logs.map(log => (
-              <tr key={log.id} className="border-b border-border/50 hover:bg-surface-2/50 transition-colors">
+              <tr key={log.id} className="border-b border-border/30 last:border-b-0 hover:bg-brand-purple/[0.04] transition-colors">
                 <td className="px-3 py-2 text-[12px] font-body text-text-muted whitespace-nowrap">
                   <div className="flex items-center gap-1">
                     <Clock size={10} className="text-text-dim" />
@@ -160,7 +163,7 @@ export default function AuditoriaPage() {
                   </div>
                 </td>
                 <td className="px-3 py-2">
-                  <span className="text-[12px] font-body font-semibold text-brand-purple bg-brand-purple/8 px-1.5 py-0.5 rounded">
+                  <span className="inline-flex items-center text-[11px] font-body font-semibold text-brand-purple bg-brand-purple/10 border border-brand-purple/20 px-2 py-0.5 rounded-full">
                     {log.action}
                   </span>
                 </td>
@@ -186,12 +189,12 @@ export default function AuditoriaPage() {
           <span className="text-[11px] font-body text-text-dim">{total} registros</span>
           <div className="flex items-center gap-1">
             <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
-              className="p-1 rounded border border-border text-text-muted hover:text-text-primary disabled:opacity-30">
+              className="p-1 rounded-md border border-border/40 text-text-muted hover:text-text-primary hover:border-brand-purple/30 disabled:opacity-30 transition-colors">
               <ChevronLeft size={14} />
             </button>
             <span className="text-[12px] font-body text-text-secondary px-2">{page + 1} / {totalPages}</span>
             <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
-              className="p-1 rounded border border-border text-text-muted hover:text-text-primary disabled:opacity-30">
+              className="p-1 rounded-md border border-border/40 text-text-muted hover:text-text-primary hover:border-brand-purple/30 disabled:opacity-30 transition-colors">
               <ChevronRight size={14} />
             </button>
           </div>

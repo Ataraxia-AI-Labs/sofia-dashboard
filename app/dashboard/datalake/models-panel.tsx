@@ -260,7 +260,7 @@ export default function ModelsPanel({ orgId, trainingReady }: ModelsPanelProps) 
 
                   {/* Evaluation Results (if available) */}
                   {evaluation && (
-                    <div className="mt-3 pt-3 border-t border-border">
+                    <div className="mt-3 pt-3 border-t border-border/30">
                       <div className="flex items-center gap-1.5 mb-2">
                         <BarChart3 size={11} className="text-brand-cyan" />
                         <span className="text-[10px] font-semibold text-text-muted uppercase">{t('evaluationResults')}</span>
@@ -403,7 +403,7 @@ function ComparisonColumn({ label, evaluation, t }: {
         <CompRow label={t('tokenSavings')} value={`${evaluation.token_savings_pct.toFixed(1)}%`} />
         <CompRow label={t('responseTime')} value={`${evaluation.response_time_ms}ms`} />
         <CompRow label={t('toneConsistency')} value={`${(evaluation.tone_consistency * 100).toFixed(1)}%`} />
-        <div className="pt-2 border-t border-border">
+        <div className="pt-2 border-t border-border/30">
           <CompRow
             label={t('overallScore')}
             value={`${(evaluation.overall_score * 100).toFixed(1)}%`}

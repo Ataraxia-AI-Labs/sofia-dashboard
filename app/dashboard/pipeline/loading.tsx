@@ -50,7 +50,7 @@ export default function PipelineLoading() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="glass-card overflow-hidden border border-border">
             {/* Column header */}
-            <div className="px-3 py-2.5 bg-surface-3/30 border-b border-border">
+            <div className="px-3 py-2.5 bg-surface-3/30 border-b border-border/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-surface-3 rounded-md" />

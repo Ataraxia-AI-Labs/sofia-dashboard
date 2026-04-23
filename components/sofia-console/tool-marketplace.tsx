@@ -158,7 +158,7 @@ export function ToolMarketplace({ open, onClose, userRole, onPickTool, initialQu
         >
           {flat.length === 0 ? (
             <div className="px-4 py-8 text-center text-[11px] font-body text-text-dim">
-              Ninguna capacidad coincide con <span className="text-text-primary">"{query}"</span>
+              Ninguna capacidad coincide con <span className="text-text-primary">&ldquo;{query}&rdquo;</span>
             </div>
           ) : (
             Array.from(grouped.entries()).map(([cat, tools]) => (

@@ -296,7 +296,7 @@ export default function FacturacionPage() {
         ) : (
           <div>
             {/* Header */}
-            <div className="grid grid-cols-4 gap-2 pb-2 border-b border-border">
+            <div className="grid grid-cols-4 gap-2 pb-2 border-b border-border/30">
               {[t('invoiceDate'), t('invoiceAmount'), t('invoiceStatus'), t('invoicePeriod')].map(h => (
                 <span key={h} className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">
                   {h}
@@ -307,7 +307,7 @@ export default function FacturacionPage() {
             {invoices.map(inv => {
               const invCls = INVOICE_STYLE[inv.status] || INVOICE_STYLE.PENDING
               return (
-                <div key={inv.id} className="grid grid-cols-4 gap-2 py-2 border-b border-border last:border-0 items-center">
+                <div key={inv.id} className="grid grid-cols-4 gap-2 py-2 border-b border-border/30 last:border-0 items-center">
                   <span className="text-[12px] font-body text-text-primary">{formatDate(inv.created_at)}</span>
                   <span className="text-[12px] font-body font-semibold text-text-primary">{formatCOP(inv.amount_cop)}</span>
                   <span>

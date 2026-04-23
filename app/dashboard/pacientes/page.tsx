@@ -466,7 +466,7 @@ export default function PacientesPage() {
 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-2.5 border-t border-border">
+          <div className="flex items-center justify-between px-4 py-2.5 border-t border-border/30">
             <span className="text-[11px] font-body text-text-dim">
               {page * PAGE_SIZE + 1}&ndash;{Math.min((page + 1) * PAGE_SIZE, total)} {t('ofTotal')} {total}
             </span>

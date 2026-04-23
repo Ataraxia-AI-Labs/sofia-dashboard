@@ -23,8 +23,8 @@ export default function Forbidden() {
           <h1 className="text-7xl font-bold font-body text-brand-purple mb-2">403</h1>
           <h2 className="text-lg font-semibold text-white font-body">Acceso denegado</h2>
           <p className="text-text-muted text-xs font-body mt-2 leading-relaxed max-w-sm mx-auto">
-            No tienes permiso para ver esta pagina.
-            Contacta al administrador de tu clinica si crees que esto es un error.
+            No tienes permiso para ver esta página.
+            Contacta al administrador de tu clínica si crees que esto es un error.
           </p>
         </div>
 

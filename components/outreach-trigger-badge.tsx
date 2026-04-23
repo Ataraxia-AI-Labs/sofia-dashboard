@@ -31,7 +31,7 @@ const TRIGGER_CONFIG: Record<OutreachTriggerType, {
   },
   BIRTHDAY: {
     icon: Cake,
-    label: 'Cumpleanos',
+    label: 'Cumpleaños',
     color: 'text-brand-purple',
     bg: 'bg-brand-purple/10',
     border: 'border-brand-purple/25',

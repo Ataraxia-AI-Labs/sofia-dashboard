@@ -165,7 +165,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
 
         {/* Insights: Top Converting Features */}
         {insights?.top_converting_features && insights.top_converting_features.length > 0 && (
-          <div className="mt-4 pt-3 border-t border-border">
+          <div className="mt-4 pt-3 border-t border-border/30">
             <div className="flex items-center gap-1.5 mb-2">
               <TrendingUp size={11} className="text-status-success" />
               <span className="text-[10px] font-semibold text-text-muted uppercase">{t('topConvertingFeatures')}</span>
@@ -185,7 +185,7 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
 
         {/* Average Score */}
         {insights && insights.avg_score > 0 && (
-          <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
+          <div className="mt-3 pt-3 border-t border-border/30 flex items-center justify-between">
             <span className="text-[12px] font-body text-text-dim uppercase font-semibold">{t('avgScore')}</span>
             <span className={`text-sm font-bold font-mono ${
               insights.avg_score >= 75 ? 'text-status-danger' :

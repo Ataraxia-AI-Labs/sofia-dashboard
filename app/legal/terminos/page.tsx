@@ -50,19 +50,19 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">2. Descripcion del Servicio</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">2. Descripción del Servicio</h2>
             <p className="mb-2">
-              SofIA es una plataforma de inteligencia artificial disenada para clinicas de salud y estetica en
-              Latinoamerica. Proporciona:
+              SofIA es una plataforma de inteligencia artificial diseñada para clínicas de salud y estética en
+              Latinoamérica. Proporciona:
             </p>
             <ul className="space-y-1 ml-3">
               {[
-                'Asistente virtual por WhatsApp Business API para atencion al paciente',
-                'Sistema de agendamiento automatico de citas',
+                'Asistente virtual por WhatsApp Business API para atención al paciente',
+                'Sistema de agendamiento automático de citas',
                 'Procesamiento de pagos anticipados',
                 'CRM y analytics de pacientes',
                 'Pipeline de oportunidades de negocio',
-                'Dashboard de gestion clinica en tiempo real',
+                'Dashboard de gestión clínica en tiempo real',
               ].map(item => (
                 <li key={item} className="flex items-start gap-2">
                   <span className="text-brand-purple mt-0.5">&#8226;</span>
@@ -90,21 +90,21 @@ export default function TerminosPage() {
               </li>
             </ul>
             <p className="mt-2">
-              Queda prohibido el uso del Servicio para actividades ilegales, envio de spam, o cualquier
-              actividad que viole la legislacion colombiana aplicable.
+              Queda prohibido el uso del Servicio para actividades ilegales, envío de spam, o cualquier
+              actividad que viole la legislación colombiana aplicable.
             </p>
           </section>
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">4. Facturacion y Cancelacion</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">4. Facturación y Cancelación</h2>
             <p className="mb-2">
-              El servicio se factura mensualmente en USD. El periodo de prueba gratuito de 7 dias no requiere
-              tarjeta de credito. Despues del periodo de prueba, el plan activo se factura automaticamente.
+              El servicio se factura mensualmente en USD. El periodo de prueba gratuito de 7 días no requiere
+              tarjeta de crédito. Después del periodo de prueba, el plan activo se factura automáticamente.
             </p>
             <p>
-              Puede cancelar en cualquier momento desde el dashboard. La cancelacion es efectiva al final
-              del periodo de facturacion vigente. No se realizan reembolsos parciales por cancelaciones
-              a mitad de periodo, excepto en caso de garantia de satisfaccion aplicable.
+              Puede cancelar en cualquier momento desde el dashboard. La cancelación es efectiva al final
+              del periodo de facturación vigente. No se realizan reembolsos parciales por cancelaciones
+              a mitad de periodo, excepto en caso de garantía de satisfacción aplicable.
             </p>
           </section>
 
@@ -122,16 +122,16 @@ export default function TerminosPage() {
             <p>
               SofIA, sus algoritmos, modelos de IA, interfaces y toda la propiedad intelectual asociada
               son propiedad exclusiva de Ataraxia IA Labs. Los datos de pacientes generados en la plataforma
-              son propiedad de la clinica cliente. Ataraxia IA Labs no reclamara derechos sobre dichos datos.
+              son propiedad de la clínica cliente. Ataraxia IA Labs no reclamará derechos sobre dichos datos.
             </p>
           </section>
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">7. Limitacion de Responsabilidad</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">7. Limitación de Responsabilidad</h2>
             <p>
-              SofIA es una herramienta de apoyo administrativo. No reemplaza el juicio medico profesional
-              y no debe usarse para diagnostico o prescripcion. Ataraxia IA Labs no sera responsable por
-              decisiones clinicas tomadas basadas en informacion procesada por la plataforma.
+              SofIA es una herramienta de apoyo administrativo. No reemplaza el juicio médico profesional
+              y no debe usarse para diagnóstico o prescripción. Ataraxia IA Labs no será responsable por
+              decisiones clínicas tomadas basadas en información procesada por la plataforma.
             </p>
           </section>
 

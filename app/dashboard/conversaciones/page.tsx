@@ -482,7 +482,7 @@ export default function ConversacionesPage() {
           } flex-col w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 glass-card overflow-hidden`}
         >
           {/* Search */}
-          <div className="p-3 border-b border-border flex-shrink-0">
+          <div className="p-3 border-b border-border/30 flex-shrink-0">
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
               <input
@@ -794,7 +794,7 @@ function ConversationDetail({
   return (
     <>
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border flex items-center gap-3 flex-shrink-0">
+      <div className="px-4 py-3 border-b border-border/30 flex items-center gap-3 flex-shrink-0">
         <button
           onClick={onBack}
           className="lg:hidden w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
@@ -868,7 +868,7 @@ function ConversationDetail({
 
       {/* Conv Intelligence Panel */}
       {showIntel && (
-        <div className="px-4 py-3 border-b border-border flex-shrink-0 max-h-[350px] overflow-y-auto animate-fade-in">
+        <div className="px-4 py-3 border-b border-border/30 flex-shrink-0 max-h-[350px] overflow-y-auto animate-fade-in">
           <ConvIntelligencePanel orgId={orgId} patientId={thread.patientId} patientName={displayName} />
         </div>
       )}
@@ -909,7 +909,7 @@ function ConversationDetail({
       </div>
 
       {/* Bottom bar */}
-      <div className="px-4 py-2.5 border-t border-border flex-shrink-0">
+      <div className="px-4 py-2.5 border-t border-border/30 flex-shrink-0">
         {isVoiceCall ? (
           <div className="flex items-center gap-2 text-[10px] text-text-dim">
             <PhoneCall size={12} className="text-brand-cyan/50" />

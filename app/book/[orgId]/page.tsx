@@ -56,7 +56,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
       setServices(svc?.services || [])
       setHours(hrs?.hours || [])
       setLoading(false)
-    }).catch(() => { setError('No se pudo cargar la informacion de la clinica'); setLoading(false) })
+    }).catch(() => { setError('No se pudo cargar la información de la clínica'); setLoading(false) })
   }, [orgId])
 
   const fetchSlots = useCallback(async (date: string) => {
@@ -136,7 +136,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
         <div className="mx-auto mb-3 opacity-50 flex justify-center">
           <AtaraxiaLogoCompact size={40} />
         </div>
-        <p className="text-text-muted text-xs font-body">Esta clinica no tiene reservas en linea habilitadas.</p>
+        <p className="text-text-muted text-xs font-body">Esta clínica no tiene reservas en línea habilitadas.</p>
       </div>
     </div>
   )

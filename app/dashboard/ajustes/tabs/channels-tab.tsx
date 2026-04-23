@@ -118,7 +118,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
 
   const handleDisconnectVoice = async () => {
     if (isReadOnly) return
-    if (!confirm('Desconectar Voice AI? Las credenciales Twilio se eliminaran de la clinica.')) return
+    if (!confirm('¿Desconectar Voice AI? Las credenciales Twilio se eliminarán de la clínica.')) return
     setVoiceDisconnecting(true)
     try {
       await disconnectVoice(orgId)
@@ -359,7 +359,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
 
             {/* WhatsApp connection options */}
             {ch.key === 'whatsapp' && ch.configurable && !connected && !isReadOnly && (
-              <div className="mt-3 pt-3 border-t border-border space-y-3">
+              <div className="mt-3 pt-3 border-t border-border/30 space-y-3">
                 {/* Embedded Signup button (primary) */}
                 <button
                   onClick={handleEmbeddedSignup}
@@ -375,7 +375,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                 </button>
                 <p className="text-[12px] font-body text-text-dim text-center">
                   Vincula tu cuenta de WhatsApp Business directamente desde Meta.
-                  Pendiente aprobacion de Meta Technology Provider — usa configuracion manual mientras tanto.
+                  Pendiente aprobación de Meta Technology Provider — usa configuración manual mientras tanto.
                 </p>
 
                 {/* Manual form toggle */}
@@ -384,7 +384,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   className="flex items-center gap-1 text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors mx-auto"
                 >
                   {showManualForm ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
-                  Configuracion manual
+                  Configuración manual
                 </button>
 
                 {/* Manual form (collapsed by default) */}
@@ -530,7 +530,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   </button>
 
                   <p className="text-[10px] font-body text-text-dim/70 leading-relaxed">
-                    Validamos las credenciales y configuramos automaticamente los webhooks de tu numero (Voice + Status Callback).
+                    Validamos las credenciales y configuramos automáticamente los webhooks de tu número (Voice + Status Callback).
                   </p>
                 </div>
               )}
@@ -540,10 +540,10 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
           {voiceConnected && (
             <div className="space-y-1.5">
               <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block">
-                Numero de transferencia
+                Número de transferencia
               </label>
               <p className="text-[11px] font-body text-text-dim">
-                Cuando un paciente pide hablar con humano, la llamada se transfiere a este numero.
+                Cuando un paciente pide hablar con alguien de tu equipo, la llamada se transfiere a este número.
               </p>
               <div className="flex gap-2">
                 <input

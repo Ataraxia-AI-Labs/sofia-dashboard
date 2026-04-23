@@ -30,14 +30,14 @@ export default function PagosLoading() {
       {/* Table skeleton */}
       <div className="glass-card overflow-hidden">
         {/* Filter bar */}
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border/30">
           <div className="h-8 bg-surface-3 rounded-md w-40" />
         </div>
         {/* Table header */}
-        <div className="h-10 bg-surface-3/50 border-b border-border" />
+        <div className="h-10 bg-surface-3/50 border-b border-border/30" />
         {/* Table rows */}
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-14 border-b border-border/50 flex items-center px-4 gap-3">
+          <div key={i} className="h-14 border-b border-border/30 flex items-center px-4 gap-3">
             <div className="h-4 bg-surface-3 rounded-md w-32" />
             <div className="h-4 bg-surface-3 rounded-md w-24" />
             <div className="h-4 bg-surface-3 rounded-md w-20 ml-auto" />

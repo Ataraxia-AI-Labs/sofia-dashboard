@@ -50,8 +50,8 @@ export default function PrivacidadPage() {
             <h2 className="text-text-primary font-semibold text-sm mb-2">1. Responsable del Tratamiento</h2>
             <p>
               Ataraxia IA Labs (&ldquo;nosotros&rdquo;, &ldquo;la Empresa&rdquo;) es responsable del tratamiento de los
-              datos personales recabados a traves de la plataforma SofIA. Actuamos como encargados del
-              tratamiento de datos de pacientes en nombre de las clinicas clientes, quienes son los
+              datos personales recabados a través de la plataforma SofIA. Actuamos como encargados del
+              tratamiento de datos de pacientes en nombre de las clínicas clientes, quienes son los
               responsables del tratamiento frente a sus pacientes.
             </p>
           </section>
@@ -60,12 +60,12 @@ export default function PrivacidadPage() {
             <h2 className="text-text-primary font-semibold text-sm mb-2">2. Datos que Recopilamos</h2>
             <div className="space-y-3">
               <div>
-                <h3 className="text-text-primary font-medium mb-1.5">Datos de la clinica (cliente):</h3>
+                <h3 className="text-text-primary font-medium mb-1.5">Datos de la clínica (cliente):</h3>
                 <ul className="space-y-1 ml-3">
                   {[
                     'Nombre del representante legal y datos de contacto',
-                    'Informacion de la organizacion (NIT, nombre, direccion)',
-                    'Datos de facturacion y pago',
+                    'Información de la organización (NIT, nombre, dirección)',
+                    'Datos de facturación y pago',
                     'Credenciales de autenticacion (email, password cifrado)',
                   ].map(item => (
                     <li key={item} className="flex items-start gap-2">
@@ -76,13 +76,13 @@ export default function PrivacidadPage() {
                 </ul>
               </div>
               <div>
-                <h3 className="text-text-primary font-medium mb-1.5">Datos de pacientes (procesados en nombre de la clinica):</h3>
+                <h3 className="text-text-primary font-medium mb-1.5">Datos de pacientes (procesados en nombre de la clínica):</h3>
                 <ul className="space-y-1 ml-3">
                   {[
-                    'Nombre, numero de telefono (WhatsApp)',
+                    'Nombre, número de teléfono (WhatsApp)',
                     'Historial de conversaciones y citas agendadas',
-                    'Informacion de pagos realizados',
-                    'Preferencias de tratamiento y notas clinicas basicas',
+                    'Información de pagos realizados',
+                    'Preferencias de tratamiento y notas clínicas básicas',
                   ].map(item => (
                     <li key={item} className="flex items-start gap-2">
                       <span className="text-brand-purple mt-0.5">&#8226;</span>
@@ -98,10 +98,10 @@ export default function PrivacidadPage() {
             <h2 className="text-text-primary font-semibold text-sm mb-2">3. Finalidad del Tratamiento</h2>
             <ul className="space-y-1 ml-3">
               {[
-                'Prestar el servicio de asistente IA para clinicas',
-                'Procesar y gestionar citas medicas',
-                'Facilitar pagos entre pacientes y clinicas',
-                'Generar analytics y reportes para la clinica',
+                'Prestar el servicio de asistente IA para clínicas',
+                'Procesar y gestionar citas médicas',
+                'Facilitar pagos entre pacientes y clínicas',
+                'Generar analytics y reportes para la clínica',
                 'Mejorar los modelos de IA del servicio (datos anonimizados)',
                 'Cumplimiento de obligaciones legales y regulatorias',
               ].map(item => (
@@ -167,11 +167,11 @@ export default function PrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">7. Retencion de Datos</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">7. Retención de Datos</h2>
             <p>
               Los datos se conservan durante la vigencia del contrato de servicio y por el periodo adicional
-              requerido por la legislacion colombiana aplicable (minimo 5 anos para datos financieros y
-              medicos, conforme a la normativa sectorial).
+              requerido por la legislación colombiana aplicable (mínimo 5 años para datos financieros y
+              médicos, conforme a la normativa sectorial).
             </p>
           </section>
 
@@ -179,23 +179,23 @@ export default function PrivacidadPage() {
             <h2 className="text-text-primary font-semibold text-sm mb-2">8. Transferencia Internacional</h2>
             <p>
               Los datos pueden ser procesados en servidores ubicados en Estados Unidos (AWS us-east-1).
-              Esta transferencia se realiza bajo acuerdos de proteccion de datos alineados con estandares
-              internacionales y con las garantias requeridas por la Ley 1581 de 2012.
+              Esta transferencia se realiza bajo acuerdos de protección de datos alineados con estándares
+              internacionales y con las garantías requeridas por la Ley 1581 de 2012.
             </p>
           </section>
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">9. Cambios a esta Politica</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">9. Cambios a esta Política</h2>
             <p>
-              Notificaremos cambios materiales a esta politica via email con al menos 30 dias de anticipacion.
-              El uso continuado del servicio tras la notificacion implica aceptacion de los cambios.
+              Notificaremos cambios materiales a esta política vía email con al menos 30 días de anticipación.
+              El uso continuado del servicio tras la notificación implica aceptación de los cambios.
             </p>
           </section>
 
           <section>
             <h2 className="text-text-primary font-semibold text-sm mb-2">10. Contacto</h2>
             <p>
-              Oficial de Proteccion de Datos: <span className="text-brand-purple">privacidad@ataraxiaialabs.ai</span>
+              Oficial de Protección de Datos: <span className="text-brand-purple">privacidad@ataraxiaialabs.ai</span>
               <br />
               Superintendencia de Industria y Comercio (SIC): <span className="text-text-muted">www.sic.gov.co</span>
             </p>

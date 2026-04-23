@@ -212,7 +212,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
 
       {/* RECENT CALLS */}
       <div className="glass-card overflow-hidden">
-        <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+        <div className="px-5 py-3 border-b border-border/30 flex items-center justify-between">
           <h3 className="text-sm font-semibold font-mono text-text-primary flex items-center gap-2">
             <PhoneCall size={14} className="text-brand-purple" />
             {t('recentCalls')}
@@ -233,7 +233,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
             <p className="text-text-dim text-[10px] mt-1">{t('noCallsHint')}</p>
           </div>
         ) : (
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border/30">
             {calls.map(call => (
               <button
                 key={call.id}
@@ -279,7 +279,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
           <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface border border-border rounded-lg  flex flex-col overflow-hidden animate-fade-in">
             {/* Modal header */}
-            <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
+            <div className="px-5 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold font-body">
                   {selectedCall.patient_name?.[0]?.toUpperCase() || '?'}
@@ -386,7 +386,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                   </div>
 
                   {/* Call Summary */}
-                  <div className="border-t border-border pt-4">
+                  <div className="border-t border-border/30 pt-4">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
                         <FileText size={12} className="text-brand-gold" />

@@ -133,7 +133,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
         selectedPatientId ? 'hidden lg:flex' : 'flex'
       } flex-col w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 glass-card overflow-hidden`}>
         {/* Channel filter tabs */}
-        <div className="px-3 pt-3 pb-2 border-b border-border flex-shrink-0">
+        <div className="px-3 pt-3 pb-2 border-b border-border/30 flex-shrink-0">
           <div className="flex gap-1 mb-2.5 flex-wrap">
             {CHANNELS.map(ch => {
               const isActive = channelFilter === ch
@@ -290,7 +290,7 @@ export default function UnifiedInbox({ orgId }: UnifiedInboxProps) {
         {selectedConversation ? (
           <>
             {/* Header */}
-            <div className="px-4 py-3 border-b border-border flex items-center gap-3 flex-shrink-0">
+            <div className="px-4 py-3 border-b border-border/30 flex items-center gap-3 flex-shrink-0">
               <button
                 onClick={() => { setSelectedPatientId(null); setSelectedChannel(null) }}
                 className="lg:hidden w-8 h-8 rounded-lg bg-surface-3 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"

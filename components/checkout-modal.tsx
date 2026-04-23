@@ -282,7 +282,7 @@ export function CheckoutModal({
                   {billingCycle === 'MONTHLY' ? 'Mensual' : 'Anual'}
                 </span>
               </div>
-              <div className="flex items-center justify-between pt-1 border-t border-border">
+              <div className="flex items-center justify-between pt-1 border-t border-border/30">
                 <span className="text-text-muted text-xs font-semibold">Total</span>
                 <span className="text-text-primary text-xs font-body font-semibold">{formatCOP(price)}</span>
               </div>

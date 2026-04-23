@@ -45,12 +45,12 @@ export default function FacturacionLoading() {
 
       {/* Invoices table */}
       <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border/30">
           <Skeleton className="h-5 w-28" />
         </div>
-        <div className="h-10 bg-surface-3/50 border-b border-border" />
+        <div className="h-10 bg-surface-3/50 border-b border-border/30" />
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-14 border-b border-border/50 flex items-center px-4 gap-3">
+          <div key={i} className="h-14 border-b border-border/30 flex items-center px-4 gap-3">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-4 w-20 ml-auto" />

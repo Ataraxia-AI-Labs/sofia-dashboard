@@ -258,7 +258,7 @@ export default function PlanesPage() {
 
         {/* Usage bar for STARTER plan */}
         {currentPlan === 'STARTER' && usage && (
-          <div className="mt-3 pt-3 border-t border-border">
+          <div className="mt-3 pt-3 border-t border-border/30">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-body text-text-muted font-medium">{t('messagesUsed')}</span>
               <span className="text-[11px] font-body text-text-secondary font-semibold">

@@ -317,7 +317,7 @@ function SuggestionCard({
 
       {/* Action buttons -- only for PENDING */}
       {suggestion.status === 'PENDING' ? (
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/30">
           <button
             onClick={() => handleAction('reject')}
             disabled={actionLoading !== null}
@@ -345,7 +345,7 @@ function SuggestionCard({
         </div>
       ) : (
         /* Applied / Rejected timestamp */
-        <div className="pt-3 border-t border-border">
+        <div className="pt-3 border-t border-border/30">
           <div className="flex items-center gap-1.5 text-[10px] text-text-dim">
             <StatusIcon size={10} className={statusCfg.color} />
             <span>

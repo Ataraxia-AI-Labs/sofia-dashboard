@@ -44,7 +44,7 @@ export function StaffCoachingPanel({ orgId }: Props) {
 
   return (
     <div className="border border-border rounded-lg">
-      <div className="bg-surface-2/50 px-4 py-2.5 border-b border-border flex items-center justify-between">
+      <div className="bg-surface-2/50 px-4 py-2.5 border-b border-border/30 flex items-center justify-between">
         <p className="text-[13px] font-body font-bold text-brand-purple flex items-center gap-1.5">
           <GraduationCap size={14} /> Coaching IA
         </p>
@@ -56,7 +56,7 @@ export function StaffCoachingPanel({ orgId }: Props) {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border">
+      <div className="flex border-b border-border/30">
         <button onClick={() => setTab('tips')}
           className={`flex items-center gap-1 px-3 py-1.5 text-[12px] font-body border-b-2 transition-colors ${
             tab === 'tips' ? 'text-brand-purple border-brand-purple font-semibold' : 'text-text-dim border-transparent hover:text-text-muted'

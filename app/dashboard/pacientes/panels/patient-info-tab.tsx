@@ -40,13 +40,13 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
     <>
       {/* Contact Info */}
       <div className="glass-card p-4 space-y-3">
-        <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Informacion</h4>
-        <DetailRow icon={<Phone size={14} />} label="Telefono" value={patient.phone} />
+        <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Información</h4>
+        <DetailRow icon={<Phone size={14} />} label="Teléfono" value={patient.phone} />
         <DetailRow icon={<Mail size={14} />} label="Email" value={patient.email || '\u2014'} />
-        <DetailRow icon={<CreditCard size={14} />} label="Cedula" value={patient.national_id || '\u2014'} />
+        <DetailRow icon={<CreditCard size={14} />} label="Cédula" value={patient.national_id || '\u2014'} />
         <DetailRow icon={<Cake size={14} />} label="Nacimiento" value={computeAge(patient.date_of_birth)} />
         <DetailRow icon={<MapPin size={14} />} label="Ciudad" value={patient.city || 'Por identificar'} />
-        <DetailRow icon={<Star size={14} />} label="Interes" value={patient.service_interest || 'Por identificar'} />
+        <DetailRow icon={<Star size={14} />} label="Interés" value={patient.service_interest || 'Por identificar'} />
         <DetailRow icon={<MessageSquare size={14} />} label="Canal" value={CHANNELS[patient.acquisition_channel]?.label || patient.acquisition_channel} />
         <DetailRow icon={<Calendar size={14} />} label="Registro" value={new Date(patient.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} />
       </div>
@@ -54,7 +54,7 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
       {/* Psychometrics */}
       {patient.psychometrics && (
         <div className="glass-card p-4 space-y-3">
-          <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Psicometria</h4>
+          <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Psicometría</h4>
           <div className="grid grid-cols-2 gap-3">
             <MiniMetric label="Nivel de Confianza" value={formatPercent((patient.psychometrics.trust_level || 0) * 100)} color="text-status-success" />
             <MiniMetric label="Riesgo de Churn" value={formatPercent((patient.psychometrics.churn_risk_score || 0) * 100)} color="text-status-danger" />

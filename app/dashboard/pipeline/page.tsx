@@ -134,7 +134,7 @@ export default function PipelinePage() {
         <div>
           <h2 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">{t('title')}</h2>
           <p className="text-text-dim text-[11px] font-body mt-0.5">
-            {totalPatients} pacientes · {STAGES.filter(s => grouped[s.key].length > 0).length} de {STAGES.length} etapas activas
+            {totalPatients} pacientes en tu clínica · {STAGES.filter(s => grouped[s.key].length > 0).length} de {STAGES.length} etapas con actividad
           </p>
         </div>
         <button
@@ -171,7 +171,7 @@ export default function PipelinePage() {
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp size={14} className="text-brand-purple" />
-            <span className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider">Flujo de Conversión</span>
+            <span className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider">Así se mueve tu embudo</span>
           </div>
           <div className="flex items-center justify-between">
             {STAGES.map((stage, i) => {

@@ -53,7 +53,7 @@ export function ConvIntelligencePanel({ orgId, patientId, patientName }: Props) 
 
   return (
     <div className="border border-border rounded-lg overflow-hidden">
-      <div className="bg-surface-2/50 px-3 py-2 border-b border-border">
+      <div className="bg-surface-2/50 px-3 py-2 border-b border-border/30">
         <p className="text-[12px] font-body font-bold text-brand-purple flex items-center gap-1">
           <Brain size={12} /> Inteligencia Conversacional
         </p>
@@ -61,7 +61,7 @@ export function ConvIntelligencePanel({ orgId, patientId, patientName }: Props) 
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border">
+      <div className="flex border-b border-border/30">
         {([
           { id: 'summary' as const, icon: BookOpen, label: 'Resumen' },
           { id: 'emotions' as const, icon: Heart, label: 'Emociones' },

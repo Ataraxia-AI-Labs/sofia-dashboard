@@ -158,12 +158,12 @@ function LoginForm() {
           </div>
 
           <h1 className="font-body text-3xl font-bold text-white leading-tight mb-3">
-            Tu clinica opera sola.{' '}
+            Tu clínica opera sola.{' '}
             <span className="text-brand-purple">Siempre.</span>
           </h1>
 
           <p className="text-text-muted text-sm font-body leading-relaxed mb-10">
-            SofIA gestiona pacientes, agenda citas, cobra anticipos y detecta oportunidades — 24/7, sin intervencion humana.
+            SofIA gestiona pacientes, agenda citas, cobra anticipos y detecta oportunidades — 24/7, sin intervención humana.
           </p>
 
           {/* Stats */}
@@ -191,7 +191,7 @@ function LoginForm() {
 
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-white font-body mb-1">Acceder al Nucleus</h2>
-            <p className="text-text-muted text-xs font-body">Ingresa al centro de control de tu clinica</p>
+            <p className="text-text-muted text-xs font-body">Ingresa al centro de control de tu clínica</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">

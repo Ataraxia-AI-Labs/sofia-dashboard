@@ -188,10 +188,10 @@ function ROICalculator() {
       <div className="text-center mb-6">
         <span className="badge badge-purple mb-3">Calculadora de ROI</span>
         <h3 className="text-xl font-bold font-mono text-text-primary mb-1.5">
-          Cuanto pierde tu clinica hoy
+          ¿Cuánto pierde tu clínica hoy?
         </h3>
         <p className="text-text-muted text-xs font-body">
-          Ajusta los datos de tu clinica y ve el impacto real
+          Ajusta los datos de tu clínica y ve el impacto real
         </p>
       </div>
 
@@ -278,7 +278,7 @@ function ROICalculator() {
 function WhatsAppDemo() {
   const messages = [
     { from: 'patient', text: 'Hola, quiero agendar una limpieza dental para el sabado', time: '10:31 AM' },
-    { from: 'sofia', text: 'Hola! Soy SofIA, la asistente de Clinica Sonrisa. Con gusto te ayudo a agendar tu cita.', time: '10:31 AM' },
+    { from: 'sofia', text: 'Hola! Soy SofIA, la asistente de Clínica Sonrisa. Con gusto te ayudo a agendar tu cita.', time: '10:31 AM' },
     { from: 'sofia', text: 'Tengo disponibilidad el sabado 1 de marzo a las 9:00 AM, 11:00 AM o 2:00 PM. Cual prefieres?', time: '10:31 AM' },
     { from: 'patient', text: '11am perfecto', time: '10:32 AM' },
     { from: 'sofia', text: 'Perfecto. Para confirmar necesito un anticipo de $50,000 COP. Te envio el link de pago Nequi:', time: '10:32 AM' },
@@ -308,7 +308,7 @@ function WhatsAppDemo() {
             CS
           </div>
           <div>
-            <div className="text-white text-sm font-semibold">Clinica Sonrisa</div>
+            <div className="text-white text-sm font-semibold">Clínica Sonrisa</div>
             <div className="text-[#8696A0] text-xs flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-status-success" />
               SofIA — en linea
@@ -481,7 +481,7 @@ export default function LandingPage() {
 
               {/* Main headline */}
               <h1 className="font-display text-3xl sm:text-4xl lg:text-6xl font-bold text-text-primary leading-tight mb-5 animate-fade-up">
-                Tu clinica llena.{' '}
+                Tu clínica llena.{' '}
                 <br className="hidden sm:block" />
                 <span className="text-brand-purple italic">Sin levantar el telefono.</span>
               </h1>
@@ -494,7 +494,7 @@ export default function LandingPage() {
 
               {/* PAS hook */}
               <p className="text-text-muted text-xs lg:text-sm font-body mb-8 max-w-xl mx-auto animate-fade-up">
-                Cada noche tu clinica pierde pacientes que escriben despues de las 6PM y no obtienen respuesta.
+                Cada noche tu clínica pierde pacientes que escriben después de las 6PM y no obtienen respuesta.
                 <span className="text-brand-gold font-medium"> SofIA responde en menos de 3 segundos. Siempre.</span>
               </p>
 
@@ -543,7 +543,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-wrap gap-5 lg:gap-8 items-center justify-center">
                 {[
-                  'Sonrisa Perfect', 'Clinica Estetica Bello', 'OdontoVida Medellin',
+                  'Sonrisa Perfect', 'Clínica Estética Bello', 'OdontoVida Medellin',
                   'Dermaclinic Pro', 'Centro Dental Norte'
                 ].map(name => (
                   <span key={name} className="text-text-dim text-xs font-body font-medium opacity-50 hover:opacity-80 transition-opacity">
@@ -574,7 +574,7 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto px-4 lg:px-8 text-center">
             <span className="badge badge-danger mb-5 inline-flex">El problema real</span>
             <h2 className="font-body text-2xl lg:text-4xl font-bold text-text-primary mb-5">
-              Cada noche tu clinica{' '}
+              Cada noche tu clínica{' '}
               <span className="text-status-danger">pierde dinero</span>{' '}
               mientras duermes
             </h2>
@@ -589,7 +589,7 @@ export default function LandingPage() {
                 {
                   stat: '68%',
                   label: 'de los pacientes que no obtienen respuesta rapida',
-                  pain: 'cambian de clinica',
+                  pain: 'cambian de clínica',
                   color: 'text-status-danger',
                 },
                 {
@@ -623,7 +623,7 @@ export default function LandingPage() {
             <div className="text-center mb-12">
               <span className="badge badge-purple mb-3 inline-flex">Funciones</span>
               <h2 className="font-body text-2xl lg:text-4xl font-bold text-text-primary mb-3">
-                Todo lo que tu clinica necesita.{' '}
+                Todo lo que tu clínica necesita.{' '}
                 <span className="text-brand-purple italic">Automatizado.</span>
               </h2>
               <p className="text-text-muted text-sm font-body max-w-2xl mx-auto">
@@ -673,7 +673,7 @@ export default function LandingPage() {
               <FeatureCard
                 icon={<Shield size={22} />}
                 title="Cumplimiento HABEAS DATA"
-                description="Procesamiento de datos conforme a la Ley 1581 de 2012. Tus pacientes y tu clinica siempre protegidos."
+                description="Procesamiento de datos conforme a la Ley 1581 de 2012. Tus pacientes y tu clínica siempre protegidos."
               />
               <FeatureCard
                 icon={<Zap size={22} />}
@@ -697,7 +697,7 @@ export default function LandingPage() {
                 </h2>
                 <p className="text-text-muted text-sm font-body leading-relaxed mb-6">
                   Esta es una conversacion real de SofIA con un paciente.
-                  Sin intervencion humana. Sin errores. En menos de 2 minutos:
+                  Sin intervención humana. Sin errores. En menos de 2 minutos:
                   consulta recibida, cita agendada, anticipo cobrado.
                 </p>
 
@@ -705,7 +705,7 @@ export default function LandingPage() {
                   {[
                     { step: '01', text: 'Paciente escribe a las 11PM buscando cita' },
                     { step: '02', text: 'SofIA responde en 3 segundos con opciones de horario' },
-                    { step: '03', text: 'Paciente elige horario — SofIA lo agenda automaticamente' },
+                    { step: '03', text: 'Paciente elige horario — SofIA lo agenda automáticamente' },
                     { step: '04', text: 'SofIA solicita anticipo y envia link de pago' },
                     { step: '05', text: 'Pago confirmado — cita bloqueada en el calendario' },
                   ].map(({ step, text }) => (
@@ -722,7 +722,7 @@ export default function LandingPage() {
                   href="/onboarding"
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-md bg-brand-purple text-white font-semibold text-xs font-body hover:bg-brand-purple-dark transition-colors"
                 >
-                  Quiero SofIA para mi clinica <ArrowRight size={16} />
+                  Quiero SofIA para mi clínica <ArrowRight size={16} />
                 </Link>
               </div>
 
@@ -737,10 +737,10 @@ export default function LandingPage() {
             <div className="text-center mb-10">
               <span className="badge badge-purple mb-3 inline-flex">Calculadora de ROI</span>
               <h2 className="font-body text-2xl lg:text-3xl font-bold text-text-primary mb-3">
-                Cuanto valdria SofIA para tu clinica?
+                ¿Cuánto valdría SofIA para tu clínica?
               </h2>
               <p className="text-text-muted text-sm font-body max-w-xl mx-auto">
-                Ingresa tus datos reales y descubre cuanto dinero recuperarias cada mes.
+                Ingresa tus datos reales y descubre cuánto dinero recuperarías cada mes.
               </p>
             </div>
             <ROICalculator />
@@ -757,48 +757,48 @@ export default function LandingPage() {
                 <span className="text-brand-purple italic">clientes</span>
               </h2>
               <p className="text-text-muted text-sm font-body max-w-xl mx-auto">
-                Clinicas reales. Resultados reales.
+                Clínicas reales. Resultados reales.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
               <TestimonialCard
-                quote="Antes perdiamos entre 8 y 10 citas a la semana por no responder rapido. Desde que tenemos SofIA, ese numero bajo a menos de 2. El ROI fue visible desde el primer mes."
+                quote="Antes perdíamos entre 8 y 10 citas a la semana por no responder rápido. Desde que tenemos SofIA, ese número bajó a menos de 2. El ROI fue visible desde el primer mes."
                 name="Dr. Carlos Medina"
-                role="Director Medico"
-                clinic="Clinica Estetica Bello, Medellin"
+                role="Director Médico"
+                clinic="Clínica Estética Bello, Medellín"
                 stars={5}
               />
               <TestimonialCard
-                quote="Lo que mas me sorprendio fue la calidad de las respuestas. SofIA suena como un asistente humano experto. Mis pacientes me preguntan como se llama la recepcionista nueva."
+                quote="Lo que más me sorprendió fue la calidad de las respuestas. SofIA suena como un asistente humano experto. Mis pacientes me preguntan cómo se llama la recepcionista nueva."
                 name="Dra. Valentina Torres"
                 role="Odontologa Especialista"
                 clinic="Sonrisa Perfect, Bogota"
                 stars={5}
               />
               <TestimonialCard
-                quote="Manejo 3 sedes y antes necesitaba una recepcionista por sede. Ahora SofIA cubre las 3. Ahorre mas de 5 millones al mes en nomina y la atencion es mejor que antes."
+                quote="Manejo 3 sedes y antes necesitaba una recepcionista por sede. Ahora SofIA cubre las 3. Ahorré más de 5 millones al mes en nómina y la atención es mejor que antes."
                 name="Dr. Andres Ramirez"
                 role="CEO"
                 clinic="OdontoVida, Bogota D.C."
                 stars={5}
               />
               <TestimonialCard
-                quote="El dashboard es increible. Ver en tiempo real cuantos pacientes estan en el pipeline, cuales tienen anticipo pagado, que oportunidades detecto SofIA — es informacion que antes no tenia."
+                quote="El dashboard es increíble. Ver en tiempo real cuántos pacientes están en el pipeline, cuáles tienen anticipo pagado, qué oportunidades detectó SofIA — es información que antes no tenía."
                 name="Dra. Sofia Gutierrez"
                 role="Medica Estetica"
                 clinic="Dermaclinic Pro, Cali"
                 stars={5}
               />
               <TestimonialCard
-                quote="La funcion de cobro de anticipos es un antes y despues. El no-show bajo de 25% a 8% en el primer mes. Solo eso ya paga el costo de SofIA varias veces."
+                quote="La función de cobro de anticipos es un antes y después. El no-show bajó de 25% a 8% en el primer mes. Solo eso ya paga el costo de SofIA varias veces."
                 name="Dr. Juan Pablo Herrera"
                 role="Cirujano Plastico"
                 clinic="Centro Medico Norte, Barranquilla"
                 stars={5}
               />
               <TestimonialCard
-                quote="Implementacion en un dia. El equipo de Ataraxia es muy profesional. SofIA empezo a atender pacientes esa misma noche. Recomendado 100%."
+                quote="Implementación en un día. El equipo de Ataraxia es muy profesional. SofIA empezó a atender pacientes esa misma noche. Recomendado 100%."
                 name="Dra. Maria Camila Lopez"
                 role="Directora"
                 clinic="Estetica Avanzada, Bucaramanga"
@@ -814,17 +814,17 @@ export default function LandingPage() {
                   <div className="flex gap-1 justify-center mb-1">
                     {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-gold text-brand-gold" />)}
                   </div>
-                  <div className="text-text-dim text-[13px] font-body">Calificacion promedio</div>
+                  <div className="text-text-dim text-[13px] font-body">Calificación promedio</div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold font-mono text-brand-purple mb-1.5">40+</div>
-                  <div className="text-text-muted text-xs font-body mb-1">Clinicas activas</div>
+                  <div className="text-text-muted text-xs font-body mb-1">Clínicas activas</div>
                   <div className="text-text-dim text-[13px] font-body">Colombia y LATAM</div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold font-mono text-brand-purple mb-1.5">98%</div>
                   <div className="text-text-muted text-xs font-body mb-1">Renuevan cada mes</div>
-                  <div className="text-text-dim text-[13px] font-body">Tasa de retencion</div>
+                  <div className="text-text-dim text-[13px] font-body">Tasa de retención</div>
                 </div>
               </div>
             </div>
@@ -841,8 +841,8 @@ export default function LandingPage() {
                 <span className="text-brand-purple italic">Sin sorpresas.</span>
               </h2>
               <p className="text-text-muted text-sm font-body max-w-xl mx-auto">
-                Sin costos por mensaje, sin limites de pacientes, sin modulos extra.
-                Todo lo que SofIA puede hacer, desde el dia uno.
+                Sin costos por mensaje, sin límites de pacientes, sin módulos extra.
+                Todo lo que SofIA puede hacer, desde el día uno.
               </p>
             </div>
 
@@ -928,7 +928,7 @@ export default function LandingPage() {
             </div>
 
             <h2 className="font-body text-3xl lg:text-5xl font-bold text-text-primary mb-5">
-              Tu clinica merece trabajar{' '}
+              Tu clínica merece trabajar{' '}
               <span className="text-brand-purple italic">para ti.</span>
             </h2>
 
@@ -949,7 +949,7 @@ export default function LandingPage() {
             </div>
 
             <p className="text-text-dim text-xs font-body">
-              Setup en 5 minutos &bull; Sin tarjeta &bull; Soporte en espanol
+              Setup en 5 minutos &bull; Sin tarjeta &bull; Soporte en español
             </p>
           </div>
         </section>

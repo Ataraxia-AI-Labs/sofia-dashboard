@@ -66,7 +66,7 @@ export function KeyboardShortcutsDialog({ open, onClose }: KeyboardShortcutsDial
             </div>
           </div>
         ))}
-        <p className="text-[10px] text-text-dim border-t border-border pt-3">
+        <p className="text-[10px] text-text-dim border-t border-border/30 pt-3">
           Los atajos no se activan cuando el cursor está en un campo de texto.
         </p>
       </div>

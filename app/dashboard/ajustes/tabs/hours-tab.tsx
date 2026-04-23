@@ -43,7 +43,7 @@ export function HoursTab({ hours, onRefresh }: HoursTabProps) {
     <div className="glass-card overflow-hidden">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-border">
+          <tr className="border-b border-border/30">
             <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('day')}</th>
             <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('openTime')}</th>
             <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('closeTime')}</th>
@@ -53,7 +53,7 @@ export function HoursTab({ hours, onRefresh }: HoursTabProps) {
         </thead>
         <tbody>
           {hours.map((h) => (
-            <tr key={h.id} className={`border-b border-border/50 ${!h.is_active ? 'opacity-40' : ''}`}>
+            <tr key={h.id} className={`border-b border-border/30 ${!h.is_active ? 'opacity-40' : ''}`}>
               <td className="px-4 py-2.5 text-xs font-body font-medium text-text-primary">{t(`days.${h.day_of_week}`)}</td>
               <td className="px-4 py-2.5">
                 <input

@@ -94,7 +94,7 @@ export function SecurityTab() {
       setEnrollFactorId(result.factorId)
     } catch (e) {
       Sentry.captureException(e)
-      setError(e instanceof Error ? e.message : 'Error al iniciar configuracion 2FA')
+      setError(e instanceof Error ? e.message : 'Error al iniciar configuración 2FA')
       setEnrolling(false)
     }
   }
