@@ -94,7 +94,7 @@ export const TOOL_REGISTRY: ToolDef[] = [
   { id: 'log_treatment_progress', category: 'treatments', icon: Activity, label: 'Registrar avance', description: 'Progreso del tratamiento', prompt: 'Anota el avance del tratamiento de ', minRole: 'STAFF', status: 'soon' },
 
   // -------- SERVICIOS (services)
-  { id: 'create_service', category: 'services', icon: Tag, label: 'Crear servicio', description: 'Catálogo: nombre + precio', prompt: 'Crea un servicio nuevo: ', minRole: 'ADMIN', status: 'live' },
+  { id: 'create_service', category: 'services', icon: Tag, label: 'Crear servicio', description: 'Catálogo: nombre + precio', prompt: 'Crea un servicio nuevo: ', minRole: 'ADMIN', status: 'live', hot: true },
   { id: 'update_service_price', category: 'services', icon: Wallet, label: 'Cambiar precio', description: 'Actualiza precio de servicio', prompt: 'Cambia el precio del servicio ', minRole: 'ADMIN', status: 'soon' },
   { id: 'create_pricing_rule', category: 'services', icon: Zap, label: 'Regla de precio', description: 'Precio dinámico por condición', prompt: 'Crea una regla de precio: ', minRole: 'OWNER', status: 'soon' },
 
@@ -103,7 +103,7 @@ export const TOOL_REGISTRY: ToolDef[] = [
   { id: 'get_funnel', category: 'growth', icon: BarChart3, label: 'Funnel', description: 'Conversión por etapa', prompt: 'Muéstrame el funnel últimos 30 días', minRole: 'ADMIN', status: 'live' },
   { id: 'create_campaign', category: 'growth', icon: MessageSquareShare, label: 'Campaña', description: 'Outreach segmentado', prompt: 'Crea una campaña para ', minRole: 'ADMIN', status: 'soon' },
   { id: 'create_ad_campaign', category: 'growth', icon: Zap, label: 'Campaña de ads', description: 'Meta/Google con presupuesto', prompt: 'Crea una campaña de ads ', minRole: 'ADMIN', status: 'soon' },
-  { id: 'create_whatsapp_template', category: 'growth', icon: MessageCircle, label: 'Plantilla WhatsApp', description: 'Genera plantilla desde descripción', prompt: 'Crea una plantilla de WhatsApp llamada ', minRole: 'ADMIN', status: 'live' },
+  { id: 'create_whatsapp_template', category: 'growth', icon: MessageCircle, label: 'Plantilla WhatsApp', description: 'Genera plantilla desde descripción', prompt: 'Crea una plantilla de WhatsApp llamada ', minRole: 'ADMIN', status: 'live', hot: true },
   { id: 'generate_referral_link', category: 'growth', icon: Gift, label: 'Link de referido', description: 'Link único para paciente', prompt: 'Genera un link de referido para ', minRole: 'STAFF', status: 'soon' },
 
   // -------- RESEÑAS (reviews)
@@ -111,13 +111,13 @@ export const TOOL_REGISTRY: ToolDef[] = [
   { id: 'trigger_nps', category: 'reviews', icon: MessageCirclePlus, label: 'Disparar NPS', description: 'Encuesta post-cita', prompt: 'Dispara encuesta NPS a ', minRole: 'ADMIN', status: 'soon' },
 
   // -------- GAMIFICACIÓN / REWARDS
-  { id: 'create_reward', category: 'patients', icon: Trophy, label: 'Crear reward', description: 'Gamification: premio canjeable', prompt: 'Crea un reward llamado ', minRole: 'ADMIN', status: 'live' },
+  { id: 'create_reward', category: 'patients', icon: Trophy, label: 'Crear reward', description: 'Gamification: premio canjeable', prompt: 'Crea un reward llamado ', minRole: 'ADMIN', status: 'live', hot: true },
 
   // -------- COMPETIDORES
-  { id: 'add_competitor', category: 'analytics', icon: SearchIcon, label: 'Agregar competidor', description: 'Monitorear clínica rival', prompt: 'Agrega como competidor a ', minRole: 'ADMIN', status: 'live' },
+  { id: 'add_competitor', category: 'analytics', icon: SearchIcon, label: 'Agregar competidor', description: 'Monitorear clínica rival', prompt: 'Agrega como competidor a ', minRole: 'ADMIN', status: 'live', hot: true },
 
   // -------- SALA DE ESPERA
-  { id: 'check_in_patient', category: 'patients', icon: UserPlus, label: 'Check-in paciente', description: 'Marcar como presente en sala', prompt: 'Haz check-in del paciente ', minRole: 'STAFF', status: 'live' },
+  { id: 'check_in_patient', category: 'patients', icon: UserPlus, label: 'Check-in paciente', description: 'Marcar como presente en sala', prompt: 'Haz check-in del paciente ', minRole: 'STAFF', status: 'live', hot: true },
 
   // -------- VOZ (voice)
   { id: 'configure_voice_channel', category: 'voice', icon: PhoneIncoming, label: 'Activar voz', description: 'Crea assistant Vapi per sede', prompt: 'Activa el canal de voz para la sede ', minRole: 'OWNER', status: 'soon' },
@@ -128,9 +128,9 @@ export const TOOL_REGISTRY: ToolDef[] = [
   { id: 'queue_proactive', category: 'workflows', icon: Sparkles, label: 'Mensaje proactivo', description: 'Envío programado', prompt: 'Programa un mensaje a ', minRole: 'ADMIN', status: 'soon' },
 
   // -------- EQUIPO (team)
-  { id: 'invite_staff', category: 'team', icon: UserPlus2, label: 'Invitar staff', description: 'Email + rol', prompt: 'Invita al equipo a ', minRole: 'ADMIN', status: 'live' },
+  { id: 'invite_staff', category: 'team', icon: UserPlus2, label: 'Invitar staff', description: 'Email + rol', prompt: 'Invita al equipo a ', minRole: 'ADMIN', status: 'live', hot: true },
   { id: 'update_staff_role', category: 'team', icon: ShieldCheck, label: 'Cambiar rol', description: 'OWNER/ADMIN/STAFF', prompt: 'Cambia el rol de ', minRole: 'OWNER', status: 'soon' },
-  { id: 'create_branch', category: 'team', icon: Building, label: 'Crear sede', description: 'Multi-sede: nueva sucursal', prompt: 'Crea una nueva sede: ', minRole: 'OWNER', status: 'live' },
+  { id: 'create_branch', category: 'team', icon: Building, label: 'Crear sede', description: 'Multi-sede: nueva sucursal', prompt: 'Crea una nueva sede: ', minRole: 'OWNER', status: 'live', hot: true },
   { id: 'assign_staff_branch', category: 'team', icon: MapPin, label: 'Asignar a sede', description: 'Staff ↔ sede + schedule', prompt: 'Asigna al staff ', minRole: 'ADMIN', status: 'soon' },
   { id: 'generate_coaching_tip', category: 'team', icon: BrainCircuit, label: 'Tip de coaching', description: 'Basado en conversaciones', prompt: 'Genera un tip de coaching para ', minRole: 'ADMIN', status: 'soon' },
 
@@ -141,7 +141,7 @@ export const TOOL_REGISTRY: ToolDef[] = [
 
   // -------- INTEGRACIONES (integrations)
   { id: 'register_webhook', category: 'integrations', icon: Webhook, label: 'Webhook saliente', description: 'URL + eventos', prompt: 'Registra un webhook: ', minRole: 'ADMIN', status: 'soon' },
-  { id: 'create_api_key', category: 'integrations', icon: KeyRound, label: 'API Key', description: 'Token con scopes', prompt: 'Crea una API key llamada ', minRole: 'OWNER', status: 'live' },
+  { id: 'create_api_key', category: 'integrations', icon: KeyRound, label: 'API Key', description: 'Token con scopes', prompt: 'Crea una API key llamada ', minRole: 'OWNER', status: 'live', hot: true },
   { id: 'install_connector', category: 'integrations', icon: Puzzle, label: 'Instalar plugin', description: 'Marketplace de conectores', prompt: 'Instala el plugin ', minRole: 'ADMIN', status: 'soon' },
 
   // -------- INTELIGENCIA (analytics)

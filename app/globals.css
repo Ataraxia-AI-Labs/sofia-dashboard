@@ -18,7 +18,9 @@
   --color-surface-2-rgb: 23 23 37;
   --color-surface-3: #1F1F32;
   --color-border: #1C1C2E;
+  --color-border-rgb: 28 28 46;
   --color-border-2: #2A2A44;
+  --color-border-2-rgb: 42 42 68;
   /* Whites with lavender tint — menos impacto al leer, más cinematografía */
   --color-text-primary: #E8E0FF;
   --color-text-secondary: #B0A6D0;
@@ -36,7 +38,9 @@
   --color-surface-2-rgb: 34 34 37;
   --color-surface-3: #2C2C30;
   --color-border: #2E2E32;
+  --color-border-rgb: 46 46 50;
   --color-border-2: #3E3E44;
+  --color-border-2-rgb: 62 62 68;
   --color-text-primary: #F5F5F5;
   --color-text-secondary: #BEBEBE;
   --color-text-muted: #8A8A8A;
@@ -59,7 +63,9 @@
   --color-surface-2-rgb: 244 243 250;
   --color-surface-3: #E9E7F4;     /* pressed / selected */
   --color-border: #E0DCEE;        /* bordes suaves, no grises puros */
+  --color-border-rgb: 224 220 238;
   --color-border-2: #C9C2E0;
+  --color-border-2-rgb: 201 194 224;
   --color-text-primary: #1C1830;  /* gris-tinta con tilt morado, no #000 duro */
   --color-text-secondary: #3F3A55;
   --color-text-muted: #6C6780;
@@ -79,7 +85,9 @@
   --color-surface-2-rgb: 15 32 36;
   --color-surface-3: #162D32;
   --color-border: #12323A;
+  --color-border-rgb: 18 50 58;
   --color-border-2: #1A4450;
+  --color-border-2-rgb: 26 68 80;
   --color-text-primary: #ECFFF8;
   --color-text-secondary: #95D0BF;
   --color-text-muted: #518A7A;
@@ -99,7 +107,9 @@
   --color-surface-2-rgb: 27 19 40;
   --color-surface-3: #261B38;
   --color-border: #281D46;
+  --color-border-rgb: 40 29 70;
   --color-border-2: #382656;
+  --color-border-2-rgb: 56 38 86;
   --color-text-primary: #F0E4FF;
   --color-text-secondary: #BCA4E0;
   --color-text-muted: #7858AC;

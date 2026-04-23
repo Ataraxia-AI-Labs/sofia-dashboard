@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
+import * as Sentry from '@sentry/nextjs'
 import {
   Users, Sparkles, Loader2, RefreshCw, ChevronLeft,
   Copy, Check, Wand2, User, Phone, DollarSign,
@@ -12,6 +13,7 @@ import {
   getCampaignSuggestion, findSimilarPatients,
 } from '@/lib/api/segments'
 import { formatCOP } from '@/lib/api/helpers'
+import { useToast } from '@/components/ui/toast'
 import type {
   PatientSegment, SegmentPatient, CampaignSuggestion, SimilarPatient,
 } from '@/types'
@@ -43,6 +45,7 @@ function getSegmentColor(index: number) {
 
 export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
   const t = useTranslations('segmentation')
+  const toast = useToast()
   const tCommon = useTranslations('common')
 
   const [segments, setSegments] = useState<PatientSegment[]>([])
@@ -84,10 +87,14 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
       const result = await runClustering(orgId)
       if (result) {
         setStatusMessage(result.message)
+        toast.success(result.message || 'Clustering completado')
         loadSegments()
+      } else {
+        toast.error('No se pudo ejecutar el clustering. Revisa la consola.')
       }
-    } catch {
-      // Clustering failed
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error('Error al ejecutar clustering: ' + (err instanceof Error ? err.message : 'desconocido'))
     }
     setClusteringInProgress(false)
   }
@@ -99,9 +106,13 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
       const result = await generateEmbeddings(orgId)
       if (result) {
         setStatusMessage(result.message)
+        toast.success(result.message || 'Embeddings generados')
+      } else {
+        toast.error('No se pudieron generar los embeddings. Revisa la consola.')
       }
-    } catch {
-      // Embeddings failed
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error('Error al generar embeddings: ' + (err instanceof Error ? err.message : 'desconocido'))
     }
     setEmbeddingsInProgress(false)
   }

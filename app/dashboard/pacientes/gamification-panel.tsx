@@ -139,7 +139,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
               <span className="text-[10px] text-text-dim uppercase font-body font-semibold">{t('totalPoints')}</span>
             </div>
             <div className="text-xl font-bold text-brand-gold font-body">
-              {insights.total_points_awarded.toLocaleString()}
+              {(insights.total_points_awarded ?? 0).toLocaleString()}
             </div>
           </div>
 
@@ -151,7 +151,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
               <span className="text-[10px] text-text-dim uppercase font-body font-semibold">{t('avgPerPatient')}</span>
             </div>
             <div className="text-xl font-bold text-brand-purple font-body">
-              {Math.round(insights.avg_points_per_patient).toLocaleString()}
+              {Math.round(insights.avg_points_per_patient ?? 0).toLocaleString()}
             </div>
           </div>
 
@@ -276,7 +276,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                   {/* Points */}
                   <div className="text-right flex-shrink-0">
                     <span className="text-sm font-bold font-mono text-brand-gold">
-                      {entry.total_points.toLocaleString()}
+                      {(entry.total_points ?? 0).toLocaleString()}
                     </span>
                     <p className="text-[9px] text-text-dim">pts</p>
                   </div>
@@ -320,7 +320,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <span className="text-sm font-bold font-mono text-brand-gold">
-                      {reward.points_cost.toLocaleString()}
+                      {(reward.points_cost ?? 0).toLocaleString()}
                     </span>
                     <p className="text-[9px] text-text-dim">pts</p>
                   </div>

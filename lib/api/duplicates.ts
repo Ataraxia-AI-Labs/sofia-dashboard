@@ -18,7 +18,12 @@ export async function getDuplicates(orgId: string, status?: string): Promise<Dup
   if (status) url += `?status=${status}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  const body = await res.json()
+  if (Array.isArray(body)) return body
+  if (Array.isArray(body?.duplicates)) return body.duplicates
+  if (Array.isArray(body?.items)) return body.items
+  if (Array.isArray(body?.data)) return body.data
+  return []
 }
 
 export async function confirmDuplicate(

@@ -57,6 +57,8 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
       const result = await scanDuplicates(orgId)
       if (result) {
         toast.success(t('scanComplete', { found: result.duplicates_found }))
+      } else {
+        toast.error(t('scanError'))
       }
       loadData()
     } catch (err) {

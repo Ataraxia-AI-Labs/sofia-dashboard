@@ -15,8 +15,8 @@ module.exports = {
           3: 'var(--color-surface-3)',
         },
         border: {
-          DEFAULT: 'var(--color-border)',
-          2: 'var(--color-border-2)',
+          DEFAULT: 'rgb(var(--color-border-rgb) / <alpha-value>)',
+          2: 'rgb(var(--color-border-2-rgb) / <alpha-value>)',
         },
         white: 'var(--color-white)',
         brand: {

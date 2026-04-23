@@ -74,8 +74,9 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
 
   // Tier distribution for visualization
   const tierOrder: LTVTier[] = ['DIAMOND', 'PLATINUM', 'GOLD', 'SILVER', 'BRONZE']
+  const tierDist = insights?.tier_distribution ?? {} as Record<LTVTier, number>
   const totalDistribution = insights
-    ? tierOrder.reduce((sum, tier) => sum + (insights.tier_distribution[tier] || 0), 0)
+    ? tierOrder.reduce((sum, tier) => sum + (tierDist[tier] || 0), 0)
     : 0
 
   if (loading) {
@@ -153,7 +154,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
           {/* Visual bar */}
           <div className="flex rounded-md overflow-hidden h-8 mb-4">
             {tierOrder.map(tier => {
-              const count = insights.tier_distribution[tier] || 0
+              const count = tierDist[tier] || 0
               const pct = totalDistribution > 0 ? (count / totalDistribution) * 100 : 0
               if (pct === 0) return null
               const cfg = TIER_CONFIG[tier]
@@ -176,7 +177,7 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
           {/* Legend */}
           <div className="flex flex-wrap gap-3">
             {tierOrder.map(tier => {
-              const count = insights.tier_distribution[tier] || 0
+              const count = tierDist[tier] || 0
               const cfg = TIER_CONFIG[tier]
               return (
                 <div key={tier} className="flex items-center gap-1.5">
