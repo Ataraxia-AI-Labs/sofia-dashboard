@@ -737,13 +737,22 @@ export interface LeadScoreAllResult {
 
 export interface PatientSegment {
   id: string
-  organization_id: string
-  segment_label: string
+  organization_id?: string
+  // S100 / v2 shape
+  label?: string
+  description?: string
+  cluster_idx?: number
   patient_count: number
-  avg_ticket: number
-  top_services: string[]
-  color: string
-  created_at: string
+  avg_messages?: number
+  top_services: Array<{ name: string; count: number } | string>
+  recommended_campaign?: string
+  silhouette_score?: number | null
+  updated_at?: string
+  // Legacy (backward compat)
+  segment_label?: string
+  avg_ticket?: number
+  color?: string
+  created_at?: string
 }
 
 export interface SegmentPatient {

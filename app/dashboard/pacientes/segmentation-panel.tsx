@@ -194,16 +194,19 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
           </div>
           <div className="glass-card p-3">
             <div className="text-[12px] font-body text-text-dim uppercase">{t('avgTicket')}</div>
-            <div className="text-lg font-bold font-mono text-status-success">{formatCOP(selectedSegment.avg_ticket)}</div>
+            <div className="text-lg font-bold font-mono text-status-success">{formatCOP(selectedSegment.avg_ticket ?? 0)}</div>
           </div>
           <div className="glass-card p-3">
             <div className="text-[12px] font-body text-text-dim uppercase">{t('topServices')}</div>
             <div className="flex flex-wrap gap-1 mt-1">
-              {selectedSegment.top_services.slice(0, 3).map((svc, i) => (
-                <span key={i} className="px-1.5 py-0.5 rounded-md bg-surface-3 text-[11px] font-body text-text-muted font-medium">
-                  {svc}
-                </span>
-              ))}
+              {selectedSegment.top_services.slice(0, 3).map((svc, i) => {
+                const name = typeof svc === 'string' ? svc : svc.name
+                return (
+                  <span key={i} className="px-1.5 py-0.5 rounded-md bg-surface-3 text-[11px] font-body text-text-muted font-medium">
+                    {name}
+                  </span>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -453,17 +456,20 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
                     </div>
                     <div>
                       <div className="text-[11px] font-body text-text-dim">{t('avgTicket')}</div>
-                      <div className="text-base font-bold font-mono text-text-primary">{formatCOP(seg.avg_ticket)}</div>
+                      <div className="text-base font-bold font-mono text-text-primary">{formatCOP(seg.avg_ticket ?? 0)}</div>
                     </div>
                   </div>
 
                   {seg.top_services.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {seg.top_services.slice(0, 3).map((svc, i) => (
-                        <span key={i} className="px-1.5 py-0.5 rounded-md bg-void/50 text-[9px] text-text-muted font-medium">
-                          {svc}
-                        </span>
-                      ))}
+                      {seg.top_services.slice(0, 3).map((svc, i) => {
+                        const name = typeof svc === 'string' ? svc : svc.name
+                        return (
+                          <span key={i} className="px-1.5 py-0.5 rounded-md bg-void/50 text-[9px] text-text-muted font-medium">
+                            {name}
+                          </span>
+                        )
+                      })}
                     </div>
                   )}
 
