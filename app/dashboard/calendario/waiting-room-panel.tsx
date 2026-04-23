@@ -177,65 +177,7 @@ export default function WaitingRoomPanel({ orgId }: WaitingRoomPanelProps) {
         </div>
       )}
 
-      {/* QUICK CHECK-IN */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setShowCheckIn(!showCheckIn)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs font-body font-semibold hover:bg-brand-purple/20 transition-colors"
-        >
-          <UserPlus size={14} />
-          {t('quickCheckIn')}
-        </button>
-      </div>
-
-      {showCheckIn && (
-        <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('searchPatient')}
-              className="w-full pl-9 pr-8 py-2 rounded-lg bg-void border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40 transition-colors"
-              autoFocus
-            />
-            {searchQuery && (
-              <button onClick={() => { setSearchQuery(''); setSearchResults([]) }} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-primary">
-                <X size={12} />
-              </button>
-            )}
-          </div>
-          {searching && (
-            <div className="flex items-center gap-2 text-text-dim text-xs">
-              <Loader2 size={12} className="animate-spin" />
-              {t('searching')}
-            </div>
-          )}
-          {searchResults.length > 0 && (
-            <div className="space-y-1">
-              {searchResults.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => handleCheckIn(p.id)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-surface-2 border border-border hover:border-brand-purple/30 transition-colors text-left"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[10px] font-bold font-body flex-shrink-0">
-                      {p.full_name?.[0]?.toUpperCase() || '?'}
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-text-primary">{p.full_name}</div>
-                      <div className="text-[10px] text-text-dim font-body">{p.phone}</div>
-                    </div>
-                  </div>
-                  <span className="text-[10px] text-brand-purple font-semibold">{t('checkInAction')}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* CRUD removido: check-in paciente vive SOLO en Pulso (SofIA). */}
 
       {/* LATE PATIENTS ALERT */}
       {latePatients.length > 0 && (

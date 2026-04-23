@@ -293,56 +293,8 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
               <Gift size={14} className="text-brand-purple" />
               {t('rewardsCatalog')}
             </h4>
-            <button
-              onClick={() => setShowCreateReward(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[13px] font-body font-semibold hover:bg-brand-purple/15 transition-colors"
-            >
-              <Plus size={12} /> {t('createReward')}
-            </button>
+            {/* CRUD removido: crear reward vive SOLO en Pulso (SofIA). */}
           </div>
-
-          {/* Create reward modal */}
-          {showCreateReward && (
-            <div className="bg-surface-3/80 rounded-lg p-4 border border-border mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <h5 className="text-xs font-body font-semibold text-text-primary">{t('newReward')}</h5>
-                <button onClick={() => setShowCreateReward(false)} className="text-text-dim hover:text-text-primary">
-                  <X size={14} />
-                </button>
-              </div>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={newReward.name}
-                  onChange={e => setNewReward(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder={t('rewardNamePlaceholder')}
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40"
-                />
-                <input
-                  type="text"
-                  value={newReward.description}
-                  onChange={e => setNewReward(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder={t('rewardDescPlaceholder')}
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40"
-                />
-                <input
-                  type="number"
-                  value={newReward.points_cost || ''}
-                  onChange={e => setNewReward(prev => ({ ...prev, points_cost: parseInt(e.target.value) || 0 }))}
-                  placeholder={t('rewardCostPlaceholder')}
-                  min={1}
-                  className="w-full px-3 py-2 rounded-lg bg-surface-2 border border-border text-text-primary text-sm placeholder:text-text-dim outline-none focus:border-brand-purple/40"
-                />
-                <button
-                  onClick={handleCreateReward}
-                  disabled={creatingReward || !newReward.name || newReward.points_cost <= 0}
-                  className="w-full py-2 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-sm font-mono font-semibold disabled:opacity-50 transition-opacity"
-                >
-                  {creatingReward ? t('creating') : t('createReward')}
-                </button>
-              </div>
-            </div>
-          )}
 
           {rewards.length === 0 ? (
             <div className="text-center py-8">

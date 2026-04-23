@@ -73,29 +73,8 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-[12px] font-body text-text-dim">{t('activeCount', { count: services.length })}</p>
-        {!isReadOnly && (
-          <Button variant="secondary" size="sm" onClick={() => setShowNew(true)} icon={<Plus size={13} />}>
-            {t('newService')}
-          </Button>
-        )}
+        {/* CRUD removido: crear servicio vive SOLO en Pulso (SofIA). */}
       </div>
-
-      {showNew && (
-        <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-xs font-body font-semibold text-text-primary">{t('newServiceTitle')}</h4>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label={t('name')} value={newSvc.name} onChange={(e) => setNewSvc({ ...newSvc, name: e.target.value })} placeholder={t('namePlaceholder')} />
-            <Input label={t('price')} value={newSvc.price.toString()} onChange={(e) => setNewSvc({ ...newSvc, price: Number(e.target.value) || 0 })} placeholder="150000" type="number" />
-            <Input label={t('duration')} value={newSvc.duration_minutes.toString()} onChange={(e) => setNewSvc({ ...newSvc, duration_minutes: Number(e.target.value) || 60 })} type="number" />
-            <Input label={t('category')} value={newSvc.category} onChange={(e) => setNewSvc({ ...newSvc, category: e.target.value })} placeholder={t('categoryPlaceholder')} />
-          </div>
-          <Input label={t('description')} value={newSvc.description} onChange={(e) => setNewSvc({ ...newSvc, description: e.target.value })} placeholder={t('descriptionPlaceholder')} />
-          <div className="flex gap-2 justify-end">
-            <Button variant="ghost" size="sm" onClick={() => setShowNew(false)}>{tCommon('cancel')}</Button>
-            <Button size="sm" onClick={handleCreate} disabled={saving || !newSvc.name} loading={saving}>{t('create')}</Button>
-          </div>
-        </div>
-      )}
 
       {services.map((svc) => (
         <div key={svc.id} className="glass-card p-4">

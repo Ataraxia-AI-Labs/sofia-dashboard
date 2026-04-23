@@ -60,28 +60,8 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
 
       <div className="flex items-center justify-between">
         <p className="text-[12px] font-body text-text-dim">{templates.length} plantillas configuradas</p>
-        {!isReadOnly && (
-          <Button variant="secondary" size="sm" onClick={() => setShowNew(true)} icon={<Plus size={13} />}>
-            Nueva Plantilla
-          </Button>
-        )}
+        {/* CRUD removido: crear plantilla vive SOLO en Pulso (SofIA). */}
       </div>
-
-      {showNew && (
-        <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-xs font-body font-semibold text-text-primary">Nueva Plantilla</h4>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Nombre (Meta template name)" value={newTpl.name} onChange={(e) => setNewTpl({ ...newTpl, name: e.target.value })} placeholder="appointment_reminder_es" />
-            <Select label="Categoria" value={newTpl.category} onChange={(e) => setNewTpl({ ...newTpl, category: e.target.value as WATemplateCategory })} options={TEMPLATE_CATEGORIES} />
-            <Input label="Idioma" value={newTpl.language} onChange={(e) => setNewTpl({ ...newTpl, language: e.target.value })} placeholder="es" />
-            <Input label="Descripcion" value={newTpl.description || ''} onChange={(e) => setNewTpl({ ...newTpl, description: e.target.value })} placeholder="Recordatorio 24h antes de la cita" />
-          </div>
-          <div className="flex gap-2 justify-end">
-            <Button variant="ghost" size="sm" onClick={() => setShowNew(false)}>Cancelar</Button>
-            <Button size="sm" onClick={handleAdd} disabled={saving || !newTpl.name} loading={saving}>Agregar Plantilla</Button>
-          </div>
-        </div>
-      )}
 
       {templates.map((tpl) => {
         const catLabel = TEMPLATE_CATEGORIES.find(c => c.value === tpl.category)?.label || tpl.category

@@ -339,9 +339,7 @@ export default function CalendarioPage() {
           <button onClick={loadAppointments} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
-          <button onClick={openNewAppt} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/25 transition-colors">
-            <Plus size={13} /> {t('newAppointment')}
-          </button>
+          {/* CRUD removido: agendar cita vive SOLO en Pulso (SofIA). */}
         </div>
       </div>
 
@@ -370,49 +368,6 @@ export default function CalendarioPage() {
       </div>
 
       {/* NEW APPOINTMENT FORM */}
-      {showNewAppt && (
-        <div className="glass-card p-4 space-y-3 border-brand-purple/20 animate-fade-up">
-          <h4 className="text-[12px] font-body font-semibold uppercase tracking-wide text-text-primary">{t('newManualAppointment')}</h4>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('patientRequired')}</label>
-              <select value={newAppt.patient_id} onChange={(e) => setNewAppt({...newAppt, patient_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
-                <option value="">{t('select')}</option>
-                {patients.map((p) => <option key={p.id} value={p.id}>{p.full_name} — {p.phone}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('serviceRequired')}</label>
-              <select value={newAppt.service_name} onChange={(e) => setNewAppt({...newAppt, service_name: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
-                <option value="">{t('select')}</option>
-                {services.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
-              </select>
-            </div>
-            {staffList.length > 0 && (
-              <div>
-                <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('staff')}</label>
-                <select value={newAppt.staff_id} onChange={(e) => setNewAppt({...newAppt, staff_id: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none">
-                  <option value="">{t('unassigned')}</option>
-                  {staffList.map((s) => <option key={s.id} value={s.id}>{s.display_name || s.role}</option>)}
-                </select>
-              </div>
-            )}
-            <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('dateRequired')}</label>
-              <input type="date" value={newAppt.date} onChange={(e) => setNewAppt({...newAppt, date: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold text-text-dim uppercase mb-1">{t('timeRequired')}</label>
-              <input type="time" value={newAppt.time} onChange={(e) => setNewAppt({...newAppt, time: e.target.value})} className="w-full px-3 py-2 rounded-lg bg-void border border-border text-text-primary text-sm outline-none" />
-            </div>
-          </div>
-          <div className="flex gap-2 justify-end">
-            <button onClick={() => setShowNewAppt(false)} className="px-3 py-1.5 rounded-lg bg-surface-3 text-text-muted text-xs font-semibold">{tCommon('cancel')}</button>
-            <button onClick={handleCreateAppt} disabled={!newAppt.patient_id || !newAppt.date || !newAppt.service_name} className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold disabled:opacity-50">{t('createAppointment')}</button>
-          </div>
-        </div>
-      )}
-
       {/* CALENDAR GRID */}
       <div className="glass-card overflow-hidden">
         {/* Day headers */}

@@ -397,13 +397,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
             {generating ? <Loader2 size={12} className="animate-spin" /> : <FileText size={12} />}
             {t('generateReport')}
           </button>
-          <button
-            onClick={() => { setEditingCompetitor(null); setShowForm(true) }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-semibold hover:bg-brand-purple-dark transition-colors"
-          >
-            <Plus size={12} />
-            {t('addCompetitor')}
-          </button>
+          {/* CRUD removido: agregar competidor vive SOLO en Pulso (SofIA). */}
           <button onClick={loadData} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} />
           </button>

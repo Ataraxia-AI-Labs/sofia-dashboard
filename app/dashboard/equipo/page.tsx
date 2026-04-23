@@ -120,11 +120,7 @@ export default function EquipoPage() {
           <button onClick={loadMembers} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} />
           </button>
-          {canManage && (
-            <Button size="sm" onClick={() => setShowInvite(true)} icon={<UserPlus size={14} />}>
-              {t('inviteMember')}
-            </Button>
-          )}
+          {/* CRUD removido: invitar staff vive SOLO en Pulso (SofIA). */}
         </div>
       </div>
 
@@ -246,30 +242,7 @@ export default function EquipoPage() {
       )}
 
       {/* Invite Modal */}
-      <Modal open={showInvite} onClose={() => setShowInvite(false)} title={t('inviteTitle')} description={t('inviteDesc')}>
-        <div className="space-y-4">
-          <Input
-            label={tCommon('email')}
-            type="email"
-            value={inviteEmail}
-            onChange={(e) => setInviteEmail(e.target.value)}
-            placeholder="nombre@clinica.com"
-            autoFocus
-          />
-          <Select
-            label={tCommon('role')}
-            value={inviteRole}
-            onChange={(e) => setInviteRole(e.target.value)}
-            options={ROLE_OPTIONS.filter(r => r.value !== 'OWNER')}
-          />
-          <div className="flex gap-2 justify-end pt-2">
-            <Button variant="ghost" onClick={() => setShowInvite(false)}>{tCommon('cancel')}</Button>
-            <Button onClick={handleInvite} loading={inviting} disabled={!inviteEmail.trim()} icon={<Mail size={14} />}>
-              {t('sendInvitation')}
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      {/* Modal de invitar removido — invitar staff vive SOLO en Pulso (SofIA) */}
 
       {/* Deactivate Confirmation Modal */}
       <Modal open={!!deactivateTarget} onClose={() => setDeactivateTarget(null)} title={t('confirmDeactivate')} size="sm">

@@ -62,15 +62,10 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
           </h3>
           <p className="text-[11px] font-body text-text-dim mt-0.5">Genera claves para integraciones externas</p>
         </div>
-        {!isReadOnly && (
-          <button onClick={() => setShowCreate(!showCreate)}
-            className="flex items-center gap-1 px-2 py-1 rounded bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[12px] font-body font-semibold">
-            <Plus size={12} /> Nueva Key
-          </button>
-        )}
+        {/* CRUD removido: crear API key vive SOLO en Pulso (SofIA). */}
       </div>
 
-      {/* New raw key display */}
+      {/* New raw key display — queda para mostrar la última key generada */}
       {newRawKey && (
         <div className="border border-status-success/20 bg-status-success/5 rounded-lg p-3">
           <p className="text-[11px] font-body text-status-success font-semibold mb-1">Copia tu API Key ahora — no se mostrara de nuevo</p>
@@ -80,26 +75,6 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
               className="p-1 rounded hover:bg-surface-2 text-text-muted"><Copy size={14} /></button>
           </div>
           <button onClick={() => setNewRawKey(null)} className="text-[11px] font-body text-text-dim mt-2 hover:text-text-muted">Cerrar</button>
-        </div>
-      )}
-
-      {/* Create form */}
-      {showCreate && (
-        <div className="border border-border rounded-lg p-4 space-y-3 bg-surface-2/50">
-          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Nombre de la key"
-            className="w-full text-[13px] font-body bg-surface border border-border rounded px-3 py-1.5 text-text-primary" />
-          <div>
-            <p className="text-[11px] font-body text-text-dim uppercase tracking-wider mb-1">Scopes</p>
-            <div className="flex flex-wrap gap-1">
-              {availableScopes.map(s => (
-                <button key={s} onClick={() => setNewScopes(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])}
-                  className={`text-[11px] font-body px-2 py-0.5 rounded border transition-colors ${
-                    newScopes.includes(s) ? 'bg-brand-purple/15 border-brand-purple/30 text-brand-purple' : 'border-border text-text-dim'
-                  }`}>{s}</button>
-              ))}
-            </div>
-          </div>
-          <button onClick={handleCreate} className="px-3 py-1 rounded bg-brand-purple text-white text-[12px] font-body font-semibold">Crear</button>
         </div>
       )}
 
