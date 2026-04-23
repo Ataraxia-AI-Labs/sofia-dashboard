@@ -6,9 +6,17 @@ import { fetchPipelineData, timeAgo } from '@/lib/api'
 import type { PipelinePatient, PipelineStage } from '@/types'
 import {
   Users, UserCheck, CalendarCheck, CheckCircle2, DollarSign, Repeat,
-  RefreshCw, Phone, Star, ChevronRight, TrendingUp, ArrowRight
+  RefreshCw, ChevronRight,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+
+// Display helper — shows last 4 digits of phone when column is narrow
+function formatPhoneShort(phone: string | null | undefined): string {
+  if (!phone) return '—'
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length <= 4) return phone
+  return `··· ${digits.slice(-4)}`
+}
 
 // ============================================================
 // STAGE CONFIG
@@ -128,7 +136,7 @@ export default function PipelinePage() {
   const totalPatients = patients.length
 
   return (
-    <div className="max-w-[1200px] space-y-4">
+    <div className="space-y-4">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
@@ -165,42 +173,6 @@ export default function PipelinePage() {
           )
         })}
       </div>
-
-      {/* CONVERSION FLOW */}
-      {totalPatients > 0 && (
-        <div className="glass-card p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp size={14} className="text-brand-purple" />
-            <span className="text-[12px] font-body font-semibold text-text-muted uppercase tracking-wider">Así se mueve tu embudo</span>
-          </div>
-          <div className="flex items-center justify-between">
-            {STAGES.map((stage, i) => {
-              const count = grouped[stage.key].length
-              const pct = totalPatients > 0 ? Math.round((count / totalPatients) * 100) : 0
-              const barWidth = Math.max(pct, 4)
-              return (
-                <div key={stage.key} className="flex items-center flex-1">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`text-[10px] font-semibold ${stage.text}`}>{stage.label}</span>
-                      <span className="text-[12px] font-body text-text-dim">{count}</span>
-                    </div>
-                    <div className="h-2 bg-surface-3 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${stage.dot} transition-all duration-700`}
-                        style={{ width: `${barWidth}%` }}
-                      />
-                    </div>
-                  </div>
-                  {i < STAGES.length - 1 && (
-                    <ArrowRight size={12} className="text-text-dim mx-2 flex-shrink-0" />
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
 
       {/* KANBAN BOARD */}
       {loading ? (
@@ -296,36 +268,37 @@ function PatientCard({
   patient: PipelinePatient
   stage: typeof STAGES[number]
 }) {
+  const hasService = patient.service_interest && patient.service_interest !== 'Por identificar'
   return (
-    <div className="bg-surface-3/50 hover:bg-surface-3 rounded-lg px-3 py-2.5 transition-colors group cursor-default">
-      {/* Name + avatar */}
-      <div className="flex items-center gap-2 mb-1.5">
+    <div className="bg-surface-3/40 hover:bg-surface-3 rounded-lg px-2.5 py-2 transition-colors group cursor-default">
+      {/* Top row: avatar + name */}
+      <div className="flex items-center gap-2">
         <div className={`w-6 h-6 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center ${stage.text} text-[11px] font-body font-bold flex-shrink-0`}>
           {patient.full_name?.[0]?.toUpperCase() || '?'}
         </div>
-        <span className="text-[12px] font-body font-semibold text-text-primary truncate group-hover:text-brand-purple-light transition-colors">
+        <span className="text-[12px] font-body font-semibold text-text-primary truncate flex-1 min-w-0 group-hover:text-brand-purple-light transition-colors">
           {patient.full_name || 'Sin nombre'}
         </span>
       </div>
 
-      {/* Metadata */}
-      <div className="space-y-1 ml-8">
-        <div className="flex items-center gap-1.5">
-          <Phone size={9} className="text-text-dim" />
-          <span className="text-[9px] text-text-muted font-body">{patient.phone}</span>
-        </div>
-        {patient.service_interest && patient.service_interest !== 'Por identificar' && (
-          <div className="flex items-center gap-1.5">
-            <Star size={9} className="text-text-dim" />
-            <span className="text-[11px] font-body text-text-muted truncate">{patient.service_interest}</span>
-          </div>
+      {/* Second row: service (if any) */}
+      {hasService && (
+        <p className="text-[10.5px] font-body text-text-muted truncate mt-1.5">
+          {patient.service_interest}
+        </p>
+      )}
+
+      {/* Bottom row: phone tail · timestamp · msgs (one line, no wrap) */}
+      <div className="flex items-center gap-2 mt-1.5 text-[10px] font-body text-text-dim whitespace-nowrap">
+        <span className="font-mono">{formatPhoneShort(patient.phone)}</span>
+        <span className="opacity-40">·</span>
+        <span>{timeAgo(patient.created_at)}</span>
+        {patient.interaction_count > 0 && (
+          <>
+            <span className="opacity-40">·</span>
+            <span>{patient.interaction_count} msg</span>
+          </>
         )}
-        <div className="flex items-center justify-between">
-          <span className="text-[9px] text-text-dim">{timeAgo(patient.created_at)}</span>
-          {patient.interaction_count > 0 && (
-            <span className="text-[9px] text-text-dim font-body">{patient.interaction_count} msg</span>
-          )}
-        </div>
       </div>
     </div>
   )

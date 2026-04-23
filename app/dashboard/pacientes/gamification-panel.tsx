@@ -163,7 +163,7 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
               <span className="text-[10px] text-text-dim uppercase font-body font-semibold">{t('topAction')}</span>
             </div>
             <div className="text-sm font-mono font-semibold text-status-success truncate">
-              {insights.most_common_action.replace(/_/g, ' ')}
+              {(insights.most_common_action || '—').replace(/_/g, ' ')}
             </div>
           </div>
 
