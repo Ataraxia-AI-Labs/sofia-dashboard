@@ -238,10 +238,11 @@ export function MemoryDropdown({
       <Tooltip label="Memoria — tu diálogo continuo con SofIA" side="left" delay={120}>
         <button
           onClick={() => setOpen(!open)}
-          className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)] active:scale-[0.9] transition-all duration-150"
+          className="hyp-topbar-btn"
+          data-active={totalCount > 0 ? 'true' : 'false'}
           aria-label="Memoria SofIA"
         >
-          <Brain size={14} strokeWidth={1.6} />
+          <Brain size={15} strokeWidth={1.8} />
           {totalCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-3.5 px-1 rounded-full bg-brand-purple/95 text-white text-[9px] font-mono font-semibold flex items-center justify-center">
               {totalCount > 99 ? '99+' : totalCount}

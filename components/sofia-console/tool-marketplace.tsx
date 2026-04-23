@@ -17,6 +17,7 @@ interface ToolMarketplaceProps {
   onClose: () => void
   userRole: ToolRole
   onPickTool: (tool: ToolDef) => void
+  initialQuery?: string
 }
 
 /**
@@ -24,8 +25,8 @@ interface ToolMarketplaceProps {
  * Lenguaje Hyprland + Sentient: naked items, LiquidGlass backdrop,
  * hairlines lila gradient, rounded-2xl, sin cards opacos.
  */
-export function ToolMarketplace({ open, onClose, userRole, onPickTool }: ToolMarketplaceProps) {
-  const [query, setQuery] = useState('')
+export function ToolMarketplace({ open, onClose, userRole, onPickTool, initialQuery = '' }: ToolMarketplaceProps) {
+  const [query, setQuery] = useState(initialQuery)
   const [activeIdx, setActiveIdx] = useState(0)
   const [mounted, setMounted] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,12 +41,12 @@ export function ToolMarketplace({ open, onClose, userRole, onPickTool }: ToolMar
   // Reset on open
   useEffect(() => {
     if (open) {
-      setQuery('')
+      setQuery(initialQuery)
       setActiveIdx(0)
       // Focus delay for smooth animation
       setTimeout(() => inputRef.current?.focus(), 50)
     }
-  }, [open])
+  }, [open, initialQuery])
 
   // Clamp active index
   useEffect(() => {

@@ -300,6 +300,30 @@
     );
   }
 
+  /* Topbar Pulso buttons — MÁS brillo y protagonismo.
+     Los iconos siguen siendo Hyprland naked pero con presencia real:
+     color más fuerte (text-muted en vez de text-dim), halo sutil
+     constante, + lift en hover, + escala. */
+  .hyp-topbar-btn {
+    @apply relative w-7 h-7 flex items-center justify-center rounded-md;
+    color: var(--color-text-muted);
+    filter: drop-shadow(0 0 2px rgba(139,92,246,0.15));
+    transition: all 0.15s ease-out;
+  }
+  .hyp-topbar-btn:hover {
+    color: var(--color-text-primary);
+    filter: drop-shadow(0 0 8px rgba(139,92,246,0.55));
+    transform: translateY(-0.5px);
+  }
+  .hyp-topbar-btn:active {
+    transform: scale(0.9);
+  }
+  .hyp-topbar-btn[data-active="true"],
+  .hyp-topbar-btn[aria-pressed="true"] {
+    color: var(--color-brand-purple, rgb(139 92 246));
+    filter: drop-shadow(0 0 10px rgba(139,92,246,0.7));
+  }
+
   /* Sentient glow — pulsing halo behind interactive cards */
   .sentient-glow {
     position: relative;

@@ -35,6 +35,9 @@ export const memoryBridge = {
 type PromptListener = (prompt: string) => void
 const promptListeners = new Set<PromptListener>()
 
+type OpenMarketplaceListener = (prefilter?: string) => void
+const marketplaceListeners = new Set<OpenMarketplaceListener>()
+
 export const toolBridge = {
   onPrompt(fn: PromptListener): () => void {
     promptListeners.add(fn)
@@ -42,5 +45,12 @@ export const toolBridge = {
   },
   injectPrompt(text: string) {
     promptListeners.forEach(fn => fn(text))
+  },
+  onOpenMarketplace(fn: OpenMarketplaceListener): () => void {
+    marketplaceListeners.add(fn)
+    return () => marketplaceListeners.delete(fn)
+  },
+  openMarketplace(prefilter?: string) {
+    marketplaceListeners.forEach(fn => fn(prefilter))
   },
 }

@@ -46,16 +46,9 @@ export function ThemeToggle() {
               onClick={() => setTheme(value)}
               aria-label={label}
               aria-pressed={isActive}
-              className={`
-                relative w-7 h-7 flex items-center justify-center rounded-md
-                active:scale-[0.9] transition-all duration-150
-                ${isActive
-                  ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.5)]'
-                  : 'text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)]'
-                }
-              `}
+              className="hyp-topbar-btn"
             >
-              <Icon size={14} strokeWidth={isActive ? 2 : 1.6} />
+              <Icon size={15} strokeWidth={isActive ? 2 : 1.8} />
               {isActive && (
                 <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-0.5 rounded-full bg-brand-purple shadow-[0_0_4px_rgba(139,92,246,0.7)]" />
               )}

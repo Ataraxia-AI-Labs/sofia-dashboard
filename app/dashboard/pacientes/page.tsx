@@ -327,8 +327,18 @@ export default function PacientesPage() {
               <Download size={13} /> {t('exportCSV')}
             </button>
           )}
-          <button onClick={() => setShowNewPatient(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/15 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/25 transition-colors">
-            <UserPlus size={13} /> {t('newPatient')}
+          {/* Nuevo paciente ahora vive en el Tool Marketplace (Cmd+K).
+              Abrimos el palette filtrado a la tool "create_patient".
+              Hyprland: naked + lila ambient + keyboard hint. */}
+          <button
+            onClick={() => {
+              import('@/lib/memory-bridge').then(m => m.toolBridge.openMarketplace('crear paciente'))
+            }}
+            className="relative flex items-center gap-2 px-3 py-1.5 rounded-md text-brand-purple text-[11px] font-mono font-semibold uppercase tracking-wider hover:text-brand-purple-light hover:drop-shadow-[0_0_6px_rgba(139,92,246,0.5)] active:scale-[0.97] transition-all"
+          >
+            <UserPlus size={13} strokeWidth={1.8} />
+            {t('newPatient')}
+            <kbd className="text-[9px] font-mono text-text-dim bg-surface-2/60 border border-border/60 rounded px-1 py-px">⌘K</kbd>
           </button>
           <button onClick={loadPatients} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />

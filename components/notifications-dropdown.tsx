@@ -71,10 +71,11 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
       <Tooltip label="Notificaciones" side="left" delay={120}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)] active:scale-[0.9] transition-all duration-150"
+        className="hyp-topbar-btn"
+        data-active={unreadCount > 0 ? 'true' : 'false'}
         aria-label="Notificaciones"
       >
-        <Bell size={14} strokeWidth={1.6} />
+        <Bell size={15} strokeWidth={1.8} />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-3.5 px-1 rounded-full bg-status-danger text-white text-[9px] font-mono font-bold flex items-center justify-center animate-fade-in">
             {unreadCount > 9 ? '9+' : unreadCount}

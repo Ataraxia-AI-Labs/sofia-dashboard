@@ -210,10 +210,11 @@ function BranchSelector({
       <Tooltip label={selected ? selected.name : tLayout('allBranches')} side="left" delay={120}>
         <button
           onClick={() => setOpen(!open)}
-          className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-text-primary hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)] active:scale-[0.9] transition-all duration-150"
+          className="hyp-topbar-btn"
+          data-active={selectedBranchId ? 'true' : 'false'}
           aria-label={selected ? selected.name : tLayout('allBranches')}
         >
-          <MapPin size={14} strokeWidth={1.6} className={selectedBranchId ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.5)]' : ''} />
+          <MapPin size={15} strokeWidth={1.8} />
           {selectedBranchId && (
             <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-brand-purple shadow-[0_0_4px_rgba(139,92,246,0.7)]" />
           )}
@@ -317,6 +318,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [toolMarketOpen, setToolMarketOpen] = useState(false)
+  const [toolMarketPrefilter, setToolMarketPrefilter] = useState('')
 
   // Cmd/Ctrl+K abre el Tool Marketplace desde CUALQUIER página del dashboard.
   useEffect(() => {
@@ -324,10 +326,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
         setToolMarketOpen(v => !v)
+        setToolMarketPrefilter('')
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  // Páginas internas (ej. botones "Nuevo X") piden abrir marketplace
+  // con un pre-filter apuntando a la tool exacta.
+  useEffect(() => {
+    return toolBridge.onOpenMarketplace(prefilter => {
+      setToolMarketPrefilter(prefilter || '')
+      setToolMarketOpen(true)
+    })
   }, [])
 
   const setBranchId = useCallback((id: string | null) => {
@@ -570,10 +582,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Tooltip label="Capacidades — Cmd+K" side="left" delay={120}>
                   <button
                     onClick={() => setToolMarketOpen(true)}
-                    className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-brand-purple hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.4)] active:scale-[0.9] transition-all duration-150"
+                    className="hyp-topbar-btn"
                     aria-label="Capacidades de SofIA"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3z"/>
                       <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
                     </svg>
@@ -633,6 +645,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         open={toolMarketOpen}
         onClose={() => setToolMarketOpen(false)}
         userRole={role}
+        initialQuery={toolMarketPrefilter}
         onPickTool={tool => {
           if (pathname !== '/dashboard') navigateTo('/dashboard')
           toolBridge.injectPrompt(tool.prompt)
