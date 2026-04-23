@@ -86,14 +86,7 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
                   disabled={isReadOnly}
                   size="sm"
                 />
-                {!isReadOnly && (
-                  <button
-                    onClick={() => saveTemplates(templates.filter(t => t.id !== tpl.id))}
-                    className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-status-danger transition-colors"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                )}
+                {/* Delete inline removido: borrar plantilla vive SOLO en Pulso (SofIA). */}
               </div>
             </div>
           </div>

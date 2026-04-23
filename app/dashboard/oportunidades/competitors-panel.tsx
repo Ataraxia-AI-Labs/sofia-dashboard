@@ -598,35 +598,7 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                     <p className="text-[10px] text-text-dim">{comp.city} {comp.specialty && `- ${comp.specialty}`}</p>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => { setEditingCompetitor(comp); setShowForm(true) }}
-                      className="w-6 h-6 rounded-md bg-surface-3 border border-border flex items-center justify-center text-text-dim hover:text-brand-purple transition-colors"
-                    >
-                      <Pencil size={10} />
-                    </button>
-                    {confirmDelete === comp.id ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleDelete(comp.id)}
-                          className="px-2 py-1 rounded-md bg-status-danger/10 text-status-danger text-[9px] font-semibold"
-                        >
-                          Si
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(null)}
-                          className="px-2 py-1 rounded-md bg-surface-3 text-text-dim text-[9px] font-semibold"
-                        >
-                          No
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setConfirmDelete(comp.id)}
-                        className="w-6 h-6 rounded-md bg-surface-3 border border-border flex items-center justify-center text-text-dim hover:text-status-danger transition-colors"
-                      >
-                        <Trash2 size={10} />
-                      </button>
-                    )}
+                    {/* Edit/delete inline removidos: CRUD de competidores vive SOLO en Pulso (SofIA). */}
                   </div>
                 </div>
                 {Object.keys(comp.services_prices).length > 0 && (

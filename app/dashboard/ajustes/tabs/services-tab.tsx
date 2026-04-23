@@ -78,50 +78,20 @@ export function ServicesTab({ orgId, services, isReadOnly, onRefresh, onMessage 
 
       {services.map((svc) => (
         <div key={svc.id} className="glass-card p-4">
-          {editingId === svc.id ? (
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Input label={t('name')} value={editData.name ?? svc.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} />
-                <Input label={t('price')} value={(editData.price ?? svc.price).toString()} onChange={(e) => setEditData({ ...editData, price: Number(e.target.value) })} type="number" />
-                <Input label={t('duration')} value={(editData.duration_minutes ?? svc.duration_minutes).toString()} onChange={(e) => setEditData({ ...editData, duration_minutes: Number(e.target.value) })} type="number" />
-                <Input label={t('category')} value={editData.category ?? svc.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} />
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-body font-semibold text-text-primary">{svc.name}</span>
+                <span className="text-[12px] font-body bg-surface-3 text-text-dim px-2 py-0.5 rounded-md">{svc.category}</span>
               </div>
-              <div className="flex gap-2 justify-end">
-                <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>{tCommon('cancel')}</Button>
-                <Button size="sm" onClick={() => handleUpdate(svc.id)} loading={saving}>{tCommon('save')}</Button>
+              <div className="flex items-center gap-3 mt-1 text-[12px] font-body text-text-muted">
+                <span className="font-semibold text-status-success">{formatCOP(svc.price)}</span>
+                <span>{svc.duration_minutes} min</span>
+                {svc.description && <span className="truncate max-w-[200px]">{svc.description}</span>}
               </div>
             </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-body font-semibold text-text-primary">{svc.name}</span>
-                  <span className="text-[12px] font-body bg-surface-3 text-text-dim px-2 py-0.5 rounded-md">{svc.category}</span>
-                </div>
-                <div className="flex items-center gap-3 mt-1 text-[12px] font-body text-text-muted">
-                  <span className="font-semibold text-status-success">{formatCOP(svc.price)}</span>
-                  <span>{svc.duration_minutes} min</span>
-                  {svc.description && <span className="truncate max-w-[200px]">{svc.description}</span>}
-                </div>
-              </div>
-              {!isReadOnly && (
-                <div className="flex gap-1.5">
-                  <button
-                    onClick={() => { setEditingId(svc.id); setEditData({}) }}
-                    className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-text-primary transition-colors"
-                  >
-                    <Edit3 size={13} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(svc.id)}
-                    className="w-7 h-7 rounded-md bg-surface-3 flex items-center justify-center text-text-dim hover:text-status-danger transition-colors"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+            {/* CRUD inline removido: editar/borrar vive SOLO en Pulso (SofIA). */}
+          </div>
         </div>
       ))}
 

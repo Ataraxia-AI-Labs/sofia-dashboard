@@ -93,12 +93,7 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
                   <span className="text-[13px] font-body font-semibold text-text-primary">{k.name}</span>
                   <span className="text-[11px] font-body text-text-dim">{k.key_prefix}•••</span>
                 </div>
-                {!isReadOnly && (
-                  <button onClick={() => handleRevoke(k.id)}
-                    className="p-1 rounded hover:bg-status-danger/10 text-text-dim hover:text-status-danger transition-colors">
-                    <Trash2 size={12} />
-                  </button>
-                )}
+                {/* Revoke inline removido: revocar API key vive SOLO en Pulso (SofIA). */}
               </div>
               <div className="flex items-center gap-3 mt-1.5">
                 <div className="flex flex-wrap gap-1">
