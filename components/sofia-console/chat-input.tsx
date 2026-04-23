@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { Paperclip, Mic, ArrowUp, Sparkles } from 'lucide-react'
+import { toolBridge } from '@/lib/memory-bridge'
 
 interface ChatInputProps {
   onSubmit: (text: string) => void
@@ -28,6 +29,23 @@ export function ChatInput({ onSubmit, disabled, placeholder }: ChatInputProps) {
     const t = setInterval(() => setPlaceholderIdx(i => (i + 1) % ROTATING_PLACEHOLDERS.length), 3500)
     return () => clearInterval(t)
   }, [placeholder])
+
+  // Listen for prompts injected from the Tool Marketplace (Cmd+K).
+  // The user completes the prompt and hits Enter — we do not auto-send,
+  // otherwise a misclick would fire a destructive tool unprompted.
+  useEffect(() => {
+    return toolBridge.onPrompt(text => {
+      setValue(text)
+      requestAnimationFrame(() => {
+        const el = ref.current
+        if (!el) return
+        el.focus()
+        el.selectionStart = el.selectionEnd = el.value.length
+        el.style.height = 'auto'
+        el.style.height = Math.min(el.scrollHeight, 200) + 'px'
+      })
+    })
+  }, [])
 
   const autoresize = () => {
     const el = ref.current

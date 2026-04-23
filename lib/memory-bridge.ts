@@ -25,3 +25,22 @@ export const memoryBridge = {
     return reloadTick
   },
 }
+
+/* =============================================================
+ * Tool bridge — empuja prompts pre-formados al chat input de Pulso.
+ * Usado por el ToolMarketplace (command palette) para inyectar la
+ * capacidad seleccionada al textarea SIN ejecutarla automáticamente:
+ * el usuario completa con el contexto (ej. nombre del paciente).
+ * =============================================================*/
+type PromptListener = (prompt: string) => void
+const promptListeners = new Set<PromptListener>()
+
+export const toolBridge = {
+  onPrompt(fn: PromptListener): () => void {
+    promptListeners.add(fn)
+    return () => promptListeners.delete(fn)
+  },
+  injectPrompt(text: string) {
+    promptListeners.forEach(fn => fn(text))
+  },
+}

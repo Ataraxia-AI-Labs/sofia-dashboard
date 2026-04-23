@@ -14,7 +14,8 @@ import OnboardingWizard from '@/components/onboarding-wizard'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 import { ClinicAvatar } from '@/components/clinic-avatar'
 import { MemoryDropdown } from '@/components/sofia-console/memory-dropdown'
-import { memoryBridge } from '@/lib/memory-bridge'
+import { ToolMarketplace } from '@/components/sofia-console/tool-marketplace'
+import { memoryBridge, toolBridge } from '@/lib/memory-bridge'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { AtaraxiaLogo, AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -315,6 +316,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [toolMarketOpen, setToolMarketOpen] = useState(false)
+
+  // Cmd/Ctrl+K abre el Tool Marketplace desde CUALQUIER página del dashboard.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setToolMarketOpen(v => !v)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   const setBranchId = useCallback((id: string | null) => {
     setSelectedBranchId(id)
@@ -553,6 +567,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     onSelect={setBranchId}
                   />
                 )}
+                <Tooltip label="Capacidades — Cmd+K" side="left" delay={120}>
+                  <button
+                    onClick={() => setToolMarketOpen(true)}
+                    className="relative w-7 h-7 flex items-center justify-center rounded-md text-text-dim hover:text-brand-purple hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.4)] active:scale-[0.9] transition-all duration-150"
+                    aria-label="Capacidades de SofIA"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3z"/>
+                      <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
+                    </svg>
+                  </button>
+                </Tooltip>
                 <NotificationsDropdown orgId={org?.id || ''} />
                 <ThemeToggle />
                 <MemoryDropdown
@@ -601,6 +627,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </main>
         </div>
       </div>
+
+      {/* Tool Marketplace — Cmd+K command palette (LiquidGlass + Hyprland) */}
+      <ToolMarketplace
+        open={toolMarketOpen}
+        onClose={() => setToolMarketOpen(false)}
+        userRole={role}
+        onPickTool={tool => {
+          if (pathname !== '/dashboard') navigateTo('/dashboard')
+          toolBridge.injectPrompt(tool.prompt)
+          setToolMarketOpen(false)
+        }}
+      />
 
       {/* PWA */}
       <ServiceWorkerRegister />
