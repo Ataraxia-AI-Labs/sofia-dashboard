@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface ReferralProgram {
   id: string
@@ -52,8 +52,7 @@ export async function generateReferralLink(orgId: string, patientId: string): Pr
 export async function getReferralLeaderboard(orgId: string): Promise<ReferralLeaderEntry[]> {
   const res = await authFetch(`${API_URL}/api/growth/engagement/${orgId}/referrals/leaderboard`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.leaderboard ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'leaderboard', 'referrers')
   return raw.map((r: Record<string, unknown>) => ({
     patient_id: (r.patient_id ?? '') as string,
     patient_name: (r.patient_name ?? r.full_name ?? '') as string,

@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   PatientGamification,
   GamificationInsights,
@@ -36,7 +36,7 @@ export async function getPatientGamification(
 export async function getLeaderboard(orgId: string): Promise<LeaderboardEntry[]> {
   const res = await authFetch(`${API_URL}/api/gamification/${orgId}/leaderboard`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<LeaderboardEntry>(await res.json(), 'leaderboard', 'entries')
 }
 
 export async function getTierDistribution(
@@ -63,7 +63,7 @@ export async function redeemPoints(
 export async function getRewardsCatalog(orgId: string): Promise<Reward[]> {
   const res = await authFetch(`${API_URL}/api/gamification/${orgId}/rewards`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<Reward>(await res.json(), 'rewards', 'catalog')
 }
 
 export async function createReward(
@@ -93,5 +93,5 @@ export async function getPointsHistory(
 ): Promise<PointsHistoryEntry[]> {
   const res = await authFetch(`${API_URL}/api/gamification/${orgId}/patient/${patientId}/history`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<PointsHistoryEntry>(await res.json(), 'history', 'entries')
 }

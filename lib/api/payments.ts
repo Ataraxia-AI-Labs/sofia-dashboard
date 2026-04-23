@@ -1,4 +1,4 @@
-import { API_URL, authFetch, withBranch } from './helpers'
+import { API_URL, authFetch, unwrapArray, withBranch } from './helpers'
 import type { Payment, RevenueAttribution } from '@/types'
 
 export async function fetchPayments(orgId: string, opts?: {
@@ -10,8 +10,7 @@ export async function fetchPayments(orgId: string, opts?: {
   url = withBranch(url, opts?.branchId)
   const res = await authFetch(url)
   if (!res.ok) return []
-  const data = await res.json()
-  return data.payments || []
+  return unwrapArray<Payment>(await res.json(), 'payments')
 }
 
 export async function fetchRevenueAttribution(orgId: string, days: number = 30, branchId?: string | null): Promise<RevenueAttribution | null> {

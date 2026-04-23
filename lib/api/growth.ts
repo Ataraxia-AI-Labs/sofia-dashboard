@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 // ============================================================
 // E5 — Attribution Intelligence
@@ -98,7 +98,7 @@ export async function listAdCampaigns(orgId: string, platform?: string): Promise
   const q = platform ? `?platform=${platform}` : ''
   const res = await authFetch(`${API_URL}/api/growth/ads/${orgId}/campaigns${q}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<AdCampaign>(await res.json(), 'campaigns', 'ads')
 }
 
 export async function getAdCampaignROI(orgId: string, campaignId: string): Promise<Record<string, unknown>> {
@@ -116,7 +116,7 @@ export async function generateAdContent(orgId: string, campaignId: string): Prom
 export async function generateKeywords(orgId: string): Promise<string[]> {
   const res = await authFetch(`${API_URL}/api/growth/ads/${orgId}/keywords`, { method: 'POST' })
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<string>(await res.json(), 'keywords')
 }
 
 // ============================================================

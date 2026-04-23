@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { WaitingRoomEntry, WaitingRoomStats, LatePatient } from '@/types'
 
 // ============================================================
@@ -22,20 +22,13 @@ export async function checkIn(
 export async function getQueue(orgId: string): Promise<WaitingRoomEntry[]> {
   const res = await authFetch(`${API_URL}/api/waiting-room/${orgId}/queue`)
   if (!res.ok) return []
-  const data = await res.json()
-  if (Array.isArray(data)) return data
-  if (data && Array.isArray(data.queue)) return data.queue
-  return []
+  return unwrapArray<WaitingRoomEntry>(await res.json(), 'queue', 'waiting')
 }
 
 export async function getLatePatients(orgId: string): Promise<LatePatient[]> {
   const res = await authFetch(`${API_URL}/api/waiting-room/${orgId}/late`)
   if (!res.ok) return []
-  const data = await res.json()
-  if (Array.isArray(data)) return data
-  if (data && Array.isArray(data.late_patients)) return data.late_patients
-  if (data && Array.isArray(data.late)) return data.late
-  return []
+  return unwrapArray<LatePatient>(await res.json(), 'late_patients', 'late')
 }
 
 export async function notifyLate(orgId: string, patientId: string): Promise<void> {

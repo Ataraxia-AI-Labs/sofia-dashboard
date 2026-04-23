@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { LTVPrediction, LTVInsights, CohortData } from '@/types'
 
 // ============================================================
@@ -24,7 +24,7 @@ export async function predictAllLTV(orgId: string): Promise<{ predicted: number;
 export async function getLTVRankings(orgId: string, limit: number = 10): Promise<LTVPrediction[]> {
   const res = await authFetch(`${API_URL}/api/ltv/rankings/${orgId}?limit=${limit}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<LTVPrediction>(await res.json(), 'rankings', 'predictions')
 }
 
 export async function getLTVInsights(orgId: string): Promise<LTVInsights | null> {
@@ -36,11 +36,11 @@ export async function getLTVInsights(orgId: string): Promise<LTVInsights | null>
 export async function getCohortAnalysis(orgId: string): Promise<CohortData[]> {
   const res = await authFetch(`${API_URL}/api/ltv/cohort-analysis/${orgId}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<CohortData>(await res.json(), 'cohorts', 'cohort_analysis')
 }
 
 export async function getAtRiskPatients(orgId: string): Promise<LTVPrediction[]> {
   const res = await authFetch(`${API_URL}/api/ltv/at-risk/${orgId}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<LTVPrediction>(await res.json(), 'at_risk', 'patients')
 }

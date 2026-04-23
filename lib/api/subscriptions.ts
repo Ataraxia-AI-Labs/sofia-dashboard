@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { Subscription, Invoice, UsageData, WompiConfig } from '@/types'
 
 export async function fetchSubscription(orgId: string): Promise<Subscription | null> {
@@ -53,8 +53,7 @@ export async function updatePaymentMethod(orgId: string, cardToken: string, acce
 export async function fetchInvoices(orgId: string, limit = 20): Promise<Invoice[]> {
   const res = await authFetch(`${API_URL}/subscriptions/${orgId}/invoices?limit=${limit}`)
   if (!res.ok) return []
-  const data = await res.json()
-  return data.invoices || []
+  return unwrapArray<Invoice>(await res.json(), 'invoices')
 }
 
 export async function fetchUsage(orgId: string): Promise<UsageData | null> {

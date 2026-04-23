@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   LearnedRule,
   DoctorCorrection,
@@ -46,7 +46,7 @@ export async function getLearnedRules(
 ): Promise<LearnedRule[]> {
   const res = await authFetch(`${API_URL}/api/learning/${orgId}/rules/${doctorId}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<LearnedRule>(await res.json(), 'rules')
 }
 
 export async function getLearningStats(
@@ -88,7 +88,7 @@ export async function getCorrectionHistory(
 ): Promise<DoctorCorrection[]> {
   const res = await authFetch(`${API_URL}/api/learning/${orgId}/corrections/${doctorId}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<DoctorCorrection>(await res.json(), 'corrections', 'history')
 }
 
 export async function getLearningProgress(

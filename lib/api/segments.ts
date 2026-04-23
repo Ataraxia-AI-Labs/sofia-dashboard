@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   PatientSegment,
   CampaignSuggestion,
@@ -31,11 +31,7 @@ export async function runClustering(orgId: string, nClusters?: number): Promise<
 export async function getSegments(orgId: string): Promise<PatientSegment[]> {
   const res = await authFetch(`${API_URL}/segments/${orgId}/segments`)
   if (!res.ok) return []
-  const data = await res.json()
-  // Backend wraps the list as { segments: [...], count: N }. Unwrap defensively.
-  if (Array.isArray(data)) return data
-  if (data && Array.isArray(data.segments)) return data.segments
-  return []
+  return unwrapArray<PatientSegment>(await res.json(), 'segments')
 }
 
 export async function getPatientSegment(orgId: string, patientId: string): Promise<PatientSegment | null> {
@@ -47,7 +43,7 @@ export async function getPatientSegment(orgId: string, patientId: string): Promi
 export async function findSimilarPatients(orgId: string, patientId: string, limit: number = 10): Promise<SimilarPatient[]> {
   const res = await authFetch(`${API_URL}/segments/${orgId}/similar/${patientId}?limit=${limit}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<SimilarPatient>(await res.json(), 'similar', 'patients', 'matches')
 }
 
 export async function getCampaignSuggestion(orgId: string, segmentId: string): Promise<CampaignSuggestion | null> {

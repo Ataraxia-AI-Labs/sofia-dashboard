@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 // ============================================================
 // Marketplace Connectors
@@ -62,8 +62,7 @@ export async function browseConnectors(params?: { category?: string; search?: st
   const qs = q.toString() ? `?${q}` : ''
   const res = await authFetch(`${API_URL}/api/marketplace/connectors${qs}`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.connectors ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'connectors')
   return raw.map(mapConnector)
 }
 
@@ -77,9 +76,8 @@ export async function getConnectorDetail(slug: string): Promise<Connector | null
 export async function getCategories(): Promise<string[]> {
   const res = await authFetch(`${API_URL}/api/marketplace/categories`)
   if (!res.ok) return []
-  const d = await res.json()
-  if (Array.isArray(d)) return d
-  return d.all_categories ?? d.categories?.map((c: Record<string, unknown>) => c.category ?? c) ?? []
+  const raw = unwrapArray<string | Record<string, unknown>>(await res.json(), 'all_categories', 'categories')
+  return raw.map((c) => (typeof c === 'string' ? c : ((c.category ?? c) as string)))
 }
 
 export async function installConnector(orgId: string, slug: string, config?: Record<string, unknown>): Promise<InstalledConnector> {
@@ -99,15 +97,13 @@ export async function uninstallConnector(orgId: string, installId: string): Prom
 export async function listInstalled(orgId: string): Promise<InstalledConnector[]> {
   const res = await authFetch(`${API_URL}/api/marketplace/${orgId}/installed`)
   if (!res.ok) return []
-  const d = await res.json()
-  return Array.isArray(d) ? d : (d.installed ?? [])
+  return unwrapArray<InstalledConnector>(await res.json(), 'installed', 'connectors')
 }
 
 export async function getConnectorReviews(slug: string): Promise<ConnectorReview[]> {
   const res = await authFetch(`${API_URL}/api/marketplace/connectors/${slug}/reviews`)
   if (!res.ok) return []
-  const d = await res.json()
-  return Array.isArray(d) ? d : (d.reviews ?? [])
+  return unwrapArray<ConnectorReview>(await res.json(), 'reviews')
 }
 
 // ============================================================
@@ -142,8 +138,7 @@ export async function listPlugins(orgId: string, hookPoint?: string): Promise<Pl
   const q = hookPoint ? `?hook_point=${hookPoint}` : ''
   const res = await authFetch(`${API_URL}/api/plugins/${orgId}${q}`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.plugins ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'plugins')
   return raw.map(mapPlugin)
 }
 

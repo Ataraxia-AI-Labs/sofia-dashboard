@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { OutreachMessage, OutreachStats } from '@/types'
 
 // ============================================================
@@ -23,7 +23,7 @@ export async function getOutreach(
   if (qs) url += `?${qs}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<OutreachMessage>(await res.json(), 'outreach', 'messages')
 }
 
 export async function approveOutreach(orgId: string, outreachId: string): Promise<void> {

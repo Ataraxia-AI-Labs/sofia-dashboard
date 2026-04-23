@@ -1,4 +1,4 @@
-import { API_URL, authFetch, withBranch } from './helpers'
+import { API_URL, authFetch, unwrapArray, withBranch } from './helpers'
 import type { DataLakeStats, DataLakeExportResult } from '@/types'
 
 export async function fetchDataLakeStats(orgId: string, branchId?: string | null): Promise<DataLakeStats | null> {
@@ -12,7 +12,7 @@ export async function fetchDataLakeStats(orgId: string, branchId?: string | null
 export async function fetchDataLakeDaily(orgId: string, days: number = 30): Promise<{ date: string; count: number }[]> {
   const res = await authFetch(`${API_URL}/data-lake/${orgId}/daily?dias=${days}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<{ date: string; count: number }>(await res.json(), 'daily', 'days')
 }
 
 export async function fetchTrainingReadyCount(orgId: string): Promise<number> {

@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface ContentItem {
   id: string
@@ -41,8 +41,7 @@ function mapContentItem(r: Record<string, unknown>): ContentItem {
 export async function listContent(orgId: string): Promise<ContentItem[]> {
   const res = await authFetch(`${API_URL}/api/growth/engagement/${orgId}/content`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.content ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'content', 'posts')
   return raw.map(mapContentItem)
 }
 
@@ -84,8 +83,7 @@ export async function getContentAnalytics(orgId: string): Promise<Record<string,
 export async function suggestTopics(orgId: string): Promise<string[]> {
   const res = await authFetch(`${API_URL}/api/growth/engagement/${orgId}/content/suggest-topics`, { method: 'POST' })
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.topics ?? d.suggestions ?? [])
+  const raw = unwrapArray<string | Record<string, unknown>>(await res.json(), 'topics', 'suggestions')
   // Backend may return [{topic, content_type, rationale}] — extract topic strings
   return raw.map((item: string | Record<string, unknown>) =>
     typeof item === 'string' ? item : ((item.topic ?? item.title ?? '') as string)

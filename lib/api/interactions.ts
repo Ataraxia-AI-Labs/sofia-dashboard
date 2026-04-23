@@ -1,4 +1,4 @@
-import { API_URL, authFetch, withBranch } from './helpers'
+import { API_URL, authFetch, unwrapArray, withBranch } from './helpers'
 import type { InteractionLog, InteractionAnnotation } from '@/types'
 
 // Backend ai_analysis.sentiment can be a number (-1.0 to 1.0) OR a string label
@@ -51,9 +51,8 @@ export async function fetchInteractions(orgId: string, opts?: {
 
   const res = await authFetch(url)
   if (!res.ok) return []
-  const data = await res.json()
   // Backend may return { interactions: [...] } or raw array
-  const raw: Record<string, unknown>[] = Array.isArray(data) ? data : (data.interactions || data.data || [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'interactions', 'logs')
 
   // Transform backend fields to match InteractionLog type.
   // Backend returns: platform, raw_content, ai_response, sentiment

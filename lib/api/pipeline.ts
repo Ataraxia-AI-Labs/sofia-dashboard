@@ -1,4 +1,4 @@
-import { API_URL, authFetch, withBranch } from './helpers'
+import { API_URL, authFetch, unwrapArray, withBranch } from './helpers'
 import type { PipelinePatient } from '@/types'
 
 export async function fetchPipelineData(orgId: string, branchId?: string | null): Promise<PipelinePatient[]> {
@@ -6,6 +6,5 @@ export async function fetchPipelineData(orgId: string, branchId?: string | null)
   url = withBranch(url, branchId)
   const res = await authFetch(url)
   if (!res.ok) return []
-  const d = await res.json()
-  return d.data ?? []
+  return unwrapArray<PipelinePatient>(await res.json(), 'pipeline', 'patients')
 }

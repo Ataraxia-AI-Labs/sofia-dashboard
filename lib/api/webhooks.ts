@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface WebhookEndpoint {
   id: string
@@ -63,8 +63,7 @@ function mapDelivery(r: Record<string, unknown>): WebhookDelivery {
 export async function listWebhookEndpoints(orgId: string): Promise<WebhookEndpoint[]> {
   const res = await authFetch(`${API_URL}/api/webhooks/${orgId}/endpoints`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.endpoints ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'endpoints', 'webhooks')
   return raw.map(mapEndpoint)
 }
 
@@ -118,8 +117,7 @@ export async function testWebhookEndpoint(orgId: string, endpointId: string): Pr
 export async function listWebhookDeliveries(orgId: string): Promise<WebhookDelivery[]> {
   const res = await authFetch(`${API_URL}/api/webhooks/${orgId}/deliveries`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.deliveries ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'deliveries')
   return raw.map(mapDelivery)
 }
 
@@ -131,6 +129,5 @@ export async function retryWebhookDelivery(orgId: string, deliveryId: string): P
 export async function getWebhookEventCatalog(orgId: string): Promise<string[]> {
   const res = await authFetch(`${API_URL}/api/webhooks/${orgId}/events`)
   if (!res.ok) return []
-  const d = await res.json()
-  return Array.isArray(d) ? d : (d.events ?? [])
+  return unwrapArray<string>(await res.json(), 'events', 'catalog')
 }

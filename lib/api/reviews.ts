@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface Review {
   id: string
@@ -52,8 +52,7 @@ export async function listReviews(orgId: string, params?: { status?: string; rat
   const qs = q.toString() ? `?${q}` : ''
   const res = await authFetch(`${API_URL}/gmb/${orgId}/reviews${qs}`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.reviews ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'reviews')
   return raw.map(mapReview)
 }
 

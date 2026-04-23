@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 // ============================================================
 // ANNOTATIONS API (P4-06)
@@ -67,8 +67,7 @@ export async function getAnnotations(
   const qs = params.toString()
   const res = await authFetch(`${API_URL}/annotations/${orgId}${qs ? `?${qs}` : ''}`)
   if (!res.ok) return []
-  const data = await res.json()
-  return Array.isArray(data) ? data : (data.annotations || [])
+  return unwrapArray<AnnotationRecord>(await res.json(), 'annotations')
 }
 
 /**

@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { DuplicateCandidate, DuplicateStats } from '@/types'
 
 // ============================================================
@@ -18,12 +18,7 @@ export async function getDuplicates(orgId: string, status?: string): Promise<Dup
   if (status) url += `?status=${status}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  const body = await res.json()
-  if (Array.isArray(body)) return body
-  if (Array.isArray(body?.duplicates)) return body.duplicates
-  if (Array.isArray(body?.items)) return body.items
-  if (Array.isArray(body?.data)) return body.data
-  return []
+  return unwrapArray<DuplicateCandidate>(await res.json(), 'duplicates', 'candidates')
 }
 
 export async function confirmDuplicate(
@@ -60,5 +55,5 @@ export async function checkPatient(orgId: string, patientId: string): Promise<Du
     body: JSON.stringify({ patient_id: patientId }),
   })
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<DuplicateCandidate>(await res.json(), 'duplicates', 'candidates', 'matches')
 }

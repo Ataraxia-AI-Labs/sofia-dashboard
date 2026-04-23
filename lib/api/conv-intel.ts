@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 // ============================================================
 // D1 — Patient Memory
@@ -18,9 +18,8 @@ export async function getPatientMemories(orgId: string, patientId: string, categ
   const q = category ? `?category=${category}` : ''
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/memories${q}`)
   if (!res.ok) return []
-  const data = await res.json()
   // Backend wraps: { memories: [...], count: N }
-  return Array.isArray(data) ? data : (data.memories || [])
+  return unwrapArray<PatientMemory>(await res.json(), 'memories')
 }
 
 export async function addPatientMemory(orgId: string, patientId: string, data: {
@@ -41,7 +40,7 @@ export async function deletePatientMemory(orgId: string, patientId: string, memo
 export async function searchPatientMemories(orgId: string, patientId: string, query: string): Promise<PatientMemory[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/memories/search?query=${encodeURIComponent(query)}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<PatientMemory>(await res.json(), 'memories', 'matches')
 }
 
 // ============================================================
@@ -110,7 +109,7 @@ export async function getEmotionTrajectory(orgId: string, patientId: string, day
   const q = days ? `?days=${days}` : ''
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/emotions/trajectory${q}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<EmotionTrajectory>(await res.json(), 'trajectory', 'emotions')
 }
 
 export async function getEmotionAnalytics(orgId: string): Promise<Record<string, unknown>> {
@@ -126,7 +125,7 @@ export async function getEmotionAnalytics(orgId: string): Promise<Record<string,
 export async function getPatientIntents(orgId: string, patientId: string): Promise<Record<string, unknown>[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/patients/${patientId}/intents`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<Record<string, unknown>>(await res.json(), 'intents')
 }
 
 export async function getIntentAnalytics(orgId: string): Promise<Record<string, unknown>> {
@@ -180,17 +179,15 @@ export interface StaffMetric {
 export async function getCoachingPatterns(orgId: string): Promise<Record<string, unknown>[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/patterns`)
   if (!res.ok) return []
-  const data = await res.json()
   // Backend wraps: { patterns: [...], count: N }
-  return Array.isArray(data) ? data : (data?.patterns || [])
+  return unwrapArray<Record<string, unknown>>(await res.json(), 'patterns')
 }
 
 export async function getCoachingTips(orgId: string): Promise<CoachingTip[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/tips`)
   if (!res.ok) return []
-  const data = await res.json()
   // Backend wraps: { tips: [...], count: N }
-  return Array.isArray(data) ? data : (data?.tips || [])
+  return unwrapArray<CoachingTip>(await res.json(), 'tips')
 }
 
 export async function markTipRead(orgId: string, tipId: string): Promise<void> {
@@ -200,11 +197,8 @@ export async function markTipRead(orgId: string, tipId: string): Promise<void> {
 export async function getStaffMetrics(orgId: string): Promise<StaffMetric[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/coaching/staff-metrics`)
   if (!res.ok) return []
-  const data = await res.json()
   // Backend may return { metrics: [...] } or raw list or object
-  if (Array.isArray(data)) return data
-  if (data?.metrics && Array.isArray(data.metrics)) return data.metrics
-  return []
+  return unwrapArray<StaffMetric>(await res.json(), 'metrics', 'staff')
 }
 
 export async function getCoachingDashboard(orgId: string): Promise<Record<string, unknown>> {
@@ -221,7 +215,7 @@ export async function getCoachingDashboard(orgId: string): Promise<Record<string
 export async function getProactiveQueue(orgId: string): Promise<Record<string, unknown>[]> {
   const res = await authFetch(`${API_URL}/api/conv-intel/${orgId}/proactive/queue`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<Record<string, unknown>>(await res.json(), 'queue', 'proactive')
 }
 
 export async function getProactiveAnalytics(orgId: string): Promise<Record<string, unknown>> {

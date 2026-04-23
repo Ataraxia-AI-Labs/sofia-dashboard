@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface TeamMember {
   id: string
@@ -13,8 +13,7 @@ export interface TeamMember {
 export async function fetchTeamMembers(orgId: string): Promise<TeamMember[]> {
   const res = await authFetch(`${API_URL}/dashboard/team/${orgId}`)
   if (!res.ok) return []
-  const data = await res.json()
-  return data.members || data || []
+  return unwrapArray<TeamMember>(await res.json(), 'members', 'team')
 }
 
 export async function inviteTeamMember(orgId: string, email: string, role: string): Promise<{ success: boolean; message?: string }> {

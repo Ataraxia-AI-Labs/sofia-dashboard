@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   ConversionPrediction,
   ConversionInsights,
@@ -35,7 +35,7 @@ export async function getConversionInsights(orgId: string): Promise<ConversionIn
 export async function getFollowUpQueue(orgId: string, limit: number = 20): Promise<FollowUpItem[]> {
   const res = await authFetch(`${API_URL}/conversions/${orgId}/follow-up-queue?limit=${limit}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<FollowUpItem>(await res.json(), 'queue', 'follow_ups')
 }
 
 export async function getBestContactTime(orgId: string, patientId: string): Promise<{ best_time: string; best_day: string } | null> {

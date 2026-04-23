@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   VoiceMetrics, CallRecord, TranscriptionSegment,
   CallEvent, VoiceAnalytics,
@@ -47,8 +47,7 @@ export async function getCallHistory(
   if (patientId) url += `?patient_id=${patientId}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  const data = await res.json()
-  return Array.isArray(data) ? data : data.calls || []
+  return unwrapArray<CallRecord>(await res.json(), 'calls', 'history')
 }
 
 export async function getCallDetail(
@@ -93,6 +92,5 @@ export async function getCallEvents(
 ): Promise<CallEvent[]> {
   const res = await authFetch(`${API_URL}/voice/${orgId}/call/${callId}/events`)
   if (!res.ok) return []
-  const data = await res.json()
-  return Array.isArray(data) ? data : data.events || []
+  return unwrapArray<CallEvent>(await res.json(), 'events')
 }

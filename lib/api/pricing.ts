@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { PricingRules, PriceSuggestion, PricingInsights, SuggestPriceRequest, SuggestPriceBatchRequest } from '@/types'
 
 // ============================================================
@@ -38,7 +38,7 @@ export async function suggestPriceBatch(orgId: string, data: SuggestPriceBatchRe
     body: JSON.stringify(data),
   })
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<PriceSuggestion>(await res.json(), 'suggestions', 'prices')
 }
 
 export async function getPriceSuggestions(orgId: string, status?: string): Promise<PriceSuggestion[]> {
@@ -46,7 +46,7 @@ export async function getPriceSuggestions(orgId: string, status?: string): Promi
   if (status) url += `?status=${status}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<PriceSuggestion>(await res.json(), 'suggestions', 'prices')
 }
 
 export async function applyPriceSuggestion(orgId: string, id: string): Promise<boolean> {

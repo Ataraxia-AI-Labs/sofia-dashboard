@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { FineTuneModel, ModelEvaluation, ModelComparison } from '@/types'
 
 // ============================================================
@@ -8,7 +8,7 @@ import type { FineTuneModel, ModelEvaluation, ModelComparison } from '@/types'
 export async function getModels(orgId: string): Promise<FineTuneModel[]> {
   const res = await authFetch(`${API_URL}/data-lake/${orgId}/models`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<FineTuneModel>(await res.json(), 'models')
 }
 
 export async function deployModel(orgId: string, modelId: string): Promise<FineTuneModel | null> {
@@ -31,7 +31,7 @@ export async function evaluateModel(orgId: string, modelId: string): Promise<Mod
 export async function getEvaluations(orgId: string): Promise<ModelEvaluation[]> {
   const res = await authFetch(`${API_URL}/models/${orgId}/evaluations`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<ModelEvaluation>(await res.json(), 'evaluations')
 }
 
 export async function compareModels(

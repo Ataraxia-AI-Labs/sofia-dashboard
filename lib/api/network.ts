@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   NetworkBenchmarks, ServiceTrend, PricingBenchmark,
   ConversionPattern, OptimalHour, NetworkAlert, NetworkNarrative, NetworkStats,
@@ -30,9 +30,7 @@ export async function getNetworkBenchmarks(orgId: string): Promise<NetworkBenchm
 export async function getServiceTrends(orgId: string): Promise<ServiceTrend[]> {
   const res = await authFetch(`${API_URL}/network/${orgId}/trends`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = d.trends ?? d
-  const arr = Array.isArray(raw) ? raw : []
+  const arr = unwrapArray<Record<string, unknown>>(await res.json(), 'trends')
   return arr.map((t: Record<string, unknown>) => ({
     service_name: (t.service_name ?? t.service ?? '') as string,
     trend: (t.trend ?? t.direction ?? 'STABLE') as ServiceTrend['trend'],
@@ -51,9 +49,7 @@ export async function getPricingBenchmark(orgId: string, service: string): Promi
 export async function getConversionPatterns(orgId: string): Promise<ConversionPattern[]> {
   const res = await authFetch(`${API_URL}/network/${orgId}/conversion-patterns`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = d.patterns ?? d
-  const arr = Array.isArray(raw) ? raw : []
+  const arr = unwrapArray<Record<string, unknown>>(await res.json(), 'patterns')
   return arr.map((p: Record<string, unknown>) => ({
     pattern: (p.pattern ?? '') as string,
     impact_factor: typeof p.impact_factor === 'number' ? p.impact_factor : parseFloat(String(p.impact ?? '0')) || 0,
@@ -64,9 +60,7 @@ export async function getConversionPatterns(orgId: string): Promise<ConversionPa
 export async function getOptimalHours(orgId: string): Promise<OptimalHour[]> {
   const res = await authFetch(`${API_URL}/network/${orgId}/optimal-hours`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = d.optimal_hours ?? d
-  const arr = Array.isArray(raw) ? raw : []
+  const arr = unwrapArray<Record<string, unknown>>(await res.json(), 'optimal_hours', 'hours')
   return arr.map((h: Record<string, unknown>) => ({
     hour: (h.hour ?? 0) as number,
     day: (h.day ?? h.day_of_week ?? '') as string,
@@ -77,9 +71,7 @@ export async function getOptimalHours(orgId: string): Promise<OptimalHour[]> {
 export async function getNetworkAlerts(orgId: string): Promise<NetworkAlert[]> {
   const res = await authFetch(`${API_URL}/network/${orgId}/alerts`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = d.alerts ?? d
-  return Array.isArray(raw) ? raw : []
+  return unwrapArray<NetworkAlert>(await res.json(), 'alerts')
 }
 
 export async function getNetworkNarrative(orgId: string): Promise<NetworkNarrative | null> {

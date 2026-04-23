@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface WorkflowStep {
   id?: string
@@ -53,8 +53,7 @@ export async function listWorkflows(orgId: string, status?: string): Promise<Wor
   const q = status ? `?status=${status}` : ''
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}${q}`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.workflows ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'workflows')
   return raw.map(ensureSteps)
 }
 
@@ -102,8 +101,7 @@ export async function listTemplates(orgId: string, category?: string): Promise<W
   const q = category ? `?category=${category}` : ''
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/templates${q}`)
   if (!res.ok) return []
-  const d = await res.json()
-  const raw = Array.isArray(d) ? d : (d.templates ?? [])
+  const raw = unwrapArray<Record<string, unknown>>(await res.json(), 'templates')
   return raw.map((t: Record<string, unknown>) => ({ ...t, steps: Array.isArray(t.steps) ? t.steps : [] })) as WorkflowTemplate[]
 }
 
@@ -126,8 +124,7 @@ export async function enrollPatients(orgId: string, workflowId: string, patientI
 export async function listEnrollments(orgId: string, workflowId: string): Promise<WorkflowEnrollment[]> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/${workflowId}/enrollments`)
   if (!res.ok) return []
-  const d = await res.json()
-  return Array.isArray(d) ? d : (d.enrollments ?? [])
+  return unwrapArray<WorkflowEnrollment>(await res.json(), 'enrollments')
 }
 
 export async function getWorkflowAnalytics(orgId: string, workflowId: string): Promise<Record<string, unknown>> {
@@ -140,6 +137,5 @@ export async function getWorkflowAnalytics(orgId: string, workflowId: string): P
 export async function getWorkflowComparison(orgId: string): Promise<Record<string, unknown>[]> {
   const res = await authFetch(`${API_URL}/api/workflows/${orgId}/comparison`)
   if (!res.ok) return []
-  const d = await res.json()
-  return Array.isArray(d) ? d : (d.comparison ?? [])
+  return unwrapArray<Record<string, unknown>>(await res.json(), 'comparison', 'workflows')
 }

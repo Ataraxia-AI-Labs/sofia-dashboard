@@ -4,6 +4,31 @@ import { API_URL, authFetch } from '../supabase'
 export { API_URL, authFetch }
 
 // ============================================================
+// RESPONSE UNWRAPPERS
+// Backend inconsistency protection: many endpoints return
+// {items: [...]} / {data: [...]} / {<resource>: [...]} instead
+// of a bare array. Without this, .map() crashes the UI.
+// ============================================================
+
+export function unwrapArray<T>(body: unknown, ...keys: string[]): T[] {
+  if (Array.isArray(body)) return body as T[]
+  if (!body || typeof body !== 'object') return []
+  const obj = body as Record<string, unknown>
+  // Probe common envelope keys first, then any caller-specific keys
+  const probe = ['items', 'data', 'results', 'rows', ...keys]
+  for (const k of probe) {
+    if (Array.isArray(obj[k])) return obj[k] as T[]
+  }
+  return []
+}
+
+export async function fetchArray<T>(url: string, ...keys: string[]): Promise<T[]> {
+  const res = await authFetch(url)
+  if (!res.ok) return []
+  return unwrapArray<T>(await res.json(), ...keys)
+}
+
+// ============================================================
 // URL HELPERS
 // ============================================================
 

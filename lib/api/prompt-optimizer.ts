@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 // ============================================================
 // PROMPT OPTIMIZER API (P4-08)
@@ -47,8 +47,7 @@ export async function triggerPromptAnalysis(orgId: string): Promise<AnalysisResu
 export async function getPromptSuggestions(orgId: string): Promise<PromptSuggestion[]> {
   const res = await authFetch(`${API_URL}/prompt-optimizer/${orgId}/suggestions`)
   if (!res.ok) return []
-  const data = await res.json()
-  return Array.isArray(data) ? data : (data.suggestions || [])
+  return unwrapArray<PromptSuggestion>(await res.json(), 'suggestions')
 }
 
 /**

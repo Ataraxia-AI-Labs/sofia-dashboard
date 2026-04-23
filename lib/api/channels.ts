@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   ChannelMetrics, ChannelComparison, InboxConversation,
   ConversationMessage, ChannelConfig, ChannelInsight,
@@ -128,8 +128,7 @@ export async function getUnifiedInbox(
   if (qs) url += `?${qs}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  const data = await res.json()
-  return Array.isArray(data) ? data : data.conversations || []
+  return unwrapArray<InboxConversation>(await res.json(), 'conversations', 'inbox')
 }
 
 export async function getConversationDetail(
@@ -141,8 +140,10 @@ export async function getConversationDetail(
   const data = await res.json()
 
   // Backend returns { messages: [{id, channel, direction, content, ai_response, ...}] }
-  // Frontend expects ConversationMessage[] with message_content field
-  const rawMessages = Array.isArray(data) ? data : data.messages || []
+  // Frontend expects ConversationMessage[] with message_content field.
+  // Loose typing — each message has 10+ diagnostic fields transformed inline below.
+
+  const rawMessages: any[] = unwrapArray<any>(data, 'messages')
   const result: ConversationMessage[] = []
 
   for (const msg of rawMessages) {
@@ -206,8 +207,7 @@ export async function getChannelConfig(
 ): Promise<ChannelConfig[]> {
   const res = await authFetch(`${API_URL}/channels/${orgId}/config`)
   if (!res.ok) return []
-  const data = await res.json()
-  return Array.isArray(data) ? data : data.channels || []
+  return unwrapArray<ChannelConfig>(await res.json(), 'channels', 'configs')
 }
 
 export async function updateChannelConfig(

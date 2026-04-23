@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface ApiKey {
   id: string
@@ -15,7 +15,7 @@ export interface ApiKey {
 export async function listApiKeys(orgId: string): Promise<ApiKey[]> {
   const res = await authFetch(`${API_URL}/admin/api-keys/${orgId}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<ApiKey>(await res.json(), 'api_keys', 'keys')
 }
 
 export async function createApiKey(orgId: string, data: {

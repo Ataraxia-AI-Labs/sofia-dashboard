@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type { LeadScore, LeadInsights, LeadScoreAllResult, LeadClassification } from '@/types'
 
 // ============================================================
@@ -29,7 +29,7 @@ export async function getLeadScores(
   if (classification) url += `?classification=${classification}`
   const res = await authFetch(url)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<LeadScore>(await res.json(), 'scores', 'leads')
 }
 
 export async function getLeadInsights(orgId: string): Promise<LeadInsights | null> {
@@ -41,5 +41,5 @@ export async function getLeadInsights(orgId: string): Promise<LeadInsights | nul
 export async function getTopLeads(orgId: string, limit: number = 10): Promise<LeadScore[]> {
   const res = await authFetch(`${API_URL}/leads/${orgId}/top?limit=${limit}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<LeadScore>(await res.json(), 'leads', 'top')
 }

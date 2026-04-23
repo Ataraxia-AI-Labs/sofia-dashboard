@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface ActiveTakeover {
   patient_id: string
@@ -10,8 +10,7 @@ export interface ActiveTakeover {
 export async function fetchActiveTakeovers(orgId: string): Promise<ActiveTakeover[]> {
   const res = await authFetch(`${API_URL}/takeover/${orgId}/active`)
   if (!res.ok) return []
-  const data = await res.json()
-  return data.takeovers || []
+  return unwrapArray<ActiveTakeover>(await res.json(), 'takeovers', 'active')
 }
 
 export async function startTakeover(orgId: string, patientId: string, reason: string = 'Manual takeover from dashboard') {

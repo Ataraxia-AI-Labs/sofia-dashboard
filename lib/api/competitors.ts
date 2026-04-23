@@ -1,4 +1,4 @@
-import { API_URL, authFetch } from './helpers'
+import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   Competitor, PricingComparison, MarketPosition,
   CompetitiveInsights, MarketBenchmark, PriceChange, CompetitorReport,
@@ -24,7 +24,7 @@ export async function registerCompetitor(
 export async function listCompetitors(orgId: string): Promise<Competitor[]> {
   const res = await authFetch(`${API_URL}/api/competitors/${orgId}`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<Competitor>(await res.json(), 'competitors')
 }
 
 export async function updateCompetitor(
@@ -51,7 +51,7 @@ export async function deleteCompetitor(orgId: string, competitorId: string): Pro
 export async function getPricingComparison(orgId: string): Promise<PricingComparison[]> {
   const res = await authFetch(`${API_URL}/api/competitors/${orgId}/pricing-comparison`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<PricingComparison>(await res.json(), 'comparison', 'pricing')
 }
 
 export async function getMarketPosition(orgId: string): Promise<MarketPosition | null> {
@@ -69,7 +69,7 @@ export async function getCompetitiveInsights(orgId: string): Promise<Competitive
 export async function getBenchmarks(orgId: string): Promise<MarketBenchmark[]> {
   const res = await authFetch(`${API_URL}/api/competitors/${orgId}/benchmarks`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<MarketBenchmark>(await res.json(), 'benchmarks')
 }
 
 export async function generateReport(orgId: string): Promise<CompetitorReport | null> {
@@ -83,5 +83,5 @@ export async function generateReport(orgId: string): Promise<CompetitorReport | 
 export async function getPriceChanges(orgId: string): Promise<PriceChange[]> {
   const res = await authFetch(`${API_URL}/api/competitors/${orgId}/price-changes`)
   if (!res.ok) return []
-  return res.json()
+  return unwrapArray<PriceChange>(await res.json(), 'price_changes', 'changes')
 }
