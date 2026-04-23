@@ -16,7 +16,16 @@ export async function generateEmbeddings(orgId: string): Promise<EmbeddingsResul
     method: 'POST',
   })
   if (!res.ok) return null
-  return res.json()
+  const body = await res.json()
+  // Backend wraps response as {result: {total, generated, errors, org_id}}. Unwrap + synthesize message.
+  const data = (body && typeof body === 'object' && body.result) ? body.result : body
+  if (data && typeof data === 'object' && !data.message) {
+    const g = data.generated ?? 0, e = data.errors ?? 0, t = data.total ?? g
+    data.message = e > 0
+      ? `${g} de ${t} pacientes procesados (${e} errores)`
+      : `${g} pacientes con huella generada`
+  }
+  return data
 }
 
 export async function runClustering(orgId: string, nClusters?: number): Promise<ClusteringResult | null> {
@@ -25,7 +34,16 @@ export async function runClustering(orgId: string, nClusters?: number): Promise<
     : `${API_URL}/segments/${orgId}/cluster`
   const res = await authFetch(url, { method: 'POST' })
   if (!res.ok) return null
-  return res.json()
+  const body = await res.json()
+  const data = (body && typeof body === 'object' && body.result) ? body.result : body
+  if (data && typeof data === 'object' && !data.message) {
+    const c = Array.isArray(data.clusters) ? data.clusters.length : (data.n_clusters ?? 0)
+    const t = data.total ?? 0
+    data.message = c > 0
+      ? `${c} tribus detectadas sobre ${t} pacientes`
+      : 'No hay embeddings aún — genera las huellas primero'
+  }
+  return data
 }
 
 export async function getSegments(orgId: string): Promise<PatientSegment[]> {
