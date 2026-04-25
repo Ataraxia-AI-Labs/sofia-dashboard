@@ -78,6 +78,48 @@ export async function connectWhatsAppEmbedded(orgId: string, code: string) {
 }
 
 // ============================================================
+// INSTAGRAM + MESSENGER (manual connect — Meta TP approval pending)
+// ============================================================
+
+export interface ConnectMetaPageData {
+  page_id: string
+  page_access_token: string
+  instagram_business_account_id?: string
+}
+
+async function connectMetaChannel(
+  orgId: string,
+  channel: 'instagram' | 'messenger',
+  data: ConnectMetaPageData,
+) {
+  const res = await authFetch(`${API_URL}/channels/${orgId}/${channel}`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }))
+    throw new Error(err.detail || `Connect ${channel} failed: ${res.status}`)
+  }
+  return res.json()
+}
+
+async function disconnectMetaChannel(orgId: string, channel: 'instagram' | 'messenger') {
+  const res = await authFetch(`${API_URL}/channels/${orgId}/${channel}`, { method: 'DELETE' })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }))
+    throw new Error(err.detail || `Disconnect ${channel} failed: ${res.status}`)
+  }
+  return res.json()
+}
+
+export const connectInstagram = (orgId: string, data: ConnectMetaPageData) =>
+  connectMetaChannel(orgId, 'instagram', data)
+export const connectMessenger = (orgId: string, data: ConnectMetaPageData) =>
+  connectMetaChannel(orgId, 'messenger', data)
+export const disconnectInstagram = (orgId: string) => disconnectMetaChannel(orgId, 'instagram')
+export const disconnectMessenger = (orgId: string) => disconnectMetaChannel(orgId, 'messenger')
+
+// ============================================================
 // CHANNEL MANAGEMENT (P5-07)
 // ============================================================
 

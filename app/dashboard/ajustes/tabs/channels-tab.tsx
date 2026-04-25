@@ -2,7 +2,12 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Script from 'next/script'
-import { fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded, connectVoice, disconnectVoice } from '@/lib/api/channels'
+import {
+  fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded,
+  connectVoice, disconnectVoice,
+  connectInstagram, disconnectInstagram,
+  connectMessenger, disconnectMessenger,
+} from '@/lib/api/channels'
 import { updateOrganization } from '@/lib/api'
 import { API_URL, authFetch } from '@/lib/api/helpers'
 import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff, Globe, ArrowRight } from 'lucide-react'
@@ -22,8 +27,8 @@ const FB_APP_ID = process.env.NEXT_PUBLIC_FB_APP_ID || FB_CONFIG_ID
 
 const CHANNELS = [
   { key: 'whatsapp', label: 'WhatsApp Business', icon: MessageCircle, color: 'text-status-success', configurable: true },
-  { key: 'instagram', label: 'Instagram DM', icon: Instagram, color: 'text-brand-purple', configurable: false },
-  { key: 'messenger', label: 'Messenger', icon: MessageCircle, color: 'text-status-info', configurable: false },
+  { key: 'instagram', label: 'Instagram DM', icon: Instagram, color: 'text-brand-purple', configurable: true },
+  { key: 'messenger', label: 'Messenger', icon: MessageCircle, color: 'text-status-info', configurable: true },
   { key: 'voice', label: 'Voice AI', icon: PhoneCall, color: 'text-brand-cyan', configurable: true },
 ] as const
 
@@ -130,6 +135,83 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
       onMessage(msg)
     }
     setVoiceDisconnecting(false)
+  }
+
+  // ============================================================
+  // Instagram + Messenger manual connect (P3)
+  // ============================================================
+  const [igForm, setIgForm] = useState({ pageId: '', token: '', igUserId: '', show: false, busy: false })
+  const [msgForm, setMsgForm] = useState({ pageId: '', token: '', show: false, busy: false })
+
+  const handleConnectInstagram = async () => {
+    if (isReadOnly) return
+    if (!igForm.pageId.trim() || !igForm.token.trim()) {
+      onMessage('Completa el ID de la página de Facebook y el token de acceso')
+      return
+    }
+    setIgForm(f => ({ ...f, busy: true }))
+    try {
+      const res = await connectInstagram(orgId, {
+        page_id: igForm.pageId.trim(),
+        page_access_token: igForm.token.trim(),
+        instagram_business_account_id: igForm.igUserId.trim() || undefined,
+      })
+      onMessage(`Instagram conectado: ${res.page_name || res.page_id}`)
+      setStatus(prev => ({ ...prev, instagram: { connected: true, page_id: res.page_id } as { connected: boolean; phone_id?: string } }))
+      setIgForm({ pageId: '', token: '', igUserId: '', show: false, busy: false })
+      onRefresh()
+    } catch (err) {
+      onMessage(err instanceof Error ? err.message : 'Error conectando Instagram')
+      setIgForm(f => ({ ...f, busy: false }))
+    }
+  }
+
+  const handleDisconnectInstagram = async () => {
+    if (isReadOnly) return
+    if (!confirm('¿Desconectar Instagram? La página se liberará.')) return
+    try {
+      await disconnectInstagram(orgId)
+      setStatus(prev => ({ ...prev, instagram: { connected: false } as { connected: boolean; phone_id?: string } }))
+      onMessage('Instagram desconectado')
+      onRefresh()
+    } catch (err) {
+      onMessage(err instanceof Error ? err.message : 'Error desconectando Instagram')
+    }
+  }
+
+  const handleConnectMessenger = async () => {
+    if (isReadOnly) return
+    if (!msgForm.pageId.trim() || !msgForm.token.trim()) {
+      onMessage('Completa el ID de la página y el token de acceso')
+      return
+    }
+    setMsgForm(f => ({ ...f, busy: true }))
+    try {
+      const res = await connectMessenger(orgId, {
+        page_id: msgForm.pageId.trim(),
+        page_access_token: msgForm.token.trim(),
+      })
+      onMessage(`Messenger conectado: ${res.page_name || res.page_id}`)
+      setStatus(prev => ({ ...prev, messenger: { connected: true, page_id: res.page_id } as { connected: boolean; phone_id?: string } }))
+      setMsgForm({ pageId: '', token: '', show: false, busy: false })
+      onRefresh()
+    } catch (err) {
+      onMessage(err instanceof Error ? err.message : 'Error conectando Messenger')
+      setMsgForm(f => ({ ...f, busy: false }))
+    }
+  }
+
+  const handleDisconnectMessenger = async () => {
+    if (isReadOnly) return
+    if (!confirm('¿Desconectar Messenger? La página se liberará.')) return
+    try {
+      await disconnectMessenger(orgId)
+      setStatus(prev => ({ ...prev, messenger: { connected: false } as { connected: boolean; phone_id?: string } }))
+      onMessage('Messenger desconectado')
+      onRefresh()
+    } catch (err) {
+      onMessage(err instanceof Error ? err.message : 'Error desconectando Messenger')
+    }
   }
 
   const handleSaveTransferNumber = async () => {
@@ -419,6 +501,135 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                       Conectar WhatsApp
                     </button>
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* Instagram connection options (P3) */}
+            {ch.key === 'instagram' && ch.configurable && !isReadOnly && (
+              <div className="mt-3 pt-3 border-t border-border/30 space-y-3">
+                {connected ? (
+                  <button
+                    onClick={handleDisconnectInstagram}
+                    className="text-[11px] font-body text-status-danger hover:underline uppercase tracking-wider"
+                  >
+                    Desconectar Instagram
+                  </button>
+                ) : (
+                  <>
+                    <p className="text-[12px] font-body text-text-dim leading-relaxed">
+                      Conecta tu cuenta de Instagram Business vinculada a una página de Facebook.
+                      Pendiente aprobación de Meta TP — usa configuración manual mientras tanto.
+                    </p>
+                    <button
+                      onClick={() => setIgForm(f => ({ ...f, show: !f.show }))}
+                      className="flex items-center gap-1 text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors"
+                    >
+                      {igForm.show ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                      Configuración manual
+                    </button>
+                    {igForm.show && (
+                      <div className="space-y-3 pt-2">
+                        <div>
+                          <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">ID de la página de Facebook</label>
+                          <input
+                            type="text"
+                            value={igForm.pageId}
+                            onChange={(e) => setIgForm(f => ({ ...f, pageId: e.target.value }))}
+                            placeholder="Ej: 102345678901234"
+                            className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">ID de cuenta de Instagram (opcional)</label>
+                          <input
+                            type="text"
+                            value={igForm.igUserId}
+                            onChange={(e) => setIgForm(f => ({ ...f, igUserId: e.target.value }))}
+                            placeholder="Si tu IG ya está vinculado a la página, lo detectamos solos"
+                            className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Token de acceso de la página</label>
+                          <input
+                            type="password"
+                            value={igForm.token}
+                            onChange={(e) => setIgForm(f => ({ ...f, token: e.target.value }))}
+                            placeholder="Página → Configuración → Generador de tokens"
+                            className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                          />
+                        </div>
+                        <button
+                          onClick={handleConnectInstagram}
+                          disabled={igForm.busy || !igForm.pageId.trim() || !igForm.token.trim()}
+                          className="px-3 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+                        >
+                          {igForm.busy ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
+                          Conectar Instagram
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Messenger connection options (P3) */}
+            {ch.key === 'messenger' && ch.configurable && !isReadOnly && (
+              <div className="mt-3 pt-3 border-t border-border/30 space-y-3">
+                {connected ? (
+                  <button
+                    onClick={handleDisconnectMessenger}
+                    className="text-[11px] font-body text-status-danger hover:underline uppercase tracking-wider"
+                  >
+                    Desconectar Messenger
+                  </button>
+                ) : (
+                  <>
+                    <p className="text-[12px] font-body text-text-dim leading-relaxed">
+                      Conecta la página de Facebook desde la que quieres recibir mensajes.
+                    </p>
+                    <button
+                      onClick={() => setMsgForm(f => ({ ...f, show: !f.show }))}
+                      className="flex items-center gap-1 text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors"
+                    >
+                      {msgForm.show ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                      Configuración manual
+                    </button>
+                    {msgForm.show && (
+                      <div className="space-y-3 pt-2">
+                        <div>
+                          <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">ID de la página</label>
+                          <input
+                            type="text"
+                            value={msgForm.pageId}
+                            onChange={(e) => setMsgForm(f => ({ ...f, pageId: e.target.value }))}
+                            placeholder="Ej: 102345678901234"
+                            className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Token de acceso</label>
+                          <input
+                            type="password"
+                            value={msgForm.token}
+                            onChange={(e) => setMsgForm(f => ({ ...f, token: e.target.value }))}
+                            placeholder="Página → Configuración → Generador de tokens"
+                            className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+                          />
+                        </div>
+                        <button
+                          onClick={handleConnectMessenger}
+                          disabled={msgForm.busy || !msgForm.pageId.trim() || !msgForm.token.trim()}
+                          className="px-3 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+                        >
+                          {msgForm.busy ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
+                          Conectar Messenger
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
