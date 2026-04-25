@@ -3,8 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import {
-  getVoiceAnalytics, getCallHistory, getCallDetail,
-  generateCallSummary, getCallEvents,
+  getVoiceAnalytics, getCallHistory, getCallDetail, getCallEvents,
 } from '@/lib/api/voice'
 import { SentimentBadge, SENTIMENT_CONFIG } from '@/components/sentiment-badge'
 import { CallStatusBadge } from '@/components/call-status-badge'
@@ -15,8 +14,8 @@ import type {
 } from '@/types'
 import {
   Phone, TrendingUp, TrendingDown, Clock, Calendar, Users,
-  RefreshCw, X, Loader2, Bot, User, MessageCircle, FileText,
-  ArrowRightLeft, Sparkles, PhoneCall,
+  RefreshCw, X, Bot, User, MessageCircle,
+  ArrowRightLeft, PhoneCall,
 } from 'lucide-react'
 import * as Sentry from '@sentry/nextjs'
 
@@ -39,7 +38,6 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
   const [transcription, setTranscription] = useState<TranscriptionSegment[]>([])
   const [events, setEvents] = useState<CallEvent[]>([])
   const [detailLoading, setDetailLoading] = useState(false)
-  const [summaryLoading, setSummaryLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
   const loadData = useCallback(async () => {
@@ -78,18 +76,6 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
       Sentry.captureException(err)
     }
     setDetailLoading(false)
-  }
-
-  const handleGenerateSummary = async () => {
-    if (!selectedCall) return
-    setSummaryLoading(true)
-    try {
-      const updated = await generateCallSummary(orgId, selectedCall.id)
-      if (updated) setSelectedCall(updated)
-    } catch (err) {
-      Sentry.captureException(err)
-    }
-    setSummaryLoading(false)
   }
 
   const closeModal = () => {
@@ -385,103 +371,9 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
                     </div>
                   </div>
 
-                  {/* Call Summary */}
-                  <div className="border-t border-border/30 pt-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-xs font-semibold text-text-primary flex items-center gap-1.5">
-                        <FileText size={12} className="text-brand-gold" />
-                        {t('callSummary')}
-                      </h4>
-                      {!selectedCall.summary?.topics?.length && (
-                        <button
-                          onClick={handleGenerateSummary}
-                          disabled={summaryLoading}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[10px] font-semibold hover:bg-brand-purple/20 transition-colors disabled:opacity-50"
-                        >
-                          {summaryLoading ? (
-                            <Loader2 size={10} className="animate-spin" />
-                          ) : (
-                            <Sparkles size={10} />
-                          )}
-                          {t('generateSummary')}
-                        </button>
-                      )}
-                    </div>
-
-                    {selectedCall.summary?.topics?.length ? (
-                      <div className="space-y-4">
-                        {/* Narrative summary + Sentiment */}
-                        <div className="glass-card p-3 space-y-2.5">
-                          {selectedCall.summary.summary_text && (
-                            <p className="text-[11px] leading-relaxed text-text-secondary font-body">
-                              {selectedCall.summary.summary_text}
-                            </p>
-                          )}
-                          {selectedCall.summary.sentiment_overall && (
-                            <div className="flex items-center gap-2 pt-1">
-                              <SentimentBadge sentiment={selectedCall.summary.sentiment_overall as SentimentType} />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Topics */}
-                        <div>
-                          <span className="text-[10px] text-text-dim font-body font-semibold uppercase tracking-wider">{t('topics')}</span>
-                          <div className="flex flex-wrap gap-1.5 mt-1.5">
-                            {selectedCall.summary.topics.map((topic, i) => (
-                              <span key={i} className="px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-[10px] text-brand-purple font-body font-medium">
-                                {topic}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Action items + Follow-ups side by side */}
-                        {((selectedCall.summary.action_items?.length ?? 0) > 0 || (selectedCall.summary.follow_ups?.length ?? 0) > 0) && (
-                          <div className="grid grid-cols-2 gap-3">
-                            {/* Action items */}
-                            {selectedCall.summary.action_items && selectedCall.summary.action_items.length > 0 && (
-                              <div className="glass-card p-3">
-                                <span className="text-[10px] text-brand-cyan font-body font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-brand-cyan" />
-                                  {t('actionItems')}
-                                </span>
-                                <ul className="space-y-1.5">
-                                  {selectedCall.summary.action_items.map((item, i) => (
-                                    <li key={i} className="text-[10px] text-text-muted font-body flex items-start gap-1.5">
-                                      <span className="text-brand-cyan text-[8px] mt-0.5">&#9654;</span>
-                                      {item}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {/* Follow-ups */}
-                            {selectedCall.summary.follow_ups && selectedCall.summary.follow_ups.length > 0 && (
-                              <div className="glass-card p-3">
-                                <span className="text-[10px] text-brand-gold font-body font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-brand-gold" />
-                                  {t('followUps')}
-                                </span>
-                                <ul className="space-y-1.5">
-                                  {selectedCall.summary.follow_ups.map((fu, i) => (
-                                    <li key={i} className="text-[10px] text-text-muted font-body flex items-start gap-1.5">
-                                      <span className="text-brand-gold text-[8px] mt-0.5">&#9654;</span>
-                                      {fu}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-[10px] text-text-dim font-body">
-                        {summaryLoading ? tCommon('loading') : t('noSummary')}
-                      </p>
-                    )}
-                  </div>
+                  {/* Call Summary block removed by CEO directive (S100):
+                      la conversación habla por sí sola en la transcripción;
+                      el resumen GPT solo quemaba tokens y duplicaba info. */}
                 </>
               )}
             </div>
