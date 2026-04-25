@@ -30,6 +30,7 @@ const SentientEyeSmall = ({ className = '' }: { className?: string }) => (
 )
 import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
 import { ServiceWorkerRegister } from '@/components/service-worker-register'
+import { DataQualityBanner } from '@/components/data-quality-banner'
 import type { User } from '@supabase/supabase-js'
 import type { Organization, Branch } from '@/types'
 import { useTranslations } from 'next-intl'
@@ -38,7 +39,7 @@ import {
   LogOut, CreditCard, Database, Activity, Kanban, Menu, X,
   MapPin, ChevronDown, MessageSquare, UserCog, Shield, ArrowLeft, Gem, Clock, AlertTriangle, Receipt,
   Zap, ArrowRight, FileText, Brain, Megaphone, Radio, Crosshair, DollarSign, Gauge, Lock,
-  TrendingUp, Palette, Gift, Star, Store, Webhook, Puzzle
+  TrendingUp, Palette, Gift, Star, Store, Webhook, Puzzle, Sparkles
 } from 'lucide-react'
 
 /* ================================================================
@@ -80,6 +81,7 @@ function useNavGroups() {
       label: t('admin'),
       items: [
         { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
+        { href: '/dashboard/inteligencia', icon: Sparkles, label: 'Inteligencia SofIA' },
         { href: '/dashboard/reportes', icon: FileText, label: t('reports') },
         { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
         { href: '/dashboard/auditoria', icon: Shield, label: t('audit') },
@@ -619,7 +621,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {org.status === 'SETUP' ? (
                     <OnboardingWizard org={org} orgId={org.id} onComplete={() => window.location.reload()} />
                   ) : (
-                    <RoleGuard>{children}</RoleGuard>
+                    <RoleGuard>
+                      <DataQualityBanner />
+                      {children}
+                    </RoleGuard>
                   )}
                 </ErrorBoundary>
               </OrgContext.Provider>

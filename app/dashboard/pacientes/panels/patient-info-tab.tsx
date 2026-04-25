@@ -4,6 +4,7 @@ import { Phone, Mail, MapPin, Calendar, MessageSquare, Star, CreditCard, Cake } 
 import { formatCOP, formatPercent } from '@/lib/api'
 import type { PatientDetail, Treatment } from '@/types'
 import { PatientAliasesStrip } from '@/components/patient-aliases-strip'
+import { PatientSummaryBlock } from '@/components/patient-summary-block'
 
 function computeAge(dob?: string | null): string {
   if (!dob) return '—'
@@ -41,6 +42,9 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
     <>
       {/* Cross-channel aliases (S100) */}
       <PatientAliasesStrip patientId={patient.id} />
+
+      {/* AI summary (Zombie #5) */}
+      <PatientSummaryBlock patientId={patient.id} />
 
       {/* Contact Info */}
       <div className="glass-card p-4 space-y-3">

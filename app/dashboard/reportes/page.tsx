@@ -6,6 +6,9 @@ import { useOrg } from '@/lib/org-context'
 import { downloadReportPdf, fetchFullAnalytics } from '@/lib/api'
 import { FileDown, TrendingUp, Users, Calendar, DollarSign, Bot, Loader2, CheckCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { GrowthSnapshotTrend } from '@/components/growth-snapshot-trend'
+import { GrowthAnomaliesCard } from '@/components/growth-anomalies-card'
+import { AttributionView } from '@/components/attribution-view'
 
 export default function ReportesPage() {
   const { orgId } = useOrg()
@@ -160,6 +163,15 @@ export default function ReportesPage() {
               sub={`$${(perf.total_costo_usd ?? 0).toFixed(2)} USD`}
             />
           </div>
+
+          {/* Growth trend (Zombie #2) + Anomalies (Zombie #8) */}
+          <div className="grid md:grid-cols-2 gap-3">
+            <GrowthSnapshotTrend orgId={orgId} days={dias} />
+            <GrowthAnomaliesCard orgId={orgId} />
+          </div>
+
+          {/* Attribution (Zombie #7) */}
+          <AttributionView orgId={orgId} days={dias} />
 
           {/* Two-column layout */}
           <div className="grid md:grid-cols-2 gap-3">
