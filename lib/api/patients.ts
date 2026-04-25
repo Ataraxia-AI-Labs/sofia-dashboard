@@ -28,6 +28,23 @@ export async function fetchPatientDetail(patientId: string) {
   return res.json()
 }
 
+export interface PatientAlias {
+  alias_type: 'phone' | 'instagram' | 'messenger' | 'web_session' | 'voice_caller' | string
+  alias_value: string
+  source_channel: string | null
+  is_primary: boolean
+  notes: string | null
+  first_seen_at: string
+  last_seen_at: string
+}
+
+export async function fetchPatientAliases(patientId: string): Promise<PatientAlias[]> {
+  const res = await authFetch(`${API_URL}/patients/${patientId}/aliases`)
+  if (!res.ok) return []
+  const body = await res.json()
+  return Array.isArray(body) ? body : []
+}
+
 export async function fetchPatientMLFeatures(patientId: string) {
   const res = await authFetch(`${API_URL}/patients/${patientId}/ml-features`)
   if (!res.ok) return null

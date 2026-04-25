@@ -3,6 +3,7 @@
 import { Phone, Mail, MapPin, Calendar, MessageSquare, Star, CreditCard, Cake } from 'lucide-react'
 import { formatCOP, formatPercent } from '@/lib/api'
 import type { PatientDetail, Treatment } from '@/types'
+import { PatientAliasesStrip } from '@/components/patient-aliases-strip'
 
 function computeAge(dob?: string | null): string {
   if (!dob) return '—'
@@ -38,6 +39,9 @@ interface PatientInfoTabProps {
 export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
   return (
     <>
+      {/* Cross-channel aliases (S100) */}
+      <PatientAliasesStrip patientId={patient.id} />
+
       {/* Contact Info */}
       <div className="glass-card p-4 space-y-3">
         <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Información</h4>

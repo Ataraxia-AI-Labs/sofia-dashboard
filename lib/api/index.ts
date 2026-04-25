@@ -19,7 +19,8 @@ export { fetchBranches } from './branches'
 export { fetchFullAnalytics, fetchQuickMetrics, fetchAiQualityMetrics, downloadReportPdf } from './analytics'
 
 // Patients
-export { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, createPatient, updatePatient, exportPatientsCSV, sendWhatsAppMessage } from './patients'
+export { fetchPatients, fetchPatientDetail, fetchPatientAliases, fetchPatientMLFeatures, createPatient, updatePatient, exportPatientsCSV, sendWhatsAppMessage } from './patients'
+export type { PatientAlias } from './patients'
 
 // Appointments
 export {
