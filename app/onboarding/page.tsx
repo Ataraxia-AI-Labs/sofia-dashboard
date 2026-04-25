@@ -732,7 +732,7 @@ export default function OnboardingPage() {
 
               {/* Manual phone ID */}
               <div>
-                <label htmlFor="ob-phone-id" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Phone Number ID (opcional)</label>
+                <label htmlFor="ob-phone-id" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">ID de numero de WhatsApp (opcional)</label>
                 <input
                   id="ob-phone-id"
                   type="text"
@@ -742,7 +742,7 @@ export default function OnboardingPage() {
                   className="w-full px-3 py-2.5 rounded-md bg-surface border border-border text-white text-xs font-body outline-none focus:border-brand-purple/50 transition-colors placeholder:text-text-dim"
                 />
                 <p className="text-[12px] font-body text-text-dim mt-0.5 flex items-center gap-1">
-                  Si ya tienes el Phone ID de Meta Business
+                  Si ya tienes el ID de tu numero en Meta Business
                   <a href="https://business.facebook.com/latest/whatsapp_manager/phone_numbers" target="_blank" rel="noopener noreferrer" className="text-brand-purple hover:brightness-125 inline-flex items-center gap-0.5">
                     Ir a Meta <ExternalLink size={9} />
                   </a>
@@ -773,7 +773,7 @@ export default function OnboardingPage() {
                 <ConfirmRow label="Comandante" value={form.owner_name} />
                 <ConfirmRow label="Email" value={form.owner_email} />
                 <ConfirmRow label="WhatsApp" value={form.phone} />
-                <ConfirmRow label="Phone ID" value={form.whatsapp_phone_id || 'Pendiente'} />
+                <ConfirmRow label="ID de numero WhatsApp" value={form.whatsapp_phone_id || 'Pendiente'} />
               </div>
 
               <div className="bg-surface border border-border rounded-md p-4">

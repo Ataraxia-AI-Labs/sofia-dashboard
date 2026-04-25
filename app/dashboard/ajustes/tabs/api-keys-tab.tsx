@@ -40,16 +40,16 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
       setNewName('')
       setNewScopes(['read'])
       load()
-      onMessage('API Key creada')
-    } catch { onMessage('Error al crear API Key') }
+      onMessage('Clave creada exitosamente')
+    } catch { onMessage('Error al crear la clave') }
   }
 
   const handleRevoke = async (keyId: string) => {
-    if (!confirm('Revocar esta API Key? Esta accion no se puede deshacer.')) return
+    if (!confirm('Revocar esta clave? Esta accion no se puede deshacer.')) return
     try {
       await revokeApiKey(orgId, keyId)
       load()
-      onMessage('API Key revocada')
+      onMessage('Clave revocada')
     } catch { onMessage('Error al revocar') }
   }
 
@@ -58,9 +58,9 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-[13px] font-body font-bold text-text-primary flex items-center gap-1.5">
-            <Key size={14} className="text-brand-purple" /> API Keys
+            <Key size={14} className="text-brand-purple" /> Claves de acceso
           </h3>
-          <p className="text-[11px] font-body text-text-dim mt-0.5">Genera claves para integraciones externas</p>
+          <p className="text-[11px] font-body text-text-dim mt-0.5">Genera claves para conectar herramientas externas con SofIA</p>
         </div>
         {/* CRUD removido: crear API key vive SOLO en Pulso (SofIA). */}
       </div>
@@ -68,7 +68,7 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
       {/* New raw key display — queda para mostrar la última key generada */}
       {newRawKey && (
         <div className="border border-status-success/20 bg-status-success/5 rounded-lg p-3">
-          <p className="text-[11px] font-body text-status-success font-semibold mb-1">Copia tu API Key ahora — no se mostrara de nuevo</p>
+          <p className="text-[11px] font-body text-status-success font-semibold mb-1">Copia tu clave ahora — no se mostrara de nuevo</p>
           <div className="flex items-center gap-2">
             <code className="text-[12px] font-body text-text-primary bg-surface-2 px-2 py-1 rounded flex-1 break-all">{newRawKey}</code>
             <button onClick={() => { navigator.clipboard.writeText(newRawKey); onMessage('Copiada') }}
@@ -82,7 +82,7 @@ export function ApiKeysTab({ orgId, isReadOnly, onMessage }: Props) {
       {loading ? (
         <p className="text-[12px] font-body text-text-dim py-8 text-center">...</p>
       ) : keys.length === 0 ? (
-        <p className="text-[12px] font-body text-text-dim py-8 text-center">Sin API Keys</p>
+        <p className="text-[12px] font-body text-text-dim py-8 text-center">Sin claves de acceso aun</p>
       ) : (
         <div className="space-y-2">
           {keys.map(k => (

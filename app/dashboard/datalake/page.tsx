@@ -16,7 +16,7 @@ export default function DataLakePage() {
         'Base vectorial con todo el histórico de tu clínica',
         'Búsqueda semántica instantánea desde SofIA Console',
         'Fine-tuning en la voz exacta de tu marca',
-        'Exports CSV y Parquet cuando los pidas',
+        'Descarga tu data en cualquier formato cuando quieras',
       ]}
     />
   )

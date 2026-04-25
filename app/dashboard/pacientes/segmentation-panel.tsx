@@ -108,11 +108,11 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
         setStatusMessage(result.message)
         toast.success(result.message || 'Embeddings generados')
       } else {
-        toast.error('No se pudieron generar los embeddings. Revisa la consola.')
+        toast.error('No se pudo actualizar la inteligencia de pacientes. Intenta de nuevo.')
       }
     } catch (err) {
       Sentry.captureException(err)
-      toast.error('Error al generar embeddings: ' + (err instanceof Error ? err.message : 'desconocido'))
+      toast.error('Error al actualizar la inteligencia de pacientes. Intenta de nuevo.')
     }
     setEmbeddingsInProgress(false)
   }

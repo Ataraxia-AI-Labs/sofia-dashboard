@@ -19,8 +19,8 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
     features: [
       { icon: <Search size={18} strokeWidth={1.5} />, title: 'Búsqueda semántica', description: 'Encuentra cualquier conversación antigua por significado, no por keyword.' },
       { icon: <Cpu size={18} strokeWidth={1.5} />, title: 'Fine-tuning propio', description: 'Entrena una versión de SofIA con la voz exacta de tu marca.' },
-      { icon: <Layers size={18} strokeWidth={1.5} />, title: 'Base vectorial', description: 'pgvector + embeddings propios. Consultas instantáneas.' },
-      { icon: <FileJson size={18} strokeWidth={1.5} />, title: 'Exports libres', description: 'CSV, Parquet, JSONL cuando los pidas. Nunca lock-in.' },
+      { icon: <Layers size={18} strokeWidth={1.5} />, title: 'Memoria inteligente', description: 'Cada interaccion indexada y lista para consultar en segundos.' },
+      { icon: <FileJson size={18} strokeWidth={1.5} />, title: 'Exports libres', description: 'Descarga tu data en cualquier formato cuando quieras. Sin ataduras.' },
     ],
     faq: [
       { q: '¿Mi data queda en Ataraxia o en mi propio stack?', a: 'Tuya. Vive en tu tenant Supabase. Puedes migrarla fuera en cualquier momento con los exports.' },
@@ -73,7 +73,7 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
     features: [
       { icon: <Layers size={18} strokeWidth={1.5} />, title: 'Directorio curado', description: 'Integraciones verificadas por el equipo Ataraxia. Calidad garantizada.' },
       { icon: <ShieldCheck size={18} strokeWidth={1.5} />, title: 'OAuth2 un click', description: 'Sin tokens manuales, sin config técnica. Login y listo.' },
-      { icon: <Cpu size={18} strokeWidth={1.5} />, title: 'Certificaciones', description: 'Plugins pasan seguridad, RLS y carga antes de publicarse.' },
+      { icon: <Cpu size={18} strokeWidth={1.5} />, title: 'Certificaciones', description: 'Plugins pasan auditorias de seguridad y desempeno antes de publicarse.' },
       { icon: <Rocket size={18} strokeWidth={1.5} />, title: 'Developer Portal', description: 'Publica tus propios conectores. Comisión por instalación.' },
     ],
     integrations: [
@@ -87,11 +87,11 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
     title: 'Webhooks',
     eta: 'Octubre 2026',
     headline: 'Conecta SofIA con lo que sea.',
-    subhead: 'Webhooks en tiempo real, firmados con HMAC, reintentos exponenciales. Eventos confiables para tu stack.',
+    subhead: 'Eventos en tiempo real con firma digital y reintentos automaticos. Tu sistema externo siempre recibe la notificacion.',
     features: [
-      { icon: <Zap size={18} strokeWidth={1.5} />, title: 'Eventos granulares', description: 'Cita, pago, mensaje, lead, paciente. Cada cambio dispara webhook.' },
-      { icon: <ShieldCheck size={18} strokeWidth={1.5} />, title: 'HMAC firma', description: 'SHA-256 para validar que el evento viene de Ataraxia de verdad.' },
-      { icon: <GitBranch size={18} strokeWidth={1.5} />, title: 'Reintentos', description: 'Backoff exponencial + dead-letter queue. Nada se pierde.' },
+      { icon: <Zap size={18} strokeWidth={1.5} />, title: 'Eventos granulares', description: 'Cita, pago, mensaje, lead, paciente. Cada cambio notifica a tu sistema.' },
+      { icon: <ShieldCheck size={18} strokeWidth={1.5} />, title: 'Firma digital', description: 'Cada evento viene firmado para que sepas que viene de Ataraxia de verdad.' },
+      { icon: <GitBranch size={18} strokeWidth={1.5} />, title: 'Reintentos', description: 'Si tu sistema no responde, reintentamos automaticamente. Nada se pierde.' },
       { icon: <BarChart3 size={18} strokeWidth={1.5} />, title: 'Dashboard entregas', description: 'Ve cuáles webhooks fueron entregados, fallos y replay manual.' },
     ],
   },

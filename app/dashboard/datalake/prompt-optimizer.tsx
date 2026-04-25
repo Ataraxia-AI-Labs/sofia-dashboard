@@ -23,9 +23,9 @@ interface PromptOptimizerProps {
 }
 
 const STATUS_CONFIG: Record<SuggestionStatus, { icon: typeof CheckCircle; color: string; bg: string; label: string }> = {
-  PENDING:  { icon: Clock,       color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', label: 'pending' },
-  APPLIED:  { icon: CheckCircle, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', label: 'applied' },
-  REJECTED: { icon: XCircle,     color: 'text-status-danger',  bg: 'bg-status-danger/10 border-status-danger/20',   label: 'rejected' },
+  PENDING:  { icon: Clock,       color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20', label: 'pendiente' },
+  APPLIED:  { icon: CheckCircle, color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20', label: 'aplicado' },
+  REJECTED: { icon: XCircle,     color: 'text-status-danger',  bg: 'bg-status-danger/10 border-status-danger/20',   label: 'rechazado' },
 }
 
 export default function PromptOptimizer({ orgId }: PromptOptimizerProps) {

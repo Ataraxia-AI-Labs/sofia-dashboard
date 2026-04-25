@@ -13,6 +13,13 @@ const STATUS_BADGE: Record<string, string> = {
   FAILED: 'bg-status-danger/15 text-status-danger',
 }
 
+const STATUS_LABEL: Record<string, string> = {
+  PENDING: 'Pendiente',
+  SENT: 'Enviado',
+  COMPLETED: 'Recibido',
+  FAILED: 'Fallido',
+}
+
 interface Props { orgId: string }
 
 export function ReviewRequestsPanel({ orgId }: Props) {
@@ -93,11 +100,11 @@ export function ReviewRequestsPanel({ orgId }: Props) {
             <tbody>
               {items.map(r => (
                 <tr key={r.id} className="border-b border-border/10 last:border-0 hover:bg-surface-2/30">
-                  <td className="px-3 py-2 text-text-primary font-mono text-[10.5px] truncate max-w-[180px]">{r.patient_id?.slice(0, 8)}…</td>
+                  <td className="px-3 py-2 text-text-primary font-body text-[10.5px] truncate max-w-[180px]">Paciente</td>
                   <td className="px-3 py-2 text-text-muted">{r.channel}</td>
                   <td className="px-3 py-2">
-                    <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-mono uppercase tracking-wider ${STATUS_BADGE[r.status] || ''}`}>
-                      {r.status}
+                    <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-body uppercase tracking-wider ${STATUS_BADGE[r.status] || ''}`}>
+                      {STATUS_LABEL[r.status] ?? r.status}
                     </span>
                   </td>
                   <td className="px-3 py-2 text-right text-text-dim text-[10.5px] font-mono">

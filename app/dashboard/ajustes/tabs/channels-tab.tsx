@@ -91,7 +91,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
   const handleConnectVoice = async () => {
     if (isReadOnly) return
     if (!voiceAccountSid.trim() || !voiceAuthToken.trim() || !voicePhoneNumber.trim()) {
-      onMessage('Completa Account SID, Auth Token y numero')
+      onMessage('Completa el ID de cuenta, token de autenticacion y numero')
       return
     }
     setVoiceConnecting(true)
@@ -310,7 +310,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
         // Build status detail per channel
         let statusDetail = ''
         if (connected) {
-          if (ch.key === 'whatsapp' && channelStatus?.phone_id) statusDetail = `Phone ID: ${channelStatus.phone_id}`
+          if (ch.key === 'whatsapp' && channelStatus?.phone_id) statusDetail = `Numero: ${channelStatus.phone_id}`
           else if (ch.key === 'voice') {
             const v = channelStatus as { phone_number?: string; per_clinic?: boolean }
             if (v.phone_number) statusDetail = v.per_clinic ? v.phone_number : `${v.phone_number} (modo demo)`
@@ -318,11 +318,11 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
           }
           else if (ch.key === 'instagram') {
             const ig = channelStatus as { page_id?: string }
-            if (ig.page_id) statusDetail = `Page ID: ${ig.page_id}`
+            if (ig.page_id) statusDetail = `Pagina: ${ig.page_id}`
           }
           else if (ch.key === 'messenger') {
             const fb = channelStatus as { page_id?: string }
-            if (fb.page_id) statusDetail = `Page ID: ${fb.page_id}`
+            if (fb.page_id) statusDetail = `Pagina: ${fb.page_id}`
           }
         }
 
@@ -391,7 +391,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                 {showManualForm && (
                   <div className="space-y-3 pt-2">
                     <div>
-                      <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Phone Number ID</label>
+                      <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">ID de numero de WhatsApp</label>
                       <input
                         type="text"
                         value={phoneId}
@@ -401,12 +401,12 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                       />
                     </div>
                     <div>
-                      <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">API Key (Meta Cloud API)</label>
+                      <label className="text-[12px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Clave de acceso Meta</label>
                       <input
                         type="password"
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
-                        placeholder="Tu API key"
+                        placeholder="Tu clave de acceso"
                         className="w-full px-3 py-2 bg-surface-3 border border-border rounded-md text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
                       />
                     </div>
@@ -471,11 +471,11 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
               {showVoiceForm && (
                 <div className="space-y-3 p-3 rounded-md bg-surface-2 border border-border">
                   <p className="text-[11px] font-body text-text-dim leading-relaxed">
-                    Conecta tu cuenta Twilio para que SofIA atienda tu numero. Encuentra Account SID y Auth Token en console.twilio.com.
+                    Conecta tu cuenta Twilio para que SofIA atienda tu numero. Encuentra el ID de cuenta y token en console.twilio.com.
                   </p>
 
                   <div>
-                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Account SID</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">ID de cuenta Twilio</label>
                     <input
                       type="text"
                       value={voiceAccountSid}
@@ -486,7 +486,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Auth Token</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Token de autenticacion</label>
                     <div className="relative">
                       <input
                         type={showAuthToken ? 'text' : 'password'}
@@ -507,7 +507,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Numero Twilio (E.164)</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Numero de telefono (ej. +573001234567)</label>
                     <input
                       type="tel"
                       value={voicePhoneNumber}
@@ -523,7 +523,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                     className="w-full px-3 py-2 rounded-md bg-brand-cyan text-void text-[12px] font-body font-semibold uppercase tracking-wider hover:bg-brand-cyan/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     {voiceConnecting ? (
-                      <><Loader2 size={12} className="animate-spin" /> Validando con Twilio...</>
+                      <><Loader2 size={12} className="animate-spin" /> Verificando conexion...</>
                     ) : (
                       <><Zap size={12} /> Conectar Voice AI</>
                     )}

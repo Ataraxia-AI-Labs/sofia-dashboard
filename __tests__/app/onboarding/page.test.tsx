@@ -227,7 +227,7 @@ describe('OnboardingPage', () => {
   it('step 3 renders WhatsApp Phone ID field', () => {
     render(<OnboardingPage />)
     navigateToStep3()
-    expect(screen.getByLabelText(/Phone Number ID/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/ID de numero de WhatsApp/)).toBeInTheDocument()
   })
 
   it('step 3 shows that WhatsApp config is optional', () => {
