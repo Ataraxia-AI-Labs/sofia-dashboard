@@ -38,20 +38,35 @@ export function AttributionView({ orgId, days = 30 }: Props) {
     return () => { cancelled = true }
   }, [orgId, days])
 
-  const filtered = useMemo(() => data.filter(d => d.model_type === model), [data, model])
-  const models = useMemo(() => Array.from(new Set(data.map(d => d.model_type))), [data])
+  // Models stored as columns: first_touch_credit, last_touch_credit, linear_credit,
+  // time_decay_credit, position_based_credit. Pick which weight to apply.
+  const models: Array<'LINEAR' | 'FIRST_TOUCH' | 'LAST_TOUCH' | 'TIME_DECAY' | 'POSITION_BASED'> = [
+    'LINEAR', 'FIRST_TOUCH', 'LAST_TOUCH', 'TIME_DECAY', 'POSITION_BASED',
+  ]
+  const creditField = (m: string): keyof AttributionSnapshot => {
+    switch (m) {
+      case 'FIRST_TOUCH': return 'first_touch_credit'
+      case 'LAST_TOUCH': return 'last_touch_credit'
+      case 'TIME_DECAY': return 'time_decay_credit'
+      case 'POSITION_BASED': return 'position_based_credit'
+      default: return 'linear_credit'
+    }
+  }
 
-  // Aggregate by channel
+  // Aggregate by channel — multiply attributed revenue by chosen credit weight
   const byChannel = useMemo(() => {
+    const field = creditField(model)
     const acc: Record<string, { revenue: number; leads: number }> = {}
-    for (const r of filtered) {
+    for (const r of data) {
       const ch = r.channel || 'UNKNOWN'
+      const credit = Number((r as unknown as Record<string, unknown>)[field as string] || 0)
+      const revenue = Number(r.attributed_revenue_cop || 0) * credit
       if (!acc[ch]) acc[ch] = { revenue: 0, leads: 0 }
-      acc[ch].revenue += Number(r.attributed_revenue || 0)
-      acc[ch].leads += r.attributed_leads || 0
+      acc[ch].revenue += revenue
+      acc[ch].leads += r.conversions_count || 0
     }
     return Object.entries(acc).sort(([, a], [, b]) => b.revenue - a.revenue)
-  }, [filtered])
+  }, [data, model])
 
   const totalRevenue = byChannel.reduce((s, [, v]) => s + v.revenue, 0)
 

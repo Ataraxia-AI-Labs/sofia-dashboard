@@ -69,12 +69,19 @@ export function CoachingTipsPanel({ orgId }: Props) {
                   <span className={`text-[10.5px] font-mono uppercase tracking-wider ${color}`}>
                     {CATEGORY_LABEL[t.category] || t.category}
                   </span>
-                  <span className="text-[10px] font-mono text-text-dim">
-                    {timeAgo(t.created_at)}
-                  </span>
+                  <div className="flex items-baseline gap-2">
+                    {typeof t.conviction === 'number' && (
+                      <span className="text-[10px] font-mono text-text-dim">
+                        {Math.round(t.conviction * 100)}% confianza
+                      </span>
+                    )}
+                    <span className="text-[10px] font-mono text-text-dim">
+                      {timeAgo(t.created_at)}
+                    </span>
+                  </div>
                 </div>
                 <p className="text-[12.5px] font-body text-text-primary leading-relaxed">
-                  {t.tip_text}
+                  {t.insight}
                 </p>
               </div>
             )

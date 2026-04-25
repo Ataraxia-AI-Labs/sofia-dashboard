@@ -53,10 +53,12 @@ export interface ProactiveMessage {
 export interface CoachingTip {
   id: string
   organization_id: string
-  staff_id: string | null
+  week_starting: string
   category: string
-  tip_text: string
+  insight: string
   evidence?: Record<string, unknown> | null
+  conviction?: number | null
+  applied: boolean
   created_at: string
 }
 
@@ -77,10 +79,13 @@ export interface ReviewRequest {
   organization_id: string
   patient_id: string
   appointment_id: string | null
-  channel: string
   status: 'PENDING' | 'SENT' | 'COMPLETED' | 'FAILED'
   scheduled_for: string
   sent_at: string | null
+  response_score?: number | null
+  response_text?: string | null
+  responded_at?: string | null
+  external_review_url?: string | null
   created_at: string
 }
 
@@ -89,29 +94,41 @@ export interface AttributionSnapshot {
   organization_id: string
   snapshot_date: string
   channel: string
-  model_type: string
-  attributed_revenue: number | string
-  attributed_leads: number
+  first_touch_credit: number | string
+  last_touch_credit: number | string
+  linear_credit: number | string
+  time_decay_credit: number | string
+  position_based_credit: number | string
+  attributed_revenue_cop: number | string
+  conversions_count: number
   created_at: string
 }
 
 export interface GrowthAnomaly {
   id: string
   organization_id: string
-  metric: string
-  value: number
-  baseline_mean: number
+  metric_name: string
+  metric_today: number
+  metric_baseline: number
   z_score: number
-  direction: 'spike' | 'drop'
+  severity: 'INFO' | 'WARN' | 'CRITICAL'
+  description?: string | null
+  resolved: boolean
+  resolved_at?: string | null
   detected_at: string
 }
 
 export interface SofiaLearning {
   id: string
   organization_id: string
-  category: string
-  insight_text: string
-  evidence?: Record<string, unknown> | null
+  week_starting: string
+  source_type: string
+  source_id?: string | null
+  pattern: string
+  rule_extracted: string
+  confidence: number
+  active: boolean
+  applied_at?: string | null
   created_at: string
 }
 

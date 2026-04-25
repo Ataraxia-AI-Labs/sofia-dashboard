@@ -92,8 +92,8 @@ export function ReviewRequestsPanel({ orgId }: Props) {
             <thead>
               <tr className="border-b border-border/30">
                 <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Paciente</th>
-                <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Canal</th>
                 <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Estado</th>
+                <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Calificación</th>
                 <th className="text-right px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Cuándo</th>
               </tr>
             </thead>
@@ -101,14 +101,16 @@ export function ReviewRequestsPanel({ orgId }: Props) {
               {items.map(r => (
                 <tr key={r.id} className="border-b border-border/10 last:border-0 hover:bg-surface-2/30">
                   <td className="px-3 py-2 text-text-primary font-body text-[10.5px] truncate max-w-[180px]">Paciente</td>
-                  <td className="px-3 py-2 text-text-muted">{r.channel}</td>
                   <td className="px-3 py-2">
                     <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-body uppercase tracking-wider ${STATUS_BADGE[r.status] || ''}`}>
                       {STATUS_LABEL[r.status] ?? r.status}
                     </span>
                   </td>
+                  <td className="px-3 py-2 text-text-muted">
+                    {r.response_score ? `${r.response_score} ★`.padEnd(2, '★') : '—'}
+                  </td>
                   <td className="px-3 py-2 text-right text-text-dim text-[10.5px] font-mono">
-                    {timeAgo(r.sent_at || r.scheduled_for)}
+                    {timeAgo(r.responded_at || r.sent_at || r.scheduled_for)}
                   </td>
                 </tr>
               ))}

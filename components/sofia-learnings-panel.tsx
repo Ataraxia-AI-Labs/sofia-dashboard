@@ -6,13 +6,13 @@ import { fetchSofiaLearnings, type SofiaLearning } from '@/lib/api/zombies'
 import { timeAgo } from '@/lib/api/helpers'
 import * as Sentry from '@sentry/nextjs'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  pricing_resistance: 'Resistencia a precios',
-  high_intent_signals: 'Señales de alta intención',
-  closing_friction: 'Fricción al cerrar',
-  channel_preference: 'Preferencia de canal',
-  popular_question: 'Pregunta popular',
-  service_demand: 'Demanda de servicios',
+const SOURCE_LABELS: Record<string, string> = {
+  conversation: 'Conversaciones',
+  appointment: 'Citas',
+  payment: 'Pagos',
+  review: 'Reseñas',
+  funnel: 'Funnel',
+  outcome: 'Resultados',
 }
 
 interface Props { orgId: string }
@@ -55,14 +55,29 @@ export function SofiaLearningsPanel({ orgId }: Props) {
       ) : (
         <div className="grid gap-2">
           {items.map(l => (
-            <div key={l.id} className="glass-card p-3">
-              <div className="flex items-baseline justify-between mb-1.5">
+            <div key={l.id} className="glass-card p-3 space-y-1.5">
+              <div className="flex items-baseline justify-between">
                 <span className="text-[10.5px] font-mono uppercase tracking-wider text-brand-purple">
-                  {CATEGORY_LABELS[l.category] || l.category}
+                  {SOURCE_LABELS[l.source_type] || l.source_type}
                 </span>
-                <span className="text-[10px] font-mono text-text-dim">{timeAgo(l.created_at)}</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[10px] font-mono text-text-dim">
+                    {Math.round((l.confidence || 0) * 100)}% confianza
+                  </span>
+                  <span className="text-[10px] font-mono text-text-dim">{timeAgo(l.created_at)}</span>
+                </div>
               </div>
-              <p className="text-[12.5px] font-body text-text-primary leading-relaxed">{l.insight_text}</p>
+              <p className="text-[12.5px] font-body text-text-primary leading-relaxed">
+                {l.pattern}
+              </p>
+              {l.rule_extracted && (
+                <div className="bg-brand-purple/[0.06] border-l-2 border-brand-purple/40 pl-2.5 py-1.5">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-brand-purple block mb-0.5">
+                    Regla aplicada
+                  </span>
+                  <span className="text-[11.5px] font-body text-text-primary">{l.rule_extracted}</span>
+                </div>
+              )}
             </div>
           ))}
         </div>

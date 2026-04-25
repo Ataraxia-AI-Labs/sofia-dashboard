@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl'
 import { GrowthSnapshotTrend } from '@/components/growth-snapshot-trend'
 import { GrowthAnomaliesCard } from '@/components/growth-anomalies-card'
 import { AttributionView } from '@/components/attribution-view'
+import { Heart, ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function ReportesPage() {
   const { orgId } = useOrg()
@@ -211,31 +212,9 @@ export default function ReportesPage() {
               </div>
             </div>
 
-            {/* AI Performance */}
-            <div className="glass-card p-4">
-              <h2 className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Bot className="h-5 w-5 text-brand-cyan" />
-                {t('aiPerformance')}
-              </h2>
-              <div className="space-y-2 text-[10px]">
-                <MetricRow label={t('totalTokens')} value={(perf.total_tokens ?? 0).toLocaleString()} />
-                <MetricRow label={t('totalCost')} value={`$${(perf.total_costo_usd ?? 0).toFixed(2)} USD`} />
-                <MetricRow label={t('costPerInteraction')} value={`$${(perf.costo_promedio_por_interaccion_usd ?? 0).toFixed(4)}`} />
-                <MetricRow label={t('avgResponse')} value={`${(perf.response_time_promedio_ms ?? 0).toLocaleString()} ms`} />
-                <MetricRow label={t('monthlyProj')} value={`$${(perf.proyeccion_costo_mensual_usd ?? 0).toFixed(2)} USD`} />
-              </div>
-              {perf.distribucion_intents && Object.keys(perf.distribucion_intents).length > 0 && (
-                <div className="mt-4">
-                  <h3 className="text-[11px] font-body text-text-dim uppercase mb-2">{t('topIntents')}</h3>
-                  {Object.entries(perf.distribucion_intents as Record<string, number>).slice(0, 5).map(([intent, count]) => (
-                    <div key={intent} className="flex justify-between text-[12px] font-body text-text-muted py-0.5">
-                      <span>{intent}</span>
-                      <span className="text-text-dim">{count}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* SofIA Health (was AI Performance) — costs hidden behind details toggle */}
+            <SofiaHealthCard perf={perf} t={t} />
+
 
             {/* Sub-Bots */}
             <div className="glass-card p-4">
@@ -348,4 +327,89 @@ function formatMoney(v: number): string {
   if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`
   if (v >= 1_000) return `$${v.toLocaleString('es-CO', { maximumFractionDigits: 0 })}`
   return `$${v.toFixed(0)}`
+}
+
+// Helper: convert avg response time (ms) to human label
+function speedLabel(ms: number): { text: string; color: string } {
+  if (!ms) return { text: '—', color: 'text-text-dim' }
+  if (ms < 800) return { text: 'Instantánea', color: 'text-status-success' }
+  if (ms < 1500) return { text: 'Rápida', color: 'text-status-success' }
+  if (ms < 3000) return { text: 'Normal', color: 'text-status-info' }
+  if (ms < 5000) return { text: 'Lenta', color: 'text-status-warning' }
+  return { text: 'Muy lenta', color: 'text-status-danger' }
+}
+
+function SofiaHealthCard({
+  perf,
+  t,
+}: {
+  perf: Record<string, unknown>
+  t: ReturnType<typeof useTranslations<'reports'>>
+}) {
+  const [showTech, setShowTech] = useState(false)
+  const interactions = (perf.total_interacciones as number) ?? 0
+  const avgMs = (perf.response_time_promedio_ms as number) ?? 0
+  const speed = speedLabel(avgMs)
+  const intents = (perf.distribucion_intents as Record<string, number>) ?? {}
+
+  return (
+    <div className="glass-card p-4">
+      <h2 className="text-[12px] font-body font-semibold text-text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+        <Heart className="h-5 w-5 text-brand-purple" />
+        Salud de SofIA
+      </h2>
+
+      {/* Headline: what SofIA did, not what it cost */}
+      <div className="mb-4 pb-3 border-b border-border/30">
+        <div className="text-[11px] font-body text-text-dim uppercase tracking-wider mb-1">
+          Atención
+        </div>
+        <div className="text-base font-mono font-bold text-text-primary">
+          {interactions.toLocaleString('es-CO')} {interactions === 1 ? 'conversación' : 'conversaciones'}
+        </div>
+        <div className="text-[11px] font-body text-text-muted mt-0.5">
+          en el periodo seleccionado
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        <div className="flex justify-between items-baseline">
+          <span className="text-text-muted font-body text-[11px]">Velocidad de respuesta</span>
+          <span className={`font-body font-semibold text-[11.5px] ${speed.color}`}>{speed.text}</span>
+        </div>
+      </div>
+
+      {Object.keys(intents).length > 0 && (
+        <div className="mt-4 pt-3 border-t border-border/30">
+          <h3 className="text-[10.5px] font-body text-text-dim uppercase tracking-wider mb-2">
+            ¿Qué te están preguntando más?
+          </h3>
+          {Object.entries(intents).slice(0, 5).map(([intent, count]) => (
+            <div key={intent} className="flex justify-between text-[11.5px] font-body text-text-muted py-0.5">
+              <span className="capitalize">{intent.toLowerCase().replace(/_/g, ' ')}</span>
+              <span className="text-text-dim font-mono">{count}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Tech details — opt-in for the curious admin */}
+      <button
+        onClick={() => setShowTech(v => !v)}
+        className="mt-4 flex items-center gap-1 text-[10.5px] font-mono uppercase tracking-wider text-text-dim hover:text-text-muted transition-colors"
+      >
+        {showTech ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+        Ver detalles técnicos
+      </button>
+      {showTech && (
+        <div className="mt-2 pt-2 border-t border-border/20 space-y-1">
+          <MetricRow label={t('totalTokens')} value={((perf.total_tokens as number) ?? 0).toLocaleString()} />
+          <MetricRow label={t('avgResponse')} value={`${avgMs.toLocaleString()} ms`} />
+          <MetricRow label={t('totalCost')} value={`$${((perf.total_costo_usd as number) ?? 0).toFixed(2)} USD`} />
+          <MetricRow label={t('costPerInteraction')} value={`$${((perf.costo_promedio_por_interaccion_usd as number) ?? 0).toFixed(4)}`} />
+          <MetricRow label={t('monthlyProj')} value={`$${((perf.proyeccion_costo_mensual_usd as number) ?? 0).toFixed(2)} USD`} />
+        </div>
+      )}
+    </div>
+  )
 }
