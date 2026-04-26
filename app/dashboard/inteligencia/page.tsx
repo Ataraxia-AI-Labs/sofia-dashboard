@@ -26,10 +26,10 @@ export default function InteligenciaPage() {
       <div>
         <h1 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary flex items-center gap-2">
           <Brain size={14} className="text-brand-purple" strokeWidth={1.8} />
-          Inteligencia de SofIA
+          Cerebro de SofIA
         </h1>
         <p className="text-[11px] font-body text-text-dim mt-0.5">
-          Acciones que SofIA quiere tomar y patrones que aprende de tu clínica
+          Lo que SofIA quiere hacer y los patrones que aprende de tu clínica
         </p>
       </div>
 

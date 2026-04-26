@@ -53,14 +53,14 @@ export function AttributionView({ orgId, days = 30 }: Props) {
     }
   }
 
-  // Aggregate by channel — multiply attributed revenue by chosen credit weight
+  // Aggregate by channel — *_credit columns are already attributed revenue
+  // in COP (weighted by the model). Sum directly.
   const byChannel = useMemo(() => {
     const field = creditField(model)
     const acc: Record<string, { revenue: number; leads: number }> = {}
     for (const r of data) {
       const ch = r.channel || 'UNKNOWN'
-      const credit = Number((r as unknown as Record<string, unknown>)[field as string] || 0)
-      const revenue = Number(r.attributed_revenue_cop || 0) * credit
+      const revenue = Number((r as unknown as Record<string, unknown>)[field as string] || 0)
       if (!acc[ch]) acc[ch] = { revenue: 0, leads: 0 }
       acc[ch].revenue += revenue
       acc[ch].leads += r.conversions_count || 0

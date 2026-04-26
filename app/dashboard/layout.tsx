@@ -81,7 +81,7 @@ function useNavGroups() {
       label: t('admin'),
       items: [
         { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
-        { href: '/dashboard/inteligencia', icon: Sparkles, label: 'Inteligencia SofIA' },
+        { href: '/dashboard/inteligencia', icon: Sparkles, label: 'Cerebro' },
         { href: '/dashboard/reportes', icon: FileText, label: t('reports') },
         { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
         { href: '/dashboard/auditoria', icon: Shield, label: t('audit') },
