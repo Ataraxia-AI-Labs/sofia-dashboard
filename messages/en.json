@@ -1589,5 +1589,28 @@
       "on_patient_create": "On patient create",
       "on_message_receive": "On message receive"
     }
+  },
+  "dataQuality": {
+    "title": "Data Quality",
+    "critical": "{count} critical",
+    "criticalPlural": "{count} critical",
+    "warn": "{count} warning",
+    "warnPlural": "{count} warnings",
+    "columns": {
+      "national_id": "national ID",
+      "date_of_birth": "date of birth",
+      "full_name": "full name",
+      "email": "email",
+      "phone": "phone"
+    },
+    "highNullPct": "{pct}% of patients missing {col} ({affected}/{total})",
+    "missingAliases": "{count} patients without cross-channel identifiers — SofIA cannot recognize them across channels",
+    "dismiss": "hide",
+    "dismissTooltip": "Mark as seen",
+    "moreAlerts": "+ {count} more",
+    "checking": "checking…",
+    "recheck": "recheck",
+    "autoCapture": "SofIA captures this data automatically in upcoming conversations",
+    "close": "Close"
   }
 }

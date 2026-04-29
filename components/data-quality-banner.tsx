@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { AlertTriangle, X, RefreshCw } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useOrg } from '@/lib/org-context'
 import {
   fetchDataQualityAlerts,
@@ -15,11 +16,12 @@ import * as Sentry from '@sentry/nextjs'
  * Sentient Data Quality Banner
  * - Auto-loads on mount, polls every 5 min while open
  * - Hidden if no CRITICAL/WARN alerts
- * - One-click "Volver a revisar" runs a fresh check
+ * - One-click "recheck" runs a fresh check
  * - Per-row dismiss
  */
 export function DataQualityBanner() {
   const { orgId, role } = useOrg()
+  const t = useTranslations('dataQuality')
   const [alerts, setAlerts] = useState<DataQualityAlert[]>([])
   const [collapsed, setCollapsed] = useState(false)
   const [running, setRunning] = useState(false)
@@ -41,7 +43,6 @@ export function DataQualityBanner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgId])
 
-  // Only OWNER/ADMIN see this banner — STAFF can't act on schema-level issues
   if (role === 'STAFF') return null
   if (!alerts.length || collapsed) return null
 
@@ -74,19 +75,20 @@ export function DataQualityBanner() {
   }
 
   const issueLabel = (a: DataQualityAlert): string => {
-    const cols: Record<string, string> = {
-      national_id: 'cédula',
-      date_of_birth: 'fecha de nacimiento',
-      full_name: 'nombre completo',
-      email: 'correo',
-      phone: 'teléfono',
-    }
-    const col = a.column_name ? (cols[a.column_name] || a.column_name) : a.issue_type
+    const knownColumns = ['national_id', 'date_of_birth', 'full_name', 'email', 'phone']
+    const colKey = a.column_name && knownColumns.includes(a.column_name) ? a.column_name : null
+    const col = colKey ? t(`columns.${colKey}`) : (a.column_name || a.issue_type)
+
     if (a.issue_type === 'high_null_pct') {
-      return `${a.pct_affected}% de pacientes sin ${col} (${a.affected_rows}/${a.total_rows})`
+      return t('highNullPct', {
+        pct: a.pct_affected,
+        col,
+        affected: a.affected_rows,
+        total: a.total_rows,
+      })
     }
     if (a.issue_type === 'missing_aliases') {
-      return `${a.affected_rows} pacientes sin identificadores cruzados — SofIA no los reconoce entre canales`
+      return t('missingAliases', { count: a.affected_rows })
     }
     return `${a.table_name}.${a.column_name || '—'} · ${a.issue_type}`
   }
@@ -110,12 +112,12 @@ export function DataQualityBanner() {
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2 mb-1.5">
           <h3 className="text-[12.5px] font-display font-semibold tracking-tight text-text-primary">
-            Calidad de datos
+            {t('title')}
           </h3>
           <span className="text-[10.5px] font-mono text-text-dim">
-            {critical.length > 0 && `${critical.length} crítico${critical.length === 1 ? '' : 's'}`}
+            {critical.length > 0 && t(critical.length === 1 ? 'critical' : 'criticalPlural', { count: critical.length })}
             {critical.length > 0 && warn.length > 0 && ' · '}
-            {warn.length > 0 && `${warn.length} advertencia${warn.length === 1 ? '' : 's'}`}
+            {warn.length > 0 && t(warn.length === 1 ? 'warn' : 'warnPlural', { count: warn.length })}
           </span>
         </div>
 
@@ -129,15 +131,15 @@ export function DataQualityBanner() {
               <button
                 onClick={() => handleDismiss(a.id)}
                 className="text-text-dim hover:text-text-primary transition-colors text-[10.5px] font-mono uppercase tracking-wider"
-                title="Marcar como visto"
+                title={t('dismissTooltip')}
               >
-                ocultar
+                {t('dismiss')}
               </button>
             </li>
           ))}
           {alerts.length > 5 && (
             <li className="text-[11px] font-mono text-text-dim pl-3">
-              + {alerts.length - 5} más
+              {t('moreAlerts', { count: alerts.length - 5 })}
             </li>
           )}
         </ul>
@@ -149,11 +151,11 @@ export function DataQualityBanner() {
             className="text-[11px] font-mono uppercase tracking-wider text-brand-purple hover:text-brand-purple-light transition-colors flex items-center gap-1.5 disabled:opacity-50"
           >
             <RefreshCw size={11} className={running ? 'animate-spin' : ''} strokeWidth={1.8} />
-            {running ? 'revisando…' : 'volver a revisar'}
+            {running ? t('checking') : t('recheck')}
           </button>
           <span className="text-text-dim text-[10.5px] font-mono">·</span>
           <span className="text-text-dim text-[10.5px] font-mono">
-            SofIA captura estos datos automáticamente en sus próximas conversaciones
+            {t('autoCapture')}
           </span>
         </div>
       </div>
@@ -161,7 +163,7 @@ export function DataQualityBanner() {
       <button
         onClick={() => setCollapsed(true)}
         className="text-text-dim hover:text-text-primary transition-colors flex-shrink-0"
-        aria-label="Cerrar"
+        aria-label={t('close')}
       >
         <X size={13} />
       </button>

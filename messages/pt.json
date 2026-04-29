@@ -1589,5 +1589,28 @@
       "PATIENT_CREATED": "Paciente criado",
       "PAYMENT_RECEIVED": "Pagamento recebido"
     }
+  },
+  "dataQuality": {
+    "title": "Qualidade de dados",
+    "critical": "{count} crítico",
+    "criticalPlural": "{count} críticos",
+    "warn": "{count} alerta",
+    "warnPlural": "{count} alertas",
+    "columns": {
+      "national_id": "CPF",
+      "date_of_birth": "data de nascimento",
+      "full_name": "nome completo",
+      "email": "e-mail",
+      "phone": "telefone"
+    },
+    "highNullPct": "{pct}% dos pacientes sem {col} ({affected}/{total})",
+    "missingAliases": "{count} pacientes sem identificadores cruzados — SofIA não os reconhece entre canais",
+    "dismiss": "ocultar",
+    "dismissTooltip": "Marcar como visto",
+    "moreAlerts": "+ {count} mais",
+    "checking": "verificando…",
+    "recheck": "verificar novamente",
+    "autoCapture": "SofIA captura esses dados automaticamente nas próximas conversas",
+    "close": "Fechar"
   }
 }

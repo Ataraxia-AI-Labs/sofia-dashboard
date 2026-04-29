@@ -1589,5 +1589,28 @@
       "on_patient_create": "Al crear paciente",
       "on_message_receive": "Al recibir mensaje"
     }
+  },
+  "dataQuality": {
+    "title": "Calidad de datos",
+    "critical": "{count} crítico",
+    "criticalPlural": "{count} críticos",
+    "warn": "{count} advertencia",
+    "warnPlural": "{count} advertencias",
+    "columns": {
+      "national_id": "cédula",
+      "date_of_birth": "fecha de nacimiento",
+      "full_name": "nombre completo",
+      "email": "correo",
+      "phone": "teléfono"
+    },
+    "highNullPct": "{pct}% de pacientes sin {col} ({affected}/{total})",
+    "missingAliases": "{count} pacientes sin identificadores cruzados — SofIA no los reconoce entre canales",
+    "dismiss": "ocultar",
+    "dismissTooltip": "Marcar como visto",
+    "moreAlerts": "+ {count} más",
+    "checking": "revisando…",
+    "recheck": "volver a revisar",
+    "autoCapture": "SofIA captura estos datos automáticamente en sus próximas conversaciones",
+    "close": "Cerrar"
   }
 }

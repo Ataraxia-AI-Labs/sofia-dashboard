@@ -14,7 +14,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:setup": "playwright test --project=chromium --grep @setup || true"
+    "test:e2e:setup": "playwright test --project=chromium --grep @setup || true",
+    "i18n:audit": "node scripts/i18n/audit.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.40.0",
