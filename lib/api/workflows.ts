@@ -2,11 +2,14 @@ import { API_URL, authFetch, unwrapArray } from './helpers'
 
 export interface WorkflowStep {
   id?: string
-  action_type: string
+  // Backend uses `step_type` (models.py::WorkflowStepDef + VALID_STEP_TYPES set:
+  // SEND_WHATSAPP, SEND_EMAIL, SEND_WEBHOOK, WAIT, CONDITION, CREATE_TASK,
+  // CREATE_APPOINTMENT, ASSIGN_OPPORTUNITY, NOTIFY_STAFF, MOVE_SEGMENT).
+  // Renamed from `action_type` to match S93 audit finding.
+  step_type: string
+  name?: string
   config: Record<string, unknown>
-  delay_minutes?: number
-  condition?: Record<string, unknown>
-  order: number
+  position?: number
 }
 
 export interface Workflow {

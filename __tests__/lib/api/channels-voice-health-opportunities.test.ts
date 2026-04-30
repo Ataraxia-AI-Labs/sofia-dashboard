@@ -206,13 +206,13 @@ describe('Channels API', () => {
       mockAuthFetch.mockResolvedValue({
         ok: true, json: () => Promise.resolve({ suggestion: 'Switch to voice' }),
       })
-      const result = await suggestRedirect('org-1', { patient_id: 'p1', from_channel: 'WHATSAPP', reason: 'complex' })
+      const result = await suggestRedirect('org-1', { patient_id: 'p1', current_channel: 'WHATSAPP', needed_action: 'complex' })
       expect(result!.suggestion).toBe('Switch to voice')
     })
 
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
-      expect(await suggestRedirect('org-1', { patient_id: 'p1', from_channel: 'x', reason: 'x' })).toBeNull()
+      expect(await suggestRedirect('org-1', { patient_id: 'p1', current_channel: 'WHATSAPP', needed_action: 'x' })).toBeNull()
     })
   })
 })
@@ -254,14 +254,14 @@ describe('Voice API', () => {
         ok: true, json: () => Promise.resolve({ success: true }),
       })
       const result = await sendCrossModal('org-1', {
-        patient_id: 'p1', call_id: 'call-1', content_type: 'image', content: 'base64data',
+        patient_id: 'p1', call_id: 'call-1', content_type: 'IMAGE', content: { url: 'https://x/img.png' },
       })
       expect(result!.success).toBe(true)
     })
 
     it('returns null on error', async () => {
       mockAuthFetch.mockResolvedValue({ ok: false })
-      expect(await sendCrossModal('org-1', { patient_id: 'p1', call_id: 'c1', content_type: 'x', content: 'x' })).toBeNull()
+      expect(await sendCrossModal('org-1', { patient_id: 'p1', call_id: 'c1', content_type: 'TEXT', content: { text: 'x' } })).toBeNull()
     })
   })
 

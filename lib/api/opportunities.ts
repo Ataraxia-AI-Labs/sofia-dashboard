@@ -1,35 +1,25 @@
 import { API_URL, authFetch, withBranch } from './helpers'
 import { normalizeOpportunity } from '@/lib/label-maps'
 
-// Backend → Frontend status mapping
-const STATUS_MAP: Record<string, string> = {
-  ENGAGED: 'ACTED_ON',
-  LOST: 'DISMISSED',
-}
-
-// Frontend → Backend reverse mappings (for updates)
-const REVERSE_STATUS_MAP: Record<string, string> = {
-  ACTED_ON: 'ENGAGED',
-  DISMISSED: 'LOST',
-}
+// S93/S111 audit fix: backend and frontend share the SAME status enum:
+//   DETECTED, ACTED_ON, CONVERTED, EXPIRED, DISMISSED
+// (verified live via detected_opportunities_status_check constraint).
+// The previous STATUS_MAP/REVERSE_STATUS_MAP introduced phantom values
+// `ENGAGED` and `LOST` that the backend rejected with CHECK violations,
+// so every PATCH on status returned 500 from the API. Maps removed —
+// status flows through unchanged in both directions.
 
 function mapOpportunity(opp: Record<string, unknown>): Record<string, unknown> {
   const rawType = (opp.opportunity_type ?? '') as string
-  const rawStatus = (opp.status ?? '') as string
   return {
     ...opp,
     opportunity_type: normalizeOpportunity(rawType),
-    status: STATUS_MAP[rawStatus] ?? rawStatus,
   }
 }
 
 export async function fetchOpportunities(orgId: string, status?: string, branchId?: string | null) {
   const params = new URLSearchParams()
-  // Map frontend status to backend status for filtering
-  if (status) {
-    const backendStatus = REVERSE_STATUS_MAP[status] ?? status
-    params.set('status', backendStatus)
-  }
+  if (status) params.set('status', status)
 
   let url = `${API_URL}/opportunities/${orgId}`
   const qs = params.toString()
@@ -44,14 +34,9 @@ export async function fetchOpportunities(orgId: string, status?: string, branchI
 }
 
 export async function updateOpportunity(opportunityId: string, data: Record<string, string>) {
-  // Map frontend status to backend status for updates
-  const mapped = { ...data }
-  if (mapped.status) {
-    mapped.status = REVERSE_STATUS_MAP[mapped.status] ?? mapped.status
-  }
   const res = await authFetch(`${API_URL}/opportunities/${opportunityId}`, {
     method: 'PATCH',
-    body: JSON.stringify(mapped),
+    body: JSON.stringify(data),
   })
   if (!res.ok) throw new Error(`Update opportunity error: ${res.status}`)
   return res.json()

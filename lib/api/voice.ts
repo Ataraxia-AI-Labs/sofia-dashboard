@@ -29,7 +29,16 @@ export async function fetchVoiceMetrics(orgId: string, days: number = 30, _branc
 
 export async function sendCrossModal(
   orgId: string,
-  data: { patient_id: string; call_id: string; content_type: string; content: string }
+  // Backend CrossModalRequest expects `content` as a dict (validated against
+  // content_type ∈ {IMAGE, DOCUMENT, TEXT}). The previous TS interface declared
+  // it as string — sending a string would fail server-side validation. Renamed
+  // to Record<string, unknown> to match models.py — S93 audit finding.
+  data: {
+    patient_id: string
+    call_id: string
+    content_type: 'IMAGE' | 'DOCUMENT' | 'TEXT'
+    content: Record<string, unknown>
+  }
 ): Promise<{ success: boolean } | null> {
   const res = await authFetch(`${API_URL}/voice/${orgId}/cross-modal`, {
     method: 'POST',

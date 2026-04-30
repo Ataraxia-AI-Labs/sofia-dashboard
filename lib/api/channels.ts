@@ -289,7 +289,10 @@ export async function getChannelInsights(
 
 export async function suggestRedirect(
   orgId: string,
-  data: { patient_id: string; from_channel: string; reason: string }
+  // Backend SuggestRedirectRequest expects `current_channel` (validated against
+  // {WHATSAPP, INSTAGRAM, WEBCHAT, VOICE}) and `needed_action`. Renamed from
+  // `from_channel`/`reason` to match models.py — S93 audit finding.
+  data: { patient_id: string; current_channel: string; needed_action: string }
 ): Promise<{ suggestion: string } | null> {
   const res = await authFetch(`${API_URL}/channels/${orgId}/suggest-redirect`, {
     method: 'POST',
