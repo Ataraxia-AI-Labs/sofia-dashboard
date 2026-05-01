@@ -613,8 +613,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <ClinicAvatar org={org} userEmail={user?.email} />
           </div>
 
-          {/* Page content — full canvas, topbar area ~56px reserved */}
-          <main className="flex-1 pt-14 pb-4 px-4 lg:px-6 overflow-auto" role="main">
+          {/* Page content — full canvas, topbar area ~56px reserved.
+              S116-A11Y: id="main-content" is the target of the skip-to-content
+              link in app/layout.tsx (WCAG 2.1 SC 2.4.1). */}
+          <main id="main-content" className="flex-1 pt-14 pb-4 px-4 lg:px-6 overflow-auto" role="main">
             {org && user ? (
               <OrgContext.Provider value={{ user, org, orgId: org.id, role, branches, branchId: selectedBranchId, setBranchId }}>
                 <ErrorBoundary>

@@ -578,3 +578,50 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   border: 2px solid #050507;
 }
+
+/* ============================================================
+   S116-A11Y: Global keyboard-focus indicator
+   Required for WCAG 2.1 SC 2.4.7 (Focus Visible).
+   Tailwind's `outline-none` on form fields was leaving keyboard
+   users with NO indicator at all. :focus-visible only fires on
+   keyboard navigation (not mouse clicks), so mouse interaction
+   stays clean while keyboard users get a clear ring.
+   ============================================================ */
+*:focus-visible {
+  outline: 2px solid #B19CFF;        /* brand-purple/light, tinted for the void background */
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Don't override custom focus styles on form fields that already
+   render their own ring via Tailwind classes (Input/Textarea/Select). */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-offset: 0;
+}
+
+/* ============================================================
+   S116-A11Y: Skip-to-content link (visible on keyboard focus only)
+   Allows screen-reader / keyboard users to jump past the persistent
+   sidebar+header to the main content. Hidden by default; appears at
+   top-left corner the moment Tab focuses it.
+   ============================================================ */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  background: #8B5CF6;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.15s ease;
+}
+.skip-to-content:focus {
+  top: 8px;
+  outline: 2px solid #B19CFF;
+  outline-offset: 2px;
+}

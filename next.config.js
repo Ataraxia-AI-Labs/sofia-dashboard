@@ -58,5 +58,8 @@ module.exports = withSentryConfig(withNextIntl(nextConfig), {
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
   hideSourceMaps: true,
-  disableLogger: true,
+  // S116-VER004: removed deprecated `disableLogger: true` (Sentry SDK v8+).
+  // Default behavior is now to preserve user console.log calls; we don't
+  // need to strip them at build time. Sentry's own internal logger is
+  // controlled separately via `silent: true` above.
 })

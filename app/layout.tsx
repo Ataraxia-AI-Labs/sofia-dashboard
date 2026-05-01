@@ -59,6 +59,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
       <body className="min-h-screen">
+        {/* S116-A11Y: skip-to-content link, hidden until keyboard focus.
+            Required for WCAG 2.1 SC 2.4.1. Targets the dashboard layout's
+            <main id="main-content"> wrapper. */}
+        <a href="#main-content" className="skip-to-content">
+          Saltar al contenido principal
+        </a>
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <ErrorBoundary>
