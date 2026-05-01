@@ -71,8 +71,12 @@ export function PWAInstallPrompt() {
               Accede al dashboard desde tu pantalla de inicio
             </p>
           </div>
-          <button onClick={handleDismiss} className="text-text-dim hover:text-text-muted transition-colors">
-            <X className="h-3.5 w-3.5" />
+          <button
+            onClick={handleDismiss}
+            aria-label="Cerrar prompt de instalación"
+            className="text-text-dim hover:text-text-muted transition-colors"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
         <div className="mt-2 flex gap-1.5">

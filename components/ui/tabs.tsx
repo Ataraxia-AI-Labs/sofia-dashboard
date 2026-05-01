@@ -15,8 +15,12 @@ interface TabsProps {
 }
 
 export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
+  // S120-A11Y-011: WAI-ARIA tablist semantics so screen readers announce
+  // the strip as a tab group and the active tab as selected. Used by the
+  // 12-tab Ajustes section among others.
   return (
     <div
+      role="tablist"
       className="flex gap-1.5 border-b border-border/30 pb-px overflow-x-auto scrollbar-thin"
       // Soft gradient fade on both edges hints that the tab strip scrolls
       // when more than ~7 tabs are defined (e.g. Ajustes has 12).
@@ -31,6 +35,9 @@ export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
         return (
           <button
             key={tab.id}
+            role="tab"
+            aria-selected={isActive}
+            tabIndex={isActive ? 0 : -1}
             onClick={() => {
               onChange(tab.id)
               // Bring the newly active tab into view so users never

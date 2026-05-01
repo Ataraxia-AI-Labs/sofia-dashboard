@@ -249,11 +249,12 @@ export default function AuditoriaPage() {
         <table className="w-full">
           <thead>
             <tr className="bg-surface-2/40 border-b border-border/30">
-              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('date')}</th>
-              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('action')}</th>
-              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('user')}</th>
-              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('resource')}</th>
-              <th className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('details')}</th>
+              {/* S120-A11Y-015: scope="col" */}
+              <th scope="col" className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('date')}</th>
+              <th scope="col" className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('action')}</th>
+              <th scope="col" className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('user')}</th>
+              <th scope="col" className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('resource')}</th>
+              <th scope="col" className="text-left text-[11px] font-body font-medium uppercase tracking-wider text-text-dim px-3 py-2">{t('details')}</th>
             </tr>
           </thead>
           <tbody>

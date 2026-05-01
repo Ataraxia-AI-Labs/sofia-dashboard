@@ -393,6 +393,7 @@ export default function PacientesPage() {
                 ].map((col) => (
                   <th
                     key={col.field}
+                    scope="col"
                     onClick={() => toggleSort(col.field)}
                     className="text-left text-[10px] font-mono font-semibold text-text-muted uppercase tracking-[0.16em] px-4 py-3 cursor-pointer hover:text-brand-purple transition-colors select-none"
                   >

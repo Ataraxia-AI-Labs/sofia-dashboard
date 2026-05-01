@@ -215,6 +215,8 @@ function BranchSelector({
           className="hyp-topbar-btn"
           data-active={selectedBranchId ? 'true' : 'false'}
           aria-label={selected ? selected.name : tLayout('allBranches')}
+          aria-haspopup="listbox"
+          aria-expanded={open}
         >
           <MapPin size={15} strokeWidth={1.8} />
           {selectedBranchId && (
@@ -226,7 +228,13 @@ function BranchSelector({
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          {/* S120-A11Y-009: branch selector now exposes proper listbox semantics
+              (aria-haspopup + aria-expanded on trigger; role=listbox on popup;
+              role=option + aria-selected on each entry) so screen readers
+              announce it as a selection menu. */}
           <div
+            role="listbox"
+            aria-label={tLayout('allBranches')}
             className="absolute right-0 top-full mt-1.5 z-40 w-48 bg-surface/75 backdrop-blur-2xl rounded-xl py-1 animate-sentient-float-in"
             style={{
               boxShadow:
@@ -234,6 +242,8 @@ function BranchSelector({
             }}
           >
             <button
+              role="option"
+              aria-selected={!selectedBranchId}
               onClick={() => { onSelect(null); setOpen(false) }}
               className={`w-full text-left px-3 py-2 text-[12px] font-body hover:bg-surface-2 transition-colors ${!selectedBranchId ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
             >
@@ -242,6 +252,8 @@ function BranchSelector({
             {branches.map(b => (
               <button
                 key={b.id}
+                role="option"
+                aria-selected={selectedBranchId === b.id}
                 onClick={() => { onSelect(b.id); setOpen(false) }}
                 className={`w-full text-left px-3 py-2 text-[12px] font-body hover:bg-surface-2 transition-colors ${selectedBranchId === b.id ? 'text-brand-purple font-semibold' : 'text-text-muted'}`}
               >

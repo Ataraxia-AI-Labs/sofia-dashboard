@@ -150,13 +150,14 @@ export default function PagosPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border/30">
-                  <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Paciente</th>
-                  <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Servicio</th>
-                  <th className="text-right text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Monto</th>
-                  <th className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Estado</th>
-                  <th className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Método</th>
-                  <th className="text-right text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Fecha</th>
-                  <th className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Link</th>
+                  {/* S120-A11Y-015: scope="col" so screen readers associate headers with cells */}
+                  <th scope="col" className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Paciente</th>
+                  <th scope="col" className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Servicio</th>
+                  <th scope="col" className="text-right text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Monto</th>
+                  <th scope="col" className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Estado</th>
+                  <th scope="col" className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Método</th>
+                  <th scope="col" className="text-right text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Fecha</th>
+                  <th scope="col" className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-5 py-3">Link</th>
                 </tr>
               </thead>
               <tbody>

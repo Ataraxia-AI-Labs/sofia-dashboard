@@ -91,10 +91,11 @@ export function ReviewRequestsPanel({ orgId }: Props) {
           <table className="w-full text-[11.5px] font-body">
             <thead>
               <tr className="border-b border-border/30">
-                <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Paciente</th>
-                <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Estado</th>
-                <th className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Calificación</th>
-                <th className="text-right px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Cuándo</th>
+                {/* S120-A11Y-015: scope="col" */}
+                <th scope="col" className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Paciente</th>
+                <th scope="col" className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Estado</th>
+                <th scope="col" className="text-left px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Calificación</th>
+                <th scope="col" className="text-right px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-text-dim">Cuándo</th>
               </tr>
             </thead>
             <tbody>

@@ -44,11 +44,12 @@ export function HoursTab({ hours, onRefresh }: HoursTabProps) {
       <table className="w-full">
         <thead>
           <tr className="border-b border-border/30">
-            <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('day')}</th>
-            <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('openTime')}</th>
-            <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('closeTime')}</th>
-            <th className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('slot')}</th>
-            <th className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('active')}</th>
+            {/* S120-A11Y-015: scope="col" */}
+            <th scope="col" className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('day')}</th>
+            <th scope="col" className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('openTime')}</th>
+            <th scope="col" className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('closeTime')}</th>
+            <th scope="col" className="text-left text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('slot')}</th>
+            <th scope="col" className="text-center text-[12px] font-body font-semibold text-text-muted uppercase px-4 py-2.5">{t('active')}</th>
           </tr>
         </thead>
         <tbody>

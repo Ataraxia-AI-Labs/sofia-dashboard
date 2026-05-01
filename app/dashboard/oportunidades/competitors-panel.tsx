@@ -481,12 +481,13 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border/30">
-                  <th className="text-left py-2 text-text-dim font-semibold">{t('service')}</th>
-                  <th className="text-right py-2 text-text-dim font-semibold">{t('yourPrice')}</th>
-                  <th className="text-right py-2 text-text-dim font-semibold">{t('competitorAvg')}</th>
-                  <th className="text-right py-2 text-text-dim font-semibold">{t('marketAvg')}</th>
-                  <th className="text-right py-2 text-text-dim font-semibold">{t('diff')}</th>
-                  <th className="text-center py-2 text-text-dim font-semibold">{t('position')}</th>
+                  {/* S120-A11Y-015: scope="col" */}
+                  <th scope="col" className="text-left py-2 text-text-dim font-semibold">{t('service')}</th>
+                  <th scope="col" className="text-right py-2 text-text-dim font-semibold">{t('yourPrice')}</th>
+                  <th scope="col" className="text-right py-2 text-text-dim font-semibold">{t('competitorAvg')}</th>
+                  <th scope="col" className="text-right py-2 text-text-dim font-semibold">{t('marketAvg')}</th>
+                  <th scope="col" className="text-right py-2 text-text-dim font-semibold">{t('diff')}</th>
+                  <th scope="col" className="text-center py-2 text-text-dim font-semibold">{t('position')}</th>
                 </tr>
               </thead>
               <tbody>
