@@ -4,6 +4,25 @@ module.exports = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    // S122: include lib/ + hooks/ + i18n/ so dynamic class strings declared
+    // in helper modules (e.g. status badge color maps in lib/status-colors)
+    // aren't purged in production builds.
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+    './hooks/**/*.{js,ts,jsx,tsx,mdx}',
+    './i18n/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  // S122: safelist runtime-computed class names. Tailwind's PurgeCSS removes
+  // any class it can't see in the source — these patterns are constructed
+  // dynamically (e.g. `bg-status-${color}`, `text-brand-${tier}`) and would
+  // otherwise be stripped from the production CSS bundle, leaving badges
+  // and tier indicators unstyled in prod but fine in dev.
+  safelist: [
+    { pattern: /^bg-status-(success|warning|danger|info)(\/\d+)?$/ },
+    { pattern: /^text-status-(success|warning|danger|info)$/ },
+    { pattern: /^border-status-(success|warning|danger|info)(\/\d+)?$/ },
+    { pattern: /^bg-brand-(purple|cyan|gold)(-light|-dark)?(\/\d+)?$/ },
+    { pattern: /^text-brand-(purple|cyan|gold)(-light|-dark)?$/ },
+    { pattern: /^border-brand-(purple|cyan|gold)(-light|-dark)?(\/\d+)?$/ },
   ],
   theme: {
     extend: {

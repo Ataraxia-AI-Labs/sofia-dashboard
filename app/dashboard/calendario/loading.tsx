@@ -10,9 +10,9 @@ export default function CalendarioLoading() {
           <Skeleton className="h-4 w-40" />
         </div>
         <div className="flex gap-2">
-          <Skeleton className="h-8 w-24 rounded-md" />
-          <Skeleton className="h-8 w-20 rounded-md" />
-          <Skeleton className="h-8 w-20 rounded-md" />
+          <Skeleton className="h-8 w-24 rounded-lg" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
         </div>
       </div>
       {/* Calendar grid skeleton */}

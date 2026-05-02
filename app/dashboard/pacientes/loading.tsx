@@ -10,8 +10,8 @@ export default function PacientesLoading() {
           <Skeleton className="h-4 w-48" />
         </div>
         <div className="flex gap-2">
-          <Skeleton className="h-9 w-64 rounded-md" />
-          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-64 rounded-lg" />
+          <Skeleton className="h-9 w-24 rounded-lg" />
         </div>
       </div>
       {/* Table skeleton */}

@@ -6,8 +6,8 @@ export default function DashboardLoading() {
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="glass-card p-4">
             <div className="w-10 h-10 rounded-lg bg-surface-3 mb-2" />
-            <div className="h-7 bg-surface-3 rounded-md w-20 mb-1.5" />
-            <div className="h-4 bg-surface-3 rounded-md w-28" />
+            <div className="h-7 bg-surface-3 rounded-lg w-20 mb-1.5" />
+            <div className="h-4 bg-surface-3 rounded-lg w-28" />
           </div>
         ))}
       </div>

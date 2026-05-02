@@ -1,9 +1,25 @@
 // SofIA PWA Service Worker
 // Caches dashboard shell + API responses for offline access
 
-const CACHE_NAME = 'sofia-v1';
+// S122-PWA-001: cache version is stamped on each release so deployments
+// invalidate the old cache cleanly. Bump this when any of:
+//   - STATIC_ASSETS changes
+//   - cache-strategy logic in this file changes
+//   - we ship a breaking dashboard layout/route change
+// The activate handler below deletes any cache with a different name,
+// so old SW + old assets get evicted automatically on the next visit.
+const CACHE_VERSION = 'v3-2026-05';  // bump to invalidate
+const CACHE_NAME = `sofia-${CACHE_VERSION}`;
+
+// S122-PWA-002: pre-cached static shell. Was 5 items (just icons +
+// manifest); added the offline fallback page + key public auth routes
+// so the PWA actually works offline. Note: Next.js builds JS/CSS with
+// content hashes, so those are picked up by the runtime fetch handler
+// below as users visit pages — listing them statically would break on
+// every release.
 const STATIC_ASSETS = [
   '/dashboard',
+  '/login',
   '/favicon.svg',
   '/icon-192.png',
   '/icon-512.png',

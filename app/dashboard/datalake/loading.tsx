@@ -13,8 +13,8 @@ export default function DataLakeLoading() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-52 rounded-md" />
-          <Skeleton className="w-8 h-8 rounded-md" />
+          <Skeleton className="h-8 w-52 rounded-lg" />
+          <Skeleton className="w-8 h-8 rounded-lg" />
         </div>
       </div>
 
@@ -23,7 +23,7 @@ export default function DataLakeLoading() {
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="glass-card p-4">
             <div className="flex items-center gap-2 mb-1.5">
-              <Skeleton className="w-8 h-8 rounded-md" />
+              <Skeleton className="w-8 h-8 rounded-lg" />
               <Skeleton className="h-3 w-16" />
             </div>
             <Skeleton className="h-7 w-16 mb-1" />
@@ -47,7 +47,7 @@ export default function DataLakeLoading() {
         </div>
         <div className="grid grid-cols-4 gap-3 mt-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="p-3 rounded-md bg-surface-3/30 border border-border text-center">
+            <div key={i} className="p-3 rounded-lg bg-surface-3/30 border border-border text-center">
               <Skeleton className="h-6 w-12 mx-auto mb-1" />
               <Skeleton className="h-3 w-20 mx-auto mb-1" />
               <Skeleton className="h-2 w-16 mx-auto" />
@@ -62,7 +62,7 @@ export default function DataLakeLoading() {
           <Skeleton className="h-4 w-48" />
           <Skeleton className="h-3 w-16" />
         </div>
-        <Skeleton className="h-48 rounded-md" />
+        <Skeleton className="h-48 rounded-lg" />
       </div>
 
       {/* Two-column bottom row */}
@@ -86,7 +86,7 @@ export default function DataLakeLoading() {
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3">
-                <Skeleton className="w-8 h-8 rounded-md" />
+                <Skeleton className="w-8 h-8 rounded-lg" />
                 <div className="flex-1">
                   <Skeleton className="h-3 w-36 mb-1" />
                   <Skeleton className="h-4 w-28" />

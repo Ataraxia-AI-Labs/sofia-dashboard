@@ -19,7 +19,7 @@ export default function PlanesLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="glass-card p-5 space-y-3">
             <div className="flex items-center gap-2">
-              <Skeleton className="w-8 h-8 rounded-md" />
+              <Skeleton className="w-8 h-8 rounded-lg" />
               <Skeleton className="h-5 w-20" />
             </div>
             <Skeleton className="h-3 w-full" />
@@ -27,7 +27,7 @@ export default function PlanesLoading() {
               <Skeleton className="h-8 w-28 mb-1" />
               <Skeleton className="h-3 w-20" />
             </div>
-            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-lg" />
             <div className="space-y-1.5">
               {Array.from({ length: 5 }).map((_, j) => (
                 <div key={j} className="flex items-center gap-2">
