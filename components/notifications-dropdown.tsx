@@ -74,6 +74,9 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
         className="hyp-topbar-btn"
         data-active={unreadCount > 0 ? 'true' : 'false'}
         aria-label="Notificaciones"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls="notifications-menu"
       >
         <Bell size={15} strokeWidth={1.8} />
         {unreadCount > 0 && (
@@ -90,6 +93,9 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
           {/* LiquidGlass — same language as the sidebar capsule + memory
               dropdown. Denser tint (0.88) so notification text stays crisp. */}
           <div
+            id="notifications-menu"
+            role="menu"
+            aria-label="Notificaciones"
             className="absolute right-0 top-full mt-2 z-40 w-80 rounded-2xl animate-fade-in overflow-hidden"
             style={{
               background:
@@ -119,8 +125,12 @@ export function NotificationsDropdown({ orgId }: { orgId: string }) {
                 style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.25) 50%, transparent)' }}
               />
               <h3 className="text-xs font-body font-semibold text-text-primary">Notificaciones</h3>
-              <button onClick={() => setOpen(false)} className="text-text-dim hover:text-text-muted transition-colors">
-                <X size={14} />
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Cerrar notificaciones"
+                className="text-text-dim hover:text-text-muted transition-colors"
+              >
+                <X size={14} aria-hidden="true" />
               </button>
             </div>
 

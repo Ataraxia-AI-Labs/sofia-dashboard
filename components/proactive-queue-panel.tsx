@@ -115,8 +115,9 @@ export function ProactiveQueuePanel({ orgId }: Props) {
                   onClick={() => handleCancel(m.id)}
                   className="text-text-dim hover:text-status-danger transition-colors flex-shrink-0"
                   title="Cancelar"
+                  aria-label="Cancelar mensaje proactivo"
                 >
-                  <X size={13} />
+                  <X size={13} aria-hidden="true" />
                 </button>
               )}
             </div>

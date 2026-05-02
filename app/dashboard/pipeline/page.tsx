@@ -230,19 +230,19 @@ export default function PipelinePage() {
         <table className="w-full">
           <thead className="bg-surface-2/40">
             <tr className="text-[10px] font-mono uppercase tracking-widest text-text-dim">
-              <th className="text-left px-4 py-2.5 cursor-pointer select-none hover:text-text-muted" onClick={() => toggleSort('name')}>
+              <th scope="col" className="text-left px-4 py-2.5 cursor-pointer select-none hover:text-text-muted" onClick={() => toggleSort('name')}>
                 Paciente <SortIndicator k="name" />
               </th>
-              <th className="text-left px-4 py-2.5 cursor-pointer select-none hover:text-text-muted" onClick={() => toggleSort('stage')}>
+              <th scope="col" className="text-left px-4 py-2.5 cursor-pointer select-none hover:text-text-muted" onClick={() => toggleSort('stage')}>
                 Etapa <SortIndicator k="stage" />
               </th>
-              <th className="text-right px-4 py-2.5 cursor-pointer select-none hover:text-text-muted hidden sm:table-cell" onClick={() => toggleSort('msg')}>
+              <th scope="col" className="text-right px-4 py-2.5 cursor-pointer select-none hover:text-text-muted hidden sm:table-cell" onClick={() => toggleSort('msg')}>
                 Mensajes <SortIndicator k="msg" />
               </th>
-              <th className="text-right px-4 py-2.5 cursor-pointer select-none hover:text-text-muted" onClick={() => toggleSort('updated')}>
+              <th scope="col" className="text-right px-4 py-2.5 cursor-pointer select-none hover:text-text-muted" onClick={() => toggleSort('updated')}>
                 Creado <SortIndicator k="updated" />
               </th>
-              <th className="text-left px-4 py-2.5 hidden lg:table-cell">Próxima acción</th>
+              <th scope="col" className="text-left px-4 py-2.5 hidden lg:table-cell">Próxima acción</th>
             </tr>
           </thead>
           <tbody>

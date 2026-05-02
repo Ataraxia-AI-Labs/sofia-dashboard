@@ -88,11 +88,20 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {/* Toast container — fixed bottom-right */}
-      <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+      {/* Toast container — fixed bottom-right.
+          aria-live polite for non-error toasts; errors render with role=alert
+          inside the per-toast div so screen readers announce them immediately. */}
+      <div
+        className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+        role="region"
+        aria-label="Notificaciones del sistema"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         {toasts.map(t => (
           <div
             key={t.id}
+            role={t.type === 'error' ? 'alert' : 'status'}
             className={clsx(
               'pointer-events-auto flex items-center gap-2.5 px-3 py-2.5 rounded-lg border animate-slide-in min-w-[260px] max-w-[380px]',
               bgMap[t.type],
@@ -102,9 +111,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             <p className="text-text-primary text-[12px] font-body flex-1">{t.message}</p>
             <button
               onClick={() => removeToast(t.id)}
+              aria-label="Cerrar notificación"
               className="text-text-dim hover:text-text-muted transition-colors flex-shrink-0"
             >
-              <X size={14} />
+              <X size={14} aria-hidden="true" />
             </button>
           </div>
         ))}
