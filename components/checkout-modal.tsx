@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { X, Check, AlertCircle, ShieldCheck, CreditCard, Zap } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
 import CardTokenizationForm from '@/components/card-tokenization-form'
@@ -161,6 +161,40 @@ export function CheckoutModal({
     setStep('card')
   }, [])
 
+  /* -- Focus trap + Escape close (S128 A11Y-012) --
+     Cycles Tab / Shift+Tab focus inside the modal so keyboard users can't
+     drift into the dashboard behind the dialog. Esc closes when not loading. */
+  const dialogRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (!isOpen) return
+    const dialog = dialogRef.current
+    if (!dialog) return
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !loading) {
+        e.stopPropagation()
+        handleClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const focusables = dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusables.length === 0) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    dialog.addEventListener('keydown', onKeyDown)
+    return () => dialog.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, loading, handleClose])
+
   if (!isOpen) return null
 
   return (
@@ -169,6 +203,7 @@ export function CheckoutModal({
       onClick={handleClose}
     >
       <div
+        ref={dialogRef}
         className="glass-card p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -179,12 +214,13 @@ export function CheckoutModal({
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xs font-body text-text-primary font-semibold">Activar plan {planName}</h2>
           <button
+            autoFocus
             onClick={handleClose}
             disabled={loading}
             className="w-7 h-7 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-dim hover:text-text-primary transition-colors"
             aria-label="Cerrar"
           >
-            <X size={14} />
+            <X size={14} aria-hidden="true" />
           </button>
         </div>
 

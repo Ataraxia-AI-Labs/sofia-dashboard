@@ -477,18 +477,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex flex-col bg-void">
-      {/* TRIAL EXPIRED OVERLAY */}
+      {/* TRIAL EXPIRED OVERLAY — modal with autofocus on the CTA so keyboard
+          users don't tab into the disabled dashboard behind it (S128 A11Y-010). */}
       {org?.status === 'TRIAL_EXPIRED' && (
-        <div className="fixed inset-0 z-50 bg-void/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-50 bg-void/90 backdrop-blur-sm flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="trial-expired-title"
+        >
           <div className="glass-card p-6 max-w-sm text-center">
             <div className="w-12 h-12 rounded-lg bg-status-danger/8 border border-status-danger/15 flex items-center justify-center mx-auto mb-3">
-              <AlertTriangle size={20} className="text-status-danger" />
+              <AlertTriangle size={20} className="text-status-danger" aria-hidden="true" />
             </div>
-            <h2 className="text-lg font-display text-text-primary mb-2 tracking-tight">Tu periodo de prueba ha expirado</h2>
+            <h2 id="trial-expired-title" className="text-lg font-display text-text-primary mb-2 tracking-tight">Tu periodo de prueba ha expirado</h2>
             <p className="text-text-muted text-[13px] font-body mb-4 leading-relaxed">
               Para seguir usando SofIA y que tus pacientes sigan siendo atendidos, activa un plan.
             </p>
             <button
+              autoFocus
               onClick={() => navigateTo('/dashboard/planes')}
               className="px-5 py-2.5 rounded-lg bg-brand-purple text-white text-[13px] font-body font-semibold hover:bg-brand-purple-dark transition-colors active:scale-[0.97]"
             >
