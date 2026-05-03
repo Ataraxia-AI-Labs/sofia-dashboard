@@ -137,9 +137,10 @@ function LoginForm() {
 
   return (
     <div className="brand min-h-screen flex bg-void relative overflow-hidden pt-12 lg:pt-16">
-      {/* Particle canvas */}
+      {/* Particle canvas — purely decorative, hidden from screen readers (A11Y-021) */}
       <canvas
         ref={canvasRef}
+        aria-hidden="true"
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ opacity: 0.5 }}
       />

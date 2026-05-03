@@ -591,7 +591,7 @@ export default function OnboardingPage() {
                       }`}
                       style={form.specialty === s.value ? { background: 'rgba(139, 92, 246, 0.08)' } : {}}
                     >
-                      <span className="text-base mr-1">{s.icon}</span>
+                      <span className="text-base mr-1" aria-hidden="true">{s.icon}</span>
                       <span className="text-[10px] font-medium">{s.label}</span>
                     </button>
                   ))}

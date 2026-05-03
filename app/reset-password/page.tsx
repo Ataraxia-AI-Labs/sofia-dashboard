@@ -24,9 +24,11 @@ export default function ResetPasswordPage() {
       }
     })
 
-    // Also check if already in a session (direct navigation after recovery)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setSessionReady(true)
+    // Also check if already in a session (direct navigation after recovery).
+    // S132 AUTH-006: getUser() validates server-side so an expired/revoked
+    // session can't show the password form to a stale tab.
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setSessionReady(true)
     })
 
     return () => subscription.unsubscribe()

@@ -638,7 +638,7 @@
     "callSummary": "Resumo da Ligacao",
     "generateSummary": "Gerar Resumo",
     "noSummary": "Sem resumo. Clique em \"Gerar Resumo\" para criar um.",
-    "topics": "Temas",
+    "topics": "Tópicos",
     "actionItems": "Acoes pendentes",
     "followUps": "Acompanhamentos"
   },
@@ -787,7 +787,7 @@
     "noAppointments": "Sem consultas",
     "today": "Hoje",
     "week": "Semana",
-    "month": "Mes",
+    "month": "Mês",
     "day": "Dia",
     "appointmentsInPeriod": "{count} consultas neste periodo",
     "allStaff": "Todos os profissionais",
@@ -838,7 +838,7 @@
       "wed": "Qua",
       "thu": "Qui",
       "fri": "Sex",
-      "sat": "Sab",
+      "sat": "Sáb",
       "sun": "Dom"
     },
     "months": {
@@ -964,8 +964,8 @@
     "description": "Selecione o idioma da interface",
     "saved": "Idioma salvo",
     "languages": {
-      "es": "Español",
-      "en": "English",
+      "es": "Espanhol",
+      "en": "Inglês",
       "pt": "Português"
     }
   },
@@ -987,7 +987,7 @@
     "nearLimit": "Voce esta proximo do limite. Considere atualizar para Pro para mensagens ilimitadas.",
     "recommended": "Recomendado",
     "perYear": "/ano",
-    "perMonth": "/mes",
+    "perMonth": "/mês",
     "equiv": "equiv.",
     "planActive": "Seu plano esta ativo",
     "customPlanQuestion": "Precisa de um plano personalizado ou tem duvidas?",
@@ -1200,7 +1200,7 @@
     "statsApproved": "Aprovados",
     "statsSent": "Enviados",
     "statsDelivered": "Entregues",
-    "statsResponded": "Respondidos",
+    "statsResponded": "Responderam",
     "statsConverted": "Convertidos",
     "statsRejected": "Rejeitados",
     "scanOpportunities": "Escanear Oportunidades",
@@ -1258,7 +1258,7 @@
     "scheduleCampaign": "Agendar campanha",
     "sent": "Enviados",
     "delivered": "Entregues",
-    "responded": "Respondidos",
+    "responded": "Responderam",
     "converted": "Convertidos",
     "revenueGenerated": "Receita gerada"
   },
@@ -1352,7 +1352,7 @@
     "swotThreats": "Ameacas"
   },
   "portal": {
-    "generateLink": "Portal Paciente",
+    "generateLink": "Portal do Paciente",
     "generateError": "Erro ao gerar link",
     "copy": "Copiar link",
     "sendWhatsApp": "Enviar por WhatsApp",

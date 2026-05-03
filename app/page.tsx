@@ -368,8 +368,11 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+    // S132 AUTH-005: getUser() validates server-side (vs getSession's
+    // client-side cookie read). Adds one network call on landing visit
+    // but eliminates the "expired-but-still-redirected" stale state.
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
         router.replace('/dashboard')
       } else {
         setAuthChecked(true)
