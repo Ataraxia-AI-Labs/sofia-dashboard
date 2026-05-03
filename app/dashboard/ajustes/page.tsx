@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useOrg } from '@/lib/org-context'
 import { fetchOrganization, fetchServicesCatalog, fetchBusinessHours, updateOrganization } from '@/lib/api'
-import { Tabs } from '@/components/ui'
+import { TabsVerticalRail } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { PromptTab, ServicesTab, HoursTab, NotificationsTab, TemplatesTab, BotsTab, ChannelsTab, SecurityTab, BrandingTab, PricingTab, ApiKeysTab, WebchatTab } from './tabs'
 import type { Organization, ServiceCatalog, BusinessHour } from '@/types'
@@ -95,7 +95,7 @@ export default function AjustesPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[1000px] space-y-3">
+      <div className="max-w-[1100px] space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="glass-card p-4 animate-pulse">
             <div className="h-4 bg-surface-3 rounded w-40 mb-3" />
@@ -107,7 +107,7 @@ export default function AjustesPage() {
   }
 
   return (
-    <div className="max-w-[1000px] space-y-4">
+    <div className="max-w-[1100px] space-y-4">
       {isReadOnly && (
         <div className="px-3 py-2.5 rounded-lg bg-status-warning/10 border border-status-warning/20 text-[12px] font-body text-status-warning font-semibold flex items-center gap-2">
           <Shield size={12} />
@@ -125,44 +125,52 @@ export default function AjustesPage() {
         </button>
       </div>
 
-      <Tabs tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
+      {/* S136 Hyprland layout: vertical rail (left) + content (right). The
+          old horizontal scrollable strip cut off ~5 of the 12 tabs on a
+          1366px viewport; the rail keeps every section one click away
+          regardless of viewport width. */}
+      <div className="flex gap-3 items-start">
+        <TabsVerticalRail tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
 
-      {activeTab === 'prompt' && (
-        <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} orgId={orgId} />
-      )}
-      {activeTab === 'services' && (
-        <ServicesTab orgId={orgId} services={services} isReadOnly={isReadOnly} onRefresh={loadData} onMessage={handleMessage} />
-      )}
-      {activeTab === 'hours' && (
-        <HoursTab hours={hours} onRefresh={loadData} />
-      )}
-      {activeTab === 'notifications' && org && (
-        <NotificationsTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} />
-      )}
-      {activeTab === 'templates' && org && (
-        <TemplatesTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} />
-      )}
-      {activeTab === 'bots' && (
-        <BotsTab orgId={orgId} />
-      )}
-      {activeTab === 'channels' && (
-        <ChannelsTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} onNavigateToTab={setActiveTab} />
-      )}
-      {activeTab === 'security' && (
-        <SecurityTab />
-      )}
-      {activeTab === 'branding' && org && (
-        <BrandingTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} />
-      )}
-      {activeTab === 'pricing' && (
-        <PricingTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
-      )}
-      {activeTab === 'apikeys' && (
-        <ApiKeysTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
-      )}
-      {activeTab === 'webchat' && (
-        <WebchatTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
-      )}
+        <div className="flex-1 min-w-0 space-y-4">
+          {activeTab === 'prompt' && (
+            <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} orgId={orgId} />
+          )}
+          {activeTab === 'services' && (
+            <ServicesTab orgId={orgId} services={services} isReadOnly={isReadOnly} onRefresh={loadData} onMessage={handleMessage} />
+          )}
+          {activeTab === 'hours' && (
+            <HoursTab hours={hours} onRefresh={loadData} />
+          )}
+          {activeTab === 'notifications' && org && (
+            <NotificationsTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} />
+          )}
+          {activeTab === 'templates' && org && (
+            <TemplatesTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} />
+          )}
+          {activeTab === 'bots' && (
+            <BotsTab orgId={orgId} />
+          )}
+          {activeTab === 'channels' && (
+            <ChannelsTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} onNavigateToTab={setActiveTab} />
+          )}
+          {activeTab === 'security' && (
+            <SecurityTab />
+          )}
+          {activeTab === 'branding' && org && (
+            <BrandingTab orgId={orgId} org={org} isReadOnly={isReadOnly} onMessage={handleMessage} onRefresh={loadData} />
+          )}
+          {activeTab === 'pricing' && (
+            <PricingTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
+          )}
+          {activeTab === 'apikeys' && (
+            <ApiKeysTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
+          )}
+          {activeTab === 'webchat' && (
+            <WebchatTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
+          )}
+        </div>
+      </div>
     </div>
   )
 }
