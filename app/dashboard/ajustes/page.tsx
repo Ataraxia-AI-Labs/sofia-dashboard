@@ -125,14 +125,14 @@ export default function AjustesPage() {
         </button>
       </div>
 
-      {/* S136 Hyprland layout: vertical rail (left) + content (right). The
-          old horizontal scrollable strip cut off ~5 of the 12 tabs on a
-          1366px viewport; the rail keeps every section one click away
-          regardless of viewport width. */}
-      <div className="flex gap-3 items-start">
-        <TabsVerticalRail tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
-
-        <div className="flex-1 min-w-0 space-y-4">
+      {/* S136/S137 Hyprland layout: content (left) + vertical rail (right).
+          The old horizontal scrollable strip cut off ~5 of the 12 tabs on
+          a 1366px viewport; the rail keeps every section one click away
+          regardless of viewport width. Rail goes on the RIGHT to avoid
+          competing with the main sidebar on the left, and renders full
+          icon+label rows so every section is readable without hovering. */}
+      <div className="flex gap-4 items-start">
+        <div className="flex-1 min-w-0 space-y-4 order-1">
           {activeTab === 'prompt' && (
             <PromptTab systemPrompt={systemPrompt} onChangePrompt={setSystemPrompt} onSave={savePrompt} saving={saving} isReadOnly={isReadOnly} orgId={orgId} />
           )}
@@ -169,6 +169,12 @@ export default function AjustesPage() {
           {activeTab === 'webchat' && (
             <WebchatTab orgId={orgId} isReadOnly={isReadOnly} onMessage={handleMessage} />
           )}
+        </div>
+
+        {/* Rail to the right of the content — sticky so it stays visible
+            while the active section's content scrolls. */}
+        <div className="order-2 sticky top-3">
+          <TabsVerticalRail tabs={TAB_DEFS} activeTab={activeTab} onChange={setActiveTab} />
         </div>
       </div>
     </div>

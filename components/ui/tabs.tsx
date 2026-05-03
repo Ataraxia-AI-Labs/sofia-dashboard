@@ -15,18 +15,21 @@ interface TabsProps {
 }
 
 /**
- * S136 Hyprland-style vertical rail for Ajustes (and any page with > ~7 tabs).
+ * S136/S137 Hyprland-style vertical rail for pages with many sections (Ajustes).
  *
- * Naked floating icons in a glass-blur capsule, no horizontal scroll —
- * every tab visible at once. Tooltip chip appears on the right of each
- * icon. Active state: brand-purple icon + dot indicator + glow, mirrors
- * the language used by the main sidebar (sidebar-nav-button.tsx).
+ * Glass-blur capsule with violet hairlines, hosts a list of icon+label
+ * rows — every section visible at once, every label readable without
+ * hovering. The capsule sits to the right of the content (table-of-
+ * contents pattern) so it doesn't visually compete with the global
+ * sidebar on the left.
  *
- * Sized so 12 icons fit comfortably in 100vh on a 900px laptop.
+ * Active row: brand-purple icon + label, dot indicator on the inner
+ * edge, soft violet glow. Inactive rows: text-muted, hover lifts to
+ * text-primary with a small translate.
  *
  * A11Y: WAI-ARIA tablist with aria-orientation="vertical" + roving
- * tabindex (only the active tab is keyboard-focusable, ArrowUp/Down move
- * the active state).
+ * tabindex (only the active tab is keyboard-focusable; ArrowUp/Down +
+ * Home/End move the active state).
  */
 export function TabsVerticalRail({ tabs, activeTab, onChange }: TabsProps) {
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -47,7 +50,7 @@ export function TabsVerticalRail({ tabs, activeTab, onChange }: TabsProps) {
       aria-orientation="vertical"
       aria-label="Secciones de ajustes"
       onKeyDown={onKeyDown}
-      className="relative flex flex-col items-stretch gap-0.5 p-1.5 rounded-2xl self-start"
+      className="relative flex flex-col items-stretch gap-px p-1.5 rounded-2xl w-[180px] flex-shrink-0 self-start"
       style={{
         background:
           'linear-gradient(180deg, rgb(var(--color-surface-rgb) / 0.42) 0%, rgb(var(--color-surface-2-rgb) / 0.28) 100%)',
@@ -73,38 +76,32 @@ export function TabsVerticalRail({ tabs, activeTab, onChange }: TabsProps) {
         const Icon = tab.icon
         const isActive = activeTab === tab.id
         return (
-          <div key={tab.id} className="relative group flex justify-center">
-            <button
-              role="tab"
-              aria-selected={isActive}
-              aria-label={tab.label}
-              tabIndex={isActive ? 0 : -1}
-              onClick={() => onChange(tab.id)}
-              className={clsx(
-                'relative w-7 h-7 flex items-center justify-center rounded-md transition-all duration-150 ease-out active:scale-[0.9]',
-                isActive
-                  ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.5)]'
-                  : 'text-text-dim hover:text-text-primary hover:translate-x-[1px] hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)]',
-              )}
-            >
-              {Icon && <Icon size={14} strokeWidth={isActive ? 2 : 1.6} aria-hidden="true" />}
-              {isActive && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[2px] h-3 bg-brand-purple rounded-full shadow-[0_0_5px_rgba(139,92,246,0.7)]"
-                />
-              )}
-            </button>
-
-            {/* Tooltip chip — appears on the right of the icon on hover. */}
-            <span
-              role="tooltip"
-              className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 z-30 whitespace-nowrap px-2 py-0.5 rounded-md bg-surface-2/95 border border-border/50 text-text-primary text-[10.5px] font-body font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-              style={{ boxShadow: '0 3px 12px rgba(0,0,0,0.4)' }}
-            >
-              {tab.label}
-            </span>
-          </div>
+          <button
+            key={tab.id}
+            role="tab"
+            aria-selected={isActive}
+            tabIndex={isActive ? 0 : -1}
+            onClick={() => onChange(tab.id)}
+            className={clsx(
+              'relative w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-left text-[12px] font-body transition-all duration-150 ease-out active:scale-[0.985]',
+              isActive
+                ? 'text-brand-purple bg-brand-purple/8 font-semibold'
+                : 'text-text-muted hover:text-text-primary hover:bg-surface-2/40 hover:translate-x-[1px]',
+            )}
+          >
+            {Icon && (
+              <span className={clsx('flex-shrink-0', isActive && 'drop-shadow-[0_0_4px_rgba(139,92,246,0.45)]')}>
+                <Icon size={13} strokeWidth={isActive ? 2 : 1.6} aria-hidden="true" />
+              </span>
+            )}
+            <span className="truncate">{tab.label}</span>
+            {isActive && (
+              <span
+                aria-hidden="true"
+                className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-[2px] h-3 bg-brand-purple rounded-full shadow-[0_0_5px_rgba(139,92,246,0.7)]"
+              />
+            )}
+          </button>
         )
       })}
     </div>
