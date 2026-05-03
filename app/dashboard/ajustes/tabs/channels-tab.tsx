@@ -12,6 +12,7 @@ import { updateOrganization } from '@/lib/api'
 import { API_URL, authFetch } from '@/lib/api/helpers'
 import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff, Globe, ArrowRight } from 'lucide-react'
 import type { Organization } from '@/types'
+import { WhatsAppMigrationWizard } from '@/components/whatsapp-migration-wizard'
 
 interface ChannelsTabProps {
   orgId: string
@@ -502,6 +503,17 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* WhatsApp SMS migration wizard — visible once phone_id+token saved */}
+            {ch.key === 'whatsapp' && ch.configurable && connected && !isReadOnly && (
+              <div className="mt-3 pt-3 border-t border-border/30">
+                <WhatsAppMigrationWizard
+                  orgId={orgId}
+                  isReadOnly={isReadOnly}
+                  onMessage={onMessage}
+                />
               </div>
             )}
 

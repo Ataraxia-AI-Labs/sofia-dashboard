@@ -77,6 +77,51 @@ export async function connectWhatsAppEmbedded(orgId: string, code: string) {
   return res.json()
 }
 
+// ── S134 WhatsApp number SMS migration / OTP verification ─────────
+// Three-step Meta Cloud API flow to migrate a number INTO Cloud API:
+//   1. requestWhatsAppOTP   → Meta sends SMS or VOICE OTP
+//   2. verifyWhatsAppOTP    → submit the OTP back to Meta
+//   3. registerWhatsAppCloud → register with Cloud API + 6-digit 2FA PIN
+// Plus sendWhatsAppTestMessage to verify the registration end-to-end.
+
+async function _postJson(url: string, body: unknown): Promise<Record<string, unknown>> {
+  const res = await authFetch(url, { method: 'POST', body: JSON.stringify(body) })
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }))
+    throw new Error(errorData.detail || `Request failed: ${res.status}`)
+  }
+  return res.json()
+}
+
+export function requestWhatsAppOTP(
+  orgId: string,
+  data: { code_method: 'SMS' | 'VOICE'; language?: string },
+) {
+  return _postJson(`${API_URL}/channels/${orgId}/whatsapp/request-otp`, {
+    code_method: data.code_method,
+    language: data.language ?? 'es',
+  })
+}
+
+export function verifyWhatsAppOTP(orgId: string, code: string) {
+  return _postJson(`${API_URL}/channels/${orgId}/whatsapp/verify-otp`, { code })
+}
+
+export function registerWhatsAppCloud(orgId: string, pin: string) {
+  return _postJson(`${API_URL}/channels/${orgId}/whatsapp/register-cloud`, { pin })
+}
+
+export function sendWhatsAppTestMessage(
+  orgId: string,
+  data: { to_phone: string; template_name?: string; template_language?: string },
+) {
+  return _postJson(`${API_URL}/channels/${orgId}/whatsapp/test-message`, {
+    to_phone: data.to_phone,
+    template_name: data.template_name ?? 'hello_world',
+    template_language: data.template_language ?? 'en_US',
+  })
+}
+
 // ============================================================
 // INSTAGRAM + MESSENGER (manual connect — Meta TP approval pending)
 // ============================================================
