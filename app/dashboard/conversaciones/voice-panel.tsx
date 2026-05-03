@@ -259,122 +259,168 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
         )}
       </div>
 
-      {/* CALL DETAIL MODAL */}
+      {/* CALL DETAIL MODAL — S138 redesign:
+          tighter header, 4 stat pills (replacing the cramped 3-tiny-icons row),
+          summary card with topics/action_items/follow_ups when available,
+          transcript reads like a chat thread with proper alignment. */}
       {showModal && selectedCall && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
-          <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface border border-border rounded-lg  flex flex-col overflow-hidden animate-fade-in">
-            {/* Modal header */}
-            <div className="px-5 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-xs font-bold font-body">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="call-detail-title">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={closeModal} />
+          <div className="relative w-full max-w-2xl max-h-[88vh] bg-surface border border-border rounded-xl flex flex-col overflow-hidden animate-fade-in shadow-[0_24px_56px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(139,92,246,0.08)]">
+
+            {/* Header: avatar + name + close */}
+            <div className="px-5 pt-4 pb-3 border-b border-border/30 flex items-start justify-between gap-3 flex-shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[13px] font-bold font-body flex-shrink-0">
                   {selectedCall.patient_name?.[0]?.toUpperCase() || '?'}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold font-mono text-text-primary">
-                      {selectedCall.patient_name}
-                    </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 id="call-detail-title" className="text-[14px] font-semibold font-mono text-text-primary truncate">
+                      {selectedCall.patient_name || t('patient')}
+                    </h3>
                     <CallStatusBadge status={selectedCall.status} />
                   </div>
-                  <div className="flex items-center gap-3 text-[10px] text-text-dim">
-                    <span className="flex items-center gap-1">
-                      <Clock size={8} /> {formatDuration(selectedCall.duration_seconds)}
-                    </span>
-                    <span>{selectedCall.started_at ? timeAgo(selectedCall.started_at) : ''}</span>
-                    <SentimentBadge sentiment={selectedCall.sentiment_overall} compact />
-                  </div>
+                  <p className="text-[11px] text-text-muted mt-0.5">
+                    {selectedCall.started_at
+                      ? new Date(selectedCall.started_at).toLocaleString('es-CO', {
+                          day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
+                        })
+                      : timeAgo(selectedCall.started_at || '')}
+                  </p>
                 </div>
               </div>
               <button
                 onClick={closeModal}
-                className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+                className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors flex-shrink-0"
                 aria-label={tCommon('close')}
               >
-                <X size={14} />
+                <X size={14} aria-hidden="true" />
               </button>
             </div>
 
-            {/* Modal body */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+            {/* Stat pills row — 3 metrics with their own labels, fills the
+                vertical breathing room that the old header left empty. */}
+            <div className="px-5 py-3 grid grid-cols-3 gap-2 border-b border-border/20 flex-shrink-0">
+              <StatPill
+                icon={<Clock size={11} aria-hidden="true" />}
+                label={t('duration')}
+                value={formatDuration(selectedCall.duration_seconds)}
+              />
+              <StatPill
+                icon={<PhoneCall size={11} aria-hidden="true" />}
+                label={t('direction')}
+                value={selectedCall.direction === 'INBOUND' ? t('inbound') : t('outbound')}
+              />
+              <StatPill
+                icon={<MessageCircle size={11} aria-hidden="true" />}
+                label={t('sentiment')}
+                value={<SentimentBadge sentiment={selectedCall.sentiment_overall} compact />}
+              />
+            </div>
+
+            {/* Summary card (topics + action items + follow ups), shown only
+                when the backend returned at least one bucket. Empty state
+                doesn't render this so we don't burn vertical real estate. */}
+            {(() => {
+              const s = selectedCall.summary || {}
+              const hasTopics = Array.isArray(s.topics) && s.topics.length > 0
+              const hasActions = Array.isArray(s.action_items) && s.action_items.length > 0
+              const hasFollowUps = Array.isArray(s.follow_ups) && s.follow_ups.length > 0
+              if (!hasTopics && !hasActions && !hasFollowUps) return null
+              return (
+                <div className="px-5 py-3 border-b border-border/20 flex-shrink-0 grid gap-2 sm:grid-cols-2">
+                  {hasTopics && (
+                    <SummaryBucket label={t('topics')} items={s.topics as string[]} accent="purple" />
+                  )}
+                  {hasActions && (
+                    <SummaryBucket label={t('actionItems')} items={s.action_items as string[]} accent="cyan" />
+                  )}
+                  {hasFollowUps && (
+                    <SummaryBucket label={t('followUps')} items={s.follow_ups as string[]} accent="amber" />
+                  )}
+                </div>
+              )
+            })()}
+
+            {/* Transcript */}
+            <div className="flex-1 overflow-y-auto px-5 py-4">
+              <div className="flex items-center gap-1.5 mb-3">
+                <MessageCircle size={12} className="text-brand-purple" aria-hidden="true" />
+                <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-text-muted">
+                  {t('transcription')}
+                </h4>
+                {transcription.length > 0 && (
+                  <span className="text-[10px] text-text-dim ml-auto">
+                    {transcription.length} {transcription.length === 1 ? t('turn') : t('turns')}
+                  </span>
+                )}
+              </div>
               {detailLoading ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
                       <div className="w-3/4 h-10 bg-surface-3 rounded-lg animate-pulse" />
                     </div>
                   ))}
                 </div>
+              ) : transcription.length === 0 ? (
+                <div className="text-center py-10">
+                  <MessageCircle size={20} className="mx-auto text-text-dim mb-2" aria-hidden="true" />
+                  <p className="text-[12px] text-text-muted">{t('noTranscription')}</p>
+                  <p className="text-[10px] text-text-dim mt-1">{t('noTranscriptionHint')}</p>
+                </div>
               ) : (
-                <>
-                  {/* Transcription */}
-                  <div>
-                    <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-1.5">
-                      <MessageCircle size={12} className="text-brand-purple" />
-                      {t('transcription')}
-                    </h4>
-                    <div className="space-y-2">
-                      {transcription.map((seg, idx) => {
-                        const isSofia = seg.speaker === 'SOFIA'
-                        // Check if there is a cross-modal event at this timestamp
-                        const crossModalEvent = events.find(e =>
-                          e.event_type === 'CROSS_MODAL' &&
-                          Math.abs(new Date(e.created_at).getTime() - new Date(seg.timestamp).getTime()) < 30000
-                        )
+                <div className="space-y-2.5">
+                  {transcription.map((seg, idx) => {
+                    const isSofia = seg.speaker === 'SOFIA'
+                    const crossModalEvent = events.find(e =>
+                      e.event_type === 'CROSS_MODAL' &&
+                      Math.abs(new Date(e.created_at).getTime() - new Date(seg.timestamp).getTime()) < 30000
+                    )
 
-                        return (
-                          <div key={idx}>
-                            <div className={`flex ${isSofia ? 'justify-end' : 'justify-start'}`}>
-                              <div className={`max-w-[80%] ${
-                                isSofia
-                                  ? 'bg-brand-purple/15 border border-brand-purple/20 rounded-lg rounded-br-md'
-                                  : 'bg-surface-3 border border-border rounded-lg rounded-bl-md'
-                              } px-3 py-2`}>
-                                <div className="flex items-center gap-1.5 mb-0.5">
-                                  {isSofia ? (
-                                    <Bot size={9} className="text-brand-purple" />
-                                  ) : (
-                                    <User size={9} className="text-text-dim" />
-                                  )}
-                                  <span className={`text-[9px] font-semibold ${isSofia ? 'text-brand-purple' : 'text-text-dim'}`}>
-                                    {isSofia ? 'SofIA' : t('patient')}
-                                  </span>
-                                  <SentimentBadge sentiment={seg.sentiment} compact />
-                                </div>
-                                <p className={`text-[11px] leading-relaxed ${isSofia ? 'text-text-secondary' : 'text-text-primary'}`}>
-                                  {seg.text}
-                                </p>
-                                <span className="text-[8px] text-text-dim mt-0.5 block">
-                                  {new Date(seg.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                                </span>
-                              </div>
+                    return (
+                      <div key={idx}>
+                        <div className={`flex ${isSofia ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[82%] ${
+                            isSofia
+                              ? 'bg-brand-purple/12 border border-brand-purple/20 rounded-2xl rounded-br-md'
+                              : 'bg-surface-2 border border-border rounded-2xl rounded-bl-md'
+                          } px-3 py-2`}>
+                            <div className="flex items-center gap-1.5 mb-1">
+                              {isSofia ? (
+                                <Bot size={10} className="text-brand-purple" aria-hidden="true" />
+                              ) : (
+                                <User size={10} className="text-text-muted" aria-hidden="true" />
+                              )}
+                              <span className={`text-[10px] font-semibold ${isSofia ? 'text-brand-purple' : 'text-text-muted'}`}>
+                                {isSofia ? 'SofIA' : t('patient')}
+                              </span>
+                              <SentimentBadge sentiment={seg.sentiment} compact />
                             </div>
-
-                            {/* Cross-modal event inline */}
-                            {crossModalEvent && (
-                              <div className="flex items-center gap-2 my-2">
-                                <div className="flex-1 h-px bg-brand-cyan/20" />
-                                <span className="text-[9px] text-brand-cyan font-semibold flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-cyan/8 border border-brand-cyan/15">
-                                  <ArrowRightLeft size={8} />
-                                  {String(crossModalEvent.content?.description || t('crossModalEvent'))}
-                                </span>
-                                <div className="flex-1 h-px bg-brand-cyan/20" />
-                              </div>
-                            )}
+                            <p className={`text-[12px] leading-relaxed ${isSofia ? 'text-text-secondary' : 'text-text-primary'}`}>
+                              {seg.text}
+                            </p>
+                            <span className="text-[9px] text-text-dim mt-1 block">
+                              {new Date(seg.timestamp).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            </span>
                           </div>
-                        )
-                      })}
+                        </div>
 
-                      {transcription.length === 0 && (
-                        <p className="text-[10px] text-text-dim text-center py-6">{t('noTranscription')}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Call Summary block removed by CEO directive (S100):
-                      la conversación habla por sí sola en la transcripción;
-                      el resumen GPT solo quemaba tokens y duplicaba info. */}
-                </>
+                        {crossModalEvent && (
+                          <div className="flex items-center gap-2 my-2">
+                            <div className="flex-1 h-px bg-brand-cyan/20" />
+                            <span className="text-[9px] text-brand-cyan font-semibold flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-cyan/8 border border-brand-cyan/15">
+                              <ArrowRightLeft size={8} aria-hidden="true" />
+                              {String(crossModalEvent.content?.description || t('crossModalEvent'))}
+                            </span>
+                            <div className="flex-1 h-px bg-brand-cyan/20" />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               )}
             </div>
           </div>
@@ -418,6 +464,58 @@ function AnalyticsCard({
         )}
       </div>
       <span className="text-[12px] font-body text-text-muted mt-0.5 block">{label}</span>
+    </div>
+  )
+}
+
+// ============================================================
+// CALL DETAIL MODAL HELPERS (S138)
+// ============================================================
+
+function StatPill({
+  icon, label, value,
+}: {
+  icon: React.ReactNode
+  label: string
+  value: React.ReactNode
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-surface-2/40 px-3 py-2 flex flex-col gap-0.5 min-w-0">
+      <span className="text-[9.5px] font-mono uppercase tracking-wider text-text-dim flex items-center gap-1">
+        <span className="text-text-muted" aria-hidden="true">{icon}</span>
+        {label}
+      </span>
+      <div className="text-[12px] font-body font-semibold text-text-primary truncate">
+        {value}
+      </div>
+    </div>
+  )
+}
+
+function SummaryBucket({
+  label, items, accent,
+}: {
+  label: string
+  items: string[]
+  accent: 'purple' | 'cyan' | 'amber'
+}) {
+  const accentClass = accent === 'cyan'
+    ? 'text-brand-cyan'
+    : accent === 'amber'
+      ? 'text-status-warning'
+      : 'text-brand-purple'
+  return (
+    <div className="rounded-lg border border-border/40 bg-surface-2/30 px-3 py-2">
+      <span className={`text-[9.5px] font-mono uppercase tracking-wider font-semibold ${accentClass}`}>
+        {label}
+      </span>
+      <ul className="mt-1.5 space-y-1 list-disc list-inside marker:text-text-dim">
+        {items.slice(0, 5).map((item, i) => (
+          <li key={i} className="text-[11.5px] font-body text-text-secondary leading-snug">
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

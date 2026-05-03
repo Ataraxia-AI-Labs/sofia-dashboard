@@ -640,7 +640,15 @@
     "noSummary": "No summary. Click \"Generate Summary\" to create one.",
     "topics": "Topics",
     "actionItems": "Action items",
-    "followUps": "Follow-ups"
+    "followUps": "Follow-ups",
+    "duration": "Duration",
+    "direction": "Direction",
+    "sentiment": "Sentiment",
+    "inbound": "Inbound",
+    "outbound": "Outbound",
+    "turn": "turn",
+    "turns": "turns",
+    "noTranscriptionHint": "Calls placed today on the new SIM will appear here as soon as they are processed."
   },
   "segmentation": {
     "title": "Patient Segmentation",

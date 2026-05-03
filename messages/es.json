@@ -640,7 +640,15 @@
     "noSummary": "Sin resumen. Haz clic en \"Generar Resumen\" para crear uno.",
     "topics": "Temas",
     "actionItems": "Acciones pendientes",
-    "followUps": "Seguimientos"
+    "followUps": "Seguimientos",
+    "duration": "Duración",
+    "direction": "Dirección",
+    "sentiment": "Sentimiento",
+    "inbound": "Entrante",
+    "outbound": "Saliente",
+    "turn": "turno",
+    "turns": "turnos",
+    "noTranscriptionHint": "Las llamadas registradas hoy en la SIM nueva aparecerán acá apenas se procesen."
   },
   "segmentation": {
     "title": "Segmentación de Pacientes",

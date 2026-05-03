@@ -50,7 +50,7 @@ export function TabsVerticalRail({ tabs, activeTab, onChange }: TabsProps) {
       aria-orientation="vertical"
       aria-label="Secciones de ajustes"
       onKeyDown={onKeyDown}
-      className="relative flex flex-col items-stretch gap-px p-1.5 rounded-2xl w-[180px] flex-shrink-0 self-start"
+      className="relative flex flex-col items-stretch gap-1 p-2 rounded-2xl w-[208px] flex-shrink-0 self-start"
       style={{
         background:
           'linear-gradient(180deg, rgb(var(--color-surface-rgb) / 0.42) 0%, rgb(var(--color-surface-2-rgb) / 0.28) 100%)',
@@ -83,7 +83,7 @@ export function TabsVerticalRail({ tabs, activeTab, onChange }: TabsProps) {
             tabIndex={isActive ? 0 : -1}
             onClick={() => onChange(tab.id)}
             className={clsx(
-              'relative w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-left text-[12px] font-body transition-all duration-150 ease-out active:scale-[0.985]',
+              'relative w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left text-[12px] font-body transition-all duration-150 ease-out active:scale-[0.985]',
               isActive
                 ? 'text-brand-purple bg-brand-purple/8 font-semibold'
                 : 'text-text-muted hover:text-text-primary hover:bg-surface-2/40 hover:translate-x-[1px]',
