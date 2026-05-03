@@ -26,6 +26,13 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // S133 VER-007 (documented tradeoff): getUser() makes a network call
+  // to Supabase on every matched request. Caching this would create a
+  // stale-session window where a revoked or expired session is still
+  // treated as valid. Supabase explicitly recommends NOT caching
+  // getUser() in middleware — see
+  // https://supabase.com/docs/guides/auth/server-side/nextjs.
+  // The latency cost is the price of the security guarantee.
   const { data: { user } } = await supabase.auth.getUser()
 
   if (pathname.startsWith('/dashboard')) {

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { Lock, ChevronRight } from 'lucide-react'
 import { getSubpages } from '@/lib/nav-subpages'
@@ -67,14 +68,27 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
         onMouseLeave={hide}
         className="relative flex justify-center"
       >
-        <button
-          onClick={() => onNavigate(locked ? '/dashboard/planes' : href)}
+        {/* S133 A11Y-008: switched from <button onClick> to Next.js <Link>
+            so right-click "open in new tab", Ctrl/Cmd+click, and middle-click
+            all work natively. Default click is still intercepted by Next's
+            router for SPA navigation; onNavigate fires the side-effects
+            (closing mobile menu, etc.). Locked items still redirect to /planes
+            via the same href substitution. */}
+        <Link
+          href={locked ? '/dashboard/planes' : href}
           aria-label={locked ? `${label} — próximamente` : label}
           aria-current={isActive ? 'page' : undefined}
+          onClick={(e) => {
+            // Allow native open-in-new-tab modifier handling; only run our
+            // SPA hook on a plain left-click (no modifier keys, primary button).
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+            e.preventDefault()
+            onNavigate(locked ? '/dashboard/planes' : href)
+          }}
           className={`
             group relative w-7 h-7 flex items-center justify-center rounded-md
             transition-all duration-150 ease-out
-            active:scale-[0.9]
+            active:scale-[0.9] no-underline
             ${locked
               ? 'text-text-dim/35 hover:text-text-muted hover:translate-x-[1px]'
               : isActive
@@ -83,14 +97,14 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
             }
           `}
         >
-          <Icon size={14} strokeWidth={isActive ? 2 : 1.6} />
+          <Icon size={14} strokeWidth={isActive ? 2 : 1.6} aria-hidden="true" />
           {isActive && (
-            <span className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[2px] h-3 bg-brand-purple rounded-full shadow-[0_0_5px_rgba(139,92,246,0.7)]" />
+            <span aria-hidden="true" className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[2px] h-3 bg-brand-purple rounded-full shadow-[0_0_5px_rgba(139,92,246,0.7)]" />
           )}
           {locked && (
-            <Lock size={6} className="absolute -top-0.5 -right-0.5 text-text-dim/50" />
+            <Lock size={6} aria-hidden="true" className="absolute -top-0.5 -right-0.5 text-text-dim/50" />
           )}
-        </button>
+        </Link>
       </div>
 
       {open && mounted && createPortal(

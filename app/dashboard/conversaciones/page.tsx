@@ -202,6 +202,13 @@ export default function ConversacionesPage() {
 
   useEffect(() => { loadData() }, [loadData])
 
+  // S133 RT-003 (documented decision): conversaciones is the only page
+  // that uses Supabase Realtime. Other lists (pipeline, appointments,
+  // patients) deliberately rely on manual refresh because their query
+  // shapes (joins, aggregates, RLS filters) make Realtime payload
+  // reconstruction more error-prone than a 30s pull. Adding Realtime to
+  // those surfaces is product work, not a bug — track via the roadmap.
+
   // Supabase Realtime: listen for new interaction_logs
   useEffect(() => {
     const channel = supabase
@@ -262,7 +269,23 @@ export default function ConversacionesPage() {
           setInteractions(prev => [...parsed, ...prev])
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        // S133 RT-001/002: surface subscription failures so a Realtime
+        // outage doesn't silently leave the page rendering stale data.
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          // CLOSED is normal on cleanup — only report unexpected failures.
+          if (err) {
+            try {
+              import('@sentry/nextjs').then(Sentry => {
+                Sentry.captureException(err, {
+                  tags: { feature: 'realtime', channel: 'interactions' },
+                  extra: { status, orgId },
+                })
+              })
+            } catch { /* Sentry optional */ }
+          }
+        }
+      })
 
     return () => {
       supabase.removeChannel(channel)
