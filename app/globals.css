@@ -9,7 +9,9 @@
 
 /* Brand theme (SofIA) — Sentient Interface signature look.
    Deep void with purple-tinted surfaces. The core Nucleus experience.
-   Purple accents. The original. Balanced and authoritative. */
+   Purple accents. The original. Balanced and authoritative.
+   S135: text-muted + text-dim lifted ~30% L for WCAG AA on captions/hints
+   (was 4.20:1 / 2.06:1 → now ~6.0:1 / ~4.0:1 vs void). */
 .brand {
   --color-void: #07070D;
   --color-surface: #10101B;
@@ -24,12 +26,13 @@
   /* Whites with lavender tint — menos impacto al leer, más cinematografía */
   --color-text-primary: #E8E0FF;
   --color-text-secondary: #B0A6D0;
-  --color-text-muted: #7C7398;
-  --color-text-dim: #4F4868;
+  --color-text-muted: #9D93BC;   /* was #7C7398 — WCAG AA */
+  --color-text-dim: #7B71A0;     /* was #4F4868 — WCAG AA Large */
   --color-white: #F3EDFF;
 }
 
-/* Dark theme — neutral dark, slightly warmer than pure black */
+/* Dark theme — neutral dark, slightly warmer than pure black.
+   S135: text-dim lifted for WCAG AA on captions (was 2.65:1 → ~4.6:1). */
 .dark {
   --color-void: #0D0D0E;
   --color-surface: #18181A;
@@ -43,8 +46,8 @@
   --color-border-2-rgb: 62 62 68;
   --color-text-primary: #F5F5F5;
   --color-text-secondary: #BEBEBE;
-  --color-text-muted: #8A8A8A;
-  --color-text-dim: #5E5E5E;
+  --color-text-muted: #9E9E9E;   /* was #8A8A8A — kept readable on light surfaces too */
+  --color-text-dim: #7A7A7A;     /* was #5E5E5E — WCAG AA */
   --color-white: #FFFFFF;
 }
 
@@ -54,7 +57,8 @@
    hacía el lavanda'. Ahora blanco casi puro con un hint morado MUY
    sutil en surfaces secundarios (~1-2%), text-primary suavizado a un
    gris-tinta con tinte morado casi imperceptible, y bordes que siguen
-   la misma paleta. El ojo descansa. El morado acentúa. Ninguno grita. */
+   la misma paleta. El ojo descansa. El morado acentúa. Ninguno grita.
+   S135: text-dim darkened (light theme = invert direction) for WCAG AA. */
 .light {
   --color-void: #FBFBFE;          /* near white, un soplo de morado */
   --color-surface: #FFFFFF;
@@ -68,15 +72,16 @@
   --color-border-2-rgb: 201 194 224;
   --color-text-primary: #1C1830;  /* gris-tinta con tilt morado, no #000 duro */
   --color-text-secondary: #3F3A55;
-  --color-text-muted: #6C6780;
-  --color-text-dim: #A09AB0;
+  --color-text-muted: #595470;   /* was #6C6780 — WCAG AA improved */
+  --color-text-dim: #7872A0;     /* was #A09AB0 — was 2.4:1, now ~3.7:1 */
   --color-white: #1C1830;
 }
 
 /* Ataraxia Cyan — Immersive cyan atmosphere.
    The doctor enters an underwater command center. Cyan bathes every surface.
    Trust, calm, clinical precision. Purple appears as rare signal flares.
-   Psychology: cyan = tranquility + trust + innovation. The Ataraxia feeling. */
+   Psychology: cyan = tranquility + trust + innovation. The Ataraxia feeling.
+   S135: muted+dim lifted, both were under WCAG AA on the deep void. */
 .ataraxia-cyan {
   --color-void: #050E10;
   --color-surface: #091618;
@@ -90,15 +95,18 @@
   --color-border-2-rgb: 26 68 80;
   --color-text-primary: #ECFFF8;
   --color-text-secondary: #95D0BF;
-  --color-text-muted: #518A7A;
-  --color-text-dim: #2E5F55;
+  --color-text-muted: #82B5A4;   /* was #518A7A — WCAG AA */
+  --color-text-dim: #5C9486;     /* was #2E5F55 — WCAG AA Large */
   --color-white: #F5FFFA;
 }
 
 /* Ataraxia Purple — Deep violet immersion.
    The doctor enters the neural core. Purple saturates the void.
    Power, intelligence, premium. Cyan sparks as vital signals.
-   Psychology: purple = authority + luxury + wisdom. SofIA's mind. */
+   Psychology: purple = authority + luxury + wisdom. SofIA's mind.
+   S135: text-muted (3.60:1) + text-dim (2.04:1) both failed WCAG AA badly
+   — captions were nearly invisible per CEO feedback. Lifted ~30% L
+   keeping the brand violet hue. Now ~5.5:1 / ~3.6:1. */
 .ataraxia-purple {
   --color-void: #0B0710;
   --color-surface: #130D1E;
@@ -112,8 +120,8 @@
   --color-border-2-rgb: 56 38 86;
   --color-text-primary: #F0E4FF;
   --color-text-secondary: #BCA4E0;
-  --color-text-muted: #7858AC;
-  --color-text-dim: #4C3680;
+  --color-text-muted: #A085D5;   /* was #7858AC — WCAG AA */
+  --color-text-dim: #7B62B8;     /* was #4C3680 — WCAG AA Large */
   --color-white: #F8F1FF;
 }
 
