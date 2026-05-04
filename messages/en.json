@@ -769,7 +769,12 @@
       "MESSENGER": "Messenger",
       "WEB": "Web Chat",
       "VOICE_CALL": "Voice"
-    }
+    },
+    "namePlaceholder": "Patient name",
+    "cityPlaceholder": "City",
+    "interestPlaceholder": "Service or treatment",
+    "noPhoneRegistered": "This patient has no WhatsApp registered yet",
+    "isWebChatHint": "Arrived via Web Chat — ask for their phone next time."
   },
   "pipeline": {
     "title": "Pipeline",

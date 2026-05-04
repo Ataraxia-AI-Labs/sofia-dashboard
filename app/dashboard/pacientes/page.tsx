@@ -607,7 +607,17 @@ export default function PacientesPage() {
           treatments={treatments}
           patientMedia={patientMedia}
           detailTab={detailTab}
-          onTabChange={setDetailTab}
+          onTabChange={(tab) => {
+            // S148: switching tab also closes any action form (Edit / WA /
+            // Treatment). The forms used to stay open across tabs which
+            // confused the operator — they'd see "Enviar WhatsApp" while
+            // looking at ML / IA and not understand which tab the form
+            // belonged to.
+            setDetailTab(tab)
+            setShowWhatsApp(false)
+            setShowTreatmentForm(false)
+            setEditingPatient(false)
+          }}
           editingPatient={editingPatient}
           onToggleEdit={() => { setEditingPatient(!editingPatient); setEditData({}) }}
           editData={editData}

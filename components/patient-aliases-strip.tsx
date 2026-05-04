@@ -47,12 +47,34 @@ function maskPhone(value: string): string {
   return `··· ${digits.slice(-4)}`
 }
 
+function looksLikeSessionId(value: string): boolean {
+  return /^web[_-]/i.test(value) || /^session[_-]/i.test(value)
+}
+
 function maskAlias(type: string, value: string): string {
+  // S148: mis-typed aliases come back from the backend with type='phone'
+  // even when the value is clearly a web-chat session id like
+  // "web_smoke_1776007406". The masker would format that as "··· 7406"
+  // and pretend the patient had a phone number. Detect the session-id
+  // shape FIRST and short-circuit so the correct visual (truncated id)
+  // wins over the type label.
+  if (looksLikeSessionId(value)) {
+    return value.length > 12 ? `${value.slice(0, 12)}…` : value
+  }
   if (type === 'phone' || type === 'voice_caller') return maskPhone(value)
   if (type === 'web_session') {
-    return value.length > 12 ? `${value.slice(0, 8)}…` : value
+    return value.length > 12 ? `${value.slice(0, 12)}…` : value
   }
   return value
+}
+
+// S148: pick the actual chip metadata. If the alias type says 'phone' but
+// the value is a session id, use Web Chat metadata so the icon and color
+// don't lie. Backend will eventually correct the type via the channel
+// resolution pipeline; this guards the dashboard until then.
+function resolveTypeMeta(type: string, value: string) {
+  if (looksLikeSessionId(value)) return TYPE_META.web_session
+  return TYPE_META[type]
 }
 
 interface Props {
@@ -103,7 +125,7 @@ export function PatientAliasesStrip({ patientId, autoLoad = true }: Props) {
       </div>
       <div className="flex flex-wrap gap-1.5">
         {aliases.map((a, i) => {
-          const meta = TYPE_META[a.alias_type] || {
+          const meta = resolveTypeMeta(a.alias_type, a.alias_value) || {
             label: a.alias_type, icon: null,
             color: 'text-text-muted', bg: 'bg-surface-3 border-border/30',
           }

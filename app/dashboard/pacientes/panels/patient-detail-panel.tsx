@@ -82,7 +82,21 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
             </div>
             <div>
               <h3 className="text-base font-mono font-semibold text-text-primary">{patient.full_name || 'Sin nombre'}</h3>
-              <p className="text-xs text-text-muted font-body">{patient.phone}</p>
+              {(() => {
+                // S148: hide auto-generated session ids (web_xxx, session_xxx)
+                // — they were rendering as if they were the phone number,
+                // which the operator can't dial. Show a friendly hint
+                // instead so the visual stays informative.
+                const phone = (patient.phone || '').trim()
+                const isSessionId = /^web[_-]/i.test(phone) || /^session[_-]/i.test(phone)
+                if (!phone) {
+                  return <p className="text-xs text-text-dim italic font-body">Sin teléfono</p>
+                }
+                if (isSessionId) {
+                  return <p className="text-xs text-text-dim italic font-body" title={phone}>Web Chat · sin teléfono</p>
+                }
+                return <p className="text-xs text-text-muted font-body">{phone}</p>
+              })()}
             </div>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
