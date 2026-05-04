@@ -350,7 +350,9 @@
     "selectConversationHint": "Escolha um paciente para ver seu historico multicanal",
     "crossChannelHistory": "Historico multicanal",
     "channelSwitch": "Continuou por {channel}",
-    "back": "Voltar"
+    "back": "Voltar",
+    "disabledButReceiving": "O canal está desativado mas recebeu {count} mensagens. Ative para que as métricas reflitam a realidade.",
+    "activateNow": "Ativar agora"
   },
   "team": {
     "title": "Equipe",

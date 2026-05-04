@@ -165,12 +165,17 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           const isEnabled = cfg?.is_enabled ?? false
           // Channel cannot be toggled if config is empty or missing
           const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
+          // S142: data inconsistency — channel is OFF in config but is
+          // receiving messages anyway. The widget/webhook acts on the
+          // underlying credential, not the dashboard flag. Surface this
+          // so the operator can flip the flag and align tracking.
+          const hasActivityWhileDisabled = !isEnabled && (m?.message_count ?? 0) > 0
 
           return (
             <div
               key={channel}
               className={`glass-card p-4 relative overflow-hidden transition-all ${
-                !isEnabled ? 'opacity-60' : ''
+                !isEnabled && !hasActivityWhileDisabled ? 'opacity-60' : ''
               }`}
             >
               {/* Status indicator */}
@@ -245,6 +250,28 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   <span className="text-[11px] font-body text-text-dim flex items-center gap-1">
                     <Clock size={8} /> {t('lastMessage')}: {timeAgo(m.last_message_at)}
                   </span>
+                </div>
+              )}
+
+              {/* S142 inconsistency ribbon — channel is OFF but receiving
+                  messages. Suggests the operator should flip the toggle on
+                  to align dashboard analytics with reality. */}
+              {hasActivityWhileDisabled && (
+                <div className="mt-3 pt-2 border-t border-status-warning/20">
+                  <div className="flex items-start gap-1.5 text-[10.5px] font-body text-status-warning leading-snug">
+                    <span className="mt-0.5" aria-hidden="true">⚠</span>
+                    <span>
+                      {t('disabledButReceiving', { count: m?.message_count ?? 0 })}
+                    </span>
+                  </div>
+                  {hasConfig && (
+                    <button
+                      onClick={() => handleToggleChannel(channel, true)}
+                      className="mt-1 text-[10.5px] font-body font-semibold text-brand-purple hover:underline"
+                    >
+                      {t('activateNow')}
+                    </button>
+                  )}
                 </div>
               )}
             </div>

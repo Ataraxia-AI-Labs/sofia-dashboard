@@ -350,7 +350,9 @@
     "selectConversationHint": "Choose a patient to view their cross-channel history",
     "crossChannelHistory": "Cross-channel history",
     "channelSwitch": "Continued via {channel}",
-    "back": "Back"
+    "back": "Back",
+    "disabledButReceiving": "Channel is off but {count} messages were received. Turn it on so analytics match reality.",
+    "activateNow": "Activate now"
   },
   "team": {
     "title": "Team",
