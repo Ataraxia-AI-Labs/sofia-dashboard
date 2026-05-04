@@ -8,7 +8,7 @@ import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNo
 import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
 import { useTranslations } from 'next-intl'
 import {
-  Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
+  Search, ChevronDown, ChevronUp, ChevronsUpDown, ChevronLeft, ChevronRight,
   X, RefreshCw, Download, UserPlus, Layers, GitMerge, TrendingUp, Trophy,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -36,14 +36,23 @@ const GamificationPanel = dynamic(() => import('./gamification-panel'), {
   loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
+// S146: aligned with the global S144 channel palette so every channel
+// renders in its own hue (was: WhatsApp+Messenger green, the rest fell
+// back to text-text-muted). Also covers a few legacy values that show
+// up in older patient rows (MANUAL = staff manually created, CALL =
+// pre-Vapi voice rows, WEB_CHAT = early widget capitalization).
 const CHANNEL_COLORS: Record<string, string> = {
-  WHATSAPP: 'text-status-success',
-  INSTAGRAM: 'text-brand-purple',
-  MESSENGER: 'text-status-info',
-  WEB: 'text-status-warning',
-  VOICE_CALL: 'text-brand-cyan',
-  PRESENCIAL: 'text-brand-gold',
-  CALL: 'text-brand-cyan',
+  WHATSAPP:   'text-status-success',  // mint green
+  INSTAGRAM:  'text-brand-purple',    // violet
+  MESSENGER:  'text-brand-cyan',      // cyan (S144)
+  WEB:        'text-status-info',     // blue (S144)
+  WEB_CHAT:   'text-status-info',
+  WEBCHAT:    'text-status-info',
+  VOICE_CALL: 'text-brand-gold',      // gold (matches Voz badge globally)
+  VOICE:      'text-brand-gold',
+  CALL:       'text-brand-gold',
+  PRESENCIAL: 'text-text-muted',      // walk-in / created at front desk
+  MANUAL:     'text-text-muted',      // staff-created via dashboard
 }
 
 const PAGE_SIZE = 20
@@ -260,11 +269,25 @@ export default function PacientesPage() {
     }
   }
 
+  // S146: explicit asc/desc indicators when active, neutral up-down icon
+  // when inactive (so users know the column is sortable but isn't sorting
+  // right now — chevron-down alone read as "this column is desc-sorted").
   const SortIcon = ({ field }: { field: string }) => {
-    if (sortBy !== field) return <ChevronDown size={12} className="text-text-dim" />
+    if (sortBy !== field) {
+      return <ChevronsUpDown size={11} className="text-text-dim/60" aria-hidden="true" />
+    }
     return sortDir === 'desc'
-      ? <ChevronDown size={12} className="text-brand-purple" />
-      : <ChevronUp size={12} className="text-brand-purple" />
+      ? <ChevronDown size={12} className="text-brand-purple" aria-hidden="true" />
+      : <ChevronUp size={12} className="text-brand-purple" aria-hidden="true" />
+  }
+
+  // Hide auto-generated session ids in the phone column. Web Chat sessions
+  // come in as "web_emergency1775727757" and similar — those are not real
+  // phone numbers and reading them in the table makes the column noise.
+  const formatPhone = (phone: string | null | undefined): string => {
+    if (!phone) return '—'
+    if (/^web[_-]/i.test(phone) || /^session[_-]/i.test(phone)) return '—'
+    return phone
   }
 
   return (
@@ -390,19 +413,30 @@ export default function PacientesPage() {
                   { field: 'service_interest', label: t('interest') },
                   { field: 'city', label: t('city') },
                   { field: 'created_at', label: t('registration') },
-                ].map((col) => (
-                  <th
-                    key={col.field}
-                    scope="col"
-                    onClick={() => toggleSort(col.field)}
-                    className="text-left text-[10px] font-mono font-semibold text-text-muted uppercase tracking-[0.16em] px-4 py-3 cursor-pointer hover:text-brand-purple transition-colors select-none"
-                  >
-                    <div className="flex items-center gap-1">
-                      {col.label}
-                      <SortIcon field={col.field} />
-                    </div>
-                  </th>
-                ))}
+                ].map((col) => {
+                  const isActive = sortBy === col.field
+                  const ariaSort = isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'
+                  return (
+                    <th
+                      key={col.field}
+                      scope="col"
+                      aria-sort={ariaSort}
+                      onClick={() => toggleSort(col.field)}
+                      className={`text-left text-[10px] font-mono font-semibold uppercase tracking-[0.16em] px-4 py-3 cursor-pointer hover:text-brand-purple transition-colors select-none ${
+                        isActive ? 'text-brand-purple' : 'text-text-muted'
+                      }`}
+                      title={isActive
+                        ? `Ordenado por ${col.label.toLowerCase()} (${sortDir === 'asc' ? 'ascendente' : 'descendente'}). Click para invertir.`
+                        : `Click para ordenar por ${col.label.toLowerCase()}.`
+                      }
+                    >
+                      <div className="flex items-center gap-1">
+                        {col.label}
+                        <SortIcon field={col.field} />
+                      </div>
+                    </th>
+                  )
+                })}
               </tr>
             </thead>
             <tbody>
@@ -430,17 +464,40 @@ export default function PacientesPage() {
                     className="sentient-row cursor-pointer transition-colors group"
                   >
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[12px] font-body font-bold flex-shrink-0">
-                          {p.full_name?.[0]?.toUpperCase() || '?'}
-                        </div>
-                        <span className="text-xs font-body font-medium text-text-primary group-hover:text-brand-purple-light transition-colors truncate max-w-[180px]">
-                          {p.full_name || t('noName')}
-                        </span>
-                      </div>
+                      {(() => {
+                        // S146: dim the avatar + label when the patient has no
+                        // real name. The grid was full of identical "Por
+                        // identificar" rows reading at primary text weight, which
+                        // made the entire column visually shouty even though
+                        // none of those rows have actionable identity yet.
+                        const hasName = !!(p.full_name && p.full_name.trim())
+                        const initial = hasName ? p.full_name![0].toUpperCase() : '?'
+                        return (
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-md flex items-center justify-center text-[12px] font-body font-bold flex-shrink-0 ${
+                              hasName
+                                ? 'bg-brand-purple/8 border border-brand-purple/15 text-brand-purple'
+                                : 'bg-surface-2/50 border border-border/40 text-text-dim'
+                            }`}>
+                              {initial}
+                            </div>
+                            <span className={`text-xs font-body truncate max-w-[180px] transition-colors ${
+                              hasName
+                                ? 'font-medium text-text-primary group-hover:text-brand-purple-light'
+                                : 'text-text-dim italic'
+                            }`}>
+                              {hasName ? p.full_name : t('noName')}
+                            </span>
+                          </div>
+                        )
+                      })()}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[10px] text-text-secondary font-body">{p.phone}</span>
+                      <span className={`text-[10px] font-body ${
+                        formatPhone(p.phone) === '—' ? 'text-text-dim' : 'text-text-secondary'
+                      }`}>
+                        {formatPhone(p.phone)}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-[12px] font-body font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
@@ -448,12 +505,33 @@ export default function PacientesPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[12px] font-body text-text-muted truncate max-w-[140px] block">
-                        {p.service_interest || '\u2014'}
-                      </span>
+                      {(() => {
+                        // S146: collapse the noisy "Por identificar" placeholder
+                        // (which the backend writes when no real value is
+                        // present) into the same em-dash treatment as null.
+                        const interest = (p.service_interest || '').trim()
+                        const isReal = interest && !/por\s+identificar/i.test(interest)
+                        return (
+                          <span className={`text-[12px] font-body truncate max-w-[140px] block ${
+                            isReal ? 'text-text-muted' : 'text-text-dim'
+                          }`}>
+                            {isReal ? interest : '\u2014'}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[12px] font-body text-text-muted">{p.city || '\u2014'}</span>
+                      {(() => {
+                        const city = (p.city || '').trim()
+                        const isReal = city && !/por\s+identificar/i.test(city)
+                        return (
+                          <span className={`text-[12px] font-body ${
+                            isReal ? 'text-text-muted' : 'text-text-dim'
+                          }`}>
+                            {isReal ? city : '\u2014'}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className="text-[11px] font-body text-text-dim">{timeAgo(p.created_at)}</span>
