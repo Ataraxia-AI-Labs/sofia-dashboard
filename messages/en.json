@@ -649,7 +649,8 @@
     "turn": "turn",
     "turns": "turns",
     "noTranscriptionHint": "Calls placed today on the new SIM will appear here as soon as they are processed.",
-    "unknownPatient": "Unknown caller"
+    "unknownPatient": "Unknown caller",
+    "period": "Period"
   },
   "segmentation": {
     "title": "Patient Segmentation",

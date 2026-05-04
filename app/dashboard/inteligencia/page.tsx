@@ -1,20 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { Brain, MessageSquare, GraduationCap, Star } from 'lucide-react'
+import { Brain, MessageSquare, GraduationCap, Star, PhoneCall } from 'lucide-react'
 import { useOrg } from '@/lib/org-context'
 import { ProactiveQueuePanel } from '@/components/proactive-queue-panel'
 import { CoachingTipsPanel } from '@/components/coaching-tips-panel'
 import { ReviewRequestsPanel } from '@/components/review-requests-panel'
 import { SofiaLearningsPanel } from '@/components/sofia-learnings-panel'
+import { VoiceAnalyticsPanel } from '@/components/voice-analytics-panel'
 
-type Tab = 'proactive' | 'coaching' | 'reviews' | 'learnings'
+type Tab = 'proactive' | 'coaching' | 'reviews' | 'learnings' | 'voice'
 
 const TABS: { id: Tab; label: string; icon: typeof Brain }[] = [
   { id: 'proactive', label: 'Cola proactiva', icon: MessageSquare },
   { id: 'coaching', label: 'Coaching', icon: GraduationCap },
   { id: 'reviews', label: 'Reseñas', icon: Star },
   { id: 'learnings', label: 'Aprendizajes', icon: Brain },
+  { id: 'voice', label: 'Voz', icon: PhoneCall },
 ]
 
 export default function InteligenciaPage() {
@@ -56,6 +58,7 @@ export default function InteligenciaPage() {
       {active === 'coaching' && <CoachingTipsPanel orgId={orgId} />}
       {active === 'reviews' && <ReviewRequestsPanel orgId={orgId} />}
       {active === 'learnings' && <SofiaLearningsPanel orgId={orgId} />}
+      {active === 'voice' && <VoiceAnalyticsPanel orgId={orgId} />}
     </div>
   )
 }

@@ -649,7 +649,8 @@
     "turn": "turno",
     "turns": "turnos",
     "noTranscriptionHint": "As ligações feitas hoje no novo SIM aparecerão aqui assim que forem processadas.",
-    "unknownPatient": "Sem identificação"
+    "unknownPatient": "Sem identificação",
+    "period": "Período"
   },
   "segmentation": {
     "title": "Segmentacao de Pacientes",

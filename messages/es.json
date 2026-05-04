@@ -649,7 +649,8 @@
     "turn": "turno",
     "turns": "turnos",
     "noTranscriptionHint": "Las llamadas registradas hoy en la SIM nueva aparecerán acá apenas se procesen.",
-    "unknownPatient": "Sin identificar"
+    "unknownPatient": "Sin identificar",
+    "period": "Período"
   },
   "segmentation": {
     "title": "Segmentación de Pacientes",
