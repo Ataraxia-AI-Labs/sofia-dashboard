@@ -4,14 +4,14 @@ import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   getChannelMetrics, getChannelComparison, getChannelConfig,
-  updateChannelConfig, getChannelInsights,
+  updateChannelConfig,
 } from '@/lib/api/channels'
 import { ChannelBadge, CHANNEL_CONFIG } from '@/components/channel-badge'
 import { timeAgo } from '@/lib/api/helpers'
-import type { ChannelMetrics, ChannelComparison, ChannelConfig, ChannelInsight, ChannelType } from '@/types'
+import type { ChannelMetrics, ChannelComparison, ChannelConfig, ChannelType } from '@/types'
 import {
-  RefreshCw, Sparkles, Trophy, MessageCircle, Users, TrendingUp,
-  Clock, Settings2, Loader2, Phone,
+  Trophy, MessageCircle, Users, TrendingUp,
+  Clock, Settings2, Phone,
 } from 'lucide-react'
 import * as Sentry from '@sentry/nextjs'
 
@@ -29,14 +29,17 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const [metrics, setMetrics] = useState<ChannelMetrics[]>([])
   const [comparison, setComparison] = useState<ChannelComparison | null>(null)
   const [config, setConfig] = useState<ChannelConfig[]>([])
-  const [insights, setInsights] = useState<ChannelInsight | null>(null)
   const [loading, setLoading] = useState(true)
-  const [insightsLoading, setInsightsLoading] = useState(false)
+
+  // S145: AI Insights panel deleted (CEO directive). Generic GPT advice
+  // ("invest in Instagram", "redirect voice traffic to WhatsApp") wasn't
+  // tied to a specific patient or action — token spend without clinical
+  // value. The patient-level proactive queue at /dashboard/inteligencia
+  // already surfaces the actionable recommendations.
 
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      // Load core data first (fast) — insights loaded separately (GPT call, slow)
       const [mRes, compRes, cfgRes] = await Promise.allSettled([
         getChannelMetrics(orgId),
         getChannelComparison(orgId),
@@ -49,16 +52,6 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
       Sentry.captureException(err)
     }
     setLoading(false)
-
-    // Load AI insights in background (GPT-4o-mini, can be slow)
-    setInsightsLoading(true)
-    try {
-      const ins = await getChannelInsights(orgId)
-      setInsights(ins)
-    } catch (err) {
-      Sentry.captureException(err)
-    }
-    setInsightsLoading(false)
   }, [orgId])
 
   useEffect(() => { loadData() }, [loadData])
@@ -88,17 +81,6 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
         c.channel === channel ? { ...c, is_enabled: !enabled } : c
       ))
     }
-  }
-
-  const handleRefreshInsights = async () => {
-    setInsightsLoading(true)
-    try {
-      const ins = await getChannelInsights(orgId)
-      setInsights(ins)
-    } catch (err) {
-      Sentry.captureException(err)
-    }
-    setInsightsLoading(false)
   }
 
   if (loading) {
@@ -339,59 +321,6 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           </div>
         </div>
       )}
-
-      {/* AI INSIGHTS */}
-      <div className="glass-card p-4 border-brand-purple/15">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold font-mono text-text-primary flex items-center gap-2">
-            <Sparkles size={14} className="text-brand-purple" />
-            {t('aiInsights')}
-          </h3>
-          <button
-            onClick={handleRefreshInsights}
-            disabled={insightsLoading}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/20 transition-colors disabled:opacity-50"
-          >
-            {insightsLoading ? (
-              <Loader2 size={10} className="animate-spin" />
-            ) : (
-              <RefreshCw size={10} />
-            )}
-            {t('refreshInsights')}
-          </button>
-        </div>
-        {insights ? (
-          <div>
-            {insights.insights?.length > 0 ? (
-              <div className="space-y-3">
-                {insights.insights.map((item, idx) => (
-                  <div key={idx} className="p-3 rounded-lg bg-surface-2 border border-border">
-                    <p className="text-[13px] font-body font-semibold text-text-primary mb-1">{item.title}</p>
-                    <p className="text-[10px] text-text-muted leading-relaxed mb-1.5">{item.observation}</p>
-                    {item.recommendation && (
-                      <p className="text-[10px] text-brand-purple leading-relaxed">
-                        → {item.recommendation}
-                      </p>
-                    )}
-                    {item.impact && (
-                      <p className="text-[9px] text-text-dim mt-1">{item.impact}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-text-muted leading-relaxed whitespace-pre-line">
-                {insights.insight}
-              </p>
-            )}
-            <p className="text-[9px] text-text-dim mt-2">
-              {timeAgo(insights.generated_at)}
-            </p>
-          </div>
-        ) : (
-          <p className="text-xs text-text-dim">{t('noInsights')}</p>
-        )}
-      </div>
 
       {/* LINK TO CHANNEL SETTINGS (if unconfigured channels exist) */}
       {CHANNEL_ORDER.some(ch => {

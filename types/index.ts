@@ -1215,18 +1215,8 @@ export interface ChannelConfig {
   config?: Record<string, unknown>
 }
 
-export interface ChannelInsightItem {
-  title: string
-  observation: string
-  recommendation: string
-  impact: string
-}
-
-export interface ChannelInsight {
-  insight: string
-  insights: ChannelInsightItem[]
-  generated_at: string
-}
+// S145: ChannelInsight + ChannelInsightItem removed (CEO directive,
+// see lib/api/channels.ts for rationale).
 
 export interface ConversationMessage {
   id: string

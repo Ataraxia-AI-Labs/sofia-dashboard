@@ -438,49 +438,10 @@ describe('MarketplacePage', () => {
   })
 })
 
-// ============================================================
-// COMPONENTS: ConvIntelligencePanel
-// ============================================================
-describe('ConvIntelligencePanel', () => {
-  const { getPatientMemories, getPatientPersonality, getPatientEmotions, getPatientSummary } = require('@/lib/api/conv-intel')
-
-  it('renders with summary data', async () => {
-    getPatientMemories.mockResolvedValue([])
-    getPatientPersonality.mockResolvedValue({ openness: 0.7, conscientiousness: 0.6, extraversion: 0.5, agreeableness: 0.8, neuroticism: 0.3, warmth: 0.9, dominant_traits: [], communication_style: 'empathetic' })
-    getPatientEmotions.mockResolvedValue({ joy: 0.6, trust: 0.7, fear: 0.1, surprise: 0.2, sadness: 0.1, disgust: 0.05, anger: 0.05, anticipation: 0.3, dominant_emotion: 'trust', emotional_stability: 0.85 })
-    getPatientSummary.mockResolvedValue({ summary: 'Patient with regular visits', brief: 'Good' })
-
-    const { ConvIntelligencePanel } = require('@/components/conv-intelligence-panel')
-    render(<ConvIntelligencePanel orgId="org-1" patientId="p-1" patientName="Maria" />)
-    await waitFor(() => {
-      expect(screen.getByText('Patient with regular visits')).toBeInTheDocument()
-    })
-  })
-
-  it('renders loading state', () => {
-    getPatientMemories.mockReturnValue(new Promise(() => {}))
-    getPatientPersonality.mockReturnValue(new Promise(() => {}))
-    getPatientEmotions.mockReturnValue(new Promise(() => {}))
-    getPatientSummary.mockReturnValue(new Promise(() => {}))
-
-    const { ConvIntelligencePanel } = require('@/components/conv-intelligence-panel')
-    render(<ConvIntelligencePanel orgId="org-1" patientId="p-1" />)
-    expect(screen.getByText('...')).toBeInTheDocument()
-  })
-
-  it('renders empty state for each section', async () => {
-    getPatientMemories.mockResolvedValue([])
-    getPatientPersonality.mockResolvedValue(null)
-    getPatientEmotions.mockResolvedValue(null)
-    getPatientSummary.mockResolvedValue(null)
-
-    const { ConvIntelligencePanel } = require('@/components/conv-intelligence-panel')
-    render(<ConvIntelligencePanel orgId="org-1" patientId="p-1" />)
-    await waitFor(() => {
-      expect(getPatientSummary).toHaveBeenCalledWith('org-1', 'p-1')
-    })
-  })
-})
+// S145: ConvIntelligencePanel describe block removed — component deleted
+// (CEO directive S142). See app/dashboard/conversaciones/page.tsx hook
+// block for rationale (no clinical action behind the panel that wasn't
+// already in the thread/badge stream).
 
 // ============================================================
 // COMPONENTS: StaffCoachingPanel

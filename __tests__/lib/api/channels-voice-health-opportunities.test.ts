@@ -11,7 +11,7 @@ import {
   fetchChannelStatus, connectWhatsApp, connectWhatsAppEmbedded,
   getChannelMetrics, getChannelComparison, getUnifiedInbox,
   getConversationDetail, getChannelConfig, updateChannelConfig,
-  getChannelInsights, suggestRedirect,
+  suggestRedirect,
 } from '@/lib/api/channels'
 
 import {
@@ -187,19 +187,8 @@ describe('Channels API', () => {
     })
   })
 
-  describe('getChannelInsights', () => {
-    it('returns insights', async () => {
-      mockAuthFetch.mockResolvedValue({
-        ok: true, json: () => Promise.resolve({ insight: 'Focus on IG' }),
-      })
-      expect((await getChannelInsights('org-1'))!.insight).toBe('Focus on IG')
-    })
-
-    it('returns null on error', async () => {
-      mockAuthFetch.mockResolvedValue({ ok: false })
-      expect(await getChannelInsights('org-1')).toBeNull()
-    })
-  })
+  // S145: getChannelInsights tests removed — function deleted with the
+  // panel (CEO directive). See lib/api/channels.ts for rationale.
 
   describe('suggestRedirect', () => {
     it('returns suggestion', async () => {

@@ -14,9 +14,7 @@ import { es } from 'date-fns/locale'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-// S142: ConvIntelligencePanel import removed — component file retained for
-// now but unwired from /conversaciones (CEO: no clinical action a doctor
-// could take from the panel that wasn't already visible in the thread).
+// S145: ConvIntelligencePanel deleted from repo (was only wired here).
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,

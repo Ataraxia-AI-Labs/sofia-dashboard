@@ -1,7 +1,7 @@
 import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   ChannelMetrics, ChannelComparison, InboxConversation,
-  ConversationMessage, ChannelConfig, ChannelInsight,
+  ConversationMessage, ChannelConfig,
 } from '@/types'
 
 // ============================================================
@@ -310,27 +310,9 @@ export async function updateChannelConfig(
   return res.json()
 }
 
-export async function getChannelInsights(
-  orgId: string
-): Promise<ChannelInsight | null> {
-  const res = await authFetch(`${API_URL}/channels/${orgId}/insights`)
-  if (!res.ok) return null
-  const data = await res.json()
-  if (data?.error) return null
-
-  // Backend returns { insights: [{title, observation, recommendation, impact}], generated_at }
-  // Frontend needs { insight: string, insights: [...], generated_at }
-  const items = data.insights || []
-  const insight = items.map((i: { title: string; observation: string; recommendation: string; impact: string }) =>
-    `**${i.title}**\n${i.observation}\n→ ${i.recommendation}${i.impact ? ` (${i.impact})` : ''}`
-  ).join('\n\n') || data.insight || ''
-
-  return {
-    insight,
-    insights: items,
-    generated_at: data.generated_at || new Date().toISOString(),
-  }
-}
+// S145: getChannelInsights removed (CEO directive). Generic GPT advice
+// burned tokens without offering any clinical action. The patient-level
+// proactive queue at /dashboard/inteligencia covers actionable signals.
 
 export async function suggestRedirect(
   orgId: string,
