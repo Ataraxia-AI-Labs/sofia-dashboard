@@ -19,7 +19,7 @@ import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock, Shield, Loader2, Inbox, Layers, Mic, Brain
+  Hash, Clock, Shield, Loader2, Inbox, Layers, Brain
 } from 'lucide-react'
 
 const ChannelsPanel = dynamic(() => import('./channels-panel'), {
@@ -32,10 +32,11 @@ const UnifiedInbox = dynamic(() => import('./unified-inbox'), {
   loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
 })
 
-const VoicePanel = dynamic(() => import('./voice-panel'), {
-  ssr: false,
-  loading: () => <div className="glass-card p-5 animate-pulse"><div className="h-48 bg-surface-3 rounded-lg" /></div>,
-})
+// S140: VoicePanel deleted. Voice calls now appear inline in the unified
+// timeline below (Transmisiones) with the VOICE_CALL platform badge.
+// Aggregate voice metrics live in the backend (/voice/{org_id}/analytics)
+// — surface them in Pulso/Inteligencia when product needs them, not as
+// a duplicate listing on top of the conversation feed.
 
 // ============================================================
 // CONSTANTS & CONFIG
@@ -139,12 +140,15 @@ export default function ConversacionesPage() {
 
   // Tab state — read initial from URL (?tab=inbox|channels|voice|conversations)
   const searchParams = useSearchParams()
-  const initialTab = ((): 'conversations' | 'inbox' | 'channels' | 'voice' => {
+  const initialTab = ((): 'conversations' | 'inbox' | 'channels' => {
     const t = searchParams.get('tab')
-    if (t === 'inbox' || t === 'channels' || t === 'voice' || t === 'conversations') return t
+    // S140: 'voice' alias kept so old bookmarks land on the unified timeline
+    // instead of 404. Voice calls are inline rows now.
+    if (t === 'voice') return 'conversations'
+    if (t === 'inbox' || t === 'channels' || t === 'conversations') return t
     return 'conversations'
   })()
-  const [activeTab, setActiveTab] = useState<'conversations' | 'inbox' | 'channels' | 'voice'>(initialTab)
+  const [activeTab, setActiveTab] = useState<'conversations' | 'inbox' | 'channels'>(initialTab)
 
   // Data state
   const [interactions, setInteractions] = useState<InteractionLog[]>([])
@@ -390,17 +394,6 @@ export default function ConversacionesPage() {
             <Layers size={11} strokeWidth={1.6} />
             {t('tabs.channels')}
           </button>
-          <button
-            onClick={() => setActiveTab('voice')}
-            className={`px-2.5 py-1 rounded-md text-[11px] font-body font-semibold transition-all flex items-center gap-1 ${
-              activeTab === 'voice'
-                ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.45)]'
-                : 'text-text-dim hover:text-text-primary'
-            }`}
-          >
-            <Mic size={11} strokeWidth={1.6} />
-            {t('tabs.voice')}
-          </button>
         </div>
       </div>
 
@@ -416,12 +409,8 @@ export default function ConversacionesPage() {
         </div>
       )}
 
-      {/* VOICE TAB */}
-      {activeTab === 'voice' && (
-        <div className="flex-1 overflow-y-auto">
-          <VoicePanel orgId={orgId} />
-        </div>
-      )}
+      {/* S140: VOICE TAB removed — voice calls appear inline as rows
+          in the conversations timeline below with the VOICE_CALL badge. */}
 
       {/* CONVERSATIONS TAB — Original content */}
       {activeTab === 'conversations' && <>
