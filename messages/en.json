@@ -648,7 +648,8 @@
     "outbound": "Outbound",
     "turn": "turn",
     "turns": "turns",
-    "noTranscriptionHint": "Calls placed today on the new SIM will appear here as soon as they are processed."
+    "noTranscriptionHint": "Calls placed today on the new SIM will appear here as soon as they are processed.",
+    "unknownPatient": "Unknown caller"
   },
   "segmentation": {
     "title": "Patient Segmentation",

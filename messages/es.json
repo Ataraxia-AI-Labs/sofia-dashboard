@@ -648,7 +648,8 @@
     "outbound": "Saliente",
     "turn": "turno",
     "turns": "turnos",
-    "noTranscriptionHint": "Las llamadas registradas hoy en la SIM nueva aparecerán acá apenas se procesen."
+    "noTranscriptionHint": "Las llamadas registradas hoy en la SIM nueva aparecerán acá apenas se procesen.",
+    "unknownPatient": "Sin identificar"
   },
   "segmentation": {
     "title": "Segmentación de Pacientes",

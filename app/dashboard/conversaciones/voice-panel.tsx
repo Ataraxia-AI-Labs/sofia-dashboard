@@ -259,25 +259,35 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
         )}
       </div>
 
-      {/* CALL DETAIL MODAL — S138 redesign:
-          tighter header, 4 stat pills (replacing the cramped 3-tiny-icons row),
-          summary card with topics/action_items/follow_ups when available,
-          transcript reads like a chat thread with proper alignment. */}
-      {showModal && selectedCall && (
+      {/* CALL DETAIL MODAL — S138/S139:
+          - Tight spacing (no separator borders between sections, just gap)
+          - Defensive patient_name guard (UUID prefix → "Sin identificar")
+          - Stat pills + summary buckets + transcript chat thread.
+          Closes on Escape (handled by the dialog) and overlay click. */}
+      {showModal && selectedCall && (() => {
+        // S139: detect UUID-prefix-as-name (legacy data + paranoid fallback).
+        // Backend now returns "Sin identificar" but old rows still have hex
+        // garbage in patient_name. Normalize at render time.
+        const rawName = (selectedCall.patient_name || '').trim()
+        const looksLikeIdPrefix = /^[a-f0-9]{6,}$/i.test(rawName)
+        const displayName = (!rawName || looksLikeIdPrefix) ? t('unknownPatient') : rawName
+        const initial = (!rawName || looksLikeIdPrefix) ? '?' : rawName[0].toUpperCase()
+        return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="call-detail-title">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={closeModal} />
           <div className="relative w-full max-w-2xl max-h-[88vh] bg-surface border border-border rounded-xl flex flex-col overflow-hidden animate-fade-in shadow-[0_24px_56px_-16px_rgba(0,0,0,0.7),0_0_0_1px_rgba(139,92,246,0.08)]">
 
-            {/* Header: avatar + name + close */}
-            <div className="px-5 pt-4 pb-3 border-b border-border/30 flex items-start justify-between gap-3 flex-shrink-0">
+            {/* Header: avatar + name + close. Compact: pb-2 instead of pb-3
+                so the stats grid below sits closer. */}
+            <div className="px-5 pt-4 pb-2 flex items-start justify-between gap-3 flex-shrink-0">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple text-[13px] font-bold font-body flex-shrink-0">
-                  {selectedCall.patient_name?.[0]?.toUpperCase() || '?'}
+                  {initial}
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 id="call-detail-title" className="text-[14px] font-semibold font-mono text-text-primary truncate">
-                      {selectedCall.patient_name || t('patient')}
+                      {displayName}
                     </h3>
                     <CallStatusBadge status={selectedCall.status} />
                   </div>
@@ -299,9 +309,9 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
               </button>
             </div>
 
-            {/* Stat pills row — 3 metrics with their own labels, fills the
-                vertical breathing room that the old header left empty. */}
-            <div className="px-5 py-3 grid grid-cols-3 gap-2 border-b border-border/20 flex-shrink-0">
+            {/* Stat pills row — 3 metrics inline, no border separator above
+                or below to keep the modal feeling continuous. */}
+            <div className="px-5 pb-3 grid grid-cols-3 gap-2 flex-shrink-0">
               <StatPill
                 icon={<Clock size={11} aria-hidden="true" />}
                 label={t('duration')}
@@ -329,7 +339,7 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
               const hasFollowUps = Array.isArray(s.follow_ups) && s.follow_ups.length > 0
               if (!hasTopics && !hasActions && !hasFollowUps) return null
               return (
-                <div className="px-5 py-3 border-b border-border/20 flex-shrink-0 grid gap-2 sm:grid-cols-2">
+                <div className="px-5 pb-3 flex-shrink-0 grid gap-2 sm:grid-cols-2">
                   {hasTopics && (
                     <SummaryBucket label={t('topics')} items={s.topics as string[]} accent="purple" />
                   )}
@@ -343,9 +353,10 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
               )
             })()}
 
-            {/* Transcript */}
-            <div className="flex-1 overflow-y-auto px-5 py-4">
-              <div className="flex items-center gap-1.5 mb-3">
+            {/* Transcript — single hairline divider above so it visually
+                separates from the metadata above without adding extra padding. */}
+            <div className="flex-1 overflow-y-auto px-5 pt-3 pb-4 border-t border-border/20">
+              <div className="flex items-center gap-1.5 mb-2">
                 <MessageCircle size={12} className="text-brand-purple" aria-hidden="true" />
                 <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-text-muted">
                   {t('transcription')}
@@ -425,7 +436,8 @@ export default function VoicePanel({ orgId }: VoicePanelProps) {
             </div>
           </div>
         </div>
-      )}
+        )
+      })()}
     </div>
   )
 }
