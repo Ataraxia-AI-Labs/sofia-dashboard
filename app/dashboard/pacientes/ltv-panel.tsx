@@ -62,9 +62,21 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
     try {
       const result = await predictAllLTV(orgId)
       if (result) {
-        toast.success(t('recalcComplete', { count: result.predicted }))
+        // S147: clarify what "0 predicted" means — when there are no
+        // patients with enough signal to compute LTV the action looks
+        // like it failed, but it ran fine; the population is just empty.
+        const count = result.predicted ?? 0
+        if (count > 0) {
+          toast.success(t('recalcComplete', { count }))
+        } else {
+          toast.info(t('recalcNoData'))
+        }
+      } else {
+        // null = endpoint returned a non-2xx; show an explicit error
+        // so the operator doesn't sit there wondering if it worked.
+        toast.error(t('recalcError'))
       }
-      loadData()
+      await loadData()
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('recalcError'))

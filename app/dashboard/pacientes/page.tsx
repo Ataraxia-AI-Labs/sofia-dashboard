@@ -345,7 +345,12 @@ export default function PacientesPage() {
               {t('views.gamification')}
             </button>
           </div>
-          {canExport && (
+          {/* S147: Exportar CSV solo aplica al listado (filtros + paginación
+              corresponden a la vista Lista). En las otras vistas
+              (Segmentos / Duplicados / LTV / Gamificación) los datos no
+              corresponden 1:1 con el endpoint patients/export, así que
+              ocultamos el botón para no confundir al operador. */}
+          {canExport && activeView === 'list' && (
             <button onClick={handleExport} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-2 border border-border text-text-muted text-[12px] font-body font-semibold hover:text-text-primary transition-colors">
               <Download size={13} /> {t('exportCSV')}
             </button>

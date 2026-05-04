@@ -5,12 +5,23 @@ import type { DuplicateCandidate, DuplicateStats } from '@/types'
 // DUPLICATE DETECTION API (P5-11)
 // ============================================================
 
-export async function scanDuplicates(orgId: string): Promise<{ scanned: number; duplicates_found: number } | null> {
+// S147: backend returns {scanned, found, stored, error}; the frontend
+// previously typed `duplicates_found` and read it back undefined, which
+// rendered "found undefined duplicados" in the toast. Normalize at the
+// boundary so callers can treat `duplicates_found` as the canonical
+// field name without caring what the backend uses.
+export async function scanDuplicates(orgId: string): Promise<{ scanned: number; duplicates_found: number; stored?: number } | null> {
   const res = await authFetch(`${API_URL}/api/duplicates/scan/${orgId}`, {
     method: 'POST',
   })
   if (!res.ok) return null
-  return res.json()
+  const raw = await res.json()
+  if (raw?.error) return null
+  return {
+    scanned: raw.scanned ?? 0,
+    duplicates_found: raw.found ?? raw.duplicates_found ?? 0,
+    stored: raw.stored ?? 0,
+  }
 }
 
 export async function getDuplicates(orgId: string, status?: string): Promise<DuplicateCandidate[]> {

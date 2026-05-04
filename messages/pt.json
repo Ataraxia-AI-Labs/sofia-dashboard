@@ -1176,7 +1176,9 @@
       "pending": "Pendentes de revisao",
       "merged": "Fundidos",
       "dismissed": "Descartados"
-    }
+    },
+    "scanCompleteEmpty": "Escaneados {scanned} pacientes — nenhum duplicado encontrado",
+    "scanNoPatients": "Sem pacientes para escanear ainda"
   },
   "ltv": {
     "subtitle": "Predicao de valor de vida do paciente (12 meses)",
@@ -1202,7 +1204,8 @@
     },
     "trendRising": "Subindo",
     "trendStable": "Estavel",
-    "trendDeclining": "Caindo"
+    "trendDeclining": "Caindo",
+    "recalcNoData": "Recálculo concluído — sem pacientes com histórico suficiente ainda"
   },
   "outreach": {
     "statsPending": "Pendentes",

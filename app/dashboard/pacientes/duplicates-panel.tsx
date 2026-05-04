@@ -56,11 +56,23 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
     try {
       const result = await scanDuplicates(orgId)
       if (result) {
-        toast.success(t('scanComplete', { found: result.duplicates_found }))
+        // S147: surface the scan size so the operator knows the action
+        // ran (was previously "0 duplicados encontrados" without context,
+        // and the scan is fast enough — O(n²) on <100 patients takes
+        // hundreds of ms — that the button felt like a no-op).
+        const scanned = result.scanned ?? 0
+        const found = result.duplicates_found ?? 0
+        if (found > 0) {
+          toast.success(t('scanComplete', { found }))
+        } else if (scanned > 0) {
+          toast.info(t('scanCompleteEmpty', { scanned }))
+        } else {
+          toast.info(t('scanNoPatients'))
+        }
       } else {
         toast.error(t('scanError'))
       }
-      loadData()
+      await loadData()
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('scanError'))

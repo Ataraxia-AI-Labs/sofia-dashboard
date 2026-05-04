@@ -100,15 +100,31 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
   }
 
   const handleGenerateEmbeddings = async () => {
+    // S147: chain the full intelligence pipeline so the operator gets a
+    // useful end-state from a single click instead of having to discover
+    // that "Actualizar inteligencia" only ran step 1/2. Was: generate
+    // embeddings only; user clicked, saw no segments appear, assumed
+    // bug. Now: embeddings → cluster → reload, with explicit status
+    // messages for each phase.
     setEmbeddingsInProgress(true)
     setStatusMessage(null)
     try {
-      const result = await generateEmbeddings(orgId)
-      if (result) {
-        setStatusMessage(result.message)
-        toast.success(result.message || 'Embeddings generados')
-      } else {
+      const embedRes = await generateEmbeddings(orgId)
+      if (!embedRes) {
         toast.error('No se pudo actualizar la inteligencia de pacientes. Intenta de nuevo.')
+        setEmbeddingsInProgress(false)
+        return
+      }
+      setStatusMessage(embedRes.message || 'Embeddings generados, ejecutando clustering...')
+
+      // Step 2: cluster automatically so the segments grid populates.
+      const clusterRes = await runClustering(orgId)
+      if (clusterRes) {
+        setStatusMessage(clusterRes.message)
+        toast.success(clusterRes.message || 'Inteligencia actualizada y segmentos generados')
+        await loadSegments()
+      } else {
+        toast.info('Embeddings generados. No hay suficientes pacientes para clustering todavía.')
       }
     } catch (err) {
       Sentry.captureException(err)

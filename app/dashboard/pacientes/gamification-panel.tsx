@@ -175,7 +175,13 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
               <span className="text-[10px] text-text-dim uppercase font-body font-semibold">{t('engagementRate')}</span>
             </div>
             <div className="text-xl font-bold text-brand-cyan font-body">
-              {(insights.engagement_rate * 100).toFixed(1)}%
+              {/* S147: backend returns NaN for engagement_rate when no
+                  patients have any points (division by zero). Guard so
+                  the UI never renders "NaN%" — show 0% as a stable
+                  zero-state for the empty leaderboard. */}
+              {Number.isFinite(insights.engagement_rate)
+                ? (insights.engagement_rate * 100).toFixed(1)
+                : '0.0'}%
             </div>
           </div>
         </div>
