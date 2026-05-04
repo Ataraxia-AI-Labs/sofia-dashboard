@@ -127,13 +127,20 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const configMap: Record<string, ChannelConfig> = {}
   for (const c of config) configMap[c.channel] = c
 
-  // Filter: only show channels that are configured OR have actual activity
+  // S142: show a channel if any of these is true:
+  //   - org-level flag is_enabled (operator turned it on, even if config blob is empty)
+  //   - has a non-empty config blob (manual setup happened)
+  //   - has any activity in the metrics window
+  // Was hiding Instagram (1 msg outside 30d window + empty config blob even
+  // though instagram_enabled=true on the org) and was hiding any channel
+  // an operator just enabled but hasn't seen traffic on yet.
   const activeChannels = CHANNEL_ORDER.filter(ch => {
     const m = metricsMap[ch]
     const cfg = configMap[ch]
+    const isEnabled = cfg?.is_enabled === true
     const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
     const hasActivity = m && (m.message_count > 0 || m.unique_patients > 0)
-    return hasConfig || hasActivity
+    return isEnabled || hasConfig || hasActivity
   })
 
   // Messaging channels only (exclude VOICE for message-based comparisons)

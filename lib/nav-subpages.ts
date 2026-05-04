@@ -12,12 +12,13 @@ export interface Subpage {
 }
 
 export const NAV_SUBPAGES: Record<string, Subpage[]> = {
-  // Conversaciones — activeTab: 'conversations' | 'inbox' | 'channels' | 'voice'
+  // Conversaciones — S140/S141: voice removed; voice rows now appear inline
+  // in the unified chat timeline with their own VOICE_CALL badge, and the
+  // aggregate metrics live under /dashboard/inteligencia → tab Voz.
   '/dashboard/conversaciones': [
-    { label: 'Chat unificado', href: '/dashboard/conversaciones?tab=conversations', description: 'Todos los canales' },
+    { label: 'Chat unificado', href: '/dashboard/conversaciones?tab=conversations', description: 'Todos los canales (incluye llamadas)' },
     { label: 'Bandeja', href: '/dashboard/conversaciones?tab=inbox', description: 'Por atender' },
     { label: 'Canales', href: '/dashboard/conversaciones?tab=channels', description: 'WhatsApp · IG · Web · Voz' },
-    { label: 'Voz en vivo', href: '/dashboard/conversaciones?tab=voice', description: 'Llamadas activas' },
   ],
 
   // Pacientes — activeView: 'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification'

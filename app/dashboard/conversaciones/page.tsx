@@ -14,12 +14,14 @@ import { es } from 'date-fns/locale'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { ConvIntelligencePanel } from '@/components/conv-intelligence-panel'
+// S142: ConvIntelligencePanel import removed — component file retained for
+// now but unwired from /conversaciones (CEO: no clinical action a doctor
+// could take from the panel that wasn't already visible in the thread).
 import {
   Search, MessageSquare, Phone, ArrowLeft, RefreshCw, Filter,
   Bot, User, Wrench, Zap, X,
   MessageCircle, Instagram, PhoneCall, Calendar as CalendarIcon,
-  Hash, Clock, Shield, Loader2, Inbox, Layers, Brain
+  Hash, Clock, Shield, Loader2, Inbox, Layers
 } from 'lucide-react'
 
 const ChannelsPanel = dynamic(() => import('./channels-panel'), {
@@ -705,8 +707,11 @@ function ConversationDetail({
   const PlatformIcon = platformCfg.icon
   const isVoiceCall = thread.channel === 'VOICE_CALL'
 
-  // Conv Intelligence panel
-  const [showIntel, setShowIntel] = useState(false)
+  // S142: Conv Intelligence panel removed by CEO directive — the
+  // patient sentiment / topic surfaces it offered duplicate the data the
+  // doctor already sees in the message thread + sentiment badge, and
+  // there was no concrete clinical action a doctor would take after
+  // pressing the Brain button. Component file kept for now but not wired.
 
   // Takeover state (not applicable for voice calls)
   const [isTakeover, setIsTakeover] = useState(false)
@@ -843,19 +848,8 @@ function ConversationDetail({
           </span>
         </div>
 
-        {/* Conv Intelligence toggle */}
-        <button
-          onClick={() => setShowIntel(!showIntel)}
-          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
-            showIntel
-              ? 'bg-brand-purple/10 border-brand-purple/25 text-brand-purple'
-              : 'bg-surface-3 border-border text-text-muted hover:text-text-primary'
-          }`}
-          aria-label="Inteligencia Conversacional"
-            title="Inteligencia Conversacional"
-          >
-            <Brain size={14} />
-          </button>
+        {/* S142: Conv Intelligence toggle removed (see hook block above
+            for rationale). */}
 
         {/* Takeover button */}
         {canTakeover && (
@@ -878,12 +872,8 @@ function ConversationDetail({
         )}
       </div>
 
-      {/* Conv Intelligence Panel */}
-      {showIntel && (
-        <div className="px-4 py-3 border-b border-border/30 flex-shrink-0 max-h-[350px] overflow-y-auto animate-fade-in">
-          <ConvIntelligencePanel orgId={orgId} patientId={thread.patientId} patientName={displayName} />
-        </div>
-      )}
+      {/* S142: Conv Intelligence Panel removed (see hook block at the top
+          of this component for rationale). */}
 
       {/* Messages area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-1">

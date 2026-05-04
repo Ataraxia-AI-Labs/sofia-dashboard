@@ -110,16 +110,22 @@ export function VoiceAnalyticsPanel({ orgId }: Props) {
 
       {/* Stats grid */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 220px))' }}
+        >
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="glass-card p-4 animate-pulse">
-              <div className="h-4 bg-surface-3 rounded w-20 mb-3" />
-              <div className="h-7 bg-surface-3 rounded w-14" />
+            <div key={i} className="rounded-lg border border-border/50 bg-surface-2/40 px-3 py-2.5 animate-pulse">
+              <div className="h-3 bg-surface-3 rounded w-20 mb-2" />
+              <div className="h-5 bg-surface-3 rounded w-14" />
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 220px))' }}
+        >
           <AnalyticsCard
             icon={<Phone size={16} aria-hidden="true" />}
             label={t('totalCalls')}
@@ -141,25 +147,25 @@ export function VoiceAnalyticsPanel({ orgId }: Props) {
             label={t('appointmentsBooked')}
             value={(analytics?.appointments_booked ?? 0).toString()}
           />
-          <div className="glass-card p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Users size={14} className="text-text-muted" aria-hidden="true" />
-              <span className="text-[10px] font-mono text-text-dim font-semibold uppercase tracking-wider">
+          <div className="rounded-lg border border-border/50 bg-surface-2/40 px-3 py-2.5 flex flex-col gap-1">
+            <div className="flex items-center gap-1.5 text-text-dim">
+              <Users size={11} className="text-brand-purple" aria-hidden="true" />
+              <span className="text-[10px] font-mono uppercase tracking-wider truncate">
                 {t('sentimentDistribution')}
               </span>
             </div>
             {conicGradient ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div
-                  className="w-12 h-12 rounded-full flex-shrink-0"
+                  className="w-8 h-8 rounded-full flex-shrink-0"
                   aria-hidden="true"
                   style={{
                     background: conicGradient,
-                    mask: 'radial-gradient(circle at center, transparent 40%, black 41%)',
-                    WebkitMask: 'radial-gradient(circle at center, transparent 40%, black 41%)',
+                    mask: 'radial-gradient(circle at center, transparent 38%, black 40%)',
+                    WebkitMask: 'radial-gradient(circle at center, transparent 38%, black 40%)',
                   }}
                 />
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-x-1.5 gap-y-0.5 min-w-0">
                   {sentimentEntries.map(([s, c]) => (
                     <span key={s} className="text-[9px] text-text-dim flex items-center gap-0.5">
                       <SentimentBadge sentiment={s} compact />
@@ -186,23 +192,26 @@ function AnalyticsCard({
   value: string
   trend?: number
 }) {
+  // S142: tighter Hyprland card — smaller icon chip, smaller value type,
+  // label moved to top so the card reads at a glance instead of feeling
+  // monstrous. Was glass-card p-4 with text-xl value.
   return (
-    <div className="glass-card p-4">
-      <div className="w-8 h-8 rounded-md bg-brand-purple/8 border border-brand-purple/15 flex items-center justify-center text-brand-purple mb-2">
-        {icon}
+    <div className="rounded-lg border border-border/50 bg-surface-2/40 px-3 py-2.5 flex flex-col gap-1">
+      <div className="flex items-center gap-1.5 text-text-dim">
+        <span className="text-brand-purple">{icon}</span>
+        <span className="text-[10px] font-mono uppercase tracking-wider truncate">{label}</span>
       </div>
-      <div className="flex items-center gap-1.5">
-        <span className="text-xl font-bold font-mono text-text-primary">{value}</span>
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-[15px] font-bold font-mono text-text-primary leading-none">{value}</span>
         {trend != null && trend !== 0 && (
-          <span className={`text-[10px] font-semibold flex items-center gap-0.5 ${
+          <span className={`text-[9.5px] font-semibold flex items-center gap-0.5 ${
             trend > 0 ? 'text-status-success' : 'text-status-danger'
           }`}>
-            {trend > 0 ? <TrendingUp size={10} aria-hidden="true" /> : <TrendingDown size={10} aria-hidden="true" />}
+            {trend > 0 ? <TrendingUp size={9} aria-hidden="true" /> : <TrendingDown size={9} aria-hidden="true" />}
             {trend > 0 ? '+' : ''}{trend.toFixed(0)}%
           </span>
         )}
       </div>
-      <span className="text-[12px] font-body text-text-muted mt-0.5 block">{label}</span>
     </div>
   )
 }
