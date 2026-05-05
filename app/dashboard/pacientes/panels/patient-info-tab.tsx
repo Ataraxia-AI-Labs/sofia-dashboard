@@ -1,7 +1,7 @@
 'use client'
 
 import { Phone, Mail, MapPin, Calendar, MessageSquare, Star, CreditCard, Cake } from 'lucide-react'
-import { formatCOP, formatPercent } from '@/lib/api'
+import { formatCOP } from '@/lib/api'
 import type { PatientDetail, Treatment } from '@/types'
 import { PatientAliasesStrip } from '@/components/patient-aliases-strip'
 import { PatientSummaryBlock } from '@/components/patient-summary-block'
@@ -59,18 +59,18 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
         <DetailRow icon={<Calendar size={14} />} label="Registro" value={new Date(patient.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} />
       </div>
 
-      {/* Psychometrics */}
-      {patient.psychometrics && (
+      {/* Psychometrics — only LTV is currently a real prediction (S153).
+          Trust/churn/price are still pipeline defaults across all patients
+          and will mislead the operator until the ML feature pipeline backfills
+          them; render only the LTV until then. */}
+      {patient.psychometrics?.lifetime_value_predicted ? (
         <div className="glass-card p-4 space-y-3">
-          <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Psicometría</h4>
-          <div className="grid grid-cols-2 gap-3">
-            <MiniMetric label="Nivel de Confianza" value={formatPercent((patient.psychometrics.trust_level || 0) * 100)} color="text-status-success" />
-            <MiniMetric label="Riesgo de Churn" value={formatPercent((patient.psychometrics.churn_risk_score || 0) * 100)} color="text-status-danger" />
-            <MiniMetric label="Sensibilidad a Precio" value={formatPercent((patient.psychometrics.price_sensitivity || 0) * 100)} color="text-status-warning" />
-            <MiniMetric label="LTV Predicho" value={formatCOP(patient.psychometrics.lifetime_value_predicted || 0)} color="text-brand-purple" />
+          <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Predicción</h4>
+          <div className="grid grid-cols-1 gap-3">
+            <MiniMetric label="LTV Predicho (12 meses)" value={formatCOP(patient.psychometrics.lifetime_value_predicted)} color="text-brand-purple" />
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Treatments */}
       {treatments.length > 0 && (
@@ -83,7 +83,7 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${t.status === 'ACTIVE' ? 'bg-status-success/10 text-status-success' : 'bg-surface-3 text-text-dim'}`}>{t.status}</span>
               </div>
               <div className="text-[10px] text-text-muted mt-0.5">{t.medication} — {t.dosage} — cada {t.frequency_hours}h</div>
-              <div className="text-[10px] text-text-dim mt-0.5">{new Date(t.start_date).toLocaleDateString('es-CO')} &rarr; {new Date(t.end_date).toLocaleDateString('es-CO')}</div>
+              <div className="text-[10px] text-text-dim mt-0.5">{new Date(t.start_date).toLocaleDateString('es-CO')} &rarr; {t.end_date ? new Date(t.end_date).toLocaleDateString('es-CO') : 'sin fin'}</div>
             </div>
           ))}
         </div>
