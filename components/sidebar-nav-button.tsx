@@ -89,7 +89,7 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, co
             onNavigate(locked ? '/dashboard/planes' : href)
           }}
           className={`
-            group relative w-7 h-6 flex items-center justify-center rounded-md
+            group relative w-7 h-[26px] flex items-center justify-center rounded-md
             transition-all duration-150 ease-out
             active:scale-[0.9] no-underline
             ${locked
