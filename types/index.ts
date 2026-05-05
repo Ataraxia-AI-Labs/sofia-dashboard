@@ -145,8 +145,22 @@ export interface Patient {
 
 /** Full patient detail (select *) includes extra DB columns */
 export interface PatientDetail extends Patient {
-  psychometrics?: Record<string, number>
+  psychometrics?: PatientPsychometrics
   config_settings?: Record<string, unknown>
+}
+
+/** Psicometría JSONB — mix of heuristic scores (S153) and LTV predictions */
+export interface PatientPsychometrics {
+  trust_level?: number
+  churn_risk_score?: number
+  price_sensitivity?: number
+  lifetime_value_predicted?: number
+  ltv_tier?: string
+  ltv_trend?: string
+  ltv_confidence?: number
+  /** "heuristic" while ML pipeline isn't trained; absent once real ML lands */
+  _source?: 'heuristic' | 'ml'
+  [key: string]: unknown
 }
 
 export interface PatientMLFeatures {
@@ -1400,6 +1414,7 @@ export interface PortalData {
     email: string
   }
   clinic_name: string
+  clinic_phone: string
   upcoming_appointments: Array<{
     id: string
     date: string

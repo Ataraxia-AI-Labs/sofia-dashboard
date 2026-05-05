@@ -1,7 +1,7 @@
 'use client'
 
 import { Phone, Mail, MapPin, Calendar, MessageSquare, Star, CreditCard, Cake } from 'lucide-react'
-import { formatCOP } from '@/lib/api'
+import { formatCOP, formatPercent } from '@/lib/api'
 import type { PatientDetail, Treatment } from '@/types'
 import { PatientAliasesStrip } from '@/components/patient-aliases-strip'
 import { PatientSummaryBlock } from '@/components/patient-summary-block'
@@ -59,15 +59,52 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
         <DetailRow icon={<Calendar size={14} />} label="Registro" value={new Date(patient.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} />
       </div>
 
-      {/* Psychometrics — only LTV is currently a real prediction (S153).
-          Trust/churn/price are still pipeline defaults across all patients
-          and will mislead the operator until the ML feature pipeline backfills
-          them; render only the LTV until then. */}
-      {patient.psychometrics?.lifetime_value_predicted ? (
+      {/* Predicción + Psicometría heurística (S153).
+          LTV viene del modelo (LtvPredictor). trust/churn/price son
+          heurísticos derivados de señales reales (sentiment, recencia,
+          show-rate, complaint count, ticket vs avg-org). _source = "heuristic"
+          deja claro al operador que NO es ML entrenado todavía — cuando
+          el pipeline de ML produzca scores, el predictor sobrescribirá
+          estas claves y el badge "heurística" desaparecerá. */}
+      {patient.psychometrics ? (
         <div className="glass-card p-4 space-y-3">
-          <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Predicción</h4>
-          <div className="grid grid-cols-1 gap-3">
-            <MiniMetric label="LTV Predicho (12 meses)" value={formatCOP(patient.psychometrics.lifetime_value_predicted)} color="text-brand-purple" />
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Lectura del paciente</h4>
+            {patient.psychometrics._source === 'heuristic' && (
+              <span className="text-[9px] font-mono uppercase tracking-wider text-text-dim border border-border rounded px-1.5 py-0.5" title="Estimaciones derivadas de señales reales: engagement, sentimiento, recencia, ticket vs promedio. No es un modelo ML entrenado todavía.">
+                heurística
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {patient.psychometrics.lifetime_value_predicted ? (
+              <MiniMetric
+                label="LTV 12 meses"
+                value={formatCOP(patient.psychometrics.lifetime_value_predicted)}
+                color="text-brand-purple"
+              />
+            ) : null}
+            {typeof patient.psychometrics.trust_level === 'number' ? (
+              <MiniMetric
+                label="Confianza"
+                value={formatPercent(patient.psychometrics.trust_level * 100)}
+                color="text-status-success"
+              />
+            ) : null}
+            {typeof patient.psychometrics.churn_risk_score === 'number' ? (
+              <MiniMetric
+                label="Riesgo de churn"
+                value={formatPercent(patient.psychometrics.churn_risk_score * 100)}
+                color={patient.psychometrics.churn_risk_score > 0.5 ? 'text-status-danger' : 'text-status-warning'}
+              />
+            ) : null}
+            {typeof patient.psychometrics.price_sensitivity === 'number' ? (
+              <MiniMetric
+                label="Sensibilidad a precio"
+                value={formatPercent(patient.psychometrics.price_sensitivity * 100)}
+                color="text-text-muted"
+              />
+            ) : null}
           </div>
         </div>
       ) : null}

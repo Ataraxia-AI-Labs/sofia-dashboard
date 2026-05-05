@@ -22,6 +22,7 @@ function mapPortalData(raw: Record<string, unknown>): PortalData {
       email: (pi.email ?? '') as string,
     },
     clinic_name: (raw.clinic_name ?? raw.org_name ?? '') as string,
+    clinic_phone: (raw.clinic_phone ?? raw.org_phone ?? '') as string,
     upcoming_appointments: rawAppts.map(a => {
       const startTime = (a.start_time ?? a.date ?? '') as string
       const dt = startTime ? new Date(startTime) : null

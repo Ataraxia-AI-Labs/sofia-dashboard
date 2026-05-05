@@ -17,11 +17,11 @@ import { AtaraxiaLogo } from '@/components/ataraxia-logo'
 // TIER CONFIG — Patient-facing gamification tiers
 // ============================================================
 
-const TIER_CONFIG: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  PLATINUM: { bg: 'bg-brand-purple/10', text: 'text-brand-purple', border: 'border-brand-purple/30', icon: '\u2B50' },
-  GOLD: { bg: 'bg-brand-gold/10', text: 'text-brand-gold', border: 'border-brand-gold/30', icon: '\uD83C\uDFC6' },
-  SILVER: { bg: 'bg-text-muted/10', text: 'text-text-muted', border: 'border-text-muted/30', icon: '\uD83E\uDD48' },
-  BRONZE: { bg: 'bg-brand-gold/5', text: 'text-brand-gold', border: 'border-brand-gold/20', icon: '\uD83E\uDD49' },
+const TIER_CONFIG: Record<string, { bg: string; text: string; border: string; glyph: string }> = {
+  PLATINUM: { bg: 'bg-brand-purple/10', text: 'text-brand-purple', border: 'border-brand-purple/30', glyph: 'P' },
+  GOLD:     { bg: 'bg-brand-gold/8',    text: 'text-brand-gold',   border: 'border-brand-gold/20',   glyph: 'G' },
+  SILVER:   { bg: 'bg-surface-2',       text: 'text-text-primary', border: 'border-border',          glyph: 'S' },
+  BRONZE:   { bg: 'bg-surface-2',       text: 'text-text-muted',   border: 'border-border',          glyph: 'B' },
 }
 
 function getTierCfg(tier: string) {
@@ -173,11 +173,13 @@ export default function PatientPortalPage({ params }: { params: { token: string 
             Hola, {data.patient_info.name.split(' ')[0]}
           </h1>
 
-          {/* Tier Badge */}
+          {/* Tier badge — sentient: square glyph + mono code */}
           <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${tierCfg.bg} border ${tierCfg.border}`}>
-            <span className="text-lg">{tierCfg.icon}</span>
-            <span className={`text-xs font-body font-bold ${tierCfg.text}`}>{data.gamification.tier}</span>
-            <span className="text-[12px] font-body text-text-dim font-medium">{data.gamification.total_points.toLocaleString()} pts</span>
+            <span aria-hidden="true" className={`w-5 h-5 rounded-md border ${tierCfg.border} flex items-center justify-center text-[11px] font-mono font-bold ${tierCfg.text}`}>
+              {tierCfg.glyph}
+            </span>
+            <span className={`text-xs font-body font-bold tracking-wider ${tierCfg.text}`}>{data.gamification.tier}</span>
+            <span className="text-[12px] font-mono text-text-dim font-medium">{data.gamification.total_points.toLocaleString()} pts</span>
           </div>
 
           {/* Progress to next tier */}
@@ -202,69 +204,81 @@ export default function PatientPortalPage({ params }: { params: { token: string 
           )}
         </div>
 
-        {/* ======== NEXT APPOINTMENT (HERO) ======== */}
+        {/* ======== NEXT APPOINTMENT (HERO) ========
+            Sentient: dark surface card with a 4px brand accent strip on the
+            left, mono date/time, ghost action buttons. Replaces the solid
+            brand-purple block which read as a marketing banner, not data. */}
         {nextAppointment && (
-          <div className="mb-3 p-4 rounded-lg bg-brand-purple text-white">
-            <p className="text-[10px] uppercase tracking-wider text-white/60 font-body font-medium mb-1.5">Proxima cita</p>
-            <p className="text-lg font-bold font-mono capitalize mb-0.5">{formatDate(nextAppointment.date)}</p>
-            <div className="flex items-center gap-3 text-xs font-body text-white/70">
-              <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{nextAppointment.time}</span>
-              <span className="flex items-center gap-1"><User className="w-3 h-3" />{nextAppointment.doctor}</span>
-            </div>
-            <p className="text-xs font-body font-medium mt-1.5">{nextAppointment.service}</p>
-            <div className="flex gap-2 mt-2.5">
-              {confirmCancel === nextAppointment.id ? (
-                <>
+          <div className="mb-3 rounded-lg bg-surface border border-border overflow-hidden flex">
+            <div aria-hidden="true" className="w-1 bg-brand-purple" />
+            <div className="flex-1 p-4">
+              <p className="text-[10px] uppercase tracking-wider text-brand-purple font-body font-medium mb-1.5">Proxima cita</p>
+              <p className="text-lg font-bold font-mono text-text-primary capitalize mb-0.5">{formatDate(nextAppointment.date)}</p>
+              <div className="flex items-center gap-3 text-xs font-body text-text-muted">
+                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /><span className="font-mono">{nextAppointment.time}</span></span>
+                <span className="flex items-center gap-1"><User className="w-3 h-3" />{nextAppointment.doctor}</span>
+              </div>
+              <p className="text-xs font-body font-medium text-text-primary mt-1.5">{nextAppointment.service}</p>
+              <div className="flex gap-2 mt-2.5">
+                {confirmCancel === nextAppointment.id ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleCancel(nextAppointment.id)}
+                      disabled={cancellingId === nextAppointment.id}
+                      className="flex-1 py-1.5 rounded-lg bg-status-danger/10 border border-status-danger/30 text-status-danger text-[12px] font-body font-medium disabled:opacity-50 hover:bg-status-danger/15 transition-colors"
+                    >
+                      {cancellingId === nextAppointment.id ? 'Cancelando...' : 'Si, cancelar'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmCancel(null)}
+                      className="flex-1 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-[12px] font-body font-medium"
+                    >
+                      No, mantener
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmCancel(nextAppointment.id)}
+                      className="flex-1 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-[12px] font-body font-medium hover:text-status-danger hover:border-status-danger/30 transition-colors"
+                    >
+                      Cancelar cita
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRescheduleId(rescheduleId === nextAppointment.id ? null : nextAppointment.id)}
+                      className="flex-1 py-1.5 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-[12px] font-body font-medium hover:bg-brand-purple/15 transition-colors"
+                    >
+                      Reagendar
+                    </button>
+                  </>
+                )}
+              </div>
+              {/* Reschedule date picker */}
+              {rescheduleId === nextAppointment.id && (
+                <div className="mt-2.5 flex gap-2">
+                  <input
+                    type="date"
+                    value={rescheduleDate}
+                    onChange={e => setRescheduleDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    aria-label="Nueva fecha sugerida"
+                    className="flex-1 px-3 py-1.5 rounded-lg bg-surface-2 text-text-primary text-[12px] font-mono border border-border focus:border-brand-purple/40 focus:outline-none"
+                  />
                   <button
-                    onClick={() => handleCancel(nextAppointment.id)}
-                    disabled={cancellingId === nextAppointment.id}
-                    className="flex-1 py-1.5 rounded-lg bg-status-danger/20 text-white text-[12px] font-body font-medium disabled:opacity-50"
+                    type="button"
+                    onClick={() => handleReschedule(nextAppointment.id)}
+                    disabled={!rescheduleDate}
+                    className="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-[12px] font-body font-semibold disabled:opacity-50 hover:bg-brand-purple-dark transition-colors"
                   >
-                    {cancellingId === nextAppointment.id ? 'Cancelando...' : 'Si, cancelar'}
+                    Enviar
                   </button>
-                  <button
-                    onClick={() => setConfirmCancel(null)}
-                    className="flex-1 py-1.5 rounded-lg bg-white/10 text-white text-[12px] font-body font-medium"
-                  >
-                    No, mantener
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setConfirmCancel(nextAppointment.id)}
-                    className="flex-1 py-1.5 rounded-lg bg-white/10 text-white text-[12px] font-body font-medium hover:bg-white/20 transition-colors"
-                  >
-                    Cancelar cita
-                  </button>
-                  <button
-                    onClick={() => setRescheduleId(rescheduleId === nextAppointment.id ? null : nextAppointment.id)}
-                    className="flex-1 py-1.5 rounded-lg bg-white/20 text-white text-[12px] font-body font-medium hover:bg-white/30 transition-colors"
-                  >
-                    Reagendar
-                  </button>
-                </>
+                </div>
               )}
             </div>
-            {/* Reschedule date picker */}
-            {rescheduleId === nextAppointment.id && (
-              <div className="mt-2.5 flex gap-2">
-                <input
-                  type="date"
-                  value={rescheduleDate}
-                  onChange={e => setRescheduleDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="flex-1 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[12px] font-body border border-white/20 placeholder:text-white/40 focus:outline-none"
-                />
-                <button
-                  onClick={() => handleReschedule(nextAppointment.id)}
-                  disabled={!rescheduleDate}
-                  className="px-3 py-1.5 rounded-lg bg-white text-brand-purple text-[12px] font-body font-semibold disabled:opacity-50"
-                >
-                  Enviar
-                </button>
-              </div>
-            )}
           </div>
         )}
 
@@ -444,20 +458,28 @@ export default function PatientPortalPage({ params }: { params: { token: string 
             Comparte tu codigo y ambos reciben descuento en su proxima visita.
           </p>
 
-          {/* Referral code */}
+          {/* Referral code — sentient: code in mono large, ghost icon buttons */}
           <div className="flex items-center gap-1.5 mb-2.5">
             <div className="flex-1 px-3 py-2 rounded-lg bg-surface border border-border text-center">
-              <span className="text-xs font-body font-bold text-brand-purple tracking-wider">{data.referral.code}</span>
+              <span className="text-sm font-mono font-bold text-brand-purple tracking-[0.25em]">{data.referral.code || '—'}</span>
             </div>
             <button
+              type="button"
               onClick={copyCode}
-              className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center text-text-dim hover:text-brand-purple hover:border-brand-purple/30 transition-colors"
+              disabled={!data.referral.code}
+              aria-label={copiedCode ? 'Codigo copiado' : 'Copiar codigo'}
+              title={copiedCode ? 'Codigo copiado' : 'Copiar codigo'}
+              className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center text-text-dim hover:text-brand-purple hover:border-brand-purple/30 transition-colors disabled:opacity-40"
             >
               {copiedCode ? <Check className="w-3.5 h-3.5 text-status-success" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
             <button
+              type="button"
               onClick={shareWhatsApp}
-              className="w-8 h-8 rounded-lg bg-status-success flex items-center justify-center text-white hover:opacity-90 transition-opacity"
+              disabled={!data.referral.code}
+              aria-label="Compartir codigo por WhatsApp"
+              title="Compartir codigo por WhatsApp"
+              className="w-8 h-8 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-purple hover:bg-brand-purple/15 transition-colors disabled:opacity-40"
             >
               <Share2 className="w-3.5 h-3.5" />
             </button>
@@ -478,16 +500,18 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
         {/* ======== FOOTER ======== */}
         <div className="text-center pt-3 pb-6 space-y-2.5">
-          {/* WhatsApp contact */}
-          {data.patient_info.phone && (
+          {/* WhatsApp clinic contact — sentient: brand purple, not bright green.
+              Use the clinic's phone (organizations.phone), not the patient's. */}
+          {data.clinic_phone && (
             <a
-              href={`https://wa.me/${data.patient_info.phone.replace(/[^0-9]/g, '')}`}
+              href={`https://wa.me/${data.clinic_phone.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-status-success text-white text-xs font-body font-medium hover:opacity-90 transition-opacity"
+              aria-label="Contactar a la clinica por WhatsApp"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs font-body font-medium hover:bg-brand-purple/15 transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              Contactar clínica por WhatsApp
+              Contactar clinica por WhatsApp
             </a>
           )}
 
