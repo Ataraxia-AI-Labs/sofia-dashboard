@@ -13,7 +13,7 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
   datalake: {
     icon: <Database size={38} strokeWidth={1.3} />,
     title: 'Data Lake',
-    eta: 'Q3 2026',
+    eta: 'En desarrollo · Próximamente',
     headline: 'Tu memoria colectiva.',
     subhead: 'Cada conversación, cita y decisión de tu clínica se vuelve conocimiento entrenable — tuyo, no de un proveedor genérico.',
     features: [
@@ -50,7 +50,7 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
   contenido: {
     icon: <Palette size={38} strokeWidth={1.3} />,
     title: 'Content Studio',
-    eta: 'Q3 2026',
+    eta: 'En desarrollo · Próximamente',
     headline: 'Contenido diario sin bloqueo creativo.',
     subhead: 'IA que genera posts, carousels y reels en la voz de tu clínica. Tú apruebas. Ella publica.',
     features: [
@@ -67,7 +67,7 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
   marketplace: {
     icon: <Store size={38} strokeWidth={1.3} />,
     title: 'Marketplace',
-    eta: 'Septiembre 2026',
+    eta: 'En desarrollo · Próximamente',
     headline: 'Un click. Integrado.',
     subhead: 'Google Calendar, Stripe, Meta Ads, HubSpot, 50+ apps — conectadas a SofIA sin setup técnico.',
     features: [
@@ -85,7 +85,7 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
   webhooks: {
     icon: <Webhook size={38} strokeWidth={1.3} />,
     title: 'Webhooks',
-    eta: 'Octubre 2026',
+    eta: 'En desarrollo · Próximamente',
     headline: 'Conecta SofIA con lo que sea.',
     subhead: 'Eventos en tiempo real con firma digital y reintentos automaticos. Tu sistema externo siempre recibe la notificacion.',
     features: [

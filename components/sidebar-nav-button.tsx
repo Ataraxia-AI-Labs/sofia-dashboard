@@ -13,6 +13,9 @@ interface Props {
   label: string
   isActive: boolean
   locked?: boolean
+  /** Render as a roadmap item (subtle purple tint, no lock). Functional
+   *  page exists (FeatureLock screen), it's just not GA yet. */
+  comingSoon?: boolean
   onNavigate: (href: string) => void
 }
 
@@ -23,7 +26,7 @@ interface Props {
  * - Active: text-brand-purple + dot indicator + glow.
  * - Mini-panel glass ramificado si el href tiene subpaginas; tooltip chip si no.
  */
-export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, onNavigate }: Props) {
+export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, comingSoon, onNavigate }: Props) {
   const [open, setOpen] = useState(false)
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const [mounted, setMounted] = useState(false)
@@ -76,7 +79,7 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
             via the same href substitution. */}
         <Link
           href={locked ? '/dashboard/planes' : href}
-          aria-label={locked ? `${label} — próximamente` : label}
+          aria-label={locked ? `${label} — solo en planes superiores` : (comingSoon ? `${label} — próximamente` : label)}
           aria-current={isActive ? 'page' : undefined}
           onClick={(e) => {
             // Allow native open-in-new-tab modifier handling; only run our
@@ -86,14 +89,16 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
             onNavigate(locked ? '/dashboard/planes' : href)
           }}
           className={`
-            group relative w-7 h-7 flex items-center justify-center rounded-md
+            group relative w-7 h-6 flex items-center justify-center rounded-md
             transition-all duration-150 ease-out
             active:scale-[0.9] no-underline
             ${locked
               ? 'text-text-dim/35 hover:text-text-muted hover:translate-x-[1px]'
               : isActive
                 ? 'text-brand-purple drop-shadow-[0_0_6px_rgba(139,92,246,0.5)]'
-                : 'text-text-dim hover:text-text-primary hover:translate-x-[1px] hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)]'
+                : comingSoon
+                  ? 'text-brand-purple/55 hover:text-brand-purple hover:translate-x-[1px] hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.45)]'
+                  : 'text-text-dim hover:text-text-primary hover:translate-x-[1px] hover:drop-shadow-[0_0_4px_rgba(139,92,246,0.35)]'
             }
           `}
         >
@@ -103,6 +108,15 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
           )}
           {locked && (
             <Lock size={6} aria-hidden="true" className="absolute -top-0.5 -right-0.5 text-text-dim/50" />
+          )}
+          {/* Subtle "soon" dot — purple/40, top-right, no lock icon. Only when
+              not locked (locked already shows a lock; comingSoon is a softer
+              roadmap signal). */}
+          {!locked && comingSoon && (
+            <span
+              aria-hidden="true"
+              className="absolute top-0 right-0 w-1 h-1 rounded-full bg-brand-purple/55 shadow-[0_0_4px_rgba(139,92,246,0.45)]"
+            />
           )}
         </Link>
       </div>
@@ -147,10 +161,15 @@ export function SidebarNavButton({ href, icon: Icon, label, isActive, locked, on
               </div>
             </div>
           ) : (
-            <div className="relative bg-surface-2/90 backdrop-blur-md border border-border/50 text-text-primary text-[10.5px] font-body font-medium px-2 py-0.5 rounded-md shadow-[0_3px_12px_rgba(0,0,0,0.4)] whitespace-nowrap flex items-center gap-1">
+            <div className="relative bg-surface-2/90 backdrop-blur-md border border-border/50 text-text-primary text-[10.5px] font-body font-medium px-2 py-0.5 rounded-md shadow-[0_3px_12px_rgba(0,0,0,0.4)] whitespace-nowrap flex items-center gap-1.5">
               <span className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-0.5 h-0.5 rounded-full bg-brand-purple/60" />
               <span>{label}</span>
               {locked && <Lock size={8} className="text-text-dim/60" />}
+              {!locked && comingSoon && (
+                <span className="text-[8.5px] font-mono uppercase tracking-wider text-brand-purple/70 border border-brand-purple/30 rounded px-1 py-px leading-none">
+                  soon
+                </span>
+              )}
             </div>
           )}
         </div>,

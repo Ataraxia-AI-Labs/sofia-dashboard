@@ -9,7 +9,7 @@ export default function DataLakePage() {
       persuasiveKey="datalake"
       icon={<Database size={32} strokeWidth={1.4} />}
       title="Data Lake"
-      eta="Q3 2026"
+      eta="En desarrollo · Próximamente"
       headline="Tu memoria colectiva."
       subhead="Cada conversación, cita y decisión de tu clínica se vuelve conocimiento entrenable — tuyo, no de un proveedor genérico."
       bullets={[

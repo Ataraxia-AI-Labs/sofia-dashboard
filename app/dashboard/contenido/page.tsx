@@ -9,7 +9,7 @@ export default function ContenidoPage() {
       persuasiveKey="contenido"
       icon={<Palette size={32} strokeWidth={1.4} />}
       title="Content Studio"
-      eta="Q3 2026"
+      eta="En desarrollo · Próximamente"
       headline="Contenido diario sin bloqueo creativo."
       subhead="IA que genera posts, carousels y reels en la voz de tu clínica. Tú apruebas. Ella publica."
       bullets={[

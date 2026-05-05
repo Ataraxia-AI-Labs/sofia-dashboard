@@ -9,7 +9,7 @@ export default function AutomatizacionesPage() {
       persuasiveKey="automatizaciones"
       icon={<Zap size={32} strokeWidth={1.4} />}
       title="Automatizaciones visuales"
-      eta="Q4 2026"
+      eta="En desarrollo · Próximamente"
       headline="Lo que hoy haces en 10 pasos, en uno."
       subhead="Flujos drag & drop entre SofIA, tu calendario, facturación e inventario — sin escribir una línea."
       bullets={[

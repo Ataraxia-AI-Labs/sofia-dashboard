@@ -9,7 +9,7 @@ export default function MarketplacePage() {
       persuasiveKey="marketplace"
       icon={<Store size={32} strokeWidth={1.4} />}
       title="Marketplace"
-      eta="Septiembre 2026"
+      eta="En desarrollo · Próximamente"
       headline="Un click. Integrado."
       subhead="Google Calendar, Stripe, Meta Ads, HubSpot, 50+ apps — conectadas a SofIA sin setup técnico."
       bullets={[

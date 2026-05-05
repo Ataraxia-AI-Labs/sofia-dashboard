@@ -47,6 +47,19 @@ import {
    Routes stay the same. Only display labels change.
    ================================================================ */
 
+/** Hrefs of pages that render <FeatureLock> — surfaced in the sidebar
+ *  with a subtle "soon" hint so the operator knows what's on the roadmap
+ *  but doesn't expect it to work today. Source of truth: the FeatureLock
+ *  pages under /app/dashboard/{slug}/page.tsx. */
+const COMING_SOON_HREFS = new Set<string>([
+  '/dashboard/datalake',
+  '/dashboard/contenido',
+  '/dashboard/automatizaciones',
+  '/dashboard/marketplace',
+  '/dashboard/webhooks',
+  '/dashboard/network',
+])
+
 function useNavGroups() {
   const t = useTranslations('nav')
   return [
@@ -73,7 +86,7 @@ function useNavGroups() {
       label: t('growth'),
       items: [
         { href: '/dashboard/crecimiento', icon: TrendingUp, label: t('growthCenter') },
-        { href: '/dashboard/contenido', icon: Palette, label: t('contentStudio') },
+        { href: '/dashboard/contenido', icon: Palette, label: t('contentStudio'), comingSoon: true },
         { href: '/dashboard/resenas', icon: Star, label: t('reviews') },
       ],
     },
@@ -83,17 +96,17 @@ function useNavGroups() {
         { href: '/dashboard/equipo', icon: UserCog, label: t('team') },
         { href: '/dashboard/inteligencia', icon: Sparkles, label: 'Cerebro' },
         { href: '/dashboard/reportes', icon: FileText, label: t('reports') },
-        { href: '/dashboard/datalake', icon: Database, label: t('datalake') },
+        { href: '/dashboard/datalake', icon: Database, label: t('datalake'), comingSoon: true },
         { href: '/dashboard/auditoria', icon: Shield, label: t('audit') },
-        { href: '/dashboard/automatizaciones', icon: Zap, label: t('automations') },
+        { href: '/dashboard/automatizaciones', icon: Zap, label: t('automations'), comingSoon: true },
       ],
     },
     {
       label: t('platform'),
       items: [
-        { href: '/dashboard/marketplace', icon: Store, label: t('marketplace') },
-        { href: '/dashboard/webhooks', icon: Webhook, label: t('webhooks') },
-        { href: '/dashboard/network', icon: Brain, label: t('network') },
+        { href: '/dashboard/marketplace', icon: Store, label: t('marketplace'), comingSoon: true },
+        { href: '/dashboard/webhooks', icon: Webhook, label: t('webhooks'), comingSoon: true },
+        { href: '/dashboard/network', icon: Brain, label: t('network'), comingSoon: true },
         { href: '/dashboard/health', icon: Activity, label: t('systemHealth') },
       ],
     },
@@ -107,6 +120,8 @@ function useNavGroups() {
     },
   ]
 }
+
+export { COMING_SOON_HREFS }
 
 /* ================================================================
    SIDEBAR — Sentient Interface
@@ -165,6 +180,7 @@ function Sidebar({
                   label={item.label}
                   isActive={isActive}
                   locked={locked}
+                  comingSoon={'comingSoon' in item ? Boolean(item.comingSoon) : false}
                   onNavigate={onNavigate}
                 />
               )

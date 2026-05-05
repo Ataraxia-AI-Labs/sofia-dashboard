@@ -9,7 +9,7 @@ export default function WebhooksPage() {
       persuasiveKey="webhooks"
       icon={<Webhook size={32} strokeWidth={1.4} />}
       title="Webhooks"
-      eta="Octubre 2026"
+      eta="En desarrollo · Próximamente"
       headline="Conecta SofIA con lo que sea."
       subhead="Eventos en tiempo real con firma digital y reintentos automaticos. Tu sistema externo siempre recibe la notificacion."
       bullets={[
