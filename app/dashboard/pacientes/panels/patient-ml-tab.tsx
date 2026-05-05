@@ -57,16 +57,14 @@ export function PatientMLTab({ mlFeatures }: PatientMLTabProps) {
         </div>
       </div>
 
-      {/* Predictions */}
-      <div>
-        <p className="text-[12px] font-body text-text-dim uppercase tracking-wider mb-2">Predicciones IA</p>
-        <div className="grid grid-cols-2 gap-2">
-          <PredictionBar label="Probabilidad Conversion" value={mlFeatures.conversion_probability ?? 0} color="bg-status-success" />
-          <PredictionBar label="Riesgo de Churn" value={mlFeatures.churn_probability ?? 0} color="bg-status-danger" />
-          <PredictionBar label="Riesgo No-Show" value={mlFeatures.no_show_probability ?? 0} color="bg-status-warning" />
-          <PredictionBar label="LTV Predicho" value={(mlFeatures.predicted_ltv ?? 0) > 0 ? Math.min((mlFeatures.predicted_ltv ?? 0) / 5000000, 1) : 0} color="bg-brand-purple" extra={formatCOP(mlFeatures.predicted_ltv ?? 0)} />
-        </div>
-      </div>
+      {/* Predictions: hidden in S153.
+          conversion_probability / churn_probability / no_show_probability /
+          predicted_ltv are never updated (all 0 across the org). The
+          real LTV prediction lives in patients.psychometrics
+          (rendered in the Info tab as "Predicción"). Re-enable this
+          section when the ML feature pipeline starts populating these
+          columns; for now showing a 4-bar 0% widget on every patient
+          mislead the operator. */}
 
       {/* Sentiment */}
       <div>
@@ -97,17 +95,3 @@ function MLStat({ label, value, color }: { label: string; value: string | number
   )
 }
 
-function PredictionBar({ label, value, color, extra }: { label: string; value: number; color: string; extra?: string }) {
-  const pct = Math.round((value || 0) * 100)
-  return (
-    <div className="bg-void/50 rounded-md px-2.5 py-2">
-      <div className="flex justify-between items-center mb-1">
-        <span className="text-[11px] font-body text-text-dim">{label}</span>
-        <span className="text-[10px] font-bold font-body text-text-primary">{extra || `${pct}%`}</span>
-      </div>
-      <div className="h-1.5 bg-surface-3 rounded-md overflow-hidden">
-        <div className={`h-full rounded-md ${color} transition-all duration-700`} style={{ width: `${Math.max(pct, 2)}%` }} />
-      </div>
-    </div>
-  )
-}
