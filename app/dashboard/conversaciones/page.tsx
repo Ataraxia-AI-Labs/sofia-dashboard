@@ -54,6 +54,16 @@ const SENTIMENT_COLORS: Record<string, string> = {
   POSITIVE: 'bg-status-success',
   NEUTRAL:  'bg-brand-cyan',
   NEGATIVE: 'bg-status-danger',
+  /** UNKNOWN: no inbound message yet (e.g., outbound followup before reply).
+   *  Subtle dim color so the operator doesn't read meaning into a default. */
+  UNKNOWN:  'bg-text-dim/40',
+}
+
+const SENTIMENT_LABEL_TEXT: Record<string, string> = {
+  POSITIVE: 'positivo',
+  NEUTRAL:  'neutral',
+  NEGATIVE: 'negativo',
+  UNKNOWN:  'sin datos del paciente',
 }
 
 /** Derive sentiment label from numeric score when label is absent */
@@ -109,6 +119,19 @@ function groupByPatient(interactions: InteractionLog[], patientsMap: Map<string,
     const patient = patientsMap.get(patientId)
     const patientFromInteraction = lastMsg.patients
 
+    // S153: aggregate sentiment from the patient's INBOUND messages, not
+    // from the last message. The last message is usually a bot followup
+    // (OUTBOUND, neutral 0), which made every thread show the cyan
+    // "neutral" dot regardless of how the patient actually feels. The
+    // dot now reflects the patient's expressed emotion.
+    const inboundMsgs = msgs.filter(m => m.direction === 'INBOUND')
+    const realScores = inboundMsgs
+      .map(m => m.sentiment_score)
+      .filter((s): s is number => typeof s === 'number' && !isNaN(s) && s !== 0)
+    const avgInboundScore = realScores.length > 0
+      ? realScores.reduce((acc, s) => acc + s, 0) / realScores.length
+      : null
+
     threads.push({
       threadId: compositeKey,
       patientId,
@@ -117,7 +140,11 @@ function groupByPatient(interactions: InteractionLog[], patientsMap: Map<string,
       channel: lastMsg.channel || 'WHATSAPP',
       lastMessage: lastMsg.message_content || '',
       lastTimestamp: lastMsg.created_at,
-      sentimentLabel: getSentimentLabel(lastMsg.sentiment_score, lastMsg.sentiment_label),
+      sentimentLabel: avgInboundScore == null
+        ? 'UNKNOWN'
+        : avgInboundScore >= 0.3 ? 'POSITIVE'
+        : avgInboundScore <= -0.3 ? 'NEGATIVE'
+        : 'NEUTRAL',
       messageCount: msgs.length,
       messages: msgs,
     })
@@ -647,10 +674,12 @@ function ThreadCard({
           >
             {displayName[0]?.toUpperCase() || '?'}
           </div>
-          {/* Sentiment dot */}
+          {/* Sentiment dot — derived from patient's INBOUND messages.
+              UNKNOWN means we have no inbound data yet, render dimmer so
+              the operator doesn't misread it as "neutral state". */}
           <div
             className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-surface-2 ${sentimentColor}`}
-            title={`${t('sentimentLabel')}: ${thread.sentimentLabel.toLowerCase()}`}
+            title={`Sentimiento: ${SENTIMENT_LABEL_TEXT[thread.sentimentLabel] || thread.sentimentLabel.toLowerCase()}`}
           />
         </div>
 

@@ -591,7 +591,7 @@
     "noDataAvailable": "Sin datos disponibles",
     "noResultsFor": "No se encontraron conversaciones para \"{query}\"",
     "whenSofiaReceives": "Cuando SofIA reciba mensajes, aparecerán aquí.",
-    "searchByNameOrPhone": "Buscar por nombre o teléfono...",
+    "searchByNameOrPhone": "Buscar nombre, teléfono o mensaje...",
     "selectConversation": "Selecciona una conversación",
     "selectThreadHint": "Elige un hilo del panel izquierdo para ver los mensajes",
     "noMessages": "Sin mensajes en esta conversación.",
