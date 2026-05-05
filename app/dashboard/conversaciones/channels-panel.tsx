@@ -145,13 +145,22 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
           const Icon = channelCfg.icon
           // Channel is "active" only if explicitly enabled in config
           const isEnabled = cfg?.is_enabled ?? false
-          // Channel cannot be toggled if config is empty or missing
-          const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
+          // S153: Web Chat is special — the public widget uses org_id directly,
+          // there is no per-org credential to gate "configured". Treat it as
+          // always configurable so the operator can flip the toggle and the
+          // tracking lines up with the widget's actual behavior.
+          const hasConfigBlob = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
+          const hasConfig = channel === 'WEBCHAT' ? true : hasConfigBlob
           // S142: data inconsistency — channel is OFF in config but is
           // receiving messages anyway. The widget/webhook acts on the
           // underlying credential, not the dashboard flag. Surface this
           // so the operator can flip the flag and align tracking.
           const hasActivityWhileDisabled = !isEnabled && (m?.message_count ?? 0) > 0
+          // S153: pulse dot reflects "data flowing", not just is_enabled.
+          // Web Chat receiving 81 messages while is_enabled=false should
+          // still pulse — the operator's "is this thing live?" intuition
+          // wants real activity, not the toggle state.
+          const isLive = isEnabled || (m?.message_count ?? 0) > 0
 
           return (
             <div
@@ -160,10 +169,24 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                 !isEnabled && !hasActivityWhileDisabled ? 'opacity-60' : ''
               }`}
             >
-              {/* Status indicator */}
+              {/* Status indicator — pulse when channel has real activity OR
+                  is explicitly enabled. Differentiated by color: brand-purple
+                  for "enabled (intentionally tracking)" vs status-warning for
+                  "data flowing despite toggle off" (a problem to fix). */}
               <div className="absolute top-3 right-3 flex items-center gap-2">
                 {isEnabled && (
-                  <span className="w-2 h-2 rounded-full bg-status-success animate-pulse" title={t('active')} />
+                  <span
+                    className="w-2 h-2 rounded-full bg-status-success animate-pulse"
+                    title={t('active')}
+                    aria-label={t('active')}
+                  />
+                )}
+                {!isEnabled && isLive && (
+                  <span
+                    className="w-2 h-2 rounded-full bg-status-warning animate-pulse"
+                    title="Hay actividad pero el canal está desactivado"
+                    aria-label="Hay actividad sin trackear"
+                  />
                 )}
                 <button
                   onClick={() => hasConfig && handleToggleChannel(channel, !isEnabled)}
