@@ -147,6 +147,8 @@ export interface Patient {
 export interface PatientDetail extends Patient {
   psychometrics?: PatientPsychometrics
   config_settings?: Record<string, unknown>
+  /** Distinct platforms seen in interaction_logs (S153) */
+  active_channels?: string[]
 }
 
 /** Psicometría JSONB — mix of heuristic scores (S153) and LTV predictions */

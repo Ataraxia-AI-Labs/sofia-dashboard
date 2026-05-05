@@ -55,7 +55,14 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
         <DetailRow icon={<Cake size={14} />} label="Nacimiento" value={computeAge(patient.date_of_birth)} />
         <DetailRow icon={<MapPin size={14} />} label="Ciudad" value={patient.city || 'Por identificar'} />
         <DetailRow icon={<Star size={14} />} label="Interés" value={patient.service_interest || 'Por identificar'} />
-        <DetailRow icon={<MessageSquare size={14} />} label="Canal" value={CHANNELS[patient.acquisition_channel]?.label || patient.acquisition_channel} />
+        <DetailRow icon={<MessageSquare size={14} />} label="Origen" value={CHANNELS[patient.acquisition_channel]?.label || patient.acquisition_channel} />
+        {patient.active_channels && patient.active_channels.length > 0 && (
+          <DetailRow
+            icon={<MessageSquare size={14} />}
+            label="Activo en"
+            value={patient.active_channels.map(c => CHANNELS[c]?.label || c).join(' · ')}
+          />
+        )}
         <DetailRow icon={<Calendar size={14} />} label="Registro" value={new Date(patient.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} />
       </div>
 
