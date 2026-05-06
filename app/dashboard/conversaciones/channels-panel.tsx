@@ -255,14 +255,28 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                   <span className="text-[12px] font-body text-text-dim flex items-center gap-1">
                     <TrendingUp size={9} /> {t('conversion')}
                   </span>
-                  <span
-                    className="text-xs font-bold font-body text-brand-purple"
-                    title={(m?.message_count ?? 0) < 5 ? 'Muestra insuficiente (menos de 5 mensajes)' : undefined}
-                  >
-                    {(m?.message_count ?? 0) < 5
-                      ? '—'
-                      : `${((m?.conversion_rate ?? 0) * 100).toFixed(1)}%`}
-                  </span>
+                  {(() => {
+                    const msgCount = m?.message_count ?? 0
+                    const convRate = m?.conversion_rate ?? 0
+                    // S153: also show "—" when conversion is genuinely zero
+                    // (Voice 0/7 → "no patient converted yet" not "0.0%
+                    // achieved"). Sample size guard kept for the case
+                    // where conversion is non-zero but on a tiny sample.
+                    const noSignal = msgCount < 5 || convRate <= 0
+                    const titleHint = msgCount < 5
+                      ? 'Muestra insuficiente (menos de 5 mensajes)'
+                      : convRate <= 0
+                        ? 'Sin pacientes convertidos aún'
+                        : undefined
+                    return (
+                      <span
+                        className={`text-xs font-bold font-body ${noSignal ? 'text-text-dim' : 'text-brand-purple'}`}
+                        title={titleHint}
+                      >
+                        {noSignal ? '—' : `${(convRate * 100).toFixed(1)}%`}
+                      </span>
+                    )
+                  })()}
                 </div>
               </div>
 
