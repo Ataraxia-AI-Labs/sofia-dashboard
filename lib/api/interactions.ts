@@ -94,6 +94,54 @@ export async function fetchInteractions(orgId: string, opts?: {
     const aiResponse = (item.ai_response || '') as string
     const rowDirection = (item.direction || 'INBOUND') as string
 
+    // S153: voice calls (Vapi engine) store the full call transcript inside
+    // raw_content as alternating "AI: ...\nUser: ..." lines. Split it into
+    // proper AI/User bubbles so the operator sees the actual conversation
+    // instead of the "[Vapi voice response]" placeholder.
+    const aiAnalysis = (item.ai_analysis || {}) as Record<string, unknown>
+    const isVoiceCall = (item.platform === 'VOICE_CALL' || item.content_type === 'AUDIO')
+    const looksLikeVapiTranscript =
+      isVoiceCall && /^(AI|User|sofia|paciente):\s/im.test(rawContent)
+    if (looksLikeVapiTranscript) {
+      const lines = rawContent.split(/\n+/)
+      let buffer: { speaker: 'AI' | 'User'; text: string } | null = null
+      let turnIdx = 0
+      const flush = () => {
+        if (buffer && buffer.text.trim()) {
+          messages.push({
+            ...base,
+            id: `${item.id}-${turnIdx++}`,
+            direction: buffer.speaker === 'User' ? 'INBOUND' : 'OUTBOUND',
+            message_content: buffer.text.trim(),
+            content_type: 'AUDIO',
+          })
+        }
+        buffer = null
+      }
+      for (const line of lines) {
+        const m = /^(AI|User|sofia|paciente):\s*(.*)$/i.exec(line)
+        if (m) {
+          flush()
+          const sp = /user|paciente/i.test(m[1]) ? 'User' : 'AI'
+          buffer = { speaker: sp, text: m[2] }
+        } else if (buffer) {
+          // Continuation line for the current speaker
+          buffer.text += '\n' + line
+        }
+      }
+      flush()
+      // If we successfully extracted at least one turn we're done with this row
+      if (turnIdx > 0) {
+        // Tag the call duration on the first turn for the UI to render
+        const dur = aiAnalysis.duration_seconds
+        if (typeof dur === 'number' && messages.length > 0) {
+          (messages[messages.length - turnIdx] as InteractionLog & { duration_seconds?: number }).duration_seconds = dur
+        }
+        continue
+      }
+      // Fallback: empty Vapi transcript -> render placeholder once
+    }
+
     // Human takeover: direction is OUTBOUND and ai_response marks [Human takeover]
     // Failed outbound: direction is OUTBOUND and ai_response marks [MENSAJE FALLIDO]
     // Only takeover messages are labeled as "Doctor"; failed bot messages stay as "SofIA"
