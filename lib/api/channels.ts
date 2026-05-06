@@ -199,9 +199,9 @@ export async function getChannelComparison(
   if (data?.comparison) {
     return {
       channels: data.comparison,
-      best_by_messages: '',
-      best_by_conversion: '',
-      best_by_revenue: '',
+      best_by_messages: null,
+      best_by_conversion: null,
+      best_by_revenue: null,
     }
   }
   return data

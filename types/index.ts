@@ -1208,9 +1208,12 @@ export interface ChannelMetrics {
 
 export interface ChannelComparison {
   channels: ChannelMetrics[]
-  best_by_messages: ChannelType
-  best_by_conversion: ChannelType
-  best_by_revenue: ChannelType
+  /** Backend's composite top_channel — the panel ignores these fields and
+   *  computes per-metric winners locally with a sample-size guard (S153).
+   *  Nullable because the panel relies on the local computation. */
+  best_by_messages: ChannelType | null
+  best_by_conversion: ChannelType | null
+  best_by_revenue: ChannelType | null
 }
 
 export interface InboxConversation {
