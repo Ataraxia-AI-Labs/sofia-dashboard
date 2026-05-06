@@ -191,13 +191,17 @@ export async function getChannelComparison(
   const res = await authFetch(`${API_URL}/channels/${orgId}/comparison`)
   if (!res.ok) return null
   const data = await res.json()
-  // Backend returns {comparison: [...], top_channel: ...} — normalize to frontend type
+  // Backend returns {comparison: [...], top_channel: ...} where top_channel
+  // is a single composite winner (volume + reach + conversion blend).
+  // S153: do NOT alias that one channel into all three best_by_* slots —
+  // the channels-panel computes per-metric winners locally with a sample
+  // size guard. Leave the slots empty here; the panel ignores them.
   if (data?.comparison) {
     return {
       channels: data.comparison,
-      best_by_messages: data.top_channel || '',
-      best_by_conversion: data.top_channel || '',
-      best_by_revenue: data.top_channel || '',
+      best_by_messages: '',
+      best_by_conversion: '',
+      best_by_revenue: '',
     }
   }
   return data

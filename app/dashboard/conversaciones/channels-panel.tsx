@@ -128,6 +128,29 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const maxConversion = Math.max(1, ...metrics.map(m => m.conversion_rate))
   const maxResponseTime = Math.max(1, ...metrics.map(m => m.avg_response_time_sec))
 
+  // S153: derive per-metric winners locally with a sample-size guard.
+  // Backend was returning a single composite top_channel and the API
+  // client was aliasing it to all three best_by_* fields, so the
+  // conversion bar's trophy always reflected the OVERALL top (volume
+  // + reach + conversion blend), not the actual conversion leader.
+  // We require ≥ 5 messages so a single-conversion 100% on a tiny
+  // sample doesn't crown a misleading winner.
+  const MIN_SAMPLE_FOR_WINNER = 5
+  function pickWinner<T extends { channel: ChannelType; message_count: number }>(
+    rows: T[],
+    score: (r: T) => number,
+  ): ChannelType | null {
+    const candidates = rows.filter(r => r.message_count >= MIN_SAMPLE_FOR_WINNER && score(r) > 0)
+    if (candidates.length === 0) return null
+    return candidates.reduce((best, r) => (score(r) > score(best) ? r : best)).channel
+  }
+  const winnerByMessages = pickWinner(messagingMetrics, m => m.message_count)
+  const winnerByConversion = pickWinner(metrics, m => m.conversion_rate)
+  const winnerByResponseTime = pickWinner(
+    metrics.filter(m => m.avg_response_time_sec > 0),
+    m => -m.avg_response_time_sec, // lower is better
+  )
+
   return (
     <div className="space-y-4">
       {/* CHANNEL OVERVIEW CARDS */}
@@ -295,7 +318,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                 metrics={messagingMetrics}
                 getValue={m => m.message_count}
                 max={maxMessages}
-                winner={comparison.best_by_messages}
+                winner={winnerByMessages}
                 format={v => v.toLocaleString()}
               />
             )}
@@ -319,7 +342,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                 metrics={metrics.filter(m => m.message_count > 0 || m.unique_patients > 0)}
                 getValue={m => m.conversion_rate * 100}
                 max={maxConversion * 100}
-                winner={comparison.best_by_conversion}
+                winner={winnerByConversion}
                 format={v => `${v.toFixed(1)}%`}
               />
             )}
@@ -331,7 +354,7 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
                 metrics={metrics.filter(m => m.avg_response_time_sec > 0)}
                 getValue={m => m.avg_response_time_sec}
                 max={maxResponseTime}
-                winner={null}
+                winner={winnerByResponseTime}
                 format={v => `${v.toFixed(0)}s`}
               />
             )}
@@ -410,7 +433,12 @@ function ComparisonRow({
                       : ''
                   }`}
                   style={{
-                    width: `${Math.max(2, pct)}%`,
+                    // S153: zero values rendered as a 2%-wide stub were
+                    // confusing — Voice 0% conversion looked like "tiny
+                    // bit of conversion" instead of "no signal at all".
+                    // Render 0 as 0; otherwise keep a 2% min so 1-2% real
+                    // values stay visible.
+                    width: val <= 0 ? '0%' : `${Math.max(2, pct)}%`,
                     backgroundColor: isWinner ? undefined : `color-mix(in srgb, ${
                       channelCfg.color === 'text-status-success' ? '#06d6a0' :
                       channelCfg.color === 'text-brand-purple' ? '#8b5cf6' :
@@ -423,9 +451,11 @@ function ComparisonRow({
                 />
               </div>
               <span className={`text-[13px] font-body font-semibold w-20 text-right flex-shrink-0 ${
-                isWinner ? 'text-brand-purple' : 'text-text-muted'
+                isWinner ? 'text-brand-purple' : val <= 0 ? 'text-text-dim' : 'text-text-muted'
               }`}>
-                {format(val)}
+                {/* Show em-dash for 0 so the operator reads "no signal"
+                    instead of "0.0% achieved". */}
+                {val <= 0 ? '—' : format(val)}
                 {isWinner && <Trophy size={9} className="inline ml-1 text-brand-gold" />}
               </span>
             </div>
