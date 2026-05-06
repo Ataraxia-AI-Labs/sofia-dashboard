@@ -830,11 +830,13 @@ function ConversationDetail({
     let currentDate = ''
 
     for (const msg of thread.messages) {
-      // S153: render dates in the clinic's timezone (Colombia / Bogotá UTC-5)
-      // not the operator's browser TZ. Operators access from anywhere; the
-      // conversation log must read consistently per clinic.
+      // Render in the operator's browser timezone (default behavior). When
+      // a Bogotá operator sees "5:00 PM" their wall clock matches; when an
+      // operator in another TZ reads the same message they see THEIR local
+      // hour, which is the natural mental model. Hardcoding the clinic TZ
+      // would force every operator outside Colombia to convert in their
+      // head.
       const msgDate = new Date(msg.created_at).toLocaleDateString('es-CO', {
-        timeZone: 'America/Bogota',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -989,18 +991,12 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
   const isOutbound = message.direction === 'OUTBOUND'
   const sentimentLabel = getSentimentLabel(message.sentiment_score, message.sentiment_label)
 
-  // Format time
-  // S153: clinic timezone (Bogotá UTC-5) instead of browser TZ. The exact
-  // same UTC instant must read the same hour to every operator regardless
-  // of where they connect from.
+  // Format time in the operator's local TZ — each operator sees the
+  // hour their own clock showed when the message arrived.
   let time: string
   try {
     const d = new Date(message.created_at)
-    time = d.toLocaleTimeString('es-CO', {
-      timeZone: 'America/Bogota',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+    time = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
   } catch {
     time = ''
   }
