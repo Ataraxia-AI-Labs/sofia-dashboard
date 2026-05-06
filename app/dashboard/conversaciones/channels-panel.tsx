@@ -109,21 +109,15 @@ export default function ChannelsPanel({ orgId }: ChannelsPanelProps) {
   const configMap: Record<string, ChannelConfig> = {}
   for (const c of config) configMap[c.channel] = c
 
-  // S142: show a channel if any of these is true:
-  //   - org-level flag is_enabled (operator turned it on, even if config blob is empty)
-  //   - has a non-empty config blob (manual setup happened)
-  //   - has any activity in the metrics window
-  // Was hiding Instagram (1 msg outside 30d window + empty config blob even
-  // though instagram_enabled=true on the org) and was hiding any channel
-  // an operator just enabled but hasn't seen traffic on yet.
-  const activeChannels = CHANNEL_ORDER.filter(ch => {
-    const m = metricsMap[ch]
-    const cfg = configMap[ch]
-    const isEnabled = cfg?.is_enabled === true
-    const hasConfig = cfg?.config && typeof cfg.config === 'object' && Object.keys(cfg.config).length > 0
-    const hasActivity = m && (m.message_count > 0 || m.unique_patients > 0)
-    return isEnabled || hasConfig || hasActivity
-  })
+  // S153: always show the 5 standard channels (WhatsApp, Instagram,
+  // Messenger, Web Chat, Voice). The operator wants to see what's
+  // available at a glance — channels they haven't connected yet should
+  // still appear with a "no configurado" toggle and zero metrics, so
+  // they know the option exists. The previous filter (S142) hid
+  // channels with empty config + zero activity, which made Instagram
+  // disappear after we cleaned the phantom is_enabled=true row, leaving
+  // the operator wondering whether Instagram is even supported.
+  const activeChannels = CHANNEL_ORDER
 
   // Messaging channels only (exclude VOICE for message-based comparisons)
   const messagingMetrics = metrics.filter(m => m.channel !== 'VOICE')
