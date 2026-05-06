@@ -113,7 +113,6 @@ export async function fetchInteractions(orgId: string, opts?: {
             id: `${item.id}-${turnIdx++}`,
             direction: buffer.speaker === 'User' ? 'INBOUND' : 'OUTBOUND',
             message_content: buffer.text.trim(),
-            content_type: 'AUDIO',
           })
         }
         buffer = null
