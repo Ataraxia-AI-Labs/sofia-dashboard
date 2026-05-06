@@ -520,23 +520,32 @@ export default function ConversacionesPage() {
             selectedThreadId ? 'hidden lg:flex' : 'flex'
           } flex-col w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 glass-card overflow-hidden`}
         >
-          {/* Search */}
-          <div className="p-3 border-b border-border/30 flex-shrink-0">
+          {/* Search — S153: more breathing room (the icon, the text and the
+              clear button were all crammed against the left/right edges and
+              the [10px] font-size was hard to read on a 1440-wide laptop). */}
+          <div className="p-4 border-b border-border/30 flex-shrink-0">
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+              <Search
+                size={14}
+                strokeWidth={1.7}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none"
+              />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t('searchByNameOrPhone')}
-                className="w-full pl-9 pr-3 py-2 bg-surface-3 border border-border rounded-md font-body text-[10px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
+                aria-label={t('searchByNameOrPhone')}
+                className="w-full pl-10 pr-9 py-2.5 bg-surface-3 border border-border rounded-lg font-body text-[12px] text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
               />
               {search && (
                 <button
+                  type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted"
+                  aria-label="Limpiar búsqueda"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors"
                 >
-                  <X size={12} />
+                  <X size={12} strokeWidth={2} />
                 </button>
               )}
             </div>
@@ -821,7 +830,11 @@ function ConversationDetail({
     let currentDate = ''
 
     for (const msg of thread.messages) {
+      // S153: render dates in the clinic's timezone (Colombia / Bogotá UTC-5)
+      // not the operator's browser TZ. Operators access from anywhere; the
+      // conversation log must read consistently per clinic.
       const msgDate = new Date(msg.created_at).toLocaleDateString('es-CO', {
+        timeZone: 'America/Bogota',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -977,10 +990,17 @@ function MessageBubble({ message, orgId, onAnnotationChange }: {
   const sentimentLabel = getSentimentLabel(message.sentiment_score, message.sentiment_label)
 
   // Format time
+  // S153: clinic timezone (Bogotá UTC-5) instead of browser TZ. The exact
+  // same UTC instant must read the same hour to every operator regardless
+  // of where they connect from.
   let time: string
   try {
     const d = new Date(message.created_at)
-    time = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
+    time = d.toLocaleTimeString('es-CO', {
+      timeZone: 'America/Bogota',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
   } catch {
     time = ''
   }

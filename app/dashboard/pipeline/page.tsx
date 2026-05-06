@@ -198,13 +198,13 @@ export default function PipelinePage() {
       {/* FILTERS */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[260px] max-w-md">
-          <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+          <Search size={14} strokeWidth={1.7} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar por nombre, teléfono, email, servicio…"
-            className="w-full pl-8 pr-3 py-2 bg-surface-2/60 border border-border/30 rounded-lg text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface-2/60 border border-border/30 rounded-lg text-[12px] font-body text-text-primary placeholder:text-text-dim focus:outline-none focus:border-brand-purple/40 transition-colors"
           />
         </div>
         {stageFilter !== 'ALL' && (
