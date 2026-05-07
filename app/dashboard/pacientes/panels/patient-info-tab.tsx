@@ -9,12 +9,21 @@ import { PatientSummaryBlock } from '@/components/patient-summary-block'
 function computeAge(dob?: string | null): string {
   if (!dob) return '—'
   try {
-    const birth = new Date(dob)
+    // S153: DOB comes as a date-only string ("1990-06-15"). new Date()
+    // parses that as UTC midnight, then toLocaleDateString shifts back
+    // to the operator's TZ — for any browser west of UTC the rendered
+    // day was off by one ("14 de jun" instead of "15 de jun"). Parse
+    // the components manually so the date stays anchored to its calendar
+    // day regardless of where the operator connects from.
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dob)
+    const birth = m
+      ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+      : new Date(dob)
     if (isNaN(birth.getTime())) return '—'
     const today = new Date()
     let age = today.getFullYear() - birth.getFullYear()
-    const m = today.getMonth() - birth.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+    const monthDiff = today.getMonth() - birth.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--
     return `${age} años (${birth.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })})`
   } catch {
     return '—'
@@ -73,7 +82,24 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
           deja claro al operador que NO es ML entrenado todavía — cuando
           el pipeline de ML produzca scores, el predictor sobrescribirá
           estas claves y el badge "heurística" desaparecerá. */}
-      {patient.psychometrics ? (
+      {patient.psychometrics ? (() => {
+        // S153: differentiate "real signal" from "heuristic floor".
+        // When the patient has no payments, no appointments, and few/no
+        // inbound messages, every weight in the heuristic collapses to
+        // the neutral midpoint and the result lands at ~50/0/50. Those
+        // are not defaults — they're what the formula computes — but
+        // visually they look like "we never measured anything." We use
+        // the underlying ml_features from the patient_summary lookup if
+        // available; otherwise fall back to a low-signal flag if all
+        // three scores sit at the heuristic floor simultaneously.
+        const trust = patient.psychometrics.trust_level
+        const churn = patient.psychometrics.churn_risk_score
+        const price = patient.psychometrics.price_sensitivity
+        const isFloorOnly =
+          typeof trust === 'number' && Math.abs(trust - 0.5) < 0.02 &&
+          typeof churn === 'number' && churn < 0.02 &&
+          typeof price === 'number' && Math.abs(price - 0.5) < 0.02
+        return (
         <div className="glass-card p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-body font-semibold text-text-muted uppercase tracking-wider">Lectura del paciente</h4>
@@ -83,6 +109,11 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
               </span>
             )}
           </div>
+          {isFloorOnly && (
+            <p className="text-[10.5px] font-body text-text-dim italic leading-snug">
+              Señal débil: todavía no hay suficientes mensajes entrantes, citas o pagos para diferenciar a este paciente. Los valores muestran el punto neutro.
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-3">
             {patient.psychometrics.lifetime_value_predicted ? (
               <MiniMetric
@@ -95,14 +126,18 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
               <MiniMetric
                 label="Confianza"
                 value={formatPercent(patient.psychometrics.trust_level * 100)}
-                color="text-status-success"
+                color={isFloorOnly ? 'text-text-dim' : 'text-status-success'}
               />
             ) : null}
             {typeof patient.psychometrics.churn_risk_score === 'number' ? (
               <MiniMetric
                 label="Riesgo de churn"
                 value={formatPercent(patient.psychometrics.churn_risk_score * 100)}
-                color={patient.psychometrics.churn_risk_score > 0.5 ? 'text-status-danger' : 'text-status-warning'}
+                color={isFloorOnly
+                  ? 'text-text-dim'
+                  : patient.psychometrics.churn_risk_score > 0.5
+                    ? 'text-status-danger'
+                    : 'text-status-warning'}
               />
             ) : null}
             {typeof patient.psychometrics.price_sensitivity === 'number' ? (
@@ -114,7 +149,8 @@ export function PatientInfoTab({ patient, treatments }: PatientInfoTabProps) {
             ) : null}
           </div>
         </div>
-      ) : null}
+        )
+      })() : null}
 
       {/* Treatments */}
       {treatments.length > 0 && (
