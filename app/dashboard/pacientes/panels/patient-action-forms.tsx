@@ -105,14 +105,24 @@ export function EditPatientForm({ patient, editData, onEditChange, onSave, onCan
     const v = (s || '').trim()
     return /^por\s+identificar$/i.test(v) ? '' : v
   }
+  // S153: cédula + fecha de nacimiento are the two fields the data
+  // quality banner complains about most (98.1% sin cédula, 53.7%
+  // sin nombre completo on the demo org). The operator was being
+  // told "fix this" but the Edit form had no input for them, so the
+  // numbers never moved. Now they're editable here. Backend already
+  // accepts both via PATCH /patients/{id} (UpdatePatientRequest).
+  const inputCls = "w-full px-2 py-1.5 rounded-md bg-void border border-border text-text-primary text-xs font-body outline-none placeholder:text-text-dim/60"
+  const labelCls = "block text-[11px] font-body text-text-dim uppercase mb-0.5"
   return (
     <div className="glass-card p-4 space-y-2 border-brand-purple/20">
       <h4 className="text-xs font-body font-semibold text-brand-purple">{t('editPatient')}</h4>
       <div className="grid grid-cols-2 gap-2">
-        <div><label className="block text-[11px] font-body text-text-dim uppercase mb-0.5">{t('name')}</label><input type="text" defaultValue={stripPlaceholder(patient.full_name)} placeholder={t('namePlaceholder')} onChange={(e) => onEditChange({...editData, full_name: e.target.value})} className="w-full px-2 py-1.5 rounded-md bg-void border border-border text-text-primary text-xs font-body outline-none placeholder:text-text-dim/60" /></div>
-        <div><label className="block text-[11px] font-body text-text-dim uppercase mb-0.5">{t('email')}</label><input type="email" defaultValue={stripPlaceholder(patient.email)} placeholder="paciente@email.com" onChange={(e) => onEditChange({...editData, email: e.target.value})} className="w-full px-2 py-1.5 rounded-md bg-void border border-border text-text-primary text-xs font-body outline-none placeholder:text-text-dim/60" /></div>
-        <div><label className="block text-[11px] font-body text-text-dim uppercase mb-0.5">{t('city')}</label><input type="text" defaultValue={stripPlaceholder(patient.city)} placeholder={t('cityPlaceholder')} onChange={(e) => onEditChange({...editData, city: e.target.value})} className="w-full px-2 py-1.5 rounded-md bg-void border border-border text-text-primary text-xs font-body outline-none placeholder:text-text-dim/60" /></div>
-        <div><label className="block text-[11px] font-body text-text-dim uppercase mb-0.5">{t('interest')}</label><input type="text" defaultValue={stripPlaceholder(patient.service_interest)} placeholder={t('interestPlaceholder')} onChange={(e) => onEditChange({...editData, service_interest: e.target.value})} className="w-full px-2 py-1.5 rounded-md bg-void border border-border text-text-primary text-xs font-body outline-none placeholder:text-text-dim/60" /></div>
+        <div><label className={labelCls}>{t('name')}</label><input type="text" defaultValue={stripPlaceholder(patient.full_name)} placeholder={t('namePlaceholder')} onChange={(e) => onEditChange({...editData, full_name: e.target.value})} className={inputCls} /></div>
+        <div><label className={labelCls}>{t('email')}</label><input type="email" defaultValue={stripPlaceholder(patient.email)} placeholder="paciente@email.com" onChange={(e) => onEditChange({...editData, email: e.target.value})} className={inputCls} /></div>
+        <div><label className={labelCls}>Cédula</label><input type="text" inputMode="numeric" pattern="[0-9]*" defaultValue={stripPlaceholder(patient.national_id)} placeholder="1234567890" onChange={(e) => onEditChange({...editData, national_id: e.target.value})} className={inputCls} /></div>
+        <div><label className={labelCls}>Nacimiento</label><input type="date" defaultValue={patient.date_of_birth || ''} onChange={(e) => onEditChange({...editData, date_of_birth: e.target.value || null})} className={inputCls} /></div>
+        <div><label className={labelCls}>{t('city')}</label><input type="text" defaultValue={stripPlaceholder(patient.city)} placeholder={t('cityPlaceholder')} onChange={(e) => onEditChange({...editData, city: e.target.value})} className={inputCls} /></div>
+        <div><label className={labelCls}>{t('interest')}</label><input type="text" defaultValue={stripPlaceholder(patient.service_interest)} placeholder={t('interestPlaceholder')} onChange={(e) => onEditChange({...editData, service_interest: e.target.value})} className={inputCls} /></div>
       </div>
       <div className="flex justify-end gap-2">
         <button onClick={onCancel} className="px-2.5 py-1 rounded-md bg-surface-3 text-text-muted text-[12px] font-body">{t('cancel')}</button>
