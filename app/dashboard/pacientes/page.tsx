@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { useToast } from '@/components/ui/toast'
 import * as Sentry from '@sentry/nextjs'
-import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, createPatient, updatePatient, exportPatientsCSV, sendWhatsAppMessage, formatNumber, timeAgo } from '@/lib/api'
+import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, updatePatient, exportPatientsCSV, sendWhatsAppMessage, formatNumber, timeAgo } from '@/lib/api'
 import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment } from '@/types'
 import { useTranslations } from 'next-intl'
 import {
@@ -12,8 +12,7 @@ import {
   X, RefreshCw, Download, UserPlus, Layers, GitMerge, TrendingUp, Trophy,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { useSearchParams } from 'next/navigation'
-import { NewPatientForm } from './panels/new-patient-form'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { PatientDetailPanel } from './panels/patient-detail-panel'
 
 const SegmentationPanel = dynamic(() => import('./segmentation-panel'), {
@@ -74,8 +73,6 @@ export default function PacientesPage() {
   const [selectedPatient, setSelectedPatient] = useState<PatientDetail | null>(null)
   const [mlFeatures, setMlFeatures] = useState<PatientMLFeatures | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
-  const [showNewPatient, setShowNewPatient] = useState(false)
-  const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', national_id: '', date_of_birth: '', city: '', service_interest: '' })
   const [staffNotes, setStaffNotes] = useState<StaffNote[]>([])
   const [treatments, setTreatments] = useState<Treatment[]>([])
   const [editingPatient, setEditingPatient] = useState(false)
@@ -85,6 +82,7 @@ export default function PacientesPage() {
   const [sendingWa, setSendingWa] = useState(false)
   const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes'>('info')
   const searchParams = useSearchParams()
+  const router = useRouter()
   const initialView = ((): 'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification' => {
     // Accept ?tab= for cross-page consistency and keep ?view= as legacy alias.
     const v = searchParams.get('tab') ?? searchParams.get('view')
@@ -99,13 +97,20 @@ export default function PacientesPage() {
       if (e.key === 'Escape') {
         if (showWhatsApp) { setShowWhatsApp(false); return }
         if (editingPatient) { setEditingPatient(false); return }
-        if (showNewPatient) { setShowNewPatient(false); return }
         if (selectedPatient) { setSelectedPatient(null); return }
       }
     }
     document.addEventListener('keydown', handleEsc)
     return () => document.removeEventListener('keydown', handleEsc)
-  }, [showWhatsApp, editingPatient, showNewPatient, selectedPatient])
+  }, [showWhatsApp, editingPatient, selectedPatient])
+
+  // S154: handleCreatePatient + state local muerto removidos —
+  // crear paciente migra al SofIA Console via tool create_patient
+  // (status: 'live + hot' en tool-registry). Botón abajo dispara
+  // navegación con prompt prellenado.
+  const launchNewPatient = () => {
+    router.push(`/dashboard?ask=${encodeURIComponent('Crea un paciente nuevo: ')}`)
+  }
 
   // Debounce search
   useEffect(() => {
@@ -157,6 +162,15 @@ export default function PacientesPage() {
       if (ml.status === 'fulfilled') setMlFeatures(ml.value)
       if (notes.status === 'fulfilled') setStaffNotes(notes.value)
       if (treats.status === 'fulfilled') setTreatments(treats.value)
+      // S154: Promise.allSettled NUNCA throws, así que el catch abajo era
+      // dead code. Reportamos cada rechazo individual a Sentry para
+      // diagnóstico, y mostramos toast sólo si el detalle del paciente
+      // no cargó (lo más visible — el panel se abre vacío).
+      const rejections = [detail, ml, notes, treats].filter(p => p.status === 'rejected') as PromiseRejectedResult[]
+      rejections.forEach(p => Sentry.captureException(p.reason, { tags: { context: 'patient_detail_load' } }))
+      if (detail.status === 'rejected') {
+        toast.error(t('detailError'))
+      }
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('detailError'))
@@ -164,26 +178,17 @@ export default function PacientesPage() {
     setDetailLoading(false)
   }
 
-  const handleCreatePatient = async () => {
-    if (!orgId || !newPatient.phone) return
-    try {
-      await createPatient(orgId, newPatient)
-      setShowNewPatient(false)
-      setNewPatient({ full_name: '', phone: '', email: '', national_id: '', date_of_birth: '', city: '', service_interest: '' })
-      loadPatients()
-    } catch (err) {
-      Sentry.captureException(err)
-      toast.error(t('createError'))
-    }
-  }
-
   const handleSavePatientEdit = async () => {
     if (!selectedPatient) return
     try {
       await updatePatient(selectedPatient.id, editData)
       setEditingPatient(false)
-      openDetail(selectedPatient)
-      loadPatients()
+      // S154: openDetail + loadPatients eran fire-and-forget — la edición
+      // confirmaba pero la tabla y el panel quedaban con datos stale por
+      // unos cientos de ms. Encadenamos await para que el operador vea
+      // la versión actualizada inmediatamente.
+      await openDetail(selectedPatient)
+      await loadPatients()
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('saveError'))
@@ -315,8 +320,18 @@ export default function PacientesPage() {
               <Download size={13} /> {t('exportCSV')}
             </button>
           )}
-          {/* CRUD removido: crear/editar paciente vive SOLO en Pulso (SofIA).
-              Esta página es visor puro — tabla + búsqueda + export CSV. */}
+          {/* S154: launcher al SofIA Console. La creación pasa por la consola
+              (tool create_patient) — SofIA pide los campos faltantes
+              conversacionalmente antes de escribir el registro. */}
+          {activeView === 'list' && (
+            <button
+              onClick={launchNewPatient}
+              title="Pídele a SofIA crear el paciente — ella valida los campos antes de escribir"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[12px] font-body font-semibold hover:bg-brand-purple/12 transition-colors"
+            >
+              <UserPlus size={13} /> {t('newPatient')}
+            </button>
+          )}
           <button onClick={loadPatients} aria-label={tCommon('refresh')} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>

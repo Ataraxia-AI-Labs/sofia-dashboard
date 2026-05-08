@@ -49,11 +49,24 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
       if (ins.status === 'fulfilled') setInsights(ins.value)
       if (coh.status === 'fulfilled') setCohorts(coh.value)
       if (risk.status === 'fulfilled') setAtRisk(risk.value)
+      // S154: si TODAS las promesas fallaron es un fallo de red o
+      // backend caído — el operador veía la pantalla "no rankings"
+      // sin saber si era ausencia de datos o error de carga. Toast
+      // explícito sólo cuando todas fallan; un fallo parcial deja
+      // la UI usable con datos en degradé. Cada promesa rechazada
+      // se reporta a Sentry para diagnóstico.
+      const allRejected = [rank, ins, coh, risk].every(p => p.status === 'rejected')
+      const anyRejected = [rank, ins, coh, risk].filter(p => p.status === 'rejected') as PromiseRejectedResult[]
+      anyRejected.forEach(p => Sentry.captureException(p.reason, { tags: { context: 'ltv_panel_load' } }))
+      if (allRejected && anyRejected.length > 0) {
+        toast.error(t('loadError'))
+      }
     } catch (err) {
       Sentry.captureException(err)
+      toast.error(t('loadError'))
     }
     setLoading(false)
-  }, [orgId])
+  }, [orgId, t, toast])
 
   useEffect(() => { loadData() }, [loadData])
 
@@ -298,9 +311,16 @@ export default function LTVPanel({ orgId }: LTVPanelProps) {
           {/* Visual bar chart */}
           <div className="space-y-2">
             {(() => {
-              const maxLtv = Math.max(...cohorts.map(c => c.avg_ltv), 1)
+              // S154: defensa para cohort vacío (Math.max(...[]) = -Infinity).
+              // El `1` del fallback antes era una línea más arriba pero como
+              // el spread se evaluaba primero, daba -Infinity igual cuando el
+              // array era 0-length. Calculamos la lista, sacamos max sólo si
+              // hay valores, y caemos a 1 si todo es 0/vacío para que la
+              // división no produzca NaN o ratios negativos.
+              const ltvs = cohorts.map(c => c.avg_ltv).filter(v => Number.isFinite(v) && v > 0)
+              const maxLtv = ltvs.length > 0 ? Math.max(...ltvs) : 1
               return cohorts.map((c) => {
-                const barWidth = (c.avg_ltv / maxLtv) * 100
+                const barWidth = ((c.avg_ltv || 0) / maxLtv) * 100
                 return (
                   <div key={c.cohort_month} className="flex items-center gap-3">
                     <span className="text-[11px] text-text-dim w-16 flex-shrink-0 font-body">

@@ -1183,7 +1183,8 @@
       "dismissed": "Dismissed"
     },
     "scanCompleteEmpty": "Scanned {scanned} patients — no duplicates found",
-    "scanNoPatients": "No patients to scan yet"
+    "scanNoPatients": "No patients to scan yet",
+    "loadError": "Couldn't load duplicates. Try again."
   },
   "ltv": {
     "subtitle": "Patient lifetime value prediction (12 months)",
@@ -1210,7 +1211,8 @@
     "trendRising": "Rising",
     "trendStable": "Stable",
     "trendDeclining": "Declining",
-    "recalcNoData": "Recalculation done — no patients with enough history yet"
+    "recalcNoData": "Recalculation done — no patients with enough history yet",
+    "loadError": "Couldn't load LTV. Check your connection and try again."
   },
   "outreach": {
     "statsPending": "Pending",
@@ -1324,7 +1326,8 @@
     "rewardCostPlaceholder": "Points cost",
     "creating": "Creating...",
     "noRewards": "No rewards",
-    "noRewardsHint": "Create rewards so patients can redeem their points."
+    "noRewardsHint": "Create rewards so patients can redeem their points.",
+    "loadError": "Couldn't load gamification. Try again."
   },
   "competitors": {
     "title": "Competitive Analysis",

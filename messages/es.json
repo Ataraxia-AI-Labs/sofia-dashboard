@@ -1183,7 +1183,8 @@
       "dismissed": "Descartados"
     },
     "scanCompleteEmpty": "Escaneados {scanned} pacientes — sin duplicados encontrados",
-    "scanNoPatients": "No hay pacientes para escanear todavía"
+    "scanNoPatients": "No hay pacientes para escanear todavía",
+    "loadError": "No se pudieron cargar los duplicados. Intenta de nuevo."
   },
   "ltv": {
     "subtitle": "Predicción de valor de vida del paciente (12 meses)",
@@ -1210,7 +1211,8 @@
     "trendRising": "Subiendo",
     "trendStable": "Estable",
     "trendDeclining": "Bajando",
-    "recalcNoData": "Recálculo completado — sin pacientes con suficiente historial para predecir LTV todavía"
+    "recalcNoData": "Recálculo completado — sin pacientes con suficiente historial para predecir LTV todavía",
+    "loadError": "No pudimos cargar el LTV. Verifica tu conexión e intenta de nuevo."
   },
   "outreach": {
     "statsPending": "Pendientes",
@@ -1324,7 +1326,8 @@
     "rewardCostPlaceholder": "Costo en puntos",
     "creating": "Creando...",
     "noRewards": "Sin recompensas",
-    "noRewardsHint": "Crea recompensas para que los pacientes puedan canjear sus puntos."
+    "noRewardsHint": "Crea recompensas para que los pacientes puedan canjear sus puntos.",
+    "loadError": "No pudimos cargar la gamificación. Intenta de nuevo."
   },
   "competitors": {
     "title": "Análisis Competitivo",

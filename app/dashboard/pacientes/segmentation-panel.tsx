@@ -9,7 +9,7 @@ import {
   Search as SearchIcon, Layers, ArrowRight
 } from 'lucide-react'
 import {
-  getSegments, runClustering, generateEmbeddings,
+  getSegments, getSegmentPatients, runClustering, generateEmbeddings,
   getCampaignSuggestion, findSimilarPatients,
 } from '@/lib/api/segments'
 import { formatCOP } from '@/lib/api/helpers'
@@ -135,11 +135,23 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
 
   const openSegmentDetail = async (segment: PatientSegment) => {
     setSelectedSegment(segment)
-    setDetailLoading(true)
     setCampaign(null)
     setSimilarPatients([])
     setSimilarForPatient(null)
     setSegmentPatients([])
+    // S154: este handler antes hacía toggle del loading sin llamar
+    // ningún fetch — la lista quedaba siempre vacía aunque hubieran
+    // 50 pacientes en el cluster. Ahora pega el endpoint nuevo
+    // GET /segments/{org}/segment/{seg}/patients que devuelve nombre,
+    // teléfono y avg_ticket por paciente.
+    setDetailLoading(true)
+    try {
+      const list = await getSegmentPatients(orgId, segment.id)
+      setSegmentPatients(list)
+    } catch (err) {
+      Sentry.captureException(err)
+      toast.error('No pudimos cargar los pacientes del segmento. Intenta de nuevo.')
+    }
     setDetailLoading(false)
   }
 

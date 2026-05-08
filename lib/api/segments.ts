@@ -1,6 +1,7 @@
 import { API_URL, authFetch, unwrapArray } from './helpers'
 import type {
   PatientSegment,
+  SegmentPatient,
   CampaignSuggestion,
   ClusteringResult,
   EmbeddingsResult,
@@ -50,6 +51,15 @@ export async function getSegments(orgId: string): Promise<PatientSegment[]> {
   const res = await authFetch(`${API_URL}/segments/${orgId}/segments`)
   if (!res.ok) return []
   return unwrapArray<PatientSegment>(await res.json(), 'segments')
+}
+
+// S154: el panel de Segmentos abría el detalle de un cluster pero
+// nunca llamaba a una API para traer los pacientes — el endpoint
+// no existía. Ahora vive en GET /segments/{org}/segment/{seg}/patients.
+export async function getSegmentPatients(orgId: string, segmentId: string, limit: number = 100): Promise<SegmentPatient[]> {
+  const res = await authFetch(`${API_URL}/segments/${orgId}/segment/${segmentId}/patients?limit=${limit}`)
+  if (!res.ok) return []
+  return unwrapArray<SegmentPatient>(await res.json(), 'patients')
 }
 
 export async function getPatientSegment(orgId: string, patientId: string): Promise<PatientSegment | null> {

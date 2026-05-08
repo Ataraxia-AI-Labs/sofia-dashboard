@@ -44,10 +44,14 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
       setDuplicates(dupes)
       setStats(st)
     } catch (err) {
+      // S154: antes el error se enviaba sólo a Sentry — el operador
+      // veía la lista vacía y asumía que no había duplicados, no que
+      // el load había fallado. Toast explícito + Sentry para diagnóstico.
       Sentry.captureException(err)
+      toast.error(t('loadError'))
     }
     setLoading(false)
-  }, [orgId])
+  }, [orgId, t, toast])
 
   useEffect(() => { loadData() }, [loadData])
 
@@ -87,7 +91,11 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
       await confirmDuplicate(orgId, dup.id, primaryId)
       toast.success(t('mergeSuccess'))
       setMergeConfirm(null)
-      loadData()
+      // S154: faltaba el await — sin él el setProcessingId(null) abajo
+      // corre antes del fetch terminar, el modal cierra mostrando la
+      // tabla vieja y el operador ve el duplicado todavía ahí. Race
+      // condition documentada en la auditoría P0.
+      await loadData()
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('mergeError'))
@@ -100,7 +108,8 @@ export default function DuplicatesPanel({ orgId }: DuplicatesPanelProps) {
     try {
       await dismissDuplicate(orgId, dup.id)
       toast.success(t('dismissed'))
-      loadData()
+      // S154: ver comentario en handleMerge — mismo race condition.
+      await loadData()
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('dismissError'))

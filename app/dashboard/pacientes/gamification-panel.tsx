@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import * as Sentry from '@sentry/nextjs'
+import { useToast } from '@/components/ui/toast'
 import {
-  Trophy, Flame, Star, Gift, Plus, X,
+  Trophy, Flame, Star, Gift, Plus,
   RefreshCw, Users, TrendingUp, Zap,
 } from 'lucide-react'
 import {
@@ -12,7 +14,6 @@ import {
   getTierDistribution,
   getGamificationInsights,
   getRewardsCatalog,
-  createReward,
 } from '@/lib/api/gamification'
 import { GamificationTierInline } from '@/components/gamification-tier-badge'
 import type {
@@ -44,18 +45,23 @@ const MEDAL_ICONS = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49']
 
 export default function GamificationPanel({ orgId }: GamificationPanelProps) {
   const t = useTranslations('gamification')
+  const toast = useToast()
+  const router = useRouter()
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [insights, setInsights] = useState<GamificationInsights | null>(null)
   const [tierDist, setTierDist] = useState<Record<string, number>>({})
   const [rewards, setRewards] = useState<Reward[]>([])
+  // S154: separamos `loading` (mount inicial) de `refreshing` (refresco
+  // del botón) — antes ambos compartían `loading`, así que cualquier
+  // refresh re-pintaba el skeleton completo y la UI parpadeaba durante
+  // 200-400ms aunque ya teníamos datos en pantalla.
   const [loading, setLoading] = useState(true)
-  const [showCreateReward, setShowCreateReward] = useState(false)
-  const [newReward, setNewReward] = useState({ name: '', description: '', points_cost: 0 })
-  const [creatingReward, setCreatingReward] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async ({ initial = false }: { initial?: boolean } = {}) => {
     if (!orgId) return
-    setLoading(true)
+    if (initial) setLoading(true)
+    else setRefreshing(true)
     try {
       const [lb, dist, ins, rw] = await Promise.allSettled([
         getLeaderboard(orgId),
@@ -67,28 +73,28 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
       if (dist.status === 'fulfilled') setTierDist(dist.value)
       if (ins.status === 'fulfilled') setInsights(ins.value)
       if (rw.status === 'fulfilled') setRewards(rw.value)
-    } catch (err) {
-      Sentry.captureException(err)
-    }
-    setLoading(false)
-  }, [orgId])
-
-  useEffect(() => { loadData() }, [loadData])
-
-  const handleCreateReward = async () => {
-    if (!orgId || !newReward.name || newReward.points_cost <= 0) return
-    setCreatingReward(true)
-    try {
-      const result = await createReward(orgId, newReward)
-      if (result) {
-        setRewards(prev => [...prev, result])
-        setShowCreateReward(false)
-        setNewReward({ name: '', description: '', points_cost: 0 })
+      const rejected = [lb, dist, ins, rw].filter(p => p.status === 'rejected') as PromiseRejectedResult[]
+      rejected.forEach(p => Sentry.captureException(p.reason, { tags: { context: 'gamification_panel_load' } }))
+      if (rejected.length === 4) {
+        toast.error(t('loadError'))
       }
     } catch (err) {
       Sentry.captureException(err)
+      toast.error(t('loadError'))
     }
-    setCreatingReward(false)
+    setLoading(false)
+    setRefreshing(false)
+  }, [orgId, t, toast])
+
+  useEffect(() => { loadData({ initial: true }) }, [loadData])
+
+  // S154: el panel tenía un form local "Crear reward" muerto — los
+  // handlers seguían en el código pero sin ningún botón ni JSX que
+  // los activara. Ahora lo unificamos al patrón SofIA Console: un
+  // botón visible que pre-forma el prompt y abre la consola, donde
+  // SofIA valida nombre + puntos antes de escribir el reward.
+  const launchCreateReward = () => {
+    router.push(`/dashboard?ask=${encodeURIComponent('Crea un reward llamado ')}`)
   }
 
   // Calculate tier distribution total
@@ -120,11 +126,12 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
           </div>
         </div>
         <button
-          onClick={loadData}
-          className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors"
+          onClick={() => loadData()}
+          disabled={refreshing}
+          className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary transition-colors disabled:opacity-50"
           aria-label="Refresh"
         >
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
         </button>
       </div>
 
@@ -299,7 +306,13 @@ export default function GamificationPanel({ orgId }: GamificationPanelProps) {
               <Gift size={14} className="text-brand-purple" />
               {t('rewardsCatalog')}
             </h4>
-            {/* CRUD removido: crear reward vive SOLO en Pulso (SofIA). */}
+            <button
+              onClick={launchCreateReward}
+              title="Pídele a SofIA crear el reward — ella valida nombre + puntos antes de escribir"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-[11px] font-body font-semibold hover:bg-brand-purple/12 transition-colors"
+            >
+              <Plus size={11} /> {t('createReward')}
+            </button>
           </div>
 
           {rewards.length === 0 ? (
