@@ -682,7 +682,17 @@
     "message": "Mensagem",
     "copyMessage": "Copiar mensagem",
     "copied": "Copiado",
-    "reach": "alcance estimado"
+    "reach": "alcance estimado",
+    "activateIntelligence": "Ativar inteligencia",
+    "updateIntelligence": "Atualizar tribos",
+    "phaseEmbeddings": "Gerando impressoes...",
+    "phaseClustering": "Detectando tribos...",
+    "phaseEmbeddingsDone": "Impressoes prontas — detectando tribos",
+    "stepEmbeddings": "Impressoes",
+    "stepClustering": "Tribos",
+    "pipelineComplete": "Inteligencia atualizada",
+    "clusterNeedsMore": "Impressoes prontas. Voce precisa mais pacientes com interacoes para detectar tribos.",
+    "errorPipeline": "Nao foi possivel atualizar a inteligencia. Tente novamente."
   },
   "conversions": {
     "title": "Predicao de Conversao",

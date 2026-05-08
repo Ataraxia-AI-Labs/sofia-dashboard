@@ -682,7 +682,17 @@
     "message": "Message",
     "copyMessage": "Copy message",
     "copied": "Copied",
-    "reach": "estimated reach"
+    "reach": "estimated reach",
+    "activateIntelligence": "Activate intelligence",
+    "updateIntelligence": "Update tribes",
+    "phaseEmbeddings": "Generating fingerprints...",
+    "phaseClustering": "Detecting tribes...",
+    "phaseEmbeddingsDone": "Fingerprints ready — detecting tribes",
+    "stepEmbeddings": "Fingerprints",
+    "stepClustering": "Tribes",
+    "pipelineComplete": "Intelligence updated",
+    "clusterNeedsMore": "Fingerprints ready. You need more patients with interactions to detect tribes.",
+    "errorPipeline": "Couldn't update patient intelligence. Try again."
   },
   "conversions": {
     "title": "Conversion Prediction",

@@ -682,7 +682,17 @@
     "message": "Mensaje",
     "copyMessage": "Copiar mensaje",
     "copied": "Copiado",
-    "reach": "alcance estimado"
+    "reach": "alcance estimado",
+    "activateIntelligence": "Activar inteligencia",
+    "updateIntelligence": "Actualizar tribus",
+    "phaseEmbeddings": "Generando huellas...",
+    "phaseClustering": "Detectando tribus...",
+    "phaseEmbeddingsDone": "Huellas listas — detectando tribus",
+    "stepEmbeddings": "Huellas",
+    "stepClustering": "Tribus",
+    "pipelineComplete": "Inteligencia actualizada",
+    "clusterNeedsMore": "Huellas listas. Necesitas más pacientes con interacciones para detectar tribus.",
+    "errorPipeline": "No pudimos actualizar la inteligencia de pacientes. Intenta de nuevo."
   },
   "conversions": {
     "title": "Predicción de Conversión",

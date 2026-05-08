@@ -50,8 +50,15 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
 
   const [segments, setSegments] = useState<PatientSegment[]>([])
   const [loading, setLoading] = useState(true)
-  const [clusteringInProgress, setClusteringInProgress] = useState(false)
-  const [embeddingsInProgress, setEmbeddingsInProgress] = useState(false)
+  // S154: el panel tenía DOS botones — "Generar huellas" y "Detectar
+  // tribus" — pero las dos acciones forman un pipeline secuencial:
+  // sin embeddings no hay clustering, y los dos botones independientes
+  // dejaban al operador apretar Cluster sin Embeddings y ver "0 tribus"
+  // pensando que era un bug. Ahora hay UN solo botón que corre el
+  // pipeline completo (embeddings idempotente → clustering → reload),
+  // y `phase` deja claro al operador qué paso está corriendo en vivo.
+  type PipelinePhase = 'idle' | 'embeddings' | 'clustering'
+  const [phase, setPhase] = useState<PipelinePhase>('idle')
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
 
   // Detail view state
@@ -80,57 +87,38 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
 
   useEffect(() => { loadSegments() }, [loadSegments])
 
-  const handleRunClustering = async () => {
-    setClusteringInProgress(true)
+  // S154: single pipeline runner. Reemplaza handleGenerateEmbeddings +
+  // handleRunClustering. La operación es idempotente: el embeddings
+  // step skipea pacientes ya con huella (force=False default), así que
+  // re-correr el pipeline cuesta sólo el clustering — barato y seguro.
+  const handleRunPipeline = async () => {
     setStatusMessage(null)
-    try {
-      const result = await runClustering(orgId)
-      if (result) {
-        setStatusMessage(result.message)
-        toast.success(result.message || 'Clustering completado')
-        loadSegments()
-      } else {
-        toast.error('No se pudo ejecutar el clustering. Revisa la consola.')
-      }
-    } catch (err) {
-      Sentry.captureException(err)
-      toast.error('Error al ejecutar clustering: ' + (err instanceof Error ? err.message : 'desconocido'))
-    }
-    setClusteringInProgress(false)
-  }
-
-  const handleGenerateEmbeddings = async () => {
-    // S147: chain the full intelligence pipeline so the operator gets a
-    // useful end-state from a single click instead of having to discover
-    // that "Actualizar inteligencia" only ran step 1/2. Was: generate
-    // embeddings only; user clicked, saw no segments appear, assumed
-    // bug. Now: embeddings → cluster → reload, with explicit status
-    // messages for each phase.
-    setEmbeddingsInProgress(true)
-    setStatusMessage(null)
+    setPhase('embeddings')
     try {
       const embedRes = await generateEmbeddings(orgId)
       if (!embedRes) {
-        toast.error('No se pudo actualizar la inteligencia de pacientes. Intenta de nuevo.')
-        setEmbeddingsInProgress(false)
+        toast.error(t('errorPipeline'))
+        setPhase('idle')
         return
       }
-      setStatusMessage(embedRes.message || 'Embeddings generados, ejecutando clustering...')
+      setStatusMessage(embedRes.message || t('phaseEmbeddingsDone'))
 
-      // Step 2: cluster automatically so the segments grid populates.
+      setPhase('clustering')
       const clusterRes = await runClustering(orgId)
       if (clusterRes) {
         setStatusMessage(clusterRes.message)
-        toast.success(clusterRes.message || 'Inteligencia actualizada y segmentos generados')
+        toast.success(clusterRes.message || t('pipelineComplete'))
         await loadSegments()
       } else {
-        toast.info('Embeddings generados. No hay suficientes pacientes para clustering todavía.')
+        // Embeddings sí, clustering no — caso típico: pocos pacientes
+        // con huella todavía. Mensaje informativo, no error.
+        toast.info(t('clusterNeedsMore'))
       }
     } catch (err) {
       Sentry.captureException(err)
-      toast.error('Error al actualizar la inteligencia de pacientes. Intenta de nuevo.')
+      toast.error(t('errorPipeline'))
     }
-    setEmbeddingsInProgress(false)
+    setPhase('idle')
   }
 
   const openSegmentDetail = async (segment: PatientSegment) => {
@@ -411,33 +399,65 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
             >
               <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
             </button>
+            {/* S154: pipeline button — label se adapta al fase para que el
+                operador vea exactamente qué está corriendo, y al estado del
+                org (sin segmentos = "Activar inteligencia"; con segmentos =
+                "Actualizar tribus"). Disable mientras corre. */}
             <button
-              onClick={handleGenerateEmbeddings}
-              disabled={embeddingsInProgress}
-              className="px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-text-muted text-xs font-semibold flex items-center gap-1.5 hover:text-text-primary transition-colors disabled:opacity-50"
+              onClick={handleRunPipeline}
+              disabled={phase !== 'idle'}
+              className="px-3 py-1.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-body font-semibold flex items-center gap-1.5 hover:bg-brand-purple/12 transition-colors disabled:opacity-50"
             >
-              {embeddingsInProgress ? (
-                <><Loader2 size={11} className="animate-spin" /> {t('generatingEmb')}</>
+              {phase === 'embeddings' ? (
+                <><Loader2 size={11} className="animate-spin" /> {t('phaseEmbeddings')}</>
+              ) : phase === 'clustering' ? (
+                <><Loader2 size={11} className="animate-spin" /> {t('phaseClustering')}</>
+              ) : segments.length > 0 ? (
+                <><Sparkles size={11} /> {t('updateIntelligence')}</>
               ) : (
-                <><Sparkles size={11} /> {t('generateEmbeddings')}</>
-              )}
-            </button>
-            <button
-              onClick={handleRunClustering}
-              disabled={clusteringInProgress}
-              className="px-3 py-1.5 rounded-lg bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-body font-semibold flex items-center gap-1.5 disabled:opacity-50"
-            >
-              {clusteringInProgress ? (
-                <><Loader2 size={11} className="animate-spin" /> {t('clustering')}</>
-              ) : (
-                <><Users size={11} /> {t('runClustering')}</>
+                <><Sparkles size={11} /> {t('activateIntelligence')}</>
               )}
             </button>
           </div>
         </div>
 
-        {/* Status message */}
-        {statusMessage && (
+        {/* S154: stepper visible mientras corre el pipeline. Le da al
+            operador feedback explícito de "vamos en el paso 1 de 2"
+            sin que tenga que adivinar qué hace el botón. */}
+        {phase !== 'idle' && (
+          <div className="mb-4 px-3 py-2 rounded-lg bg-brand-purple/5 border border-brand-purple/15 flex items-center gap-3">
+            <div className="flex items-center gap-2 flex-1">
+              {/* Step 1: embeddings */}
+              <div className="flex items-center gap-1.5">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
+                  phase === 'embeddings'
+                    ? 'bg-brand-purple text-white animate-pulse'
+                    : 'bg-status-success text-white'
+                }`}>
+                  {phase === 'embeddings' ? '1' : '✓'}
+                </div>
+                <span className="text-[11px] font-body text-text-muted">{t('stepEmbeddings')}</span>
+              </div>
+              <div className="h-px flex-1 bg-border" />
+              {/* Step 2: clustering */}
+              <div className="flex items-center gap-1.5">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
+                  phase === 'clustering'
+                    ? 'bg-brand-purple text-white animate-pulse'
+                    : 'bg-surface-3 text-text-dim border border-border'
+                }`}>
+                  2
+                </div>
+                <span className="text-[11px] font-body text-text-muted">{t('stepClustering')}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Status message — mostramos sólo cuando el pipeline TERMINA
+            (phase === 'idle' pero hay statusMessage de la última corrida).
+            Durante la corrida el stepper de arriba lleva el mensaje. */}
+        {statusMessage && phase === 'idle' && (
           <div className="mb-4 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-xs">
             {statusMessage}
           </div>
