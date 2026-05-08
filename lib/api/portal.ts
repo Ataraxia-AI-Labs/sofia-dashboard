@@ -6,6 +6,25 @@ import type { PortalData } from '@/types'
 
 const API = process.env.NEXT_PUBLIC_API_URL!
 
+// S154: las citas vienen como ISO UTC desde Postgres. Antes usábamos
+// dt.toISOString().split('T')[0] que devuelve la fecha en UTC — para un
+// paciente en Bogotá (UTC-5) una cita "2026-05-08T03:00:00Z" se rendereaba
+// como "8 de mayo" cuando en local es "7 de mayo, 22:00". Convertimos a
+// componentes locales para que la fecha + la hora siempre cuadren con el
+// reloj del paciente. Misma familia que el fix DOB del patient panel.
+function localYMD(dt: Date): string {
+  const y = dt.getFullYear()
+  const m = String(dt.getMonth() + 1).padStart(2, '0')
+  const d = String(dt.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+function localHM(dt: Date): string {
+  const h = String(dt.getHours()).padStart(2, '0')
+  const m = String(dt.getMinutes()).padStart(2, '0')
+  return `${h}:${m}`
+}
+
 function mapPortalData(raw: Record<string, unknown>): PortalData {
   const pi = (raw.patient_info ?? {}) as Record<string, unknown>
   const rawAppts = (raw.upcoming_appointments ?? []) as Record<string, unknown>[]
@@ -13,6 +32,7 @@ function mapPortalData(raw: Record<string, unknown>): PortalData {
   const rawInvoices = (raw.invoices ?? raw.payments ?? []) as Record<string, unknown>[]
   const rawGam = (raw.gamification ?? {}) as Record<string, unknown>
   const rawRef = (raw.referral_code ?? raw.referral ?? {}) as Record<string, unknown>
+  const rawTreatments = (raw.treatments ?? []) as Record<string, unknown>[]
   const progress = (rawGam.progress_to_next_tier ?? {}) as Record<string, unknown>
 
   return {
@@ -28,8 +48,8 @@ function mapPortalData(raw: Record<string, unknown>): PortalData {
       const dt = startTime ? new Date(startTime) : null
       return {
         id: (a.id ?? '') as string,
-        date: dt ? dt.toISOString().split('T')[0] : (a.date ?? '') as string,
-        time: dt ? dt.toTimeString().slice(0, 5) : (a.time ?? '') as string,
+        date: dt ? localYMD(dt) : (a.date ?? '') as string,
+        time: dt ? localHM(dt) : (a.time ?? '') as string,
         doctor: (a.doctor_name ?? a.doctor ?? a.doctor_id ?? '') as string,
         service: (a.service_name ?? a.service ?? '') as string,
         status: (a.status ?? '') as string,
@@ -39,11 +59,23 @@ function mapPortalData(raw: Record<string, unknown>): PortalData {
       const startTime = (a.start_time ?? a.date ?? '') as string
       const dt = startTime ? new Date(startTime) : null
       return {
-        date: dt ? dt.toISOString().split('T')[0] : (a.date ?? '') as string,
+        date: dt ? localYMD(dt) : (a.date ?? '') as string,
         service: (a.service_name ?? a.service ?? '') as string,
         doctor: (a.doctor_name ?? a.doctor ?? a.doctor_id ?? '') as string,
       }
     }),
+    treatments: rawTreatments.map(t => ({
+      id: (t.id ?? '') as string,
+      name: (t.treatment_name ?? t.name ?? '') as string,
+      treatment_name: (t.treatment_name ?? t.name ?? '') as string,
+      medication: (t.medication ?? '') as string,
+      dosage: (t.dosage ?? '') as string,
+      frequency_hours: (t.frequency_hours ?? 0) as number,
+      start_date: (t.start_date ?? t.date ?? '') as string,
+      end_date: (t.end_date ?? null) as string | null,
+      status: (t.status ?? 'ACTIVE') as string,
+      notes: (t.notes ?? null) as string | null,
+    })),
     payments: rawInvoices.map(p => ({
       id: (p.id ?? '') as string,
       date: (p.created_at ?? p.date ?? '') as string,

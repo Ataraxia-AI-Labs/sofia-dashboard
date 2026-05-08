@@ -1453,4 +1453,19 @@ export interface PortalData {
     referrals_made: number
     discounts_earned: number
   }
+  // S154: el backend ya devolvía treatments y mensajes pero el portal nunca
+  // los renderizaba. El plan post-op (medicación + dosis + frecuencia) es
+  // exactamente lo que el paciente busca al abrir el link.
+  treatments: Array<{
+    id: string
+    name: string                  // alias de treatment_name (legacy)
+    treatment_name: string
+    medication: string
+    dosage: string
+    frequency_hours: number
+    start_date: string
+    end_date: string | null
+    status: string
+    notes: string | null
+  }>
 }

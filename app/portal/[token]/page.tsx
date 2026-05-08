@@ -5,7 +5,7 @@ import {
   Calendar, Clock, User, Gift, Star, Trophy,
   ChevronDown, ChevronUp, Copy, Check, X, Share2,
   CreditCard, History, Loader2, AlertCircle, MessageCircle,
-  Flame, Award,
+  Flame, Award, Pill,
 } from 'lucide-react'
 import {
   getPortalData, cancelAppointment, requestReschedule,
@@ -36,20 +36,32 @@ function formatCOP(n: number): string {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n)
 }
 
-function formatDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
-  } catch {
-    return dateStr
+// S154: el mapper ya entrega fechas en local-YMD ("2026-05-07"). Si las
+// pasamos a `new Date(...)` directo, JS las parsea como UTC midnight y
+// `toLocaleDateString` las regresa al TZ del usuario, restándole un día
+// para cualquier zona oeste de UTC. Parsemos los componentes a mano para
+// que la fecha quede anclada a su día calendario sin importar dónde se
+// abre el portal. Misma técnica que el cómputo de edad en el patient
+// panel después del fix DOB de S153.
+function parseLocalDate(dateStr: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr)
+  if (!m) {
+    const fallback = new Date(dateStr)
+    return isNaN(fallback.getTime()) ? null : fallback
   }
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+}
+
+function formatDate(dateStr: string): string {
+  const d = parseLocalDate(dateStr)
+  if (!d) return dateStr
+  return d.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
 function formatShortDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
-  } catch {
-    return dateStr
-  }
+  const d = parseLocalDate(dateStr)
+  if (!d) return dateStr
+  return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 // ============================================================
@@ -158,6 +170,10 @@ export default function PatientPortalPage({ params }: { params: { token: string 
   const otherAppointments = data.upcoming_appointments.slice(1)
   const pendingPayments = data.payments.filter(p => p.status === 'PENDING')
   const paidPayments = data.payments.filter(p => p.status === 'PAID')
+  // S154: mostrar sólo tratamientos en curso. Si el paciente tiene una
+  // serie cerrada (status COMPLETED) la dejamos fuera del portal — para
+  // eso ya está el historial que el operador ve en el dashboard.
+  const activeTreatments = (data.treatments || []).filter(t => (t.status || '').toUpperCase() === 'ACTIVE')
 
   return (
     <div className="min-h-screen bg-void">
@@ -329,6 +345,60 @@ export default function PatientPortalPage({ params }: { params: { token: string 
             <Calendar className="w-6 h-6 text-text-dim mx-auto mb-1.5" />
             <p className="text-xs font-body font-medium text-text-muted">Sin citas pendientes</p>
             <p className="text-[12px] font-body text-text-dim mt-0.5">Contacta a la clínica para agendar tu próxima visita</p>
+          </div>
+        )}
+
+        {/* ======== ACTIVE TREATMENTS (S154) ========
+            El paciente abre el portal típicamente para repasar su plan
+            post-op: medicación, cada cuántas horas, fecha de fin. Antes
+            esta información viajaba en la respuesta del backend pero el
+            portal nunca la mostraba. Sentient: card con strip lateral
+            cyan (status-info) para diferenciarlo del bloque purple de
+            citas y del gold de logros. */}
+        {activeTreatments.length > 0 && (
+          <div className="mb-3 rounded-lg bg-surface border border-border overflow-hidden flex">
+            <div aria-hidden="true" className="w-1 bg-status-info" />
+            <div className="flex-1 p-4">
+              <h2 className="text-xs font-body font-bold text-status-info flex items-center gap-2 mb-2.5">
+                <Pill className="w-3.5 h-3.5" />
+                Tu tratamiento en curso
+              </h2>
+              <div className="space-y-2">
+                {activeTreatments.map(t => {
+                  const freq = t.frequency_hours
+                    ? (t.frequency_hours === 24
+                        ? 'una vez al día'
+                        : t.frequency_hours === 12
+                          ? 'cada 12 horas'
+                          : `cada ${t.frequency_hours} horas`)
+                    : null
+                  return (
+                    <div key={t.id} className="rounded-md bg-surface-2 border border-border px-3 py-2.5">
+                      <p className="text-[13px] font-body font-semibold text-text-primary">{t.treatment_name || 'Tratamiento'}</p>
+                      <p className="text-xs font-body text-text-muted mt-0.5">
+                        {[t.medication, t.dosage].filter(Boolean).join(' · ') || 'Sin medicación registrada'}
+                      </p>
+                      {freq && (
+                        <p className="text-[12px] font-body text-text-dim mt-0.5 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {freq}
+                        </p>
+                      )}
+                      {(t.start_date || t.end_date) && (
+                        <p className="text-[12px] font-body text-text-dim mt-0.5">
+                          {t.start_date ? formatShortDate(t.start_date) : '—'}
+                          {' '}&rarr;{' '}
+                          {t.end_date ? formatShortDate(t.end_date) : 'sin fecha de fin'}
+                        </p>
+                      )}
+                      {t.notes && (
+                        <p className="text-[12px] font-body text-text-muted mt-1.5 italic">{t.notes}</p>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         )}
 

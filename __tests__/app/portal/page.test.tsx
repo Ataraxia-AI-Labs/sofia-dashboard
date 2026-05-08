@@ -31,6 +31,7 @@ import type { PortalData } from '@/types'
 const MOCK_DATA: PortalData = {
   patient_info: { name: 'Maria Garcia Perez', phone: '+573001234567', email: 'maria@test.com' },
   clinic_name: 'Clinica Sonrisa',
+  clinic_phone: '+573001234567',
   upcoming_appointments: [
     { id: 'apt-1', date: '2026-04-01', time: '10:00', doctor: 'Dr. Perez', service: 'Limpieza Dental', status: 'CONFIRMED' },
     { id: 'apt-2', date: '2026-04-15', time: '14:00', doctor: 'Dra. Lopez', service: 'Blanqueamiento', status: 'CONFIRMED' },
@@ -55,6 +56,7 @@ const MOCK_DATA: PortalData = {
     ],
   },
   referral: { code: 'MARIA2026', referrals_made: 3, discounts_earned: 2 },
+  treatments: [],
 }
 
 import PatientPortalPage from '@/app/portal/[token]/page'
