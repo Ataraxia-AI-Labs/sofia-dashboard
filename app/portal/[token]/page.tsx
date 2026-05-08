@@ -8,7 +8,8 @@ import {
   Flame, Award, Pill,
 } from 'lucide-react'
 import {
-  getPortalData, cancelAppointment, requestReschedule,
+  loadPortal, cancelAppointment, requestReschedule,
+  type PortalLoadError,
 } from '@/lib/api/portal'
 import type { PortalData } from '@/types'
 import { AtaraxiaLogo } from '@/components/ataraxia-logo'
@@ -72,7 +73,11 @@ export default function PatientPortalPage({ params }: { params: { token: string 
   const { token } = params
   const [data, setData] = useState<PortalData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  // S154: separamos los dos modos de fallo. Antes 401 (token expirado)
+  // y 500/red caían en el mismo mensaje genérico — el paciente no sabía
+  // si volver a intentar o avisarle a la clínica para que le envíe un
+  // link nuevo. Ahora cada caso muestra su propia acción.
+  const [errorKind, setErrorKind] = useState<PortalLoadError | null>(null)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [rescheduleId, setRescheduleId] = useState<string | null>(null)
   const [rescheduleDate, setRescheduleDate] = useState('')
@@ -82,16 +87,12 @@ export default function PatientPortalPage({ params }: { params: { token: string 
 
   const loadData = useCallback(async () => {
     setLoading(true)
-    try {
-      const result = await getPortalData(token)
-      if (!result) {
-        setError('No se pudo cargar tu informacion. El enlace puede haber expirado.')
-        setLoading(false)
-        return
-      }
-      setData(result)
-    } catch {
-      setError('Error de conexion. Intenta de nuevo.')
+    setErrorKind(null)
+    const result = await loadPortal(token)
+    if (result.ok) {
+      setData(result.data)
+    } else {
+      setErrorKind(result.error)
     }
     setLoading(false)
   }, [token])
@@ -144,22 +145,35 @@ export default function PatientPortalPage({ params }: { params: { token: string 
     )
   }
 
-  // ERROR STATE
-  if (error || !data) {
+  // ERROR STATE — copy diferente según el motivo del fallo (S154).
+  if (errorKind || !data) {
+    const isExpired = errorKind === 'EXPIRED_OR_INVALID'
     return (
       <div className="min-h-screen bg-void flex items-center justify-center p-4">
         <div className="text-center max-w-sm">
-          <div className="w-14 h-14 rounded-lg bg-status-danger/10 border border-status-danger/20 flex items-center justify-center mx-auto mb-3">
-            <AlertCircle className="w-6 h-6 text-status-danger" />
+          <div className={`w-14 h-14 rounded-lg flex items-center justify-center mx-auto mb-3 ${
+            isExpired
+              ? 'bg-status-warning/10 border border-status-warning/20'
+              : 'bg-status-danger/10 border border-status-danger/20'
+          }`}>
+            <AlertCircle className={`w-6 h-6 ${isExpired ? 'text-status-warning' : 'text-status-danger'}`} />
           </div>
-          <h2 className="text-lg font-bold text-text-primary font-body mb-1">Enlace no disponible</h2>
-          <p className="text-text-muted text-xs font-body mb-3">{error || 'Este enlace no es valido o ha expirado.'}</p>
-          <button
-            onClick={loadData}
-            className="px-5 py-2 rounded-lg bg-brand-purple text-white text-xs font-body font-medium hover:bg-brand-purple-dark transition-colors"
-          >
-            Reintentar
-          </button>
+          <h2 className="text-lg font-bold text-text-primary font-body mb-1">
+            {isExpired ? 'Tu enlace expiró' : 'Sin conexión'}
+          </h2>
+          <p className="text-text-muted text-xs font-body mb-3 leading-relaxed">
+            {isExpired
+              ? 'Por seguridad, los enlaces del portal expiran después de 90 días sin uso. Pídele a la clínica que te envíe uno nuevo y vuelves a entrar.'
+              : 'No pudimos cargar tu información en este momento. Verifica tu conexión y vuelve a intentarlo.'}
+          </p>
+          {!isExpired && (
+            <button
+              onClick={loadData}
+              className="px-5 py-2 rounded-lg bg-brand-purple text-white text-xs font-body font-medium hover:bg-brand-purple-dark transition-colors"
+            >
+              Reintentar
+            </button>
+          )}
         </div>
       </div>
     )

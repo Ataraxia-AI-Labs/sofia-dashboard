@@ -15,13 +15,28 @@ jest.mock('lucide-react', () => {
   })
 })
 
-// Mock portal API
+// Mock portal API. S154: la página ahora usa loadPortal (que devuelve
+// {ok, data|error}) en vez de getPortalData (que devolvía PortalData|null).
+// El helper aquí mantiene el shape antiguo del mock (resolve(MOCK_DATA)
+// significa éxito; resolve(null) significa fallo) y lo traduce al nuevo
+// contrato — así no toca cambiar cada test individualmente.
 const mockGetPortalData = jest.fn()
 const mockCancelAppointment = jest.fn()
 const mockRequestReschedule = jest.fn()
 
 jest.mock('@/lib/api/portal', () => ({
-  getPortalData: (...args: any[]) => mockGetPortalData(...args),
+  loadPortal: async (...args: any[]) => {
+    try {
+      const result = await mockGetPortalData(...args)
+      if (result === null || result === undefined) {
+        return { ok: false, error: 'EXPIRED_OR_INVALID' }
+      }
+      return { ok: true, data: result }
+    } catch {
+      // El loadPortal real nunca relanza — convierte excepciones a NETWORK.
+      return { ok: false, error: 'NETWORK' }
+    }
+  },
   cancelAppointment: (...args: any[]) => mockCancelAppointment(...args),
   requestReschedule: (...args: any[]) => mockRequestReschedule(...args),
 }))
@@ -79,34 +94,49 @@ describe('PatientPortalPage', () => {
     expect(screen.getByText('Cargando tu portal...')).toBeInTheDocument()
   })
 
-  it('shows error state when getPortalData returns null', async () => {
+  it('shows expired-link copy when token is rejected (null result)', async () => {
     mockGetPortalData.mockResolvedValue(null)
     render(<PatientPortalPage params={{ token: 'tok-1' }} />)
     await waitFor(() => {
-      expect(screen.getByText('Enlace no disponible')).toBeInTheDocument()
-      expect(screen.getByText(/No se pudo cargar tu informacion/)).toBeInTheDocument()
+      // S154: el copy específico para 401 le dice al paciente qué hacer
+      // (pedir un link nuevo a la clínica) en vez del genérico anterior.
+      expect(screen.getByText('Tu enlace expiró')).toBeInTheDocument()
+      expect(screen.getByText(/los enlaces del portal expiran/i)).toBeInTheDocument()
     })
   })
 
-  it('shows error state when getPortalData throws', async () => {
+  it('shows network-error copy when fetch throws', async () => {
     mockGetPortalData.mockRejectedValue(new Error('Network'))
     render(<PatientPortalPage params={{ token: 'tok-1' }} />)
     await waitFor(() => {
-      expect(screen.getByText('Enlace no disponible')).toBeInTheDocument()
-      expect(screen.getByText(/Error de conexion/)).toBeInTheDocument()
+      expect(screen.getByText('Sin conexión')).toBeInTheDocument()
+      expect(screen.getByText(/Verifica tu conexión/i)).toBeInTheDocument()
     })
   })
 
-  it('renders retry button on error state', async () => {
-    mockGetPortalData.mockResolvedValue(null)
-    render(<PatientPortalPage params={{ token: 'tok-1' }} />)
+  it('shows retry button only on network errors (not on expiry)', async () => {
+    // Network → reintento permitido
+    mockGetPortalData.mockRejectedValueOnce(new Error('Network'))
+    const { unmount } = render(<PatientPortalPage params={{ token: 'tok-1' }} />)
     await waitFor(() => {
       expect(screen.getByText('Reintentar')).toBeInTheDocument()
     })
+    unmount()
+
+    // Expiry → no tiene sentido reintentar; el operador tiene que mandar
+    // un link nuevo. Ocultar el botón evita confusión.
+    mockGetPortalData.mockResolvedValue(null)
+    render(<PatientPortalPage params={{ token: 'tok-2' }} />)
+    await waitFor(() => {
+      expect(screen.getByText('Tu enlace expiró')).toBeInTheDocument()
+    })
+    expect(screen.queryByText('Reintentar')).not.toBeInTheDocument()
   })
 
-  it('retries loading on retry button click', async () => {
-    mockGetPortalData.mockResolvedValueOnce(null).mockResolvedValueOnce(MOCK_DATA)
+  it('retries loading on retry button click after network error', async () => {
+    mockGetPortalData
+      .mockRejectedValueOnce(new Error('Network'))
+      .mockResolvedValueOnce(MOCK_DATA)
     render(<PatientPortalPage params={{ token: 'tok-1' }} />)
     await waitFor(() => screen.getByText('Reintentar'))
     fireEvent.click(screen.getByText('Reintentar'))

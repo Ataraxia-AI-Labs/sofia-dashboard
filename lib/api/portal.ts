@@ -103,11 +103,34 @@ function mapPortalData(raw: Record<string, unknown>): PortalData {
   }
 }
 
+// S154: el portal ahora distingue dos estados de fallo distintos:
+//   - 401 = token inválido o EXPIRADO (la clínica debe reenviar el link)
+//   - cualquier otro error = problema temporal (red, backend caído, etc.)
+// Devolvemos un código semántico para que la UI muestre el copy correcto
+// — antes ambos casos caían en el mismo "Enlace no disponible" genérico
+// y el paciente no sabía si reintentar o llamar a la clínica.
+export type PortalLoadError = 'EXPIRED_OR_INVALID' | 'NETWORK'
+export type PortalLoadResult =
+  | { ok: true; data: PortalData }
+  | { ok: false; error: PortalLoadError }
+
 export async function getPortalData(token: string): Promise<PortalData | null> {
   const res = await fetch(`${API}/api/portal/${token}`)
   if (!res.ok) return null
   const raw = await res.json()
   return mapPortalData(raw)
+}
+
+export async function loadPortal(token: string): Promise<PortalLoadResult> {
+  try {
+    const res = await fetch(`${API}/api/portal/${token}`)
+    if (res.status === 401) return { ok: false, error: 'EXPIRED_OR_INVALID' }
+    if (!res.ok) return { ok: false, error: 'NETWORK' }
+    const raw = await res.json()
+    return { ok: true, data: mapPortalData(raw) }
+  } catch {
+    return { ok: false, error: 'NETWORK' }
+  }
 }
 
 export async function getAppointments(token: string): Promise<PortalData['upcoming_appointments']> {
