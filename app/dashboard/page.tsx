@@ -44,17 +44,34 @@ export default function SofiaConsolePage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
-  // S153: when other pages link here with `?ask=<text>` (e.g. the patient
-  // panel "Anotar nota / Crear tratamiento" buttons), inject the prompt
-  // into the chat input and strip the query so a refresh doesn't re-fire it.
+  // S153/S154: when other pages link here with `?ask=<text>` (e.g. the
+  // patient panel Tratamiento/Nota buttons, gamification "Crear reward",
+  // pacientes header "Nuevo Paciente"), inject the prompt into the chat
+  // input and strip the query so a refresh doesn't re-fire it.
+  //
+  // S154 race-condition fix: la versión anterior usaba setTimeout(200) +
+  // router.replace inmediato. Cuando la navegación venía de client-side
+  // router.push (no full reload), router.replace cambiaba searchParams
+  // dentro del mismo tick, el effect re-disparaba con cleanup, y la
+  // cleanup CANCELABA el setTimeout antes que injectPrompt corriera —
+  // el prompt nunca llegaba al ChatInput. La navegación full-reload
+  // (URL pegada en la barra) sí funcionaba por accidente: el setTimeout
+  // 200ms ganaba contra el ciclo de hidratación.
+  //
+  // Fix: useRef guard para procesar `ask` exactamente UNA vez por mount,
+  // injectPrompt en microtask (Promise.resolve().then) — no setTimeout
+  // que pueda cancelarse. React 18 garantiza child effects antes que
+  // parent effects, así que ChatInput ya está suscrito al bridge cuando
+  // este effect corre; el microtask es seguro.
+  const askProcessedRef = useRef(false)
   useEffect(() => {
+    if (askProcessedRef.current) return
     const ask = searchParams?.get('ask')
     if (!ask) return
+    askProcessedRef.current = true
     const text = decodeURIComponent(ask)
-    // Defer until ChatInput has subscribed to the bridge.
-    const t = setTimeout(() => toolBridge.injectPrompt(text), 200)
+    Promise.resolve().then(() => toolBridge.injectPrompt(text))
     router.replace('/dashboard')
-    return () => clearTimeout(t)
   }, [searchParams, router])
 
   const loadSession = useCallback(async (sid: string) => {
