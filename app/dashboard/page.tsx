@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import * as Sentry from '@sentry/nextjs'
 import { useOrg } from '@/lib/org-context'
 import { WelcomeState } from '@/components/sofia-console/welcome-state'
 import { ChatInput } from '@/components/sofia-console/chat-input'
 import { SuggestedPrompts } from '@/components/sofia-console/suggested-prompts'
 import { MessageBubble, type Message } from '@/components/sofia-console/message-bubble'
-import { memoryBridge } from '@/lib/memory-bridge'
+import { memoryBridge, toolBridge } from '@/lib/memory-bridge'
 import { askConsole, getConsoleMessages, type ConsoleHistoryItem } from '@/lib/api/console'
 
 function inferThinkingSteps(q: string): string[] {
@@ -32,6 +33,8 @@ function inferThinkingSteps(q: string): string[] {
 
 export default function SofiaConsolePage() {
   const { user, org, branchId } = useOrg()
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [sending, setSending] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
@@ -40,6 +43,19 @@ export default function SofiaConsolePage() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
+
+  // S153: when other pages link here with `?ask=<text>` (e.g. the patient
+  // panel "Anotar nota / Crear tratamiento" buttons), inject the prompt
+  // into the chat input and strip the query so a refresh doesn't re-fire it.
+  useEffect(() => {
+    const ask = searchParams?.get('ask')
+    if (!ask) return
+    const text = decodeURIComponent(ask)
+    // Defer until ChatInput has subscribed to the bridge.
+    const t = setTimeout(() => toolBridge.injectPrompt(text), 200)
+    router.replace('/dashboard')
+    return () => clearTimeout(t)
+  }, [searchParams, router])
 
   const loadSession = useCallback(async (sid: string) => {
     setSessionId(sid)

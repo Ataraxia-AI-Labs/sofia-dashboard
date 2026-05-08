@@ -75,7 +75,7 @@ export const TOOL_REGISTRY: ToolDef[] = [
   { id: 'find_patient', category: 'patients', icon: SearchIcon, label: 'Buscar paciente', description: 'Encuentra por nombre o teléfono', prompt: 'Busca al paciente ', minRole: 'STAFF', status: 'live', hot: true },
   { id: 'create_patient', category: 'patients', icon: UserPlus, label: 'Crear paciente', description: 'Registra un paciente nuevo', prompt: 'Crea un paciente nuevo: ', minRole: 'STAFF', status: 'live', hot: true },
   { id: 'update_patient', category: 'patients', icon: UserCog, label: 'Editar paciente', description: 'Actualiza datos de un paciente', prompt: 'Actualiza los datos de ', minRole: 'STAFF', status: 'soon' },
-  { id: 'add_staff_note', category: 'patients', icon: StickyNote, label: 'Agregar nota', description: 'Nota privada del equipo', prompt: 'Anota lo siguiente para el paciente ', minRole: 'STAFF', status: 'soon' },
+  { id: 'add_staff_note', category: 'patients', icon: StickyNote, label: 'Agregar nota', description: 'Nota privada del equipo', prompt: 'Anota lo siguiente para el paciente ', minRole: 'STAFF', status: 'live', hot: true },
   { id: 'merge_duplicates', category: 'patients', icon: Merge, label: 'Merge duplicados', description: 'Fusiona dos registros', prompt: 'Une los pacientes duplicados ', minRole: 'ADMIN', status: 'soon' },
   { id: 'archive_patient', category: 'patients', icon: UserX, label: 'Archivar paciente', description: 'Soft delete', prompt: 'Archiva al paciente ', minRole: 'ADMIN', status: 'soon' },
   { id: 'generate_portal_link', category: 'patients', icon: KeyRound, label: 'Link portal', description: 'Genera link único paciente', prompt: 'Genera un link de portal para ', minRole: 'STAFF', status: 'soon' },
@@ -90,7 +90,7 @@ export const TOOL_REGISTRY: ToolDef[] = [
   { id: 'create_recurring', category: 'appointments', icon: RepeatIcon, label: 'Serie de citas', description: 'Tratamiento con múltiples sesiones', prompt: 'Crea una serie recurrente para ', minRole: 'STAFF', status: 'soon' },
 
   // -------- TRATAMIENTOS (treatments)
-  { id: 'create_treatment', category: 'treatments', icon: Pill, label: 'Crear tratamiento', description: 'Plan activo con medicación', prompt: 'Crea un tratamiento para ', minRole: 'STAFF', status: 'soon' },
+  { id: 'create_treatment', category: 'treatments', icon: Pill, label: 'Crear tratamiento', description: 'Plan activo con medicación', prompt: 'Crea un tratamiento para ', minRole: 'STAFF', status: 'live', hot: true },
   { id: 'log_treatment_progress', category: 'treatments', icon: Activity, label: 'Registrar avance', description: 'Progreso del tratamiento', prompt: 'Anota el avance del tratamiento de ', minRole: 'STAFF', status: 'soon' },
 
   // -------- SERVICIOS (services)

@@ -1,15 +1,15 @@
 'use client'
 
 import { useEffect } from 'react'
-import { X, Edit3, Send, Pill } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { X, Edit3, Send, Pill, NotebookPen } from 'lucide-react'
 import { useOrg } from '@/lib/org-context'
 import { PortalLinkGenerator } from '@/components/portal-link-generator'
-import type { PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
+import type { PatientDetail, PatientMLFeatures, StaffNote, Treatment } from '@/types'
 import { PatientInfoTab } from './patient-info-tab'
 import { PatientMLTab } from './patient-ml-tab'
 import { PatientNotesTab } from './patient-notes-tab'
-import { PatientMediaTab } from './patient-media-tab'
-import { WhatsAppForm, TreatmentForm, EditPatientForm } from './patient-action-forms'
+import { WhatsAppForm, EditPatientForm } from './patient-action-forms'
 
 interface PatientDetailPanelProps {
   patient: PatientDetail
@@ -20,10 +20,9 @@ interface PatientDetailPanelProps {
   mlFeatures: PatientMLFeatures | null
   staffNotes: StaffNote[]
   treatments: Treatment[]
-  patientMedia: PatientMedia[]
-  // Tabs
-  detailTab: 'info' | 'ml' | 'notes' | 'media'
-  onTabChange: (tab: 'info' | 'ml' | 'notes' | 'media') => void
+  // Tabs (S153: Media tab removed; Tratamiento + Nota now flow through SofIA console)
+  detailTab: 'info' | 'ml' | 'notes'
+  onTabChange: (tab: 'info' | 'ml' | 'notes') => void
   // Edit
   editingPatient: boolean
   onToggleEdit: () => void
@@ -37,22 +36,12 @@ interface PatientDetailPanelProps {
   onWaMessageChange: (v: string) => void
   onSendWhatsApp: () => void
   sendingWa: boolean
-  // Treatment
-  showTreatmentForm: boolean
-  onToggleTreatment: () => void
-  newTreatment: { treatment_name: string; medication: string; dosage: string; frequency_hours: number; start_date: string; end_date: string; notes: string }
-  onTreatmentChange: (data: PatientDetailPanelProps['newTreatment']) => void
-  onCreateTreatment: () => void
-  // Notes
-  newNote: string
-  onNewNoteChange: (v: string) => void
-  onAddNote: () => void
-  savingNote: boolean
 }
 
 export function PatientDetailPanel(props: PatientDetailPanelProps) {
   const { patient, onClose, detailLoading, detailTab, onTabChange } = props
   const { orgId } = useOrg()
+  const router = useRouter()
 
   // Lock body scroll while panel is open
   useEffect(() => {
@@ -60,11 +49,26 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
     return () => { document.body.style.overflow = '' }
   }, [])
 
+  // S153: Tratamiento + Nota migraron al SofIA Console. La intención del
+  // operador se valida conversacionalmente (SofIA pide los campos
+  // obligatorios faltantes) antes de escribir el tratamiento o la nota.
+  // Pre-formamos el prompt con el nombre del paciente para que el cursor
+  // quede listo en lo que el operador necesite agregar.
+  const launchTreatment = () => {
+    const ref = patient.full_name || patient.phone || 'el paciente'
+    const prompt = `Crea un tratamiento para ${ref}: `
+    router.push(`/dashboard?ask=${encodeURIComponent(prompt)}`)
+  }
+  const launchNote = () => {
+    const ref = patient.full_name || patient.phone || 'el paciente'
+    const prompt = `Anota lo siguiente para ${ref}: `
+    router.push(`/dashboard?ask=${encodeURIComponent(prompt)}`)
+  }
+
   const tabs = [
     { id: 'info' as const, label: 'Info' },
     { id: 'ml' as const, label: 'ML / IA' },
     { id: 'notes' as const, label: `Notas (${props.staffNotes.length})` },
-    { id: 'media' as const, label: `Media (${props.patientMedia.length})` },
   ]
 
   return (
@@ -112,8 +116,19 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
           <button onClick={props.onToggleWhatsApp} className={`px-2.5 py-1 rounded-md text-[12px] font-body font-semibold transition-colors ${props.showWhatsApp ? 'bg-status-success/8 border border-status-success/15 text-status-success' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
             <Send size={11} className="inline mr-1" />WhatsApp
           </button>
-          <button onClick={props.onToggleTreatment} className={`px-2.5 py-1 rounded-md text-[12px] font-body font-semibold transition-colors ${props.showTreatmentForm ? 'bg-status-info/8 border border-status-info/15 text-status-info' : 'bg-surface-3 text-text-muted hover:text-text-primary'}`}>
+          <button
+            onClick={launchTreatment}
+            title="Pídele a SofIA crear el tratamiento — ella valida los campos antes de escribir"
+            className="px-2.5 py-1 rounded-md text-[12px] font-body font-semibold bg-surface-3 text-text-muted hover:bg-status-info/8 hover:border-status-info/15 hover:text-status-info border border-transparent transition-colors"
+          >
             <Pill size={11} className="inline mr-1" />Tratamiento
+          </button>
+          <button
+            onClick={launchNote}
+            title="Pídele a SofIA agregar una nota — ella confirma el contenido antes de guardarla"
+            className="px-2.5 py-1 rounded-md text-[12px] font-body font-semibold bg-surface-3 text-text-muted hover:bg-brand-purple/8 hover:border-brand-purple/15 hover:text-brand-purple border border-transparent transition-colors"
+          >
+            <NotebookPen size={11} className="inline mr-1" />Nota
           </button>
           <PortalLinkGenerator orgId={orgId} patientId={patient.id} patientName={patient.full_name} compact />
         </div>
@@ -146,14 +161,6 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
                   sending={props.sendingWa}
                 />
               )}
-              {props.showTreatmentForm && (
-                <TreatmentForm
-                  data={props.newTreatment}
-                  onChange={props.onTreatmentChange}
-                  onSubmit={props.onCreateTreatment}
-                  onCancel={props.onToggleTreatment}
-                />
-              )}
               {props.editingPatient && (
                 <EditPatientForm
                   patient={patient}
@@ -172,16 +179,7 @@ export function PatientDetailPanel(props: PatientDetailPanelProps) {
                 <PatientMLTab mlFeatures={props.mlFeatures} />
               )}
               {detailTab === 'notes' && (
-                <PatientNotesTab
-                  notes={props.staffNotes}
-                  newNote={props.newNote}
-                  onNewNoteChange={props.onNewNoteChange}
-                  onAddNote={props.onAddNote}
-                  saving={props.savingNote}
-                />
-              )}
-              {detailTab === 'media' && (
-                <PatientMediaTab media={props.patientMedia} />
+                <PatientNotesTab notes={props.staffNotes} onLaunchNote={launchNote} />
               )}
             </>
           )}

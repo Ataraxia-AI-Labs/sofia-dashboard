@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { useOrg } from '@/lib/org-context'
 import { useToast } from '@/components/ui/toast'
 import * as Sentry from '@sentry/nextjs'
-import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, fetchPatientMedia, createPatient, updatePatient, createStaffNote, createTreatment, exportPatientsCSV, sendWhatsAppMessage, formatNumber, timeAgo } from '@/lib/api'
-import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment, PatientMedia } from '@/types'
+import { fetchPatients, fetchPatientDetail, fetchPatientMLFeatures, fetchStaffNotes, fetchPatientTreatments, createPatient, updatePatient, exportPatientsCSV, sendWhatsAppMessage, formatNumber, timeAgo } from '@/lib/api'
+import type { Patient, PatientDetail, PatientMLFeatures, StaffNote, Treatment } from '@/types'
 import { useTranslations } from 'next-intl'
 import {
   Search, ChevronDown, ChevronUp, ChevronsUpDown, ChevronLeft, ChevronRight,
@@ -78,17 +78,12 @@ export default function PacientesPage() {
   const [newPatient, setNewPatient] = useState({ full_name: '', phone: '', email: '', national_id: '', date_of_birth: '', city: '', service_interest: '' })
   const [staffNotes, setStaffNotes] = useState<StaffNote[]>([])
   const [treatments, setTreatments] = useState<Treatment[]>([])
-  const [newNote, setNewNote] = useState('')
-  const [savingNote, setSavingNote] = useState(false)
   const [editingPatient, setEditingPatient] = useState(false)
   const [editData, setEditData] = useState<Partial<PatientDetail>>({})
-  const [patientMedia, setPatientMedia] = useState<PatientMedia[]>([])
   const [showWhatsApp, setShowWhatsApp] = useState(false)
   const [waMessage, setWaMessage] = useState('')
   const [sendingWa, setSendingWa] = useState(false)
-  const [showTreatmentForm, setShowTreatmentForm] = useState(false)
-  const [newTreatment, setNewTreatment] = useState({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
-  const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes' | 'media'>('info')
+  const [detailTab, setDetailTab] = useState<'info' | 'ml' | 'notes'>('info')
   const searchParams = useSearchParams()
   const initialView = ((): 'list' | 'segments' | 'duplicates' | 'ltv' | 'gamification' => {
     // Accept ?tab= for cross-page consistency and keep ?view= as legacy alias.
@@ -103,7 +98,6 @@ export default function PacientesPage() {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (showWhatsApp) { setShowWhatsApp(false); return }
-        if (showTreatmentForm) { setShowTreatmentForm(false); return }
         if (editingPatient) { setEditingPatient(false); return }
         if (showNewPatient) { setShowNewPatient(false); return }
         if (selectedPatient) { setSelectedPatient(null); return }
@@ -111,7 +105,7 @@ export default function PacientesPage() {
     }
     document.addEventListener('keydown', handleEsc)
     return () => document.removeEventListener('keydown', handleEsc)
-  }, [showWhatsApp, showTreatmentForm, editingPatient, showNewPatient, selectedPatient])
+  }, [showWhatsApp, editingPatient, showNewPatient, selectedPatient])
 
   // Debounce search
   useEffect(() => {
@@ -149,25 +143,20 @@ export default function PacientesPage() {
     setMlFeatures(null)
     setStaffNotes([])
     setTreatments([])
-    setPatientMedia([])
     setEditingPatient(false)
-    setNewNote('')
     setShowWhatsApp(false)
-    setShowTreatmentForm(false)
     setDetailTab('info')
     try {
-      const [detail, ml, notes, treats, media] = await Promise.allSettled([
+      const [detail, ml, notes, treats] = await Promise.allSettled([
         fetchPatientDetail(patient.id),
         fetchPatientMLFeatures(patient.id),
         fetchStaffNotes(patient.id),
         fetchPatientTreatments(patient.id),
-        fetchPatientMedia(patient.id),
       ])
       if (detail.status === 'fulfilled') setSelectedPatient(detail.value)
       if (ml.status === 'fulfilled') setMlFeatures(ml.value)
       if (notes.status === 'fulfilled') setStaffNotes(notes.value)
       if (treats.status === 'fulfilled') setTreatments(treats.value)
-      if (media.status === 'fulfilled') setPatientMedia(media.value)
     } catch (err) {
       Sentry.captureException(err)
       toast.error(t('detailError'))
@@ -201,21 +190,6 @@ export default function PacientesPage() {
     }
   }
 
-  const handleAddNote = async () => {
-    if (!selectedPatient || !newNote.trim()) return
-    setSavingNote(true)
-    try {
-      await createStaffNote(selectedPatient.id, newNote.trim())
-      setNewNote('')
-      const notes = await fetchStaffNotes(selectedPatient.id)
-      setStaffNotes(notes)
-    } catch (err) {
-      Sentry.captureException(err)
-      toast.error(t('noteError'))
-    }
-    setSavingNote(false)
-  }
-
   const handleSendWhatsApp = async () => {
     if (!selectedPatient || !waMessage.trim() || !orgId) return
     setSendingWa(true)
@@ -228,20 +202,6 @@ export default function PacientesPage() {
       toast.error(t('whatsappError'))
     }
     setSendingWa(false)
-  }
-
-  const handleCreateTreatment = async () => {
-    if (!selectedPatient || !orgId || !newTreatment.treatment_name || !newTreatment.medication) return
-    try {
-      await createTreatment(orgId, { ...newTreatment, patient_id: selectedPatient.id })
-      setShowTreatmentForm(false)
-      setNewTreatment({ treatment_name: '', medication: '', dosage: '', frequency_hours: 8, start_date: '', end_date: '', notes: '' })
-      const treats = await fetchPatientTreatments(selectedPatient.id)
-      setTreatments(treats)
-    } catch (err) {
-      Sentry.captureException(err)
-      toast.error(t('treatmentError'))
-    }
   }
 
   const handleExport = async () => {
@@ -605,17 +565,14 @@ export default function PacientesPage() {
           mlFeatures={mlFeatures}
           staffNotes={staffNotes}
           treatments={treatments}
-          patientMedia={patientMedia}
           detailTab={detailTab}
           onTabChange={(tab) => {
-            // S148: switching tab also closes any action form (Edit / WA /
-            // Treatment). The forms used to stay open across tabs which
-            // confused the operator — they'd see "Enviar WhatsApp" while
-            // looking at ML / IA and not understand which tab the form
-            // belonged to.
+            // S153: switching tab también cierra cualquier form abierto
+            // (Edit / WA). Tratamiento y Nota ya no son forms locales —
+            // viven en el SofIA Console — así que el cierre cross-tab
+            // solo aplica a los dos forms que sí permanecen aquí.
             setDetailTab(tab)
             setShowWhatsApp(false)
-            setShowTreatmentForm(false)
             setEditingPatient(false)
           }}
           editingPatient={editingPatient}
@@ -629,15 +586,6 @@ export default function PacientesPage() {
           onWaMessageChange={setWaMessage}
           onSendWhatsApp={handleSendWhatsApp}
           sendingWa={sendingWa}
-          showTreatmentForm={showTreatmentForm}
-          onToggleTreatment={() => setShowTreatmentForm(!showTreatmentForm)}
-          newTreatment={newTreatment}
-          onTreatmentChange={setNewTreatment}
-          onCreateTreatment={handleCreateTreatment}
-          newNote={newNote}
-          onNewNoteChange={setNewNote}
-          onAddNote={handleAddNote}
-          savingNote={savingNote}
         />
       )}
     </div>
