@@ -480,9 +480,24 @@ export default function PacientesPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-[12px] font-body font-semibold ${CHANNEL_COLORS[p.acquisition_channel] || 'text-text-muted'}`}>
-                        {t.has(`channels.${p.acquisition_channel}`) ? t(`channels.${p.acquisition_channel}`) : p.acquisition_channel}
-                      </span>
+                      {(() => {
+                        // S154: normalize channel to UPPER for both color lookup
+                        // and i18n key. BD tiene mezcla "WhatsApp" / "whatsapp"
+                        // / "WHATSAPP" en acquisition_channel — el operador
+                        // veía "whatsapp" en una fila y "WhatsApp" en otra
+                        // (inconsistencia tipográfica que sugería que eran
+                        // canales distintos). Normalizamos en el render para
+                        // no depender de que la BD ya esté limpia.
+                        const channelKey = (p.acquisition_channel || '').toUpperCase()
+                        const colorClass = CHANNEL_COLORS[channelKey] || 'text-text-muted'
+                        const i18nKey = `channels.${channelKey}`
+                        const label = t.has(i18nKey) ? t(i18nKey) : channelKey
+                        return (
+                          <span className={`text-[12px] font-body font-semibold ${colorClass}`}>
+                            {label}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="px-4 py-3">
                       {(() => {

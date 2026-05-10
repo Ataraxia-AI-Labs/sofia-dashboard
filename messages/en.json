@@ -778,7 +778,11 @@
       "INSTAGRAM": "Instagram",
       "MESSENGER": "Messenger",
       "WEB": "Web Chat",
-      "VOICE_CALL": "Voice"
+      "WEB_CHAT": "Web Chat",
+      "WEBCHAT": "Web Chat",
+      "VOICE_CALL": "Voice",
+      "VOICE": "Voice",
+      "MANUAL": "Manual"
     },
     "namePlaceholder": "Patient name",
     "cityPlaceholder": "City",
