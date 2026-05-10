@@ -27,6 +27,18 @@ interface SegmentationPanelProps {
   orgId: string
 }
 
+// S154: el panel de pacientes en un segmento mostraba el `phone` crudo,
+// que en web chat es un session id auto-generado tipo
+// "web_emergency1775727757". El operador no puede llamar a eso ni buscar
+// al paciente por ese string, así que lo escondemos con la misma
+// regla que el listado principal y la lista de duplicados.
+function formatPhoneOrWebChat(phone: string | null | undefined): string {
+  const v = (phone || '').trim()
+  if (!v) return '—'
+  if (/^web[_-]/i.test(v) || /^session[_-]/i.test(v)) return 'Web Chat · sin teléfono'
+  return v
+}
+
 // Predefined segment colors for visual differentiation
 const SEGMENT_COLORS = [
   { bg: 'bg-brand-purple/10', border: 'border-brand-purple/25', text: 'text-brand-purple', dot: 'bg-brand-purple' },
@@ -264,7 +276,7 @@ export default function SegmentationPanel({ orgId }: SegmentationPanelProps) {
                     </div>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Phone size={9} className="text-text-dim flex-shrink-0" />
-                      <span className="text-[10px] text-text-dim font-body">{p.phone}</span>
+                      <span className="text-[10px] text-text-dim font-body italic">{formatPhoneOrWebChat(p.phone)}</span>
                     </div>
                   </div>
                   {p.avg_ticket != null && (
