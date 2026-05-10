@@ -79,5 +79,10 @@ export async function getCampaignSuggestion(orgId: string, segmentId: string): P
     method: 'POST',
   })
   if (!res.ok) return null
-  return res.json()
+  // S154: backend envuelve la respuesta como `{campaign: {...}}` (consistente
+  // con `{segments, count}`, `{rankings, count}`, etc.). Antes leíamos
+  // res.json() directo, así que CampaignSuggestion quedaba undefined en
+  // todas sus claves y la card aparecía vacía. Unwrap explícito.
+  const data = await res.json()
+  return (data?.campaign ?? data) as CampaignSuggestion
 }
