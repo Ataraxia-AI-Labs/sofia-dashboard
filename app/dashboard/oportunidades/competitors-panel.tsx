@@ -419,9 +419,19 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
               <div className="text-right flex-shrink-0">
                 <span className="text-[10px] text-text-dim line-through">{formatCurrency(pc.old_price)}</span>
                 <span className="text-xs font-bold text-text-primary ml-1.5">{formatCurrency(pc.new_price)}</span>
-                <span className={`text-[12px] font-body font-semibold ml-1 ${pc.change_pct > 0 ? 'text-status-danger' : 'text-status-success'}`}>
-                  {pc.change_pct > 0 ? '+' : ''}{pc.change_pct.toFixed(1)}%
-                </span>
+                {(() => {
+                  // S154: backend a veces devuelve change_pct null/undefined
+                  // cuando el competidor no tiene precio anterior. Default a 0
+                  // y mostrar "—" en lugar de crashear con .toFixed sobre null.
+                  const pct = Number.isFinite(pc.change_pct as number) ? (pc.change_pct as number) : null
+                  return pct === null ? (
+                    <span className="text-[12px] font-body font-semibold ml-1 text-text-dim">—</span>
+                  ) : (
+                    <span className={`text-[12px] font-body font-semibold ml-1 ${pct > 0 ? 'text-status-danger' : 'text-status-success'}`}>
+                      {pct > 0 ? '+' : ''}{pct.toFixed(1)}%
+                    </span>
+                  )
+                })()}
               </div>
             </div>
           ))}
@@ -498,11 +508,17 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                     <td className="py-2.5 text-right font-body text-text-muted">{formatCurrency(p.competitor_avg)}</td>
                     <td className="py-2.5 text-right font-body text-text-muted">{formatCurrency(p.market_avg)}</td>
                     <td className="py-2.5 text-right">
-                      <span className={`font-body font-semibold ${
-                        p.difference_pct > 5 ? 'text-status-danger' : p.difference_pct < -5 ? 'text-status-success' : 'text-status-warning'
-                      }`}>
-                        {p.difference_pct > 0 ? '+' : ''}{p.difference_pct.toFixed(1)}%
-                      </span>
+                      {(() => {
+                        const diff = Number.isFinite(p.difference_pct as number) ? (p.difference_pct as number) : null
+                        if (diff === null) return <span className="font-body font-semibold text-text-dim">—</span>
+                        return (
+                          <span className={`font-body font-semibold ${
+                            diff > 5 ? 'text-status-danger' : diff < -5 ? 'text-status-success' : 'text-status-warning'
+                          }`}>
+                            {diff > 0 ? '+' : ''}{diff.toFixed(1)}%
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="py-2.5 text-center"><PositionBadge position={p.position} /></td>
                   </tr>
@@ -539,15 +555,21 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-lg font-bold font-mono text-text-primary">
-                    {typeof bm.your_value === 'number' && bm.your_value < 100 ? `${bm.your_value.toFixed(1)}%` : formatCurrency(bm.your_value)}
+                    {Number.isFinite(bm.your_value as number) ? ((bm.your_value as number) < 100 ? `${(bm.your_value as number).toFixed(1)}%` : formatCurrency(bm.your_value as number)) : '—'}
                   </span>
                   <span className="text-[10px] text-text-dim">
-                    vs {typeof bm.market_avg === 'number' && bm.market_avg < 100 ? `${bm.market_avg.toFixed(1)}%` : formatCurrency(bm.market_avg)}
+                    vs {Number.isFinite(bm.market_avg as number) ? ((bm.market_avg as number) < 100 ? `${(bm.market_avg as number).toFixed(1)}%` : formatCurrency(bm.market_avg as number)) : '—'}
                   </span>
                 </div>
-                <span className={`text-[12px] font-body font-semibold ${bm.is_better ? 'text-status-success' : 'text-status-danger'}`}>
-                  {bm.difference_pct > 0 ? '+' : ''}{bm.difference_pct.toFixed(1)}%
-                </span>
+                {(() => {
+                  const diff = Number.isFinite(bm.difference_pct as number) ? (bm.difference_pct as number) : null
+                  if (diff === null) return <span className="text-[12px] font-body font-semibold text-text-dim">—</span>
+                  return (
+                    <span className={`text-[12px] font-body font-semibold ${bm.is_better ? 'text-status-success' : 'text-status-danger'}`}>
+                      {diff > 0 ? '+' : ''}{diff.toFixed(1)}%
+                    </span>
+                  )
+                })()}
               </div>
             ))}
           </div>
