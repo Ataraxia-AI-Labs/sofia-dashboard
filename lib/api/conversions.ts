@@ -29,13 +29,23 @@ export async function predictAll(orgId: string): Promise<PredictAllResult | null
 export async function getConversionInsights(orgId: string): Promise<ConversionInsights | null> {
   const res = await authFetch(`${API_URL}/conversions/${orgId}/insights`)
   if (!res.ok) return null
-  // S154: backend envuelve `{insights: {...}}` — sin desempaque,
-  // insights.total_predictions / avg_conversion_rate / quincena_lift
-  // quedaban undefined y los stat cards mostraban 0/0/0 aunque la
-  // BD tuviera 54 predicciones. Patrón consistente con stats,
-  // rankings, market-position, pricing.
+  // S154: backend envuelve `{insights: {...}}` Y los nombres tampoco
+  // matchean del todo:
+  //   Backend → {total_predictions, avg_conversion_rate, quincena_lift,
+  //              by_day, by_hour, top_priority_count}
+  //   Frontend ConversionInsights → {total_predicted, avg_conversion_rate,
+  //                                  quincena_lift, by_day, by_hour}
+  // Sin mapeo `insights.total_predicted` quedaba undefined → "0" en
+  // el stat card aunque BD tenía 54 predicciones reales.
   const data = await res.json()
-  return (data?.insights ?? data) as ConversionInsights
+  const raw = (data?.insights ?? data ?? {}) as Record<string, unknown>
+  return {
+    total_predicted: (raw.total_predicted ?? raw.total_predictions ?? 0) as number,
+    avg_conversion_rate: (raw.avg_conversion_rate ?? 0) as number,
+    quincena_boost: (raw.quincena_boost ?? raw.quincena_lift ?? 0) as number,
+    top_factors: (raw.top_factors ?? []) as ConversionInsights['top_factors'],
+    heatmap: (raw.heatmap ?? {}) as Record<string, Record<string, number>>,
+  }
 }
 
 export async function getFollowUpQueue(orgId: string, limit: number = 20): Promise<FollowUpItem[]> {
