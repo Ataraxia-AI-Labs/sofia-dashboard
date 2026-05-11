@@ -250,12 +250,21 @@ export default function LeadScoringPanel({ orgId }: LeadScoringPanelProps) {
                       {lead.patients?.full_name || t('unknownPatient')}
                     </span>
                   </div>
-                  {lead.patients?.phone && (
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <Phone size={9} className="text-text-dim flex-shrink-0" />
-                      <span className="text-[10px] text-text-dim font-body">{lead.patients.phone}</span>
-                    </div>
-                  )}
+                  {lead.patients?.phone && (() => {
+                    // S154: ocultamos session ids del web chat (web_*,
+                    // session_*) que no son números marcables — mismo
+                    // patrón que Lista, Cola, Personas.
+                    const phone = lead.patients.phone.trim()
+                    const isSession = /^web[_-]/i.test(phone) || /^session[_-]/i.test(phone)
+                    return (
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <Phone size={9} className="text-text-dim flex-shrink-0" />
+                        <span className={`text-[10px] font-body ${isSession ? 'italic text-text-dim' : 'text-text-dim'}`}>
+                          {isSession ? 'Web Chat · sin teléfono' : phone}
+                        </span>
+                      </div>
+                    )
+                  })()}
                 </div>
 
                 {/* Score */}

@@ -57,7 +57,29 @@ export async function getPricingComparison(orgId: string): Promise<PricingCompar
 export async function getMarketPosition(orgId: string): Promise<MarketPosition | null> {
   const res = await authFetch(`${API_URL}/api/competitors/${orgId}/market-position`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend devuelve un shape diferente al que el frontend espera:
+  //   Backend → {position_summary, competitive, expensive, cheap, total_services}
+  //     (competitive/expensive/cheap son contadores numéricos)
+  //   Frontend → {competitive_services, total_services, overall_score,
+  //               cheap_services: string[], expensive_services: string[]}
+  // Sin mapeo, `position.overall_score.toFixed(0)` lanzaba TypeError porque
+  // overall_score era undefined → error boundary "¡Algo salió mal!".
+  // Para evitar invenciones: si el backend no devuelve overall_score, lo
+  // derivamos como competitive/total*100. cheap_services/expensive_services
+  // se quedan como [] hasta que el backend exponga esa info.
+  const raw = (await res.json() ?? {}) as Record<string, unknown>
+  const competitive = (raw.competitive_services ?? raw.competitive ?? 0) as number
+  const total = (raw.total_services ?? 0) as number
+  const overall = (raw.overall_score as number | undefined) ??
+    (total > 0 ? Math.round((competitive / total) * 100) : 0)
+  return {
+    competitive_services: competitive,
+    total_services: total,
+    overall_score: overall,
+    cheap_services: (raw.cheap_services as string[] | undefined) ?? [],
+    expensive_services: (raw.expensive_services as string[] | undefined) ?? [],
+    competitive_services_list: (raw.competitive_services_list as string[] | undefined) ?? [],
+  }
 }
 
 export async function getCompetitiveInsights(orgId: string): Promise<CompetitiveInsights | null> {

@@ -60,7 +60,12 @@ export async function getLeadScores(
 export async function getLeadInsights(orgId: string): Promise<LeadInsights | null> {
   const res = await authFetch(`${API_URL}/leads/${orgId}/insights`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend envuelve la respuesta como `{insights: {...}}` (patrón
+  // consistente con stats, rankings, campaign, pricing). El helper devolvía
+  // res.json() directo, así que el panel mostraba "Distribución 0 leads
+  // puntuados" mientras los top 10 sí cargaban — incoherencia visible.
+  const data = await res.json()
+  return (data?.insights ?? data) as LeadInsights
 }
 
 export async function getTopLeads(orgId: string, limit: number = 10): Promise<LeadScore[]> {
