@@ -331,9 +331,9 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <span className="flex items-center gap-1 text-[10px] text-text-dim font-body">
+                  <span className={`flex items-center gap-1 text-[10px] font-body ${isSessionId(item.phone) ? 'italic text-text-dim' : 'text-text-dim'}`}>
                     <Phone size={9} />
-                    {item.phone}
+                    {isSessionId(item.phone) ? 'Web Chat · sin teléfono' : (item.phone || '—')}
                   </span>
                 </div>
               </div>
@@ -350,20 +350,41 @@ export function FollowUpQueue({ orgId }: FollowUpQueueProps) {
                 </div>
               </div>
 
-              {/* Contact button */}
-              <a
-                href={`https://wa.me/${item.phone.replace(/\D/g, '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-[10px] font-semibold hover:bg-status-success/20 transition-colors flex items-center gap-1"
-              >
-                <Phone size={10} />
-                {t('contact')}
-              </a>
+              {/* Contact button — S154: si el phone es session id (web chat),
+                  el wa.me con replace(/\D/g) extraería los dígitos del
+                  timestamp ("web_emergency1775727757" → "1775727757") y
+                  abriría chat a un número basura. Ocultamos el botón en
+                  ese caso para evitar el "click contacta a un random". */}
+              {!isSessionId(item.phone) && item.phone ? (
+                <a
+                  href={`https://wa.me/${item.phone.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1.5 rounded-lg bg-status-success/10 border border-status-success/20 text-status-success text-[10px] font-semibold hover:bg-status-success/20 transition-colors flex items-center gap-1"
+                >
+                  <Phone size={10} />
+                  {t('contact')}
+                </a>
+              ) : (
+                <span
+                  className="px-2.5 py-1.5 rounded-lg bg-surface-3 border border-border text-text-dim text-[10px] font-semibold flex items-center gap-1 cursor-not-allowed"
+                  title="Sin teléfono — pide al paciente que comparta uno"
+                >
+                  <Phone size={10} />
+                  {t('contact')}
+                </span>
+              )}
             </div>
           ))}
         </div>
       )}
     </div>
   )
+}
+
+// S154: helper compartido — detecta los session ids generados por el
+// web chat ("web_*", "session_*") que no son números marcables.
+function isSessionId(phone: string | null | undefined): boolean {
+  const v = (phone || '').trim()
+  return /^web[_-]/i.test(v) || /^session[_-]/i.test(v)
 }

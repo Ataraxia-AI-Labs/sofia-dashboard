@@ -2,9 +2,22 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
+import * as Sentry from '@sentry/nextjs'
 import { useOrg } from '@/lib/org-context'
+import { useToast } from '@/components/ui/toast'
 import { fetchOpportunities, updateOpportunity, formatCOP, timeAgo } from '@/lib/api'
 import type { Opportunity } from '@/types'
+
+// S154: el `phone` de un paciente puede ser un session id de web chat
+// (web_emergency1775727757) cuando el origen fue widget sin teléfono.
+// El operador no puede llamar a ese string — lo escondemos con el
+// mismo patrón que usamos en Personas (Lista + Segmentos + Duplicados).
+function formatPhoneOrWebChat(phone: string | null | undefined): string {
+  const v = (phone || '').trim()
+  if (!v) return '—'
+  if (/^web[_-]/i.test(v) || /^session[_-]/i.test(v)) return 'Web Chat · sin teléfono'
+  return v
+}
 import {
   Target, DollarSign, TrendingUp, Clock, User, Phone,
   RefreshCw, Check, Zap, AlertTriangle,
@@ -51,6 +64,7 @@ export default function OportunidadesPage() {
   const { orgId, branchId } = useOrg()
   const t = useTranslations('opportunities')
   const tCommon = useTranslations('common')
+  const toast = useToast()
 
   const OPP_CONFIG: Record<string, { label: string; icon: typeof Flame; color: string; bg: string }> = {
     HOT_LEAD:        { label: t('types.HOT_LEAD'), icon: Flame, color: 'text-brand-purple', bg: 'bg-brand-purple/10 border-brand-purple/20' },
@@ -98,11 +112,16 @@ export default function OportunidadesPage() {
         scoreMap[s.patient_id] = s
       }
       setLeadScores(scoreMap)
-    } catch {
-      // Opportunities load failed — UI will show empty state
+    } catch (err) {
+      // S154: antes el catch estaba vacío con sólo un comentario — si el
+      // backend caía, el operador veía empty state ambiguo ("no hay
+      // oportunidades") sin saber si era falla o ausencia. Toast +
+      // Sentry para diagnóstico.
+      Sentry.captureException(err, { tags: { context: 'oportunidades_load' } })
+      toast.error('No pudimos cargar las oportunidades. Intenta de nuevo.')
     }
     setLoading(false)
-  }, [orgId, statusFilter, branchId])
+  }, [orgId, statusFilter, branchId, toast])
 
   useEffect(() => { loadData() }, [loadData])
 
@@ -111,9 +130,12 @@ export default function OportunidadesPage() {
       const updateData: Record<string, string> = { status: newStatus }
       if (newStatus === 'ACTED_ON') updateData.notes = `Acción tomada el ${new Date().toLocaleDateString('es-CO')}`
       await updateOpportunity(oppId, updateData)
-      loadData()
-    } catch {
-      // Status update failed — user can retry
+      // S154: faltaba await — el reload empezaba antes que el PATCH
+      // terminara, mostrando estado stale por unos cientos de ms.
+      await loadData()
+    } catch (err) {
+      Sentry.captureException(err, { tags: { context: 'oportunidades_update_status', oppId, newStatus } })
+      toast.error('No pudimos actualizar la oportunidad. Intenta de nuevo.')
     }
   }
 
@@ -363,9 +385,9 @@ export default function OportunidadesPage() {
                             <User size={11} />
                             {opp.patients?.full_name || 'Sin nombre'}
                           </span>
-                          <span className="flex items-center gap-1">
+                          <span className={`flex items-center gap-1 ${/^web[_-]|^session[_-]/i.test(opp.patients?.phone || '') ? 'italic text-text-dim' : ''}`}>
                             <Phone size={11} />
-                            {opp.patients?.phone}
+                            {formatPhoneOrWebChat(opp.patients?.phone)}
                           </span>
                           {opp.patient_id && leadScores[opp.patient_id] && (
                             <LeadScoreBadge

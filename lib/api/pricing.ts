@@ -68,5 +68,11 @@ export async function rejectPriceSuggestion(orgId: string, id: string, reason: s
 export async function getPricingInsights(orgId: string): Promise<PricingInsights | null> {
   const res = await authFetch(`${API_URL}/pricing/${orgId}/insights`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend envuelve la respuesta como `{insights: {...}}` (consistente
+  // con `{stats: ...}`, `{rankings: ...}`, `{campaign: ...}`). El helper
+  // devolvía res.json() directo, así que PricingInsights quedaba como
+  // `{insights: {...}}` y el panel leía undefined en avg_discount_pct,
+  // revenue_impact, etc. → stat cards vacíos.
+  const data = await res.json()
+  return (data?.insights ?? data) as PricingInsights
 }
