@@ -49,7 +49,12 @@ export async function rejectOutreach(orgId: string, outreachId: string): Promise
 export async function getOutreachStats(orgId: string): Promise<OutreachStats | null> {
   const res = await authFetch(`${API_URL}/api/outreach/${orgId}/stats`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend envuelve `{stats: {...}}` — sin desempaque los 7
+  // StatPills (Pendientes/Aprobados/Enviados/Entregados/Respondidos/
+  // Convertidos/Rechazados) leían undefined en .value y mostraban
+  // labels sin números. Mismo patrón que pricing/conversions/competitors.
+  const data = await res.json()
+  return (data?.stats ?? data) as OutreachStats
 }
 
 export async function generateMessage(
