@@ -111,7 +111,51 @@ export async function generateReport(orgId: string): Promise<CompetitorReport | 
     method: 'POST',
   })
   if (!res.ok) return null
-  return res.json()
+  // S154: el backend devuelve un shape complejo:
+  //   {report: {executive_summary, action_items, key_risks, ...},
+  //    data_snapshot: {market_position, pricing_comparison, benchmarks, ...},
+  //    generated_at, org_id}
+  // El frontend espera CompetitorReport plano con market_position +
+  // pricing_comparison + insights + benchmarks + generated_at. Sin
+  // mapeo el panel crasheaba: report.market_position.competitive_services
+  // sobre undefined → error boundary.
+  //
+  // Mapeamos:
+  // - market_position ← data_snapshot.market_position (con defaults)
+  // - pricing_comparison ← data_snapshot.pricing_comparison
+  // - benchmarks ← data_snapshot.benchmarks.comparison (o [])
+  // - insights ← derivamos del LLM report: key_risks → weaknesses,
+  //   market_opportunities → opportunities, executive_summary → summary
+  // - generated_at queda como viene
+  const raw = (await res.json() ?? {}) as Record<string, unknown>
+  const llm = (raw.report ?? {}) as Record<string, unknown>
+  const snap = (raw.data_snapshot ?? {}) as Record<string, unknown>
+  const pos = (snap.market_position ?? {}) as Record<string, unknown>
+  const benchmarksWrap = (snap.benchmarks ?? {}) as Record<string, unknown>
+  const competitive = (pos.competitive_services ?? pos.competitive ?? 0) as number
+  const total = (pos.total_services ?? 0) as number
+  const overall = (pos.overall_score as number | undefined) ??
+    (total > 0 ? Math.round((competitive / total) * 100) : 0)
+  return {
+    market_position: {
+      competitive_services: competitive,
+      total_services: total,
+      overall_score: overall,
+      cheap_services: (pos.cheap_services as string[] | undefined) ?? [],
+      expensive_services: (pos.expensive_services as string[] | undefined) ?? [],
+      competitive_services_list: (pos.competitive_services_list as string[] | undefined) ?? [],
+    },
+    pricing_comparison: (snap.pricing_comparison as CompetitorReport['pricing_comparison'] | undefined) ?? [],
+    benchmarks: (benchmarksWrap.comparison as CompetitorReport['benchmarks'] | undefined) ?? [],
+    insights: {
+      strengths: (llm.strengths as string[] | undefined) ?? [],
+      weaknesses: (llm.key_risks as string[] | undefined) ?? [],
+      opportunities: (llm.market_opportunities as string[] | undefined) ?? [],
+      threats: (llm.threats as string[] | undefined) ?? [],
+      summary: (llm.executive_summary as string | undefined) ?? '',
+    },
+    generated_at: (raw.generated_at as string | undefined) ?? new Date().toISOString(),
+  }
 }
 
 export async function getPriceChanges(orgId: string): Promise<PriceChange[]> {
