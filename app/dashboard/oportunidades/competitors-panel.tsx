@@ -632,11 +632,17 @@ export default function CompetitorsPanel({ orgId }: CompetitorsPanelProps) {
                     {/* Edit/delete inline removidos: CRUD de competidores vive SOLO en Pulso (SofIA). */}
                   </div>
                 </div>
-                {Object.keys(comp.services_prices).length > 0 && (
-                  <p className="text-[10px] text-text-dim mt-1.5">
-                    {Object.keys(comp.services_prices).length} {t('servicesRegistered')}
-                  </p>
-                )}
+                {(() => {
+                  // S154: defender contra services_prices undefined/null.
+                  // Backend a veces lo deja vacío y Object.keys(undefined)
+                  // crashea con "Cannot read properties of undefined".
+                  const services = comp.services_prices ? Object.keys(comp.services_prices) : []
+                  return services.length > 0 ? (
+                    <p className="text-[10px] text-text-dim mt-1.5">
+                      {services.length} {t('servicesRegistered')}
+                    </p>
+                  ) : null
+                })()}
               </div>
             ))}
           </div>
