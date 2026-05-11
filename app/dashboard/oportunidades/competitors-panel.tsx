@@ -258,12 +258,20 @@ function SwotCard({ type, items }: { type: keyof typeof SWOT_CONFIG; items: stri
 // ============================================================
 
 function PositionBadge({ position }: { position: PricingComparison['position'] }) {
-  const config = {
-    CHEAPER: { label: 'Economico', color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
+  // S154: el backend devuelve valores fuera del enum tipado (ej. cuando
+  // un servicio no tiene comparativa todavía viene "NO_DATA" o null).
+  // El config[position] resultaba undefined → cfg.bg crasheaba todo el
+  // panel con error boundary. Default + fallback visible.
+  const config: Record<string, { label: string; color: string; bg: string }> = {
+    CHEAPER: { label: 'Económico', color: 'text-status-success', bg: 'bg-status-success/10 border-status-success/20' },
     SIMILAR: { label: 'Similar', color: 'text-status-warning', bg: 'bg-status-warning/10 border-status-warning/20' },
     EXPENSIVE: { label: 'Caro', color: 'text-status-danger', bg: 'bg-status-danger/10 border-status-danger/20' },
   }
-  const cfg = config[position]
+  const cfg = config[position as string] ?? {
+    label: 'Sin dato',
+    color: 'text-text-dim',
+    bg: 'bg-surface-3 border-border',
+  }
   return (
     <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.color}`}>
       {cfg.label}
