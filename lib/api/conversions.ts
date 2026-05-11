@@ -29,7 +29,13 @@ export async function predictAll(orgId: string): Promise<PredictAllResult | null
 export async function getConversionInsights(orgId: string): Promise<ConversionInsights | null> {
   const res = await authFetch(`${API_URL}/conversions/${orgId}/insights`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend envuelve `{insights: {...}}` — sin desempaque,
+  // insights.total_predictions / avg_conversion_rate / quincena_lift
+  // quedaban undefined y los stat cards mostraban 0/0/0 aunque la
+  // BD tuviera 54 predicciones. Patrón consistente con stats,
+  // rankings, market-position, pricing.
+  const data = await res.json()
+  return (data?.insights ?? data) as ConversionInsights
 }
 
 export async function getFollowUpQueue(orgId: string, limit: number = 20): Promise<FollowUpItem[]> {
