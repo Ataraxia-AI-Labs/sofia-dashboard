@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { useOrg } from '@/lib/org-context'
 import { useToast } from '@/components/ui/toast'
@@ -33,12 +33,16 @@ export default function PagosPage() {
   const [activeTab, setActiveTab] = useState<'pagos' | 'attribution'>('pagos')
   const [statusFilter, setStatusFilter] = useState('')
 
+  // S154: status filter es client-side (sin re-fetch). Backend filter rompía
+  // las KPIs porque cambiaba el universo de payments y el header counter.
+  // Attribution corre a 365d para que demo data (Mar-Abr 2026) ilumine los
+  // breakdowns; sin esto resumen.total_revenue era 0 con la ventana de 30d.
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const [paymentsData, attrData] = await Promise.all([
-        apiFetchPayments(orgId, { status: statusFilter || undefined, branchId }),
-        fetchRevenueAttribution(orgId, 30, branchId),
+        apiFetchPayments(orgId, { branchId }),
+        fetchRevenueAttribution(orgId, 365, branchId),
       ])
       setPayments(paymentsData)
       setAttribution(attrData)
@@ -47,11 +51,36 @@ export default function PagosPage() {
       toast.error(t('loadError'))
     }
     setLoading(false)
-  }, [orgId, statusFilter, branchId])
+  }, [orgId, branchId])
 
   useEffect(() => { loadData() }, [loadData])
 
-  const resumen = attribution?.resumen ?? {} as RevenueAttribution['resumen']
+  // S154: resumen se deriva de payments[] (fuente canónica, sin filtro de fecha)
+  // para que las KPI cards siempre cuadren con el contador del header y la tabla.
+  // costo_ia_usd / roi_estimado / tiempo_promedio salen del endpoint de attribution
+  // porque dependen de interaction_logs (no derivables desde payments).
+  const resumen = useMemo<RevenueAttribution['resumen']>(() => {
+    const paid = payments.filter(p => p.status === 'PAID' || p.status === 'Pagado')
+    const pending = payments.filter(p => p.status === 'PENDING' || p.status === 'Pendiente')
+    const total_revenue = paid.reduce((s, p) => s + (Number(p.amount_cop) || 0), 0)
+    const total_pending = pending.reduce((s, p) => s + (Number(p.amount_cop) || 0), 0)
+    return {
+      total_revenue,
+      total_pending,
+      total_pagos: paid.length,
+      pagos_pendientes: pending.length,
+      ticket_promedio: paid.length > 0 ? Math.floor(total_revenue / paid.length) : 0,
+      costo_ia_usd: attribution?.resumen?.costo_ia_usd ?? 0,
+      roi_estimado: attribution?.resumen?.roi_estimado ?? 0,
+      tiempo_promedio_a_pago_horas: attribution?.resumen?.tiempo_promedio_a_pago_horas ?? 0,
+    }
+  }, [payments, attribution])
+
+  const filteredPayments = useMemo(() => {
+    if (!statusFilter) return payments
+    return payments.filter(p => p.status === statusFilter)
+  }, [payments, statusFilter])
+
   const attr = attribution?.attribution ?? {} as RevenueAttribution['attribution']
 
   return (
@@ -161,7 +190,7 @@ export default function PagosPage() {
                 </tr>
               </thead>
               <tbody>
-                {loading && payments.length === 0 ? (
+                {loading && filteredPayments.length === 0 ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="border-b border-border/30">
                       {Array.from({ length: 7 }).map((_, j) => (
@@ -169,9 +198,9 @@ export default function PagosPage() {
                       ))}
                     </tr>
                   ))
-                ) : payments.length === 0 ? (
+                ) : filteredPayments.length === 0 ? (
                   <tr><td colSpan={7} className="text-center py-12 text-text-dim text-[12px] font-body">{t('noPayments')}</td></tr>
-                ) : payments.map((p) => {
+                ) : filteredPayments.map((p) => {
                   const status = STATUS_CONFIG[p.status] || STATUS_CONFIG.PENDING
                   return (
                     <tr key={p.id} className="border-b border-border/30 hover:bg-surface-3/50 transition-colors">
