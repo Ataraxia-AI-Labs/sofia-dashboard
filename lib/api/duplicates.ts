@@ -56,7 +56,18 @@ export async function dismissDuplicate(orgId: string, duplicateId: string): Prom
 export async function getDuplicateStats(orgId: string): Promise<DuplicateStats | null> {
   const res = await authFetch(`${API_URL}/api/duplicates/${orgId}/stats`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend devuelve `{stats: {total_detected, pending, merged, dismissed, ...}}`.
+  // Frontend leía res.json() directo (envelope ignorado) y el panel renderaba 0/0/0/0
+  // aunque sí había candidates. También el backend usa `pending` mientras el type tenía
+  // `pending_review` — mapeamos aquí para mantener el shape del frontend estable.
+  const data = await res.json()
+  const stats = (data?.stats ?? data) || {}
+  return {
+    total_detected: stats.total_detected ?? 0,
+    pending_review: stats.pending ?? stats.pending_review ?? 0,
+    merged: stats.merged ?? 0,
+    dismissed: stats.dismissed ?? 0,
+  }
 }
 
 export async function checkPatient(orgId: string, patientId: string): Promise<DuplicateCandidate[]> {
