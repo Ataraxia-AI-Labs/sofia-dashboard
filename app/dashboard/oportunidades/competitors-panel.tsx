@@ -228,19 +228,25 @@ const SWOT_CONFIG = {
   threat: { icon: Target, color: 'text-status-warning', bg: 'bg-status-warning/10', border: 'border-status-warning/20', labelKey: 'swotThreats' },
 } as const
 
-function SwotCard({ type, items }: { type: keyof typeof SWOT_CONFIG; items: string[] }) {
+function SwotCard({ type, items }: { type: keyof typeof SWOT_CONFIG; items: string[] | undefined | null }) {
   const cfg = SWOT_CONFIG[type]
   const Icon = cfg.icon
   const t = useTranslations('competitors')
+  // S154: items puede llegar undefined cuando el backend (getCompetitiveInsights)
+  // no envuelve la respuesta como esperábamos, o cuando la cuenta es nueva y aún
+  // no se han generado strengths/weaknesses/opportunities/threats. Defendemos
+  // con array vacío para que items.length nunca crashee — el panel renderea el
+  // empty state del SWOT en lugar del error boundary completo.
+  const safeItems = Array.isArray(items) ? items : []
   return (
     <div className={`p-3 rounded-lg ${cfg.bg} border ${cfg.border}`}>
       <div className="flex items-center gap-1.5 mb-2">
         <Icon size={12} className={cfg.color} />
         <span className={`text-[10px] font-bold font-body uppercase tracking-wider ${cfg.color}`}>{t(cfg.labelKey)}</span>
       </div>
-      {items.length > 0 ? (
+      {safeItems.length > 0 ? (
         <ul className="space-y-1">
-          {items.map((item, i) => (
+          {safeItems.map((item, i) => (
             <li key={i} className="text-[11px] text-text-muted leading-relaxed">
               {item}
             </li>

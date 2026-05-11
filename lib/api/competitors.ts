@@ -85,7 +85,19 @@ export async function getMarketPosition(orgId: string): Promise<MarketPosition |
 export async function getCompetitiveInsights(orgId: string): Promise<CompetitiveInsights | null> {
   const res = await authFetch(`${API_URL}/api/competitors/${orgId}/insights`)
   if (!res.ok) return null
-  return res.json()
+  // S154: backend posiblemente envuelve `{insights: {...}}` (consistente con
+  // stats, rankings, pricing). Sin desempaque, insights.strengths quedaba
+  // undefined y SwotCard crasheaba con items.length. Defensive default:
+  // arrays vacíos si el shape no llega como esperamos.
+  const data = await res.json()
+  const raw = (data?.insights ?? data ?? {}) as Record<string, unknown>
+  return {
+    strengths: (raw.strengths as string[] | undefined) ?? [],
+    weaknesses: (raw.weaknesses as string[] | undefined) ?? [],
+    opportunities: (raw.opportunities as string[] | undefined) ?? [],
+    threats: (raw.threats as string[] | undefined) ?? [],
+    summary: (raw.summary as string | undefined) ?? '',
+  }
 }
 
 export async function getBenchmarks(orgId: string): Promise<MarketBenchmark[]> {
