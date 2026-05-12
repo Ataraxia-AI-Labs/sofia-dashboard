@@ -481,7 +481,7 @@ export default function CrecimientoPage() {
                 ))}
               </div>
 
-              {attribution && (
+              {attribution && Object.keys(attribution.channels || {}).length > 0 ? (
                 <div className="space-y-2">
                   {Object.entries(attribution.channels || {}).map(([channel, data]) => {
                     const d = data as { conversions: number; revenue: number; weight: number }
@@ -507,6 +507,19 @@ export default function CrecimientoPage() {
                       </div>
                     )
                   })}
+                </div>
+              ) : (
+                // S154: backend devuelve attribution=null y channel_roi=[] cuando no hay
+                // attribution_touchpoints en el rango. Antes el panel renderea sólo el
+                // selector de modelos flotando sin contexto. Empty state explícito.
+                <div
+                  className="rounded-lg p-6 bg-brand-purple/[0.04] text-center"
+                  style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.12)' }}
+                >
+                  <p className="text-[13px] font-body text-text-primary">Sin datos de attribution en este periodo</p>
+                  <p className="text-[11px] font-body text-text-dim mt-1">
+                    SofIA registra el canal de origen automáticamente cuando los pacientes contactan. Amplía el rango o conecta tus canales.
+                  </p>
                 </div>
               )}
             </div>

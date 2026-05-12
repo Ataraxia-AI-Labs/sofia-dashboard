@@ -33,6 +33,22 @@ function formatDate(date: string): string {
   })
 }
 
+// S154: si la fecha está en el pasado (billing job atrasado o demo data),
+// avanzamos en intervalos del billing_cycle hasta llegar a una fecha futura.
+// Sin esto, "Próximo cobro" mostraba la fecha vencida y el operador no
+// entendía cuándo se cobraría.
+function formatNextBilling(raw: string | null | undefined, cycle: string | null | undefined): string {
+  if (!raw) return '—'
+  const d = new Date(raw)
+  if (Number.isNaN(d.getTime())) return '—'
+  const now = new Date()
+  if (d > now) return formatDate(raw)
+  const months = (cycle ?? 'MONTHLY').toUpperCase() === 'ANNUAL' ? 12 : 1
+  const fwd = new Date(d)
+  while (fwd <= now) fwd.setMonth(fwd.getMonth() + months)
+  return fwd.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
 const STATUS_STYLE: Record<string, string> = {
   ACTIVE: 'bg-status-success/15 text-status-success',
   PAST_DUE: 'bg-status-warning/15 text-status-warning',
@@ -202,7 +218,7 @@ export default function FacturacionPage() {
             <p className="text-[11px] font-body font-semibold text-text-muted uppercase tracking-wider">{t('nextCharge')}</p>
             <p className="text-[12px] font-body font-semibold text-text-primary mt-1 flex items-center gap-1.5">
               <CalendarDays size={11} className="text-text-dim" />
-              {formatDate(sub.next_billing_date)}
+              {formatNextBilling(sub.next_billing_date, sub.billing_cycle)}
             </p>
           </div>
           <div>

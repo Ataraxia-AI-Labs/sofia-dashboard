@@ -183,8 +183,8 @@ export default function ReferidosPage() {
                 <p className="text-[13px] font-body text-text-primary mt-0.5">{formatCurrency(program.reward_value)}</p>
               </div>
               <div>
-                <p className="text-[11px] font-body text-text-dim uppercase tracking-wider">Descripcion</p>
-                <p className="text-[13px] font-body text-text-primary mt-0.5">{program.reward_description}</p>
+                <p className="text-[11px] font-body text-text-dim uppercase tracking-wider">Descripción</p>
+                <p className="text-[13px] font-body text-text-primary mt-0.5">{program.reward_description || '—'}</p>
               </div>
             </div>
           )}

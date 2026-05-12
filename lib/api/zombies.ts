@@ -78,6 +78,8 @@ export interface ReviewRequest {
   id: string
   organization_id: string
   patient_id: string
+  patient_name?: string
+  patient_phone?: string
   appointment_id: string | null
   status: 'PENDING' | 'SENT' | 'COMPLETED' | 'FAILED'
   scheduled_for: string

@@ -101,7 +101,9 @@ export function ReviewRequestsPanel({ orgId }: Props) {
             <tbody>
               {items.map(r => (
                 <tr key={r.id} className="border-b border-border/10 last:border-0 hover:bg-surface-2/30">
-                  <td className="px-3 py-2 text-text-primary font-body text-[10.5px] truncate max-w-[180px]">Paciente</td>
+                  <td className="px-3 py-2 text-text-primary font-body text-[10.5px] truncate max-w-[180px]" title={r.patient_phone || r.patient_id}>
+                    {r.patient_name || (r.patient_id ? r.patient_id.slice(0, 8) : 'Paciente sin nombre')}
+                  </td>
                   <td className="px-3 py-2">
                     <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-body uppercase tracking-wider ${STATUS_BADGE[r.status] || ''}`}>
                       {STATUS_LABEL[r.status] ?? r.status}

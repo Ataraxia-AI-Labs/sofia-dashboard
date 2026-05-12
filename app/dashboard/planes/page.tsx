@@ -208,12 +208,23 @@ export default function PlanesPage() {
     return isActive && subscription?.plan === planId
   }
 
-  /* Next billing date formatted */
-  const nextBilling = subscription?.next_billing_date
-    ? new Date(subscription.next_billing_date).toLocaleDateString(undefined, {
-        day: 'numeric', month: 'short', year: 'numeric',
-      })
-    : null
+  /* S154: si el next_billing_date de BD está en el pasado (job de billing
+     no avanzó, o demo data), avanzamos en intervalos del billing_cycle
+     hasta encontrar la próxima fecha futura. Antes mostraba "23 abr 2026"
+     incluso un mes después — el operador veía una fecha vencida. */
+  const nextBilling = (() => {
+    if (!subscription?.next_billing_date) return null
+    const raw = new Date(subscription.next_billing_date)
+    if (Number.isNaN(raw.getTime())) return null
+    const now = new Date()
+    if (raw > now) {
+      return raw.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+    }
+    const cycle = subscription.billing_cycle === 'ANNUAL' ? 12 : 1
+    const fwd = new Date(raw)
+    while (fwd <= now) fwd.setMonth(fwd.getMonth() + cycle)
+    return fwd.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+  })()
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-4">
