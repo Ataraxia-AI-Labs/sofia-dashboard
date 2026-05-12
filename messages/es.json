@@ -1250,7 +1250,7 @@
   "campaigns": {
     "title": "Campañas de Marketing",
     "subtitle": "Mensajes que agendan. No que se ignoran.",
-    "newCampaign": "Nueva Campana",
+    "newCampaign": "Nueva Campaña",
     "totalCampaigns": "Total campañas",
     "totalSent": "Total enviados",
     "avgConversion": "Conversión promedio",

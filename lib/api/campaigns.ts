@@ -5,6 +5,33 @@ import type { Campaign, CampaignPreview, CampaignAnalytics } from '@/types'
 // CAMPAIGNS API — Marketing Campaigns (P5-09)
 // ============================================================
 
+// S154: el backend persiste stats con nombres semánticos modernos
+// (read/clicked/booked) pero el panel renderea con los nombres
+// históricos (responded/converted). Normalizamos en el helper para
+// que cada vista pinte números reales sin duplicar la lógica.
+//   read    → primer interés (no se rendea, pero queda accesible)
+//   clicked → engagement accionable → responded
+//   booked  → cita agendada (conversión real) → converted
+// Si el backend ya envía los nombres legacy, prevalecen.
+function normalizeStats<T extends { stats?: Record<string, unknown> }>(camp: T): T {
+  const raw = (camp?.stats ?? {}) as Record<string, unknown>
+  if (!raw || typeof raw !== 'object') return camp
+  const num = (v: unknown) => (typeof v === 'number' ? v : Number(v) || 0)
+  const responded = num(raw.responded ?? raw.clicked)
+  const converted = num(raw.converted ?? raw.booked)
+  return {
+    ...camp,
+    stats: {
+      ...raw,
+      sent: num(raw.sent),
+      delivered: num(raw.delivered),
+      responded,
+      converted,
+      revenue: num(raw.revenue),
+    },
+  }
+}
+
 export async function createCampaign(
   orgId: string,
   data: { name: string; message_template: string; segment_criteria: Record<string, unknown> }
@@ -15,19 +42,20 @@ export async function createCampaign(
     body: JSON.stringify(data),
   })
   if (!res.ok) throw new Error('Create campaign failed')
-  return res.json()
+  return normalizeStats(await res.json() as Campaign)
 }
 
 export async function listCampaigns(orgId: string): Promise<Campaign[]> {
   const res = await authFetch(`${API_URL}/api/campaigns/${orgId}`)
   if (!res.ok) return []
-  return unwrapArray<Campaign>(await res.json(), 'campaigns')
+  const list = unwrapArray<Campaign>(await res.json(), 'campaigns')
+  return list.map(normalizeStats)
 }
 
 export async function getCampaign(orgId: string, campaignId: string): Promise<Campaign | null> {
   const res = await authFetch(`${API_URL}/api/campaigns/${orgId}/${campaignId}`)
   if (!res.ok) return null
-  return res.json()
+  return normalizeStats(await res.json() as Campaign)
 }
 
 export async function previewCampaign(orgId: string, campaignId: string): Promise<CampaignPreview | null> {
@@ -69,7 +97,7 @@ export async function getCampaignResults(
 ): Promise<Campaign | null> {
   const res = await authFetch(`${API_URL}/api/campaigns/${orgId}/${campaignId}/results`)
   if (!res.ok) return null
-  return res.json()
+  return normalizeStats(await res.json() as Campaign)
 }
 
 export async function getCampaignAnalytics(orgId: string): Promise<CampaignAnalytics | null> {
