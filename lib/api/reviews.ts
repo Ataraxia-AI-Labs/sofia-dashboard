@@ -1,4 +1,5 @@
 import { API_URL, authFetch, unwrapArray } from './helpers'
+import { parseAPIError } from '../supabase'
 
 export interface Review {
   id: string
@@ -88,16 +89,12 @@ export async function generateReviewReply(orgId: string, reviewId: string): Prom
 export async function syncReviews(orgId: string): Promise<void> {
   const res = await authFetch(`${API_URL}/gmb/${orgId}/sync`, { method: 'POST' })
   if (!res.ok) {
-    // S154: el backend devuelve un detail descriptivo (ej. "Google
-    // Business no está conectado. Use POST /gmb/.../connect primero.")
-    // Sin esto el catch del page mostraba un genérico "Error al
-    // sincronizar" sin pistas — operador no sabía que faltaba conectar GBP.
-    let detail = `Sync error: ${res.status}`
-    try {
-      const body = await res.json()
-      if (body?.detail) detail = String(body.detail)
-    } catch { /* keep generic */ }
-    throw new Error(detail)
+    // S154: el middleware del backend transforma HTTPException.detail en
+    // `{error, status_code, message}`. parseAPIError ya lee `message` primero,
+    // luego `detail` como fallback. Sin esto el toast mostraba "Sync error:
+    // 400" en vez de "Google Business no está conectado. Use POST
+    // /gmb/.../connect primero." — operador no sabía que faltaba GBP.
+    throw new Error(await parseAPIError(res))
   }
 }
 
