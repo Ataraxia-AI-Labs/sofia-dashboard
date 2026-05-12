@@ -87,7 +87,18 @@ export async function generateReviewReply(orgId: string, reviewId: string): Prom
 
 export async function syncReviews(orgId: string): Promise<void> {
   const res = await authFetch(`${API_URL}/gmb/${orgId}/sync`, { method: 'POST' })
-  if (!res.ok) throw new Error(`Sync error: ${res.status}`)
+  if (!res.ok) {
+    // S154: el backend devuelve un detail descriptivo (ej. "Google
+    // Business no está conectado. Use POST /gmb/.../connect primero.")
+    // Sin esto el catch del page mostraba un genérico "Error al
+    // sincronizar" sin pistas — operador no sabía que faltaba conectar GBP.
+    let detail = `Sync error: ${res.status}`
+    try {
+      const body = await res.json()
+      if (body?.detail) detail = String(body.detail)
+    } catch { /* keep generic */ }
+    throw new Error(detail)
+  }
 }
 
 export async function getReputationDashboard(orgId: string): Promise<Record<string, unknown>> {

@@ -23,7 +23,11 @@ export default function ResenasPage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyText, setReplyText] = useState('')
   const [generating, setGenerating] = useState<string | null>(null)
-  const [msg, setMsg] = useState('')
+  // S154: msg ahora discrimina success vs error. Antes se hardcodeaba
+  // styling status-success y los errores aparecían en verde. Con GBP
+  // rechazado, sincronizar siempre falla — operador veía verde y
+  // pensaba que había funcionado.
+  const [msg, setMsg] = useState<{ kind: 'success' | 'error'; text: string } | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -45,10 +49,13 @@ export default function ResenasPage() {
   const handleSync = async () => {
     try {
       await syncReviews(orgId)
-      setMsg('Sincronizado')
+      setMsg({ kind: 'success', text: 'Sincronizado' })
       load()
-    } catch { setMsg('Error al sincronizar') }
-    setTimeout(() => setMsg(''), 2000)
+    } catch (err) {
+      const text = err instanceof Error && err.message ? err.message : 'Error al sincronizar'
+      setMsg({ kind: 'error', text })
+    }
+    setTimeout(() => setMsg(null), 4000)
   }
 
   const handleReply = async (reviewId: string) => {
@@ -57,7 +64,7 @@ export default function ResenasPage() {
       await replyToReview(orgId, reviewId, replyText)
       setReplyingTo(null); setReplyText('')
       load()
-    } catch { setMsg('Error al responder') }
+    } catch { setMsg({ kind: 'error', text: 'Error al responder' }) }
   }
 
   const handleGenerate = async (reviewId: string) => {
@@ -66,7 +73,7 @@ export default function ResenasPage() {
       const { reply } = await generateReviewReply(orgId, reviewId)
       setReplyText(reply)
       setReplyingTo(reviewId)
-    } catch { setMsg('Error al generar') }
+    } catch { setMsg({ kind: 'error', text: 'Error al generar' }) }
     setGenerating(null)
   }
 
@@ -91,7 +98,13 @@ export default function ResenasPage() {
         </button>
       </div>
 
-      {msg && <div className="text-[12px] font-body text-status-success bg-status-success/8 px-3 py-1.5 rounded border border-status-success/15">{msg}</div>}
+      {msg && (
+        <div className={`text-[12px] font-body px-3 py-1.5 rounded border ${
+          msg.kind === 'success'
+            ? 'text-status-success bg-status-success/8 border-status-success/15'
+            : 'text-status-danger bg-status-danger/8 border-status-danger/15'
+        }`}>{msg.text}</div>
+      )}
 
       {/* Stats banner */}
       {stats && (
@@ -108,12 +121,26 @@ export default function ResenasPage() {
             <p className="text-[10px] font-body text-text-dim uppercase tracking-wider">{t('responseRate')}</p>
             <p className="text-sm font-mono font-bold text-text-primary mt-0.5">{(stats.response_rate * 100).toFixed(0)}%</p>
           </div>
-          <div className="rounded-xl p-3.5 bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>
-            <p className="text-[10px] font-body text-text-dim uppercase tracking-wider">{t('nps')}</p>
-            <p className={`text-sm font-mono font-bold mt-0.5 ${nps && nps.score >= 50 ? 'text-status-success' : nps && nps.score >= 0 ? 'text-status-warning' : 'text-status-danger'}`}>
-              {nps?.score ?? '—'}
-            </p>
-          </div>
+          {/* S154: NPS muestra "—" cuando no hay respuestas. Antes mostraba "0"
+              que se confundía con un score real bajo. hasResponses verifica
+              que al menos haya un promotor/pasivo/detractor antes de mostrar score. */}
+          {(() => {
+            const hasResponses = !!nps && (nps.promoters + nps.passives + nps.detractors) > 0
+            const score = hasResponses ? nps.score : null
+            const colorCls = score === null
+              ? 'text-text-dim'
+              : score >= 50 ? 'text-status-success'
+              : score >= 0 ? 'text-status-warning'
+              : 'text-status-danger'
+            return (
+              <div className="rounded-xl p-3.5 bg-surface/40" style={{ boxShadow: '0 0 0 1px rgba(139,92,246,0.1), 0 2px 12px -4px rgba(139,92,246,0.12)' }}>
+                <p className="text-[10px] font-body text-text-dim uppercase tracking-wider">{t('nps')}</p>
+                <p className={`text-sm font-mono font-bold mt-0.5 ${colorCls}`}>
+                  {score === null ? '—' : score}
+                </p>
+              </div>
+            )
+          })()}
         </div>
       )}
 
