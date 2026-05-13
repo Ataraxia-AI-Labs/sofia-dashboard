@@ -116,5 +116,31 @@ export async function suggestSegment(
     body: JSON.stringify({ goal }),
   })
   if (!res.ok) throw new Error('Suggest segment failed')
-  return res.json()
+  // S154: backend devuelve `{suggested_criteria, explanation, goal}` con
+  // age_range como objeto `{min, max}`. Frontend espera `{criteria,
+  // explanation}` con age_range como array `[min, max]`. Sin esto,
+  // clickear "Sugerir IA" en Crear Campaña no populaba el form y
+  // `c.age_range[0]` daba undefined o crasheaba.
+  const raw = await res.json() as Record<string, unknown>
+  const src = (raw.suggested_criteria ?? raw.criteria ?? {}) as Record<string, unknown>
+  const ageObj = src.age_range as { min?: number; max?: number } | number[] | undefined
+  let ageRange: number[] | undefined
+  if (Array.isArray(ageObj)) ageRange = ageObj
+  else if (ageObj && typeof ageObj === 'object') ageRange = [Number(ageObj.min ?? 18), Number(ageObj.max ?? 65)]
+  const lastVisitObj = src.last_visit_days_ago as { min?: number } | number | undefined
+  const lastVisit = typeof lastVisitObj === 'object' && lastVisitObj !== null
+    ? Number((lastVisitObj as { min?: number }).min ?? 0)
+    : (lastVisitObj as number | undefined)
+  return {
+    criteria: {
+      ...src,
+      age_range: ageRange,
+      gender: src.gender,
+      services: src.services_used ?? src.services,
+      last_visit_days: lastVisit,
+      min_lead_score: src.lead_score_min ?? src.min_lead_score,
+      min_ltv_tier: src.ltv_tier_min ?? src.min_ltv_tier,
+    },
+    explanation: (raw.explanation as string) ?? '',
+  }
 }
