@@ -846,9 +846,9 @@ export default function OnboardingPage() {
 
           {/* Footer */}
           <p className="text-[11px] font-body text-text-dim text-center mt-8">
-            Ya tienes cuenta?{' '}
+            ¿Ya tienes cuenta?{' '}
             <a href="/login" className="text-brand-purple hover:brightness-125 transition-colors">
-              Iniciar sesion
+              Iniciar sesión
             </a>
           </p>
         </div>

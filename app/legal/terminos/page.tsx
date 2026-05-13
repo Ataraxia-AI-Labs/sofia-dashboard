@@ -3,11 +3,11 @@ import { ArrowLeft } from 'lucide-react'
 import { AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 
 export const metadata = {
-  title: 'Terminos de Servicio — SofIA by Ataraxia IA Labs',
-  description: 'Terminos y condiciones de uso de la plataforma SofIA.',
+  title: 'Términos de Servicio — SofIA by Ataraxia IA Labs',
+  description: 'Términos y condiciones de uso de la plataforma SofIA.',
 }
 
-export default function TerminosPage() {
+export default function TérminosPage() {
   return (
     <div className="min-h-screen bg-void">
       {/* Nav */}
@@ -31,7 +31,7 @@ export default function TerminosPage() {
         <div className="mb-8">
           <span className="badge badge-purple mb-3 inline-flex">Legal</span>
           <h1 className="font-body text-3xl lg:text-4xl font-bold text-white mb-3">
-            Terminos de Servicio
+            Términos de Servicio
           </h1>
           <p className="text-text-muted text-xs font-body">
             Ultima actualizacion: febrero de 2026 &mdash; Version 2.0
@@ -41,10 +41,10 @@ export default function TerminosPage() {
         <div className="bg-brand-purple/8 border border-brand-purple/15 rounded-lg p-5 space-y-6 text-text-secondary text-sm font-body leading-relaxed">
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">1. Aceptacion de los Terminos</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">1. Aceptación de los Términos</h2>
             <p>
               Al acceder y usar la plataforma SofIA de Ataraxia IA Labs (&ldquo;la Plataforma&rdquo;, &ldquo;el Servicio&rdquo;),
-              usted acepta quedar vinculado por estos Terminos de Servicio. Si no esta de acuerdo con estos terminos,
+              usted acepta quedar vinculado por estos Términos de Servicio. Si no está de acuerdo con estos términos,
               por favor no use la Plataforma.
             </p>
           </section>
@@ -74,7 +74,7 @@ export default function TerminosPage() {
 
           <section>
             <h2 className="text-text-primary font-semibold text-sm mb-2">3. Uso Aceptable</h2>
-            <p className="mb-2">El Servicio esta disenado exclusivamente para uso por:</p>
+            <p className="mb-2">El Servicio está diseñado exclusivamente para uso por:</p>
             <ul className="space-y-1 ml-3">
               <li className="flex items-start gap-2">
                 <span className="text-brand-purple mt-0.5">&#8226;</span>
@@ -138,7 +138,7 @@ export default function TerminosPage() {
           <section>
             <h2 className="text-text-primary font-semibold text-sm mb-2">8. Contacto</h2>
             <p>
-              Para consultas sobre estos terminos: <span className="text-brand-purple">legal@ataraxiaialabs.ai</span>
+              Para consultas sobre estos términos: <span className="text-brand-purple">legal@ataraxiaialabs.ai</span>
             </p>
           </section>
         </div>
