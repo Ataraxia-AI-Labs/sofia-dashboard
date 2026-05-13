@@ -54,8 +54,8 @@ export function TemplatesTab({ orgId, org, isReadOnly, onMessage }: TemplatesTab
   return (
     <div className="space-y-3">
       <div className="px-3 py-2 rounded-md bg-status-info/10 border border-status-info/20 text-[12px] font-body text-status-info leading-relaxed">
-        <strong>Importante:</strong> Las plantillas deben estar aprobadas en Meta Business Manager antes de configurarlas aqui.
-        Cuando los sub-bots (Reminder, Hunter, Nurse) envian mensajes fuera de la ventana de 24h de WhatsApp, usan estas plantillas en lugar de texto libre.
+        <strong>Importante:</strong> Las plantillas deben estar aprobadas en Meta Business Manager antes de configurarlas aquí.
+        Cuando los sub-bots (Reminder, Hunter, Nurse) envían mensajes fuera de la ventana de 24h de WhatsApp, usan estas plantillas en lugar de texto libre.
       </div>
 
       <div className="flex items-center justify-between">
