@@ -233,7 +233,13 @@ export default function ConversionPanel({ orgId }: ConversionPanelProps) {
                   <span className={`text-[10px] font-bold font-body ${
                     factor.direction === 'positive' ? 'text-status-success' : 'text-status-danger'
                   }`}>
-                    {factor.direction === 'positive' ? '+' : ''}{Math.round(factor.impact * 100)}%
+                    {(() => {
+                      // S154: backend a veces devuelve impact=null/undefined.
+                      // Math.round(null * 100) = NaN visible como "NaN%".
+                      const n = Number(factor.impact)
+                      if (!Number.isFinite(n)) return '—'
+                      return `${factor.direction === 'positive' ? '+' : ''}${Math.round(n * 100)}%`
+                    })()}
                   </span>
                 </div>
               ))}
