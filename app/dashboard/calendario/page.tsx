@@ -43,7 +43,13 @@ type ViewMode = 'week' | 'month'
 type ActiveTab = 'calendar' | 'waitingRoom'
 
 export default function CalendarioPage() {
-  const { orgId, branchId } = useOrg()
+  const { orgId, branchId, org } = useOrg()
+  // S154: Sin esto, toLocaleTimeString usa la TZ del browser (UTC en runners
+  // headless, mountain/pacific en algunos clientes), no la TZ de la clínica.
+  // Una cita 13:00 UTC para clínica Bogotá (08:00) aparecía como "06:00 a. m."
+  // o cualquier hora dependiendo del browser del operador. Forzamos siempre
+  // la TZ del org (cae a 'America/Bogota' si la config no la trae).
+  const orgTz = ((org?.config_settings as { timezone?: string } | undefined)?.timezone) || 'America/Bogota'
   const t = useTranslations('calendar')
   const tCommon = useTranslations('common')
   const searchParams = useSearchParams()
@@ -214,26 +220,48 @@ export default function CalendarioPage() {
   }, [staffList])
 
   // Group appointments by date
+  // S154: dateKey debe estar en la TZ del org. Sin esto, una cita 04 abril
+  // 23:05 UTC (= 04 abril 18:05 Bogotá) sale clasificada como "05 abril"
+  // por el toISOString. Operador ve la cita en el día equivocado.
+  const dateKeyOf = (iso: string) => {
+    const d = new Date(iso)
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: orgTz, year: 'numeric', month: '2-digit', day: '2-digit',
+    }).formatToParts(d)
+    const y = parts.find(p => p.type === 'year')?.value
+    const m = parts.find(p => p.type === 'month')?.value
+    const day = parts.find(p => p.type === 'day')?.value
+    return `${y}-${m}-${day}`
+  }
   const groupedByDate = useMemo(() => {
     const groups: Record<string, Appointment[]> = {}
     appointments.forEach((a) => {
-      const dateKey = new Date(a.start_time).toISOString().split('T')[0]
+      const dateKey = dateKeyOf(a.start_time)
       if (!groups[dateKey]) groups[dateKey] = []
       groups[dateKey].push(a)
     })
     return groups
-  }, [appointments])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appointments, orgTz])
 
   // Generate day cells
+  // S154: keys via componentes locales (getFullYear/getMonth/getDate) en vez
+  // de toISOString. toISOString convierte la Date a UTC; para browsers al
+  // este de UTC (ej. Tokyo +9), midnight local = previous day UTC → la cell
+  // visualmente "4 abr" obtenía key "2026-04-03" y el match con appointments
+  // fallaba. Componentes locales siempre matchean lo que se muestra.
+  const dayKey = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   const dayCells = useMemo(() => {
     const cells: { date: Date; key: string; isToday: boolean; isCurrentMonth: boolean }[] = []
-    const today = new Date().toISOString().split('T')[0]
+    const todayDate = new Date()
+    const today = dayKey(todayDate)
 
     if (viewMode === 'week') {
       for (let i = 0; i < 7; i++) {
         const d = new Date(fromDate)
         d.setDate(fromDate.getDate() + i)
-        const key = d.toISOString().split('T')[0]
+        const key = dayKey(d)
         cells.push({ date: d, key, isToday: key === today, isCurrentMonth: true })
       }
     } else {
@@ -245,7 +273,7 @@ export default function CalendarioPage() {
       for (let i = 0; i < 42; i++) {
         const d = new Date(start)
         d.setDate(start.getDate() + i)
-        const key = d.toISOString().split('T')[0]
+        const key = dayKey(d)
         cells.push({
           date: d,
           key,
@@ -400,7 +428,7 @@ export default function CalendarioPage() {
                 <div className="space-y-0.5">
                   {dayAppts.slice(0, viewMode === 'week' ? 20 : 3).map((appt) => {
                     const cfg = STATUS_STYLE[appt.status] || STATUS_STYLE.REQUESTED
-                    const time = new Date(appt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })
+                    const time = new Date(appt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: orgTz })
                     const patientName = appt.patients?.full_name || t('noName')
                     const staffName = getStaffName(appt.staff_id)
                     return (
@@ -477,8 +505,8 @@ export default function CalendarioPage() {
 
             <div className="space-y-3">
               <ApptRow icon={<User size={14} />} label={t('patientRequired').replace(' *', '')} value={selectedAppt.patients?.full_name || t('noName')} />
-              <ApptRow icon={<CalIcon size={14} />} label={tCommon('date')} value={new Date(selectedAppt.start_time).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} />
-              <ApptRow icon={<Clock size={14} />} label={t('timeRequired').replace(' *', '')} value={`${new Date(selectedAppt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}${selectedAppt.end_time ? ` — ${new Date(selectedAppt.end_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })}` : ''}`} />
+              <ApptRow icon={<CalIcon size={14} />} label={tCommon('date')} value={new Date(selectedAppt.start_time).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: orgTz })} />
+              <ApptRow icon={<Clock size={14} />} label={t('timeRequired').replace(' *', '')} value={`${new Date(selectedAppt.start_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: orgTz })}${selectedAppt.end_time ? ` — ${new Date(selectedAppt.end_time).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: orgTz })}` : ''}`} />
               <ApptRow icon={<Eye size={14} />} label={t('service')} value={selectedAppt.service_name || '—'} />
 
               {/* Staff assignment */}
@@ -510,7 +538,7 @@ export default function CalendarioPage() {
                   <div>
                     <div className="text-[10px] text-text-dim uppercase">{t('previousTime')}</div>
                     <div className="text-xs font-body text-text-muted line-through">
-                      {new Date(selectedAppt.previous_start_time).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })}
+                      {new Date(selectedAppt.previous_start_time).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short', timeZone: orgTz })}
                     </div>
                   </div>
                 </div>
