@@ -1,6 +1,7 @@
 'use client'
 
-import { notFound, useParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
 import { HyperPersuasivePage } from '@/components/hyper-persuasive-page'
 import {
   Database, Zap, Palette, Store, Webhook, Brain,
@@ -119,6 +120,23 @@ export default function ComingSoonPage() {
   const params = useParams<{ feature: string }>()
   const key = params?.feature
   const config = key ? CONFIGS[key] : undefined
-  if (!config) notFound()
+  // S154: antes llamábamos notFound() pero en client components sin un
+  // not-found.tsx adyacente eso dispara el error boundary ("¡Algo salió
+  // mal!"). Para un slug fuera del catálogo mostramos empty state limpio
+  // con CTA de regreso, no un crash.
+  if (!config) {
+    return (
+      <div className="max-w-md mx-auto py-16 text-center space-y-3">
+        <h1 className="text-sm font-mono font-bold uppercase tracking-wide text-text-primary">Funcionalidad no disponible</h1>
+        <p className="text-[12px] font-body text-text-dim">Esta sección no existe o todavía no la lanzamos. Vuelve al dashboard para ver lo que sí está activo.</p>
+        <Link
+          href="/dashboard"
+          className="inline-block px-4 py-2 rounded-md bg-brand-purple text-white text-[12px] font-body font-semibold hover:bg-brand-purple-dark transition-colors"
+        >
+          Volver al dashboard
+        </Link>
+      </div>
+    )
+  }
   return <HyperPersuasivePage {...config} />
 }
