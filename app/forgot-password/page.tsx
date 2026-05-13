@@ -52,8 +52,8 @@ export default function ForgotPasswordPage() {
             <div>
               <h2 className="text-xl font-semibold text-text-primary font-body mb-1">Revisa tu correo</h2>
               <p className="text-text-muted text-xs font-body leading-relaxed">
-                Enviamos un enlace de recuperacion a <strong className="text-text-primary">{email}</strong>.
-                Haz clic en el enlace para restablecer tu contrasena.
+                Enviamos un enlace de recuperación a <strong className="text-text-primary">{email}</strong>.
+                Haz clic en el enlace para restablecer tu contraseña.
               </p>
             </div>
             <p className="text-text-dim text-[12px] font-body">
@@ -70,9 +70,9 @@ export default function ForgotPasswordPage() {
         ) : (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-text-primary font-body mb-1">Recuperar contrasena</h2>
+              <h2 className="text-2xl font-semibold text-text-primary font-body mb-1">Recuperar contraseña</h2>
               <p className="text-text-muted text-xs font-body">
-                Ingresa tu email y te enviaremos un enlace para restablecer tu contrasena.
+                Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.
               </p>
             </div>
 

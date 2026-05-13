@@ -122,7 +122,7 @@ export default function PatientPortalPage({ params }: { params: { token: string 
   const copyCode = () => {
     if (!data?.referral.code) return
     const portalUrl = `${window.location.origin}/portal/${token}`
-    navigator.clipboard.writeText(`Usa mi codigo ${data.referral.code} - ${portalUrl}`)
+    navigator.clipboard.writeText(`Usa mi código ${data.referral.code} - ${portalUrl}`)
     setCopiedCode(true)
     setTimeout(() => setCopiedCode(false), 2000)
   }
@@ -242,7 +242,7 @@ export default function PatientPortalPage({ params }: { params: { token: string 
           <div className="mb-3 rounded-lg bg-surface border border-border overflow-hidden flex">
             <div aria-hidden="true" className="w-1 bg-brand-purple" />
             <div className="flex-1 p-4">
-              <p className="text-[10px] uppercase tracking-wider text-brand-purple font-body font-medium mb-1.5">Proxima cita</p>
+              <p className="text-[10px] uppercase tracking-wider text-brand-purple font-body font-medium mb-1.5">Próxima cita</p>
               <p className="text-lg font-bold font-mono text-text-primary capitalize mb-0.5">{formatDate(nextAppointment.date)}</p>
               <div className="flex items-center gap-3 text-xs font-body text-text-muted">
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /><span className="font-mono">{nextAppointment.time}</span></span>
@@ -539,7 +539,7 @@ export default function PatientPortalPage({ params }: { params: { token: string 
             Refiere un amigo
           </h2>
           <p className="text-[12px] font-body text-text-muted mb-2.5">
-            Comparte tu codigo y ambos reciben descuento en su proxima visita.
+            Comparte tu código y ambos reciben descuento en su próxima visita.
           </p>
 
           {/* Referral code — sentient: code in mono large, ghost icon buttons */}
@@ -551,8 +551,8 @@ export default function PatientPortalPage({ params }: { params: { token: string 
               type="button"
               onClick={copyCode}
               disabled={!data.referral.code}
-              aria-label={copiedCode ? 'Codigo copiado' : 'Copiar codigo'}
-              title={copiedCode ? 'Codigo copiado' : 'Copiar codigo'}
+              aria-label={copiedCode ? 'Código copiado' : 'Copiar código'}
+              title={copiedCode ? 'Código copiado' : 'Copiar código'}
               className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center text-text-dim hover:text-brand-purple hover:border-brand-purple/30 transition-colors disabled:opacity-40"
             >
               {copiedCode ? <Check className="w-3.5 h-3.5 text-status-success" /> : <Copy className="w-3.5 h-3.5" />}
@@ -561,8 +561,8 @@ export default function PatientPortalPage({ params }: { params: { token: string 
               type="button"
               onClick={shareWhatsApp}
               disabled={!data.referral.code}
-              aria-label="Compartir codigo por WhatsApp"
-              title="Compartir codigo por WhatsApp"
+              aria-label="Compartir código por WhatsApp"
+              title="Compartir código por WhatsApp"
               className="w-8 h-8 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-purple hover:bg-brand-purple/15 transition-colors disabled:opacity-40"
             >
               <Share2 className="w-3.5 h-3.5" />
@@ -591,11 +591,11 @@ export default function PatientPortalPage({ params }: { params: { token: string 
               href={`https://wa.me/${data.clinic_phone.replace(/[^0-9]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Contactar a la clinica por WhatsApp"
+              aria-label="Contactar a la clínica por WhatsApp"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple text-xs font-body font-medium hover:bg-brand-purple/15 transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              Contactar clinica por WhatsApp
+              Contactar clínica por WhatsApp
             </a>
           )}
 

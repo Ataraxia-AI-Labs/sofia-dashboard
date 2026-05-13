@@ -43,7 +43,7 @@ function MFAForm() {
       router.replace('/dashboard')
     } catch (e) {
       Sentry.captureException(e)
-      setError(e instanceof Error ? e.message : 'Codigo incorrecto. Intenta de nuevo.')
+      setError(e instanceof Error ? e.message : 'Código incorrecto. Intenta de nuevo.')
       setLoading(false)
     }
   }
@@ -61,9 +61,9 @@ function MFAForm() {
             <div className="w-10 h-10 rounded-lg bg-brand-purple/10 flex items-center justify-center mb-3">
               <ShieldCheck size={20} className="text-brand-purple" />
             </div>
-            <h1 className="text-xl font-semibold text-text-primary font-body">Verificacion de dos pasos</h1>
+            <h1 className="text-xl font-semibold text-text-primary font-body">Verificación de dos pasos</h1>
             <p className="text-text-muted text-xs font-body mt-1.5 leading-relaxed">
-              Abre tu app autenticadora e ingresa el codigo de 6 digitos.
+              Abre tu app autenticadora e ingresa el código de 6 dígitos.
             </p>
           </div>
 

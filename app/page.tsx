@@ -101,7 +101,7 @@ function StickyTrialBanner() {
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse flex-shrink-0" />
             <p className="text-text-muted text-xs font-body truncate">
-              <span className="text-text-primary font-semibold">7 dias gratis.</span>{' '}
+              <span className="text-text-primary font-semibold">7 días gratis.</span>{' '}
               Sin tarjeta. Sin compromiso.
             </p>
           </div>
@@ -258,9 +258,9 @@ function ROICalculator() {
         <p className="text-xs font-body text-text-muted">
           SofIA te devuelve{' '}
           <span className="text-brand-purple font-bold text-base">{roiMultiple > 0 ? `${roiMultiple}x` : '2x+'}</span>
-          {' '}tu inversion cada mes.
+          {' '}tu inversión cada mes.
           <br />
-          <span className="text-text-dim text-[10px]">*Proyeccion basada en promedios del sector en Latinoamerica</span>
+          <span className="text-text-dim text-[10px]">*Proyeccion basada en promedios del sector en Latinoamérica</span>
         </p>
       </div>
 
@@ -268,7 +268,7 @@ function ROICalculator() {
         href="/onboarding"
         className="w-full py-3 rounded-md bg-brand-purple text-white font-bold text-sm font-body flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors"
       >
-        Quiero este ROI — Prueba 7 dias gratis <ArrowRight size={16} />
+        Quiero este ROI — Prueba 7 días gratis <ArrowRight size={16} />
       </Link>
     </div>
   )
@@ -427,7 +427,7 @@ export default function LandingPage() {
                 href="/login"
                 className="hidden sm:block text-xs font-body text-text-muted hover:text-text-primary transition-colors px-3 py-1.5 rounded-md hover:bg-surface-2"
               >
-                Iniciar sesion
+                Iniciar sesión
               </Link>
               <Link
                 href="/onboarding"
@@ -460,7 +460,7 @@ export default function LandingPage() {
                 </a>
               ))}
               <Link href="/login" className="block py-2 text-xs font-body text-text-muted">
-                Iniciar sesion
+                Iniciar sesión
               </Link>
             </div>
           )}
@@ -479,14 +479,14 @@ export default function LandingPage() {
               {/* Urgency badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-brand-purple/8 border border-brand-purple/15 text-brand-purple text-xs font-body font-medium mb-6 animate-fade-in">
                 <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse" />
-                Mas de 40 clinicas en lista de espera — cupos limitados para Colombia
+                Más de 40 clínicas en lista de espera — cupos limitados para Colombia
               </div>
 
               {/* Main headline */}
               <h1 className="font-display text-3xl sm:text-4xl lg:text-6xl font-bold text-text-primary leading-tight mb-5 animate-fade-up">
                 Tu clínica llena.{' '}
                 <br className="hidden sm:block" />
-                <span className="text-brand-purple italic">Sin levantar el telefono.</span>
+                <span className="text-brand-purple italic">Sin levantar el teléfono.</span>
               </h1>
 
               {/* Subheadline */}
@@ -508,7 +508,7 @@ export default function LandingPage() {
                   className="group px-7 py-3.5 rounded-lg bg-brand-purple text-white font-bold text-base font-body flex items-center gap-2.5 hover:bg-brand-purple-dark transition-colors duration-300 hover:scale-[1.02] w-full sm:w-auto justify-center"
                 >
                   <Zap size={20} className="text-brand-gold" />
-                  Prueba Gratis 7 Dias
+                  Prueba Gratis 7 Días
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <a
@@ -522,9 +522,9 @@ export default function LandingPage() {
               {/* Trust signals below CTA */}
               <div className="flex flex-wrap gap-3 justify-center text-[13px] font-body text-text-dim animate-fade-in">
                 {[
-                  { icon: <Shield size={12} />, text: 'Sin tarjeta de credito' },
+                  { icon: <Shield size={12} />, text: 'Sin tarjeta de crédito' },
                   { icon: <Check size={12} />, text: 'Setup en 5 minutos' },
-                  { icon: <Clock size={12} />, text: '7 dias completamente gratis' },
+                  { icon: <Clock size={12} />, text: '7 días completamente gratis' },
                   { icon: <Activity size={12} />, text: 'Cancela cuando quieras' },
                 ].map(({ icon, text }) => (
                   <span key={text} className="flex items-center gap-1.5 text-text-muted">
@@ -542,7 +542,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
               <p className="text-text-dim text-xs font-body text-center lg:text-left">
-                Con la confianza de clinicas lideres en Colombia y Latinoamerica
+                Con la confianza de clínicas líderes en Colombia y Latinoamérica
               </p>
               <div className="flex flex-wrap gap-5 lg:gap-8 items-center justify-center">
                 {[
@@ -565,8 +565,8 @@ export default function LandingPage() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-5">
                 <AnimatedStat value={40} suffix="%" label="Reduccion en citas perdidas por no-show" delay={0} />
                 <AnimatedStat value={3} suffix="s" label="Tiempo de respuesta promedio de SofIA" delay={150} />
-                <AnimatedStat value={24} suffix="/7" label="Atencion sin interrupciones, nunca duerme" delay={300} />
-                <AnimatedStat value={97} suffix="%" label="Satisfaccion de pacientes con la atencion IA" delay={450} />
+                <AnimatedStat value={24} suffix="/7" label="Atención sin interrupciones, nunca duerme" delay={300} />
+                <AnimatedStat value={97} suffix="%" label="Satisfacción de pacientes con la atención IA" delay={450} />
               </div>
             </div>
           </div>
@@ -638,7 +638,7 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               <FeatureCard
                 icon={<MessageSquare size={22} />}
-                title="Atencion 24/7 por WhatsApp"
+                title="Atención 24/7 por WhatsApp"
                 description="Responde consultas, agenda citas y maneja objeciones en tiempo real por WhatsApp Business API — incluso a las 3AM."
                 highlight
               />
@@ -661,7 +661,7 @@ export default function LandingPage() {
               <FeatureCard
                 icon={<TrendingUp size={22} />}
                 title="Dashboard de analytics"
-                description="Panel en tiempo real con metricas de conversion, revenue, NPS de pacientes, rendimiento por doctor y sede."
+                description="Panel en tiempo real con métricas de conversión, revenue, NPS de pacientes, rendimiento por doctor y sede."
               />
               <FeatureCard
                 icon={<Users size={22} />}
@@ -870,7 +870,7 @@ export default function LandingPage() {
 
                   <div className="space-y-2.5 mb-6">
                     {[
-                      'Atencion 24/7 por WhatsApp Business API',
+                      'Atención 24/7 por WhatsApp Business API',
                       'Agenda automatica + recordatorios',
                       'Cobro de anticipos integrado',
                       'Dashboard analytics en tiempo real',
@@ -895,11 +895,11 @@ export default function LandingPage() {
                     href="/onboarding"
                     className="w-full py-3 rounded-md bg-brand-purple text-white font-bold text-sm font-body flex items-center justify-center gap-2 hover:bg-brand-purple-dark transition-colors mb-3"
                   >
-                    Empezar con 7 dias gratis <ArrowRight size={16} />
+                    Empezar con 7 días gratis <ArrowRight size={16} />
                   </Link>
 
                   <p className="text-center text-text-dim text-[13px] font-body">
-                    Sin tarjeta de credito. Sin contratos. Cancela cuando quieras.
+                    Sin tarjeta de crédito. Sin contratos. Cancela cuando quieras.
                   </p>
                 </div>
               </div>
@@ -908,10 +908,10 @@ export default function LandingPage() {
               <div className="mt-5 p-4 rounded-md bg-status-success/5 border border-status-success/20 text-center">
                 <div className="flex items-center justify-center gap-2 mb-1.5">
                   <Shield size={14} className="text-status-success" />
-                  <span className="text-status-success font-semibold text-xs font-body">Garantia de resultados 30 dias</span>
+                  <span className="text-status-success font-semibold text-xs font-body">Garantía de resultados 30 días</span>
                 </div>
                 <p className="text-text-muted text-[13px] font-body leading-relaxed">
-                  Si en 30 dias SofIA no mejora tu tasa de agendamiento al menos un 20%,
+                  Si en 30 días SofIA no mejora tu tasa de agendamiento al menos un 20%,
                   te devolvemos el dinero. Sin preguntas.
                 </p>
               </div>
@@ -937,7 +937,7 @@ export default function LandingPage() {
 
             <p className="text-text-muted text-sm lg:text-base font-body leading-relaxed mb-10 max-w-2xl mx-auto">
               Cada dia que esperas es un dia que tu competencia automatiza mas.
-              Empieza hoy con 7 dias gratis y ve la diferencia desde la primera noche.
+              Empieza hoy con 7 días gratis y ve la diferencia desde la primera noche.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
@@ -967,14 +967,14 @@ export default function LandingPage() {
               <span className="text-xs font-body font-semibold text-brand-purple tracking-wide">SofIA</span>
             </div>
                 <p className="text-text-dim text-[13px] font-body mt-1.5 max-w-xs text-center lg:text-left">
-                  Asistente IA para clinicas de salud y estetica en Latinoamerica.
+                  Asistente IA para clínicas de salud y estética en Latinoamérica.
                   Ataraxia IA Labs &copy; {new Date().getFullYear()}
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-5 text-xs font-body text-text-muted justify-center">
                 <Link href="/onboarding" className="hover:text-text-primary transition-colors">Empezar gratis</Link>
-                <Link href="/login" className="hover:text-text-primary transition-colors">Iniciar sesion</Link>
+                <Link href="/login" className="hover:text-text-primary transition-colors">Iniciar sesión</Link>
                 <a href="#features" className="hover:text-text-primary transition-colors">Funciones</a>
                 <a href="#pricing" className="hover:text-text-primary transition-colors">Precios</a>
                 <Link href="/legal/terminos" className="hover:text-text-primary transition-colors">Terminos</Link>

@@ -112,7 +112,7 @@ function LoginForm() {
       if (authError) {
         setError(
           authError.message === 'Invalid login credentials'
-            ? 'Email o contrasena incorrectos'
+            ? 'Email o contraseña incorrectos'
             : authError.message
         )
         setLoading(false)
@@ -213,7 +213,7 @@ function LoginForm() {
 
             <div>
               <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
-                Contrasena
+                Contraseña
               </label>
               <div className="relative">
                 <input
@@ -228,7 +228,7 @@ function LoginForm() {
                   type="button"
                   onClick={() => setShowPw(!showPw)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors"
-                  aria-label={showPw ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+                  aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
                   {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
@@ -240,7 +240,7 @@ function LoginForm() {
                 href="/forgot-password"
                 className="text-[12px] font-body text-brand-purple hover:brightness-125 transition-colors"
               >
-                Olvide mi contrasena
+                Olvidé mi contraseña
               </a>
             </div>
 
@@ -270,7 +270,7 @@ function LoginForm() {
           {/* Trial CTA */}
           <div className="mt-6 p-4 rounded-md bg-surface border border-border">
             <p className="text-text-muted text-xs font-body text-center mb-2.5">
-              Aun no tienes cuenta?
+              ¿Aún no tienes cuenta?
             </p>
             <Link
               href="/onboarding"
@@ -278,7 +278,7 @@ function LoginForm() {
               style={{ background: 'rgba(139, 92, 246, 0.05)' }}
             >
               <Zap size={12} />
-              Prueba gratis de 7 dias
+              Prueba gratis de 7 días
               <ArrowRight size={12} />
             </Link>
             <p className="text-center text-text-dim text-[11px] font-body mt-1.5">Sin tarjeta. Setup en 5 minutos.</p>
