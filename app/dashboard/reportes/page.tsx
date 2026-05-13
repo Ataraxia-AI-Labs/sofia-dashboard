@@ -123,7 +123,7 @@ export default function ReportesPage() {
         </div>
       ) : !orgId ? (
         <div className="glass-card p-8 text-center">
-          <p className="text-[12px] font-body text-text-dim">No hay organizacion activa. Vuelve a iniciar sesion.</p>
+          <p className="text-[12px] font-body text-text-dim">No hay organización activa. Vuelve a iniciar sesión.</p>
         </div>
       ) : loadError ? (
         <div className="glass-card p-8 text-center">

@@ -27,7 +27,7 @@ export function NewPatientForm({ data, onChange, onSubmit, onCancel }: NewPatien
           <input id="np-name" type="text" value={data.full_name} onChange={(e) => onChange({ ...data, full_name: e.target.value })} placeholder="Maria Garcia" className="w-full px-3 py-2 rounded-md bg-void border border-border text-text-primary text-sm font-body outline-none focus:border-brand-purple/40" />
         </div>
         <div>
-          <label htmlFor="np-phone" className="block text-[12px] font-body font-semibold text-text-dim uppercase mb-1">Telefono *</label>
+          <label htmlFor="np-phone" className="block text-[12px] font-body font-semibold text-text-dim uppercase mb-1">Teléfono *</label>
           <input id="np-phone" type="text" value={data.phone} onChange={(e) => onChange({ ...data, phone: e.target.value })} placeholder="573001234567" className="w-full px-3 py-2 rounded-md bg-void border border-border text-text-primary text-sm font-body outline-none focus:border-brand-purple/40" />
         </div>
         <div>

@@ -11,7 +11,7 @@ export default function WebhooksPage() {
       title="Webhooks"
       eta="En desarrollo · Próximamente"
       headline="Conecta SofIA con lo que sea."
-      subhead="Eventos en tiempo real con firma digital y reintentos automaticos. Tu sistema externo siempre recibe la notificacion."
+      subhead="Eventos en tiempo real con firma digital y reintentos automáticos. Tu sistema externo siempre recibe la notificación."
       bullets={[
         'Eventos: cita, pago, mensaje, lead, paciente',
         'Firma digital para verificar que el evento es autentico',

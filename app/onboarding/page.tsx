@@ -293,16 +293,16 @@ export default function OnboardingPage() {
             ? 'El servidor esta iniciando. Espera 30 segundos e intenta de nuevo.'
             : res.status === 429
             ? 'Demasiados intentos. Espera un minuto e intenta de nuevo.'
-            : `Error de conexion con el servidor (${res.status}). Intenta de nuevo.`
+            : `Error de conexión con el servidor (${res.status}). Intenta de nuevo.`
         )
         setLoading(false)
         return
       }
 
       if (!res.ok) {
-        const msg = String(data.detail || data.mensaje || 'Error creando clinica')
+        const msg = String(data.detail || data.mensaje || 'Error creando clínica')
         if (msg.toLowerCase().includes('already') || msg.toLowerCase().includes('duplicate') || msg.toLowerCase().includes('existe')) {
-          setError('Ya existe una cuenta con este email. Intenta iniciar sesion o usa otro email.')
+          setError('Ya existe una cuenta con este email. Intenta iniciar sesión o usa otro email.')
         } else {
           setError(msg)
         }
@@ -347,7 +347,7 @@ export default function OnboardingPage() {
 
           <h1 className="text-2xl font-bold text-white font-body mb-2 tracking-tight">Portal activado</h1>
           <p className="text-text-muted text-xs font-body mb-1 leading-relaxed">
-            Enviamos un link de verificacion a
+            Enviamos un link de verificación a
           </p>
           <p className="text-brand-purple font-semibold text-sm font-body mb-8 break-all">
             {form.owner_email}
@@ -395,13 +395,13 @@ export default function OnboardingPage() {
               ? `Reenviar email (${resendCooldown}s)`
               : resendSuccess
                 ? 'Email reenviado'
-                : 'Reenviar email de verificacion'
+                : 'Reenviar email de verificación'
             }
           </button>
 
           {resendSuccess && resendCooldown > 0 && (
             <p className="text-[10px] text-status-success font-body mb-2 flex items-center justify-center gap-1">
-              <Check size={10} /> Email de verificacion reenviado exitosamente
+              <Check size={10} /> Email de verificación reenviado exitosamente
             </p>
           )}
 
@@ -642,7 +642,7 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label htmlFor="ob-password" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Contrasena del Dashboard *</label>
+                <label htmlFor="ob-password" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Contraseña del Dashboard *</label>
                 <div className="relative">
                   <input
                     id="ob-password"
@@ -658,7 +658,7 @@ export default function OnboardingPage() {
                     type="button"
                     onClick={() => setShowPw(!showPw)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-text-muted transition-colors"
-                    aria-label={showPw ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+                    aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   >
                     {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -669,22 +669,22 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <label htmlFor="ob-pw-confirm" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Confirmar contrasena *</label>
+                <label htmlFor="ob-pw-confirm" className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">Confirmar contraseña *</label>
                 <input
                   id="ob-pw-confirm"
                   type={showPw ? 'text' : 'password'}
                   value={form.password_confirm}
                   onChange={(e) => updateForm('password_confirm', e.target.value)}
-                  placeholder="Repite la contrasena"
+                  placeholder="Repite la contraseña"
                   className={`w-full px-3 py-2.5 rounded-md bg-surface border text-white text-xs font-body outline-none transition-colors placeholder:text-text-dim ${
                     form.password_confirm && !passwordsMatch ? 'border-status-danger/40' : 'border-border focus:border-brand-purple/50'
                   }`}
                 />
                 {form.password_confirm && !passwordsMatch && (
-                  <p className="text-[12px] font-body text-status-danger mt-0.5">Las contrasenas no coinciden</p>
+                  <p className="text-[12px] font-body text-status-danger mt-0.5">Las contraseñas no coinciden</p>
                 )}
                 {form.password_confirm && passwordsMatch && passwordValid && (
-                  <p className="text-[12px] font-body text-status-success mt-0.5 flex items-center gap-1"><Check size={10} /> Contrasenas coinciden</p>
+                  <p className="text-[12px] font-body text-status-success mt-0.5 flex items-center gap-1"><Check size={10} /> Contraseñas coinciden</p>
                 )}
               </div>
 
@@ -701,7 +701,7 @@ export default function OnboardingPage() {
                   }`}
                 />
                 {form.phone && !phoneValid ? (
-                  <p className="text-[12px] font-body text-status-danger mt-0.5">Formato: codigo de pais + numero (ej: +573001234567)</p>
+                  <p className="text-[12px] font-body text-status-danger mt-0.5">Formato: código de país + número (ej: +573001234567)</p>
                 ) : (
                   <p className="text-[12px] font-body text-text-dim mt-0.5">SofIA enviara alertas de emergencia aqui</p>
                 )}
@@ -720,7 +720,7 @@ export default function OnboardingPage() {
                     <Zap size={14} className="text-brand-purple" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-body font-semibold text-white">Conexion con un clic</h3>
+                    <h3 className="text-xs font-body font-semibold text-white">Conexión con un clic</h3>
                     <p className="text-[12px] font-body text-text-dim">Disponible en Ajustes &rarr; Canales</p>
                   </div>
                 </div>

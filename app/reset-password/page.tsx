@@ -39,12 +39,12 @@ export default function ResetPasswordPage() {
     setError('')
 
     if (password.length < 8) {
-      setError('La contrasena debe tener al menos 8 caracteres')
+      setError('La contraseña debe tener al menos 8 caracteres')
       return
     }
 
     if (password !== confirmPassword) {
-      setError('Las contrasenas no coinciden')
+      setError('Las contraseñas no coinciden')
       return
     }
 
@@ -64,7 +64,7 @@ export default function ResetPasswordPage() {
       setSuccess(true)
       setTimeout(() => router.push('/dashboard'), 3000)
     } catch {
-      setError('Error actualizando la contrasena. Intenta de nuevo.')
+      setError('Error actualizando la contraseña. Intenta de nuevo.')
     }
     setLoading(false)
   }
@@ -82,9 +82,9 @@ export default function ResetPasswordPage() {
               <CheckCircle2 size={24} className="text-status-success" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-text-primary font-body mb-1">Contrasena actualizada</h2>
+              <h2 className="text-xl font-semibold text-text-primary font-body mb-1">Contraseña actualizada</h2>
               <p className="text-text-muted text-xs font-body">
-                Tu contrasena ha sido restablecida exitosamente. Redirigiendo al dashboard...
+                Tu contraseña ha sido restablecida exitosamente. Redirigiendo al dashboard...
               </p>
             </div>
             <div className="w-4 h-4 border-2 border-brand-purple/30 border-t-brand-purple rounded-full animate-spin mx-auto" />
@@ -108,16 +108,16 @@ export default function ResetPasswordPage() {
         ) : (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-text-primary font-body mb-1">Nueva contrasena</h2>
+              <h2 className="text-2xl font-semibold text-text-primary font-body mb-1">Nueva contraseña</h2>
               <p className="text-text-muted text-xs font-body">
-                Ingresa tu nueva contrasena. Debe tener al menos 8 caracteres.
+                Ingresa tu nueva contraseña. Debe tener al menos 8 caracteres.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
-                  Nueva contrasena
+                  Nueva contraseña
                 </label>
                 <div className="relative">
                   <input
@@ -142,13 +142,13 @@ export default function ResetPasswordPage() {
 
               <div>
                 <label className="block text-[12px] font-body font-medium text-text-dim mb-1.5 uppercase tracking-wider">
-                  Confirmar contrasena
+                  Confirmar contraseña
                 </label>
                 <input
                   type={showPw ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repite la contrasena"
+                  placeholder="Repite la contraseña"
                   className="w-full px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-primary placeholder:text-text-dim text-xs font-body outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/20 transition-all"
                   required
                   minLength={8}
@@ -189,7 +189,7 @@ export default function ResetPasswordPage() {
                 ) : (
                   <>
                     <Lock size={14} />
-                    Restablecer contrasena
+                    Restablecer contraseña
                   </>
                 )}
               </button>

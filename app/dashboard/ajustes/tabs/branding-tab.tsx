@@ -327,7 +327,7 @@ export function BrandingTab({ orgId, org, isReadOnly, onMessage, onRefresh }: Br
             ) : (
               <>
                 <AlertCircle size={14} />
-                Pendiente de verificacion DNS
+                Pendiente de verificación DNS
               </>
             )}
           </div>

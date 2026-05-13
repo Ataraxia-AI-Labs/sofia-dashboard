@@ -78,7 +78,7 @@ export default function TerminosPage() {
             <ul className="space-y-1 ml-3">
               <li className="flex items-start gap-2">
                 <span className="text-brand-purple mt-0.5">&#8226;</span>
-                Clinicas dentales y de medicina estetica legalmente constituidas
+                Clínicas dentales y de medicina estética legalmente constituidas
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-brand-purple mt-0.5">&#8226;</span>
@@ -109,11 +109,11 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-text-primary font-semibold text-sm mb-2">5. Garantia de Satisfaccion</h2>
+            <h2 className="text-text-primary font-semibold text-sm mb-2">5. Garantía de Satisfacción</h2>
             <p>
-              Si dentro de los primeros 30 dias de su primer mes de pago SofIA no mejora su tasa de
+              Si dentro de los primeros 30 días de su primer mes de pago SofIA no mejora su tasa de
               agendamiento al menos un 20% respecto al periodo previo, Ataraxia IA Labs reembolsara
-              el valor del mes pagado. Para aplicar la garantia, contacte soporte dentro de los 30 dias.
+              el valor del mes pagado. Para aplicar la garantía, contacte soporte dentro de los 30 días.
             </p>
           </section>
 

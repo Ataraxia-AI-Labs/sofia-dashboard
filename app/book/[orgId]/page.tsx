@@ -79,7 +79,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
   }
 
   const handleSubmit = async () => {
-    if (!name.trim() || !phone.trim()) { setError('Nombre y telefono son obligatorios'); return }
+    if (!name.trim() || !phone.trim()) { setError('Nombre y teléfono son obligatorios'); return }
     setSubmitting(true)
     setError('')
     try {
@@ -274,7 +274,7 @@ export default function BookingPage({ params }: { params: { orgId: string } }) {
             <div className="space-y-2">
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre completo *"
                 className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
-              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Telefono / WhatsApp *"
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Teléfono / WhatsApp *"
                 className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />
               <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email (opcional)" type="email"
                 className="w-full p-2.5 border border-border bg-surface rounded-md text-xs font-body text-white placeholder:text-text-dim focus:outline-none focus:border-brand-purple/50 transition-colors" />

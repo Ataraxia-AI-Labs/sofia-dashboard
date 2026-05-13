@@ -3,8 +3,8 @@ import { ArrowLeft, Shield } from 'lucide-react'
 import { AtaraxiaLogoCompact } from '@/components/ataraxia-logo'
 
 export const metadata = {
-  title: 'Politica de Privacidad — SofIA by Ataraxia IA Labs',
-  description: 'Politica de privacidad y tratamiento de datos personales de la plataforma SofIA.',
+  title: 'Política de Privacidad — SofIA by Ataraxia IA Labs',
+  description: 'Política de privacidad y tratamiento de datos personales de la plataforma SofIA.',
 }
 
 export default function PrivacidadPage() {
@@ -37,7 +37,7 @@ export default function PrivacidadPage() {
             </div>
           </div>
           <h1 className="font-body text-3xl lg:text-4xl font-bold text-white mb-3">
-            Politica de Privacidad
+            Política de Privacidad
           </h1>
           <p className="text-text-muted text-xs font-body">
             Ultima actualizacion: febrero de 2026 &mdash; Version 2.0

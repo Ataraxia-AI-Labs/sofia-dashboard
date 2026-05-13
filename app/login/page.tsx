@@ -130,7 +130,7 @@ function LoginForm() {
 
       router.replace(redirect)
     } catch {
-      setError('Error de conexion. Verifica tu internet e intenta de nuevo.')
+      setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
       setLoading(false)
     }
   }

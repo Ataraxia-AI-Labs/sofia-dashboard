@@ -115,7 +115,7 @@ export function SecurityTab() {
       setEnrolling(false)
     } catch (e) {
       Sentry.captureException(e)
-      setError(e instanceof Error ? e.message : 'Codigo incorrecto. Intenta de nuevo.')
+      setError(e instanceof Error ? e.message : 'Código incorrecto. Intenta de nuevo.')
     }
     setVerifying(false)
   }
@@ -151,7 +151,7 @@ export function SecurityTab() {
         email: user.email,
         password: disablePassword,
       })
-      if (signInError) throw new Error('Contrasena incorrecta')
+      if (signInError) throw new Error('Contraseña incorrecta')
 
       await unenrollMFA(factorId)
       setMfaEnabled(false)
@@ -233,7 +233,7 @@ export function SecurityTab() {
         {enrolling && qrCode && (
           <div className="mt-4 space-y-4">
             <p className="text-[12px] font-body text-text-muted leading-relaxed">
-              Escanea el codigo QR con tu app autenticadora (Google Authenticator, Authy, etc.) y luego ingresa el codigo de 6 digitos para confirmar.
+              Escanea el código QR con tu app autenticadora (Google Authenticator, Authy, etc.) y luego ingresa el código de 6 dígitos para confirmar.
             </p>
 
             {/* QR Code */}
@@ -245,7 +245,7 @@ export function SecurityTab() {
 
               {secret && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-[12px] font-body text-text-dim mb-1.5">O ingresa el codigo manual:</p>
+                  <p className="text-[12px] font-body text-text-dim mb-1.5">O ingresa el código manual:</p>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 min-w-0 px-3 py-2 rounded-md bg-surface-3 text-text-muted text-[12px] font-body break-all">
                       {secret}
@@ -303,8 +303,8 @@ export function SecurityTab() {
       <div className="glass-card p-4">
         <p className="text-[12px] font-body text-text-dim leading-relaxed">
           <span className="text-text-muted font-medium">Que es 2FA?</span>{' '}
-          La autenticacion en dos pasos requiere que ingreses un codigo de 6 digitos generado por tu app autenticadora cada vez que inicias sesion, ademas de tu contrasena habitual.
-          Esto protege tu cuenta incluso si alguien obtiene tu contrasena.
+          La autenticación en dos pasos requiere que ingreses un código de 6 dígitos generado por tu app autenticadora cada vez que inicias sesión, además de tu contraseña habitual.
+          Esto protege tu cuenta incluso si alguien obtiene tu contraseña.
         </p>
       </div>
 
@@ -313,13 +313,13 @@ export function SecurityTab() {
         open={disableModalOpen}
         onClose={() => !disabling && setDisableModalOpen(false)}
         title="Desactivar 2FA"
-        description="Confirma tu contrasena para desactivar la autenticacion en dos pasos."
+        description="Confirma tu contraseña para desactivar la autenticación en dos pasos."
         size="sm"
       >
         <div className="space-y-3 pt-2">
           <div>
             <label className="block text-[12px] font-body font-medium text-text-muted mb-1.5 uppercase tracking-wider">
-              Contrasena actual
+              Contraseña actual
             </label>
             <input
               type="password"

@@ -277,7 +277,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
         const code = response.authResponse?.code
         if (!code) {
           setEmbeddedConnecting(false)
-          onMessage('Inicio de sesion cancelado o fallido')
+          onMessage('Inicio de sesión cancelado o fallido')
           return
         }
 
@@ -730,7 +730,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Numero de telefono (ej. +573001234567)</label>
+                    <label className="text-[11px] font-body text-text-dim font-semibold uppercase tracking-wider block mb-1">Número de teléfono (ej. +573001234567)</label>
                     <input
                       type="tel"
                       value={voicePhoneNumber}
@@ -746,7 +746,7 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                     className="w-full px-3 py-2 rounded-md bg-brand-cyan text-void text-[12px] font-body font-semibold uppercase tracking-wider hover:bg-brand-cyan/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
                     {voiceConnecting ? (
-                      <><Loader2 size={12} className="animate-spin" /> Verificando conexion...</>
+                      <><Loader2 size={12} className="animate-spin" /> Verificando conexión...</>
                     ) : (
                       <><Zap size={12} /> Conectar Voice AI</>
                     )}

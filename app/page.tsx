@@ -789,7 +789,7 @@ export default function LandingPage() {
               <TestimonialCard
                 quote="El dashboard es increíble. Ver en tiempo real cuántos pacientes están en el pipeline, cuáles tienen anticipo pagado, qué oportunidades detectó SofIA — es información que antes no tenía."
                 name="Dra. Sofia Gutierrez"
-                role="Medica Estetica"
+                role="Médica Estética"
                 clinic="Dermaclinic Pro, Cali"
                 stars={5}
               />
@@ -804,7 +804,7 @@ export default function LandingPage() {
                 quote="Implementación en un día. El equipo de Ataraxia es muy profesional. SofIA empezó a atender pacientes esa misma noche. Recomendado 100%."
                 name="Dra. Maria Camila Lopez"
                 role="Directora"
-                clinic="Estetica Avanzada, Bucaramanga"
+                clinic="Estética Avanzada, Bucaramanga"
                 stars={5}
               />
             </div>

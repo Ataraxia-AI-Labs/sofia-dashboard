@@ -88,7 +88,7 @@ const CONFIGS: Record<string, Parameters<typeof HyperPersuasivePage>[0]> = {
     title: 'Webhooks',
     eta: 'En desarrollo · Próximamente',
     headline: 'Conecta SofIA con lo que sea.',
-    subhead: 'Eventos en tiempo real con firma digital y reintentos automaticos. Tu sistema externo siempre recibe la notificacion.',
+    subhead: 'Eventos en tiempo real con firma digital y reintentos automáticos. Tu sistema externo siempre recibe la notificación.',
     features: [
       { icon: <Zap size={18} strokeWidth={1.5} />, title: 'Eventos granulares', description: 'Cita, pago, mensaje, lead, paciente. Cada cambio notifica a tu sistema.' },
       { icon: <ShieldCheck size={18} strokeWidth={1.5} />, title: 'Firma digital', description: 'Cada evento viene firmado para que sepas que viene de Ataraxia de verdad.' },
