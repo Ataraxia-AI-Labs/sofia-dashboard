@@ -799,7 +799,7 @@ export default function OnboardingPage() {
                   className="mt-0.5 w-4 h-4 rounded border-border accent-brand-purple"
                 />
                 <span className="text-[12px] font-body text-text-muted leading-relaxed group-hover:text-text-primary transition-colors">
-                  Acepto los terminos de servicio y la politica de privacidad.
+                  Acepto los términos de servicio y la política de privacidad.
                   Datos procesados conforme a Ley 1581 de 2012.
                 </span>
               </label>
