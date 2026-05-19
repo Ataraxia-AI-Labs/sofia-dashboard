@@ -8,9 +8,10 @@ import {
   connectInstagram, disconnectInstagram,
   connectMessenger, disconnectMessenger,
 } from '@/lib/api/channels'
+import { startMetaPageOAuth, listMetaPages, selectMetaPage, type MetaOAuthPage, type MetaOAuthChannel } from '@/lib/api/meta-oauth'
 import { updateOrganization } from '@/lib/api'
 import { API_URL, authFetch } from '@/lib/api/helpers'
-import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff, Globe, ArrowRight } from 'lucide-react'
+import { MessageCircle, Instagram, PhoneCall, Wifi, CheckCircle, XCircle, Loader2, Zap, ChevronDown, ChevronUp, Save, Eye, EyeOff, Globe, ArrowRight, Facebook } from 'lucide-react'
 import type { Organization } from '@/types'
 import { WhatsAppMigrationWizard } from '@/components/whatsapp-migration-wizard'
 
@@ -74,6 +75,15 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
 
   // Web Chat status — fetched separately since it has its own config endpoint
   const [webchatCfg, setWebchatCfg] = useState<{ enabled: boolean; allowed_domains: string[]; primary_color: string } | null>(null)
+
+  // Meta OAuth (Facebook Page + Instagram via Page) — Fase 1
+  const [metaOAuthStarting, setMetaOAuthStarting] = useState<MetaOAuthChannel | null>(null)
+  const [metaSelectModal, setMetaSelectModal] = useState<{
+    channel: MetaOAuthChannel
+    state: string
+    pages: MetaOAuthPage[]
+    busy: boolean
+  } | null>(null)
 
   useEffect(() => {
     if (!orgId) return
@@ -243,6 +253,82 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [orgId])
+
+  // Detecta `?meta_oauth=select&channel=...&state=...` cuando Meta redirige
+  // de vuelta al dashboard via el callback del backend. Abre el modal de
+  // selección de Page.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const mode = params.get('meta_oauth')
+    if (!mode) return
+
+    // Limpia los params de la URL para que el modal no se reabra al refrescar
+    const cleanUrl = window.location.pathname + window.location.hash
+    window.history.replaceState({}, '', cleanUrl)
+
+    if (mode === 'error') {
+      onMessage('Meta canceló o rechazó la conexión: ' + (params.get('detail') || 'error desconocido'))
+      return
+    }
+    if (mode === 'no_pages') {
+      onMessage('No se encontraron páginas de Facebook administradas por esta cuenta')
+      return
+    }
+    if (mode !== 'select') return
+
+    const channel = (params.get('channel') || 'messenger') as MetaOAuthChannel
+    const state = params.get('state') || ''
+    if (!state) {
+      onMessage('Estado OAuth inválido — reintenta la conexión')
+      return
+    }
+
+    listMetaPages(state)
+      .then(({ channel: ch, pages }) => {
+        setMetaSelectModal({ channel: ch || channel, state, pages, busy: false })
+      })
+      .catch((err) => {
+        onMessage(err instanceof Error ? err.message : 'Error al listar páginas')
+      })
+  }, [onMessage])
+
+  const handleStartMetaOAuth = async (channel: MetaOAuthChannel) => {
+    if (isReadOnly) return
+    setMetaOAuthStarting(channel)
+    try {
+      const url = await startMetaPageOAuth(channel)
+      // Full-page redirect to Facebook OAuth dialog
+      window.location.href = url
+    } catch (err) {
+      onMessage(err instanceof Error ? err.message : 'Error iniciando OAuth')
+      setMetaOAuthStarting(null)
+    }
+  }
+
+  const handleSelectMetaPage = async (pageId: string) => {
+    if (!metaSelectModal) return
+    const sel = metaSelectModal.pages.find(p => p.id === pageId)
+    if (!sel) return
+    setMetaSelectModal(m => m ? { ...m, busy: true } : m)
+    try {
+      const result = await selectMetaPage({
+        selectState: metaSelectModal.state,
+        pageId,
+        channel: metaSelectModal.channel,
+        instagramBusinessAccountId: sel.instagram_business_account_id,
+      })
+      onMessage(
+        `${metaSelectModal.channel === 'instagram' ? 'Instagram' : 'Messenger'} conectado: ${result.page_name}`
+        + (result.webhook_subscribed ? '' : ' (webhook pendiente, reintenta si no llegan mensajes)')
+      )
+      setMetaSelectModal(null)
+      onRefresh()
+    } catch (err) {
+      onMessage(err instanceof Error ? err.message : 'Error conectando página')
+      setMetaSelectModal(m => m ? { ...m, busy: false } : m)
+    }
+  }
 
   const handleConnect = async () => {
     if (!phoneId.trim()) return
@@ -531,8 +617,19 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                   <>
                     <p className="text-[12px] font-body text-text-dim leading-relaxed">
                       Conecta tu cuenta de Instagram Business vinculada a una página de Facebook.
-                      Pendiente aprobación de Meta TP — usa configuración manual mientras tanto.
                     </p>
+                    <button
+                      onClick={() => handleStartMetaOAuth('instagram')}
+                      disabled={metaOAuthStarting === 'instagram'}
+                      className="w-full px-3 py-2 rounded-md bg-[#1877F2] hover:bg-[#166FE5] text-white text-[12px] font-body font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {metaOAuthStarting === 'instagram' ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <Facebook size={12} />
+                      )}
+                      Conectar con Facebook
+                    </button>
                     <button
                       onClick={() => setIgForm(f => ({ ...f, show: !f.show }))}
                       className="flex items-center gap-1 text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors"
@@ -602,6 +699,18 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
                     <p className="text-[12px] font-body text-text-dim leading-relaxed">
                       Conecta la página de Facebook desde la que quieres recibir mensajes.
                     </p>
+                    <button
+                      onClick={() => handleStartMetaOAuth('messenger')}
+                      disabled={metaOAuthStarting === 'messenger'}
+                      className="w-full px-3 py-2 rounded-md bg-[#1877F2] hover:bg-[#166FE5] text-white text-[12px] font-body font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {metaOAuthStarting === 'messenger' ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <Facebook size={12} />
+                      )}
+                      Conectar con Facebook
+                    </button>
                     <button
                       onClick={() => setMsgForm(f => ({ ...f, show: !f.show }))}
                       className="flex items-center gap-1 text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors"
@@ -787,6 +896,66 @@ export function ChannelsTab({ orgId, org, isReadOnly, onMessage, onRefresh, onNa
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Meta OAuth — Page selection modal (Fase 1) */}
+      {metaSelectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="glass-card max-w-md w-full p-5 space-y-4">
+            <div className="flex items-center gap-2.5">
+              <Facebook size={16} className="text-[#1877F2]" />
+              <h3 className="text-sm font-body font-semibold text-text-primary">
+                Elige la página para {metaSelectModal.channel === 'instagram' ? 'Instagram' : 'Messenger'}
+              </h3>
+            </div>
+            <p className="text-[12px] font-body text-text-dim leading-relaxed">
+              Selecciona la página de Facebook que SofIA va a usar para recibir y responder mensajes.
+              {metaSelectModal.channel === 'instagram' && ' Solo se muestran páginas con una cuenta de Instagram Business vinculada.'}
+            </p>
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {metaSelectModal.pages
+                .filter(p => metaSelectModal.channel !== 'instagram' || p.has_instagram)
+                .map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => handleSelectMetaPage(p.id)}
+                    disabled={metaSelectModal.busy}
+                    className="w-full text-left p-3 rounded-md bg-surface-3 border border-border hover:border-brand-purple/40 transition-colors disabled:opacity-50"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[13px] font-body font-semibold text-text-primary truncate">{p.name}</div>
+                        <div className="text-[11px] font-body text-text-dim truncate">
+                          {p.category || 'Página'}{p.has_instagram && ' · Instagram vinculado'}
+                        </div>
+                      </div>
+                      {metaSelectModal.busy ? (
+                        <Loader2 size={14} className="animate-spin text-text-dim flex-shrink-0" />
+                      ) : (
+                        <ArrowRight size={14} className="text-text-dim flex-shrink-0" />
+                      )}
+                    </div>
+                  </button>
+                ))}
+              {metaSelectModal.channel === 'instagram'
+                && metaSelectModal.pages.every(p => !p.has_instagram) && (
+                  <div className="p-3 rounded-md bg-status-warning/10 border border-status-warning/20 text-[12px] font-body text-status-warning">
+                    Ninguna de tus páginas tiene una cuenta de Instagram Business vinculada.
+                    Vinculala desde Meta Business Suite y reintenta.
+                  </div>
+                )}
+            </div>
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={() => setMetaSelectModal(null)}
+                disabled={metaSelectModal.busy}
+                className="px-3 py-2 rounded-md text-[12px] font-body text-text-dim hover:text-text-secondary transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
