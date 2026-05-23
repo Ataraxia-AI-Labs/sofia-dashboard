@@ -82,8 +82,8 @@ MOTION        breathe=loading, pulse=alive, fade=transition
 ## Numbers
 
 ```
-23 pages  ·  42+ components  ·  39 API modules  ·  3 languages
-671 unit tests (Jest)  ·  159 E2E tests (Playwright)
+44 pages  ·  56 components  ·  51 API modules  ·  3 languages
+~1593 unit tests (Jest)  ·  ~186 E2E tests (Playwright)
 ```
 
 ## Setup
@@ -108,7 +108,7 @@ npx next lint               # ESLint
 
 ## Deploy
 
-Vercel auto-deploys from `main`. Environment variables configured in Vercel dashboard.
+Production auto-deploys from `main` at https://dashboard.ataraxiaialabs.ai. Environment variables configured in the hosting provider dashboard.
 
 ---
 
